@@ -1,0 +1,47 @@
+name: Hosting release
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Validate release tag
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          test "$GITHUB_REF_NAME" = "v$(node -p "require('./package.json').version")"
+      - run: npm ci
+      - run: npm test
+      - name: Check PHP syntax
+        run: |
+          while IFS= read -r -d '' file; do
+            php -l "$file"
+          done < <(find public -name '*.php' ! -name 'config.php' -print0)
+      - name: Package hosting files
+        run: python3 scripts/package-release.py
+      - name: Verify archive
+        run: |
+          cd dist/releases
+          sha256sum -c *.sha256
+          python3 -m zipfile -t *.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hosting-package
+          path: dist/releases/*
+      - name: Publish GitHub release
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1 || gh release create "$GITHUB_REF_NAME" --title "Finans Paneli $GITHUB_REF_NAME" --notes "Kuruluma hazır hosting ZIP'i ve SHA-256 doğrulama dosyası. Kurulum talimatları ZIP içindedir. PHP 8.3+ ve MySQL/MariaDB gerekir."
+          gh release upload "$GITHUB_REF_NAME" dist/releases/* --clobber
