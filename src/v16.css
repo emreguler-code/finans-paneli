@@ -1,0 +1,138 @@
+/* 1.6 keeps the approved typography/palette and restores existing list density. */
+.finance-page,.main-shell,.main-content,.page-title,.page-title>div,.panel,.cari-table-scroll{min-width:0}
+.ledger-v15 td{padding-top:18px;padding-bottom:18px}
+.ledger-v15 td:last-child{padding:18px 22px;width:auto}
+.ledger-v15 th:nth-child(3){width:230px}
+.ledger-v15 .party-ledger th:nth-child(3){width:100px}
+.ledger-v15 .party-ledger th:nth-child(4){width:230px}
+.ledger-v15 th:last-child,.ledger-v15 th:nth-last-child(2){width:150px}
+.ledger-v15 .cari-entry-kind{grid-template-columns:130px 4px minmax(50px,1fr);gap:6px;min-width:0}
+.ledger-v15 .cari-entry-kind .cari-badge{width:130px;min-width:130px;max-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;line-height:30px;text-align:center;font-size:12px;padding:0 5px}
+.ledger-v15 .expanded td:first-child{box-shadow:inset 3px 0 var(--brand)}
+.ledger-v15 .ledger-action-row>td{border:0!important;padding:0!important;box-shadow:inset 3px 0 var(--brand);background:#f0f7f8}
+.ledger-actions{min-height:32px;padding:0 15px 5px}
+.ledger-v15 .settled-note{font-size:12px;color:var(--muted);font-weight:400;white-space:normal}
+.party-detail-header{flex-wrap:wrap}
+.party-inline-info{flex:0 0 100%;border-top:1px solid var(--line);padding-top:14px}
+.party-inline-info dl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 22px;margin:0}
+.party-inline-info dt{font-size:12px;color:var(--muted)}
+.party-inline-info dd{margin:3px 0 0;overflow-wrap:anywhere;font-size:14px}
+.rotate-open{transform:rotate(180deg)}
+.account-page{gap:14px}
+.account-title{align-items:flex-start;gap:16px}
+.account-title-actions{display:flex;align-items:flex-start;justify-content:flex-end;gap:10px;min-width:0;flex:1}
+.account-title-actions>.primary-button{min-height:44px;flex-shrink:0}
+.inventory-tools{min-width:0;max-width:100%;width:min(520px,100%)}
+.inventory-tools .common-toolbar{padding:0;gap:8px;flex-wrap:nowrap}
+.inventory-tools .cari-search{flex:1;width:auto;min-width:80px}
+.inventory-tools .cari-toolbar-actions{gap:5px;width:auto;flex-shrink:0}
+.inventory-tools .list-icon{width:38px;height:44px}
+.inventory-tools .shared-filters{padding:12px;margin-top:10px;border:1px solid var(--line);border-radius:8px}
+.account-page>section.inventory-tools{padding:12px;width:100%}
+.account-card-actions{display:flex;gap:4px;position:absolute;right:12px;bottom:12px;z-index:2}
+.account-card-actions .icon-button{width:32px;height:32px;background:white;border:1px solid var(--line);border-radius:6px}
+.account-face{position:relative}
+.bank-face footer{padding-right:72px}
+.face-mark{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
+.compact-bank-carousel .carousel-caption{min-height:22px;font-size:12px}
+.compact-bank-carousel .carousel-viewport{height:248px}
+.compact-bank-carousel .carousel-track{top:0}
+.kmh-card-body{margin:auto 0}
+.kmh-totals{display:flex;justify-content:space-between;gap:15px;font-size:12px;margin-top:8px}
+.kmh-totals span{display:block;color:var(--muted)}
+.kmh-totals strong{font-size:14px;white-space:nowrap}
+.alert-notice{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border:1px solid #e8d9bc;background:#fcf8ef;border-radius:8px;color:#955f12;width:100%;text-align:left}
+.alert-notice>span{flex:1;min-width:0}
+.alert-notice strong{display:block;font-size:14px}
+.alert-notice small{display:block;font-size:12px;line-height:1.5;margin-top:3px;color:var(--muted);overflow-wrap:anywhere}
+.alert-notice.danger{border-color:#edcece;background:#fcf3f3;color:var(--red)}
+.notification-list{display:flex;flex-direction:column;gap:10px}
+.drawer-layer{overscroll-behavior:contain}
+.drawer.finance-sheet{min-width:0;overscroll-behavior:contain}
+.sheet-scroll{touch-action:pan-y;-webkit-overflow-scrolling:touch}
+@media(max-width:1100px){.account-title{flex-wrap:wrap}.account-title-actions{flex-basis:100%}.inventory-tools{width:100%;max-width:none}.ledger-v15 .party-ledger{min-width:980px}}
+@media(max-width:800px){.compact-bank-carousel .carousel-viewport{height:220px}.party-inline-info dl{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){
+  html,body,#root,.app,.main-shell{width:100%;max-width:100%;min-width:0}
+  .topbar{gap:8px}.breadcrumb{min-width:0}.breadcrumb b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100px}
+  .top-actions{min-width:0;flex:1;justify-content:flex-end}.top-actions .search{min-width:0;max-width:150px;flex:1}.top-actions .search input{min-width:0;width:100%;font-size:16px}
+  .main-content{padding:16px 12px 90px;max-width:100%}
+  .account-page .page-title{flex-direction:column;align-items:stretch;gap:10px}
+  .account-title-actions{width:100%;flex-basis:auto;gap:6px}
+  .inventory-tools .common-toolbar{flex-wrap:wrap;gap:6px}
+  .inventory-tools .common-toolbar .cari-search{min-width:100px;flex:1}
+  .inventory-tools .common-toolbar .cari-toolbar-actions{width:auto;gap:4px}
+  .inventory-tools .list-icon{width:32px;height:40px}
+  .inventory-tools .cari-search input,.common-toolbar .cari-search input{font-size:16px}
+  .account-ledger-heading .cari-tabs{flex:1;width:auto;gap:4px}
+  .account-ledger-heading .cari-tabs button{font-size:14px;white-space:normal;padding:10px 6px}
+  .account-ledger-heading{gap:6px;align-items:center}
+  .account-ledger-heading .cari-actions{gap:5px}
+  .account-ledger-heading .list-icon{width:36px;height:40px}
+  .account-ledger-heading .primary-button{min-height:40px;width:40px;padding:0;justify-content:center}
+  .carousel-area{max-width:100%;overflow:hidden}
+  .party-detail-header .party-heading{min-width:0}.party-detail-header h1{overflow-wrap:anywhere}
+  .party-inline-info dl{grid-template-columns:1fr 1fr;gap:12px}
+  .alert-notice{padding:10px;gap:8px}
+  .common-toolbar{flex-wrap:wrap}.common-toolbar .cari-search{min-width:0}
+}
+@media(max-width:700px){
+  .ledger-v15 .party-ledger{min-width:0}
+  .ledger-v15 .finance-table td:last-child{padding:0!important;width:auto}
+  .ledger-v15 .finance-table tr.expanded{box-shadow:inset 3px 0 var(--brand);border-bottom:0;margin-bottom:0}
+  .ledger-v15 .expanded td:first-child{box-shadow:none}
+  .ledger-v15 .finance-table tr.ledger-action-row{box-shadow:inset 3px 0 var(--brand);border:0;margin:0;padding:0;background:#f0f7f8}
+  .ledger-v15 .ledger-action-row>td{box-shadow:none}
+  .ledger-v15 .finance-table td[data-label="İşlem"]{grid-column:1;grid-row:3;min-width:0}
+  .ledger-v15 .finance-table td[data-label="Etiket"]{grid-column:1;grid-row:4}
+  .ledger-v15 .finance-table td[data-label="Bakiye"]{grid-column:1/-1;grid-row:5;text-align:right}
+  .ledger-v15 .cari-entry-kind{display:flex;gap:5px;flex-wrap:wrap}
+  .ledger-v15 .cari-entry-kind .cari-badge{width:110px;min-width:110px;max-width:110px;height:27px;line-height:27px}
+  .ledger-v15 .expense-tag{margin-left:0}
+  .ledger-actions{min-height:42px}
+  .finance-table td[data-label="Açıklama"]{overflow-wrap:anywhere}
+  .ledger-v15 .settled-note{max-width:140px}
+  .drawer-layer{padding:10px}.drawer.finance-sheet{max-width:100%;max-height:calc(var(--visible-height,100dvh) - 20px)}
+  .date-centered .date-months{grid-template-columns:minmax(0,1fr)}
+  .date-centered .date-second{display:none}
+  .date-navigation{gap:4px;min-width:0}.date-navigation select{min-width:0;max-width:100%}
+  .party-inline-info dl{grid-template-columns:1fr}
+}
+@media(max-width:390px){.compact-bank-carousel .carousel-viewport{height:199px}.account-face.bank-face{width:calc(100vw - 52px);flex-basis:calc(100vw - 52px)}.bank-face h2{font-size:16px}.bank-face .account-face-balance>div{font-size:27px}.inventory-tools .common-toolbar .cari-search{flex-basis:100%}.account-title-actions>.primary-button{height:40px;min-height:40px}.account-title-actions .inventory-tools{flex:1}.bank-face footer{padding-right:70px}}
+@media(max-width:350px){.compact-bank-carousel .carousel-viewport{height:220px}.account-face.bank-face{min-height:208px}.breadcrumb b{max-width:76px}.topbar{padding:0 12px}.account-card-actions{right:9px;bottom:9px}}
+
+@media(max-width:760px){
+ .bank-account-page .inventory-tools .common-toolbar{flex-wrap:nowrap}
+ .bank-account-page .inventory-tools .common-toolbar .cari-search{flex-basis:auto;min-width:64px}
+ .bank-account-page .account-ledger-heading>.cari-tabs{flex-wrap:nowrap;min-width:0}
+ .bank-account-page .account-ledger-heading>.cari-tabs button{flex:1;min-width:0}
+ .account-page .ledger-v15 .common-toolbar{padding:12px;gap:6px;flex-wrap:nowrap}
+ .account-page .ledger-v15 .common-toolbar>.cari-search{width:auto;flex:1;min-width:0}
+ .account-page .ledger-v15 .common-toolbar .cari-toolbar-actions{width:auto;gap:4px}
+ .account-page .ledger-v15 .common-toolbar .list-icon{width:32px;height:40px}
+ .bank-account-page .account-face,.bank-account-page .carousel-active,.bank-account-page .carousel-neighbor{width:300px;flex-basis:300px}
+ .bank-account-page .account-face{min-height:185px;aspect-ratio:1.618;gap:4px;padding:11px 13px}
+ .bank-account-page .carousel-viewport{height:194px;mask-image:linear-gradient(to right,transparent,#000 7%,#000 93%,transparent);-webkit-mask-image:linear-gradient(to right,transparent,#000 7%,#000 93%,transparent)}
+ .bank-account-page .account-face h2{font-size:16px}
+ .credit-face .limit-legend{grid-template-columns:1fr 1fr 1.15fr}
+ .credit-face .limit-legend span{white-space:normal;line-height:1.25}
+}
+@media(max-width:350px){
+ .bank-account-page .account-face,.bank-account-page .carousel-active,.bank-account-page .carousel-neighbor{width:268px;flex-basis:268px}
+ .bank-account-page .account-face{min-height:185px}
+ .bank-account-page .carousel-viewport{height:194px}
+ .ledger-v15 .cari-entry-kind .cari-badge{min-width:100px;max-width:100px;width:100px}
+}
+
+@media(max-width:700px){
+ .party-detail-header.page-title{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center}
+ .party-detail-header>div:first-child{grid-column:1/-1;min-width:0}
+ .party-detail-header .party-header-balance{grid-column:1;margin:0;min-width:0;width:auto}
+ .party-detail-header .party-header-balance .cari-total{font-size:24px;white-space:nowrap}
+ .party-detail-header>.cari-actions{grid-column:2;grid-row:2;gap:6px;width:auto}
+ .party-detail-header>.cari-actions>button{width:40px;height:40px;min-height:40px;padding:0;justify-content:center}
+ .party-inline-info{grid-column:1/-1}
+ .ledger-v15 .ledger-action-row>td{box-shadow:inset 3px 0 var(--brand)}
+}
+
+@media(max-width:760px){.account-page .carousel-area{overflow:visible}.account-page .carousel-arrow{width:32px;height:32px}.account-page .carousel-arrow.previous{left:-8px}.account-page .carousel-arrow.next{right:-8px}}
