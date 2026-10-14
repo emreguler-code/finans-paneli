@@ -1,6 +1,6 @@
 # Finans Paneli — Codex çalışma kuralları
 
-Bu depo Finans 1.6.0 kaynaklarıdır. Ürün dili Türkçe, tasarım dili Sade Netlik'tir.
+Bu depo Finans 1.6.1 kaynaklarıdır. Ürün dili Türkçe, tasarım dili Sade Netlik'tir.
 Önce README.md, docs/TASARIM-ILKELERI.md ve docs/CODEX-BASLANGIC.md dosyalarını okuyun.
 
 ## Değişiklik kapsamı

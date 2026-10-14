@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {operationDirection,grossPartyAmount,kmhUsage,hasMaturity} from '../src/v16-utils.mjs';
+import {operationDirection,grossPartyAmount,kmhUsage,hasMaturity} from '../src/account-utils.mjs';
 test('Cari gross amount stays distinct from partial or complete settlement',()=>{
  const e={party_id:1,kind:'Alacak',amount_cents:100000,settled_cents:30000,party_effect:70000};
  assert.equal(grossPartyAmount(e),100000);assert.equal(grossPartyAmount({...e,settled_cents:100000,party_effect:0}),100000);

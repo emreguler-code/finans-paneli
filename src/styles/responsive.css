@@ -1,17 +1,17 @@
 /* 1.6 keeps the approved typography/palette and restores existing list density. */
 .finance-page,.main-shell,.main-content,.page-title,.page-title>div,.panel,.cari-table-scroll{min-width:0}
-.ledger-v15 td{padding-top:18px;padding-bottom:18px}
-.ledger-v15 td:last-child{padding:18px 22px;width:auto}
-.ledger-v15 th:nth-child(3){width:230px}
-.ledger-v15 .party-ledger th:nth-child(3){width:100px}
-.ledger-v15 .party-ledger th:nth-child(4){width:230px}
-.ledger-v15 th:last-child,.ledger-v15 th:nth-last-child(2){width:150px}
-.ledger-v15 .cari-entry-kind{grid-template-columns:130px 4px minmax(50px,1fr);gap:6px;min-width:0}
-.ledger-v15 .cari-entry-kind .cari-badge{width:130px;min-width:130px;max-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;line-height:30px;text-align:center;font-size:12px;padding:0 5px}
-.ledger-v15 .expanded td:first-child{box-shadow:inset 3px 0 var(--brand)}
-.ledger-v15 .ledger-action-row>td{border:0!important;padding:0!important;box-shadow:inset 3px 0 var(--brand);background:#f0f7f8}
+.ledger-view td{padding-top:18px;padding-bottom:18px}
+.ledger-view td:last-child{padding:18px 22px;width:auto}
+.ledger-view th:nth-child(3){width:230px}
+.ledger-view .party-ledger th:nth-child(3){width:100px}
+.ledger-view .party-ledger th:nth-child(4){width:230px}
+.ledger-view th:last-child,.ledger-view th:nth-last-child(2){width:150px}
+.ledger-view .cari-entry-kind{grid-template-columns:130px 4px minmax(50px,1fr);gap:6px;min-width:0}
+.ledger-view .cari-entry-kind .cari-badge{width:130px;min-width:130px;max-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;line-height:30px;text-align:center;font-size:12px;padding:0 5px}
+.ledger-view .expanded td:first-child{box-shadow:inset 3px 0 var(--brand)}
+.ledger-view .ledger-action-row>td{border:0!important;padding:0!important;box-shadow:inset 3px 0 var(--brand);background:#f0f7f8}
 .ledger-actions{min-height:32px;padding:0 15px 5px}
-.ledger-v15 .settled-note{font-size:12px;color:var(--muted);font-weight:400;white-space:normal}
+.ledger-view .settled-note{font-size:12px;color:var(--muted);font-weight:400;white-space:normal}
 .party-detail-header{flex-wrap:wrap}
 .party-inline-info{flex:0 0 100%;border-top:1px solid var(--line);padding-top:14px}
 .party-inline-info dl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 22px;margin:0}
@@ -50,7 +50,7 @@
 .drawer-layer{overscroll-behavior:contain}
 .drawer.finance-sheet{min-width:0;overscroll-behavior:contain}
 .sheet-scroll{touch-action:pan-y;-webkit-overflow-scrolling:touch}
-@media(max-width:1100px){.account-title{flex-wrap:wrap}.account-title-actions{flex-basis:100%}.inventory-tools{width:100%;max-width:none}.ledger-v15 .party-ledger{min-width:980px}}
+@media(max-width:1100px){.account-title{flex-wrap:wrap}.account-title-actions{flex-basis:100%}.inventory-tools{width:100%;max-width:none}.ledger-view .party-ledger{min-width:980px}}
 @media(max-width:800px){.compact-bank-carousel .carousel-viewport{height:220px}.party-inline-info dl{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:760px){
   html,body,#root,.app,.main-shell{width:100%;max-width:100%;min-width:0}
@@ -77,21 +77,21 @@
   .common-toolbar{flex-wrap:wrap}.common-toolbar .cari-search{min-width:0}
 }
 @media(max-width:700px){
-  .ledger-v15 .party-ledger{min-width:0}
-  .ledger-v15 .finance-table td:last-child{padding:0!important;width:auto}
-  .ledger-v15 .finance-table tr.expanded{box-shadow:inset 3px 0 var(--brand);border-bottom:0;margin-bottom:0}
-  .ledger-v15 .expanded td:first-child{box-shadow:none}
-  .ledger-v15 .finance-table tr.ledger-action-row{box-shadow:inset 3px 0 var(--brand);border:0;margin:0;padding:0;background:#f0f7f8}
-  .ledger-v15 .ledger-action-row>td{box-shadow:none}
-  .ledger-v15 .finance-table td[data-label="İşlem"]{grid-column:1;grid-row:3;min-width:0}
-  .ledger-v15 .finance-table td[data-label="Etiket"]{grid-column:1;grid-row:4}
-  .ledger-v15 .finance-table td[data-label="Bakiye"]{grid-column:1/-1;grid-row:5;text-align:right}
-  .ledger-v15 .cari-entry-kind{display:flex;gap:5px;flex-wrap:wrap}
-  .ledger-v15 .cari-entry-kind .cari-badge{width:110px;min-width:110px;max-width:110px;height:27px;line-height:27px}
-  .ledger-v15 .expense-tag{margin-left:0}
+  .ledger-view .party-ledger{min-width:0}
+  .ledger-view .finance-table td:last-child{padding:0!important;width:auto}
+  .ledger-view .finance-table tr.expanded{box-shadow:inset 3px 0 var(--brand);border-bottom:0;margin-bottom:0}
+  .ledger-view .expanded td:first-child{box-shadow:none}
+  .ledger-view .finance-table tr.ledger-action-row{box-shadow:inset 3px 0 var(--brand);border:0;margin:0;padding:0;background:#f0f7f8}
+  .ledger-view .ledger-action-row>td{box-shadow:none}
+  .ledger-view .finance-table td[data-label="İşlem"]{grid-column:1;grid-row:3;min-width:0}
+  .ledger-view .finance-table td[data-label="Etiket"]{grid-column:1;grid-row:4}
+  .ledger-view .finance-table td[data-label="Bakiye"]{grid-column:1/-1;grid-row:5;text-align:right}
+  .ledger-view .cari-entry-kind{display:flex;gap:5px;flex-wrap:wrap}
+  .ledger-view .cari-entry-kind .cari-badge{width:110px;min-width:110px;max-width:110px;height:27px;line-height:27px}
+  .ledger-view .expense-tag{margin-left:0}
   .ledger-actions{min-height:42px}
   .finance-table td[data-label="Açıklama"]{overflow-wrap:anywhere}
-  .ledger-v15 .settled-note{max-width:140px}
+  .ledger-view .settled-note{max-width:140px}
   .drawer-layer{padding:10px}.drawer.finance-sheet{max-width:100%;max-height:calc(var(--visible-height,100dvh) - 20px)}
   .date-centered .date-months{grid-template-columns:minmax(0,1fr)}
   .date-centered .date-second{display:none}
@@ -106,10 +106,10 @@
  .bank-account-page .inventory-tools .common-toolbar .cari-search{flex-basis:auto;min-width:64px}
  .bank-account-page .account-ledger-heading>.cari-tabs{flex-wrap:nowrap;min-width:0}
  .bank-account-page .account-ledger-heading>.cari-tabs button{flex:1;min-width:0}
- .account-page .ledger-v15 .common-toolbar{padding:12px;gap:6px;flex-wrap:nowrap}
- .account-page .ledger-v15 .common-toolbar>.cari-search{width:auto;flex:1;min-width:0}
- .account-page .ledger-v15 .common-toolbar .cari-toolbar-actions{width:auto;gap:4px}
- .account-page .ledger-v15 .common-toolbar .list-icon{width:32px;height:40px}
+ .account-page .ledger-view .common-toolbar{padding:12px;gap:6px;flex-wrap:nowrap}
+ .account-page .ledger-view .common-toolbar>.cari-search{width:auto;flex:1;min-width:0}
+ .account-page .ledger-view .common-toolbar .cari-toolbar-actions{width:auto;gap:4px}
+ .account-page .ledger-view .common-toolbar .list-icon{width:32px;height:40px}
  .bank-account-page .account-face,.bank-account-page .carousel-active,.bank-account-page .carousel-neighbor{width:300px;flex-basis:300px}
  .bank-account-page .account-face{min-height:185px;aspect-ratio:1.618;gap:4px;padding:11px 13px}
  .bank-account-page .carousel-viewport{height:194px;mask-image:linear-gradient(to right,transparent,#000 7%,#000 93%,transparent);-webkit-mask-image:linear-gradient(to right,transparent,#000 7%,#000 93%,transparent)}
@@ -121,7 +121,7 @@
  .bank-account-page .account-face,.bank-account-page .carousel-active,.bank-account-page .carousel-neighbor{width:268px;flex-basis:268px}
  .bank-account-page .account-face{min-height:185px}
  .bank-account-page .carousel-viewport{height:194px}
- .ledger-v15 .cari-entry-kind .cari-badge{min-width:100px;max-width:100px;width:100px}
+ .ledger-view .cari-entry-kind .cari-badge{min-width:100px;max-width:100px;width:100px}
 }
 
 @media(max-width:700px){
@@ -132,7 +132,7 @@
  .party-detail-header>.cari-actions{grid-column:2;grid-row:2;gap:6px;width:auto}
  .party-detail-header>.cari-actions>button{width:40px;height:40px;min-height:40px;padding:0;justify-content:center}
  .party-inline-info{grid-column:1/-1}
- .ledger-v15 .ledger-action-row>td{box-shadow:inset 3px 0 var(--brand)}
+ .ledger-view .ledger-action-row>td{box-shadow:inset 3px 0 var(--brand)}
 }
 
 @media(max-width:760px){.account-page .carousel-area{overflow:visible}.account-page .carousel-arrow{width:32px;height:32px}.account-page .carousel-arrow.previous{left:-8px}.account-page .carousel-arrow.next{right:-8px}}

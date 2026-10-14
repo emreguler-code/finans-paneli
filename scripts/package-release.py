@@ -16,7 +16,7 @@ archive = output / f"finans-paneli-{version}.zip"
 files = {"hosting/index.html": ROOT / "dist/client/index.html",
          "hosting/update.php": ROOT / "public/update.php",
          "KURULUM.md": ROOT / "docs/HOSTING-KURULUM.md",
-         "GUNCELLEME-1.6.md": ROOT / "GUNCELLEME-1.6.md"}
+         "GUNCELLEME.md": ROOT / "docs/GUNCELLEME.md"}
 # Vite assets are generated; public/ is deliberately not copied wholesale.
 for source in (ROOT / "dist/client/assets").rglob("*"):
     if source.is_file():
@@ -30,6 +30,8 @@ for name in filter(None, tracked):
         files["hosting/" + name.removeprefix("public/")] = source
     elif name.startswith("database/") and source.suffix == ".sql" and source.name != "sample-data.sql":
         files[name] = source
+        if name.startswith("database/migrations/"):
+            files["hosting/api/v2/migrations/" + source.name] = source
 files["licenses/Inter-OFL.txt"] = ROOT / "src/assets/fonts/OFL.txt"
 with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as z:
     for name, source in sorted(files.items()):

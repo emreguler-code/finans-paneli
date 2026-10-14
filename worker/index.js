@@ -1,5 +1,9 @@
 export default {
   async fetch(request, env) {
+    const pathname = new URL(request.url).pathname;
+    if (/^\/api(?:\/|$)/i.test(pathname) || /\.php(?:\/|$)/i.test(pathname)) {
+      return new Response("PHP API is not available on static hosting", {status: 404});
+    }
     const response = await env.ASSETS.fetch(request);
     const acceptsHtml = request.headers.get("accept")?.includes("text/html");
 

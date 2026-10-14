@@ -1,10 +1,11 @@
-import React,{useState} from 'react';
-import {api,requestId} from './api';
-import {Sheet,fmt} from './ui';
+import {MoneyInput} from './MoneyInput';
+import { useState } from 'react';
+import {api, requestId} from './api';
+import {Sheet, fmt} from './ui';
 import {DatePicker} from './DatePicker';
-import {formatMoneyInput,normalizeMoney} from './list-utils.mjs';
-import {operations,partyOptions,isInvoice} from './v15-utils.mjs';
-import {operationDirection} from './v16-utils.mjs';
+import {formatMoneyInput, normalizeMoney} from './list-utils.mjs';
+import {operations, partyOptions, isInvoice} from './operations.mjs';
+import {operationDirection} from './account-utils.mjs';
 const money=n=>formatMoneyInput(String((n||0)/100).replace('.',','));
 export function EventForm({context,data,onClose,onState,notify}){
  const e=context.item||{},init=context.initial||{},locked=context.lockedPartyId||e.party_id||null;
@@ -17,7 +18,7 @@ export function EventForm({context,data,onClose,onState,notify}){
  if(e.operation==='employee_expense')opts=opts.map(x=>x==='employee_purchase'?'employee_expense':x);
  if(f.operation==='collection'&&party?.type==='Tedarikçi'&&f.linkedId)opts=['collection'];if(f.operation==='return_payment')opts=['return_payment'];
  if(f.operation==='opening')opts=['opening'];
- const amountInput=(key,label,required=false)=><label className="cari-field">{label}<input name={key} inputMode="decimal" required={required} value={f[key]} onChange={ev=>{const el=ev.currentTarget,raw=el.value,pos=el.selectionStart??raw.length,logical=raw.slice(0,pos).replaceAll('.','').length,value=formatMoneyInput(raw);change(key,value);requestAnimationFrame(()=>{let i=0,n=0;while(i<value.length&&n<logical){if(value[i]!=='.')n++;i++}if(el.isConnected)el.setSelectionRange(i,i)})}}/></label>;
+ const amountInput=(key,label,required=false)=><label className="cari-field">{label}<MoneyInput name={key} required={required} value={f[key]} onValueChange={v=>change(key,v)}/></label>;
  const select=(key,label,options)=><label className="cari-field">{label}<select value={String(f[key]??'')} onChange={ev=>{if(key==='partyId'){const p=data.parties.find(p=>p.id===Number(ev.target.value));setF(s=>({...s,partyId:ev.target.value,operation:p?partyOptions(p.type)[0]:'expense',immediate:false,settled:'0',scheduled:false}))}else change(key,ev.target.value)}}>{options.map(([v,t])=><option key={v} value={v}>{t}</option>)}</select></label>;
  const accounts=data.accounts.filter(a=>a.active).map(a=>[a.id,a.name]);const cards=data.cards.filter(c=>c.active).map(c=>['card:'+c.id,c.name+' · Kart']);
  const accountValue=f.cardId?'card:'+f.cardId:f.account;

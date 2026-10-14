@@ -1,13 +1,15 @@
-"""Destructive recovery test ONLY for isolated finans_test. Uses local test runtime."""
+"""Backup, rollback and retry tests in a runner-owned disposable database."""
 from pathlib import Path
-import json,subprocess,urllib.request,urllib.error,http.cookiejar
-root=Path(__file__).resolve().parents[1];runtime=root/'.local-runtime'
-creds=json.loads((runtime/'test-env.json').read_text())
-client=[str(runtime/'root/usr/bin/mariadb'),'--no-defaults','--protocol=tcp','-h127.0.0.1','-P3307','-uroot','--batch','--skip-column-names']
-def sql(s):return subprocess.run(client,input=s,text=True,capture_output=True,check=True).stdout.strip()
+import json,subprocess,urllib.request,urllib.error,http.cookiejar,os
+root=Path(__file__).resolve().parents[1]
+container=os.environ['QA_SQL_CONTAINER']
+assert container.startswith('finans-qa-db-'), 'Migration tests require their own disposable container'
+creds=dict(username=os.environ['API_TEST_USERNAME'],password=os.environ['API_TEST_PASSWORD'],token=os.environ['API_TEST_SETUP_TOKEN'])
+def sql(statement):
+ result=subprocess.run(['docker','exec','-i',container,'sh','-c','exec mariadb -uroot -p"$MARIADB_ROOT_PASSWORD" --batch --skip-column-names'],input=statement,text=True,capture_output=True,check=True)
+ return result.stdout.strip()
 fixture=json.loads((root/'tests/fixtures/legacy-v1.json').read_text())
-sql('DROP DATABASE IF EXISTS finans_test; CREATE DATABASE finans_test; USE finans_test;'+fixture['schema']+fixture['sample']+fixture['cari'])
-op=urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()));url='http://127.0.0.1:8088/api/index.php?action=';csrf='';checks=0
+op=urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()));url=os.environ['API_TEST_URL']+'?action=';csrf='';checks=0
 def call(a,b=None):
  global csrf
  try:
@@ -19,6 +21,16 @@ def ok(name,test):
  global checks
  assert test,name
  checks+=1;print('PASS',name,flush=True)
+sql('USE finans_test;'+fixture['schema']+fixture['sample'])
+call('session');assert call('setup',creds)[0]==200
+ok('Version 1 migrates directly to schema 7',call('update_apply',{})[0]==200 and call('state')[1]['schemaVersion']==7)
+s=call('state')[1]
+ok('Legacy administrator and total cash preserved',s['user']['username']==creds['username'] and sum(a['balance_cents'] for a in s['accounts'])==12480000)
+ok('Legacy card debt preserved',round(sum(c['debt'] for c in s['cards'])*100)==2430000)
+ok('Legacy net cari preserved',sum(p['balance_cents'] for p in s['parties'])==5050000)
+ok('Successful migration is repeatable',call('update_apply',{})[0]==200 and call('state')[1]['events']==s['events'])
+sql('DROP DATABASE IF EXISTS finans_test; CREATE DATABASE finans_test; USE finans_test;'+fixture['schema']+fixture['sample']+fixture['cari'])
+op=urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()));csrf=''
 call('session');assert call('setup',creds)[0]==200
 sql("USE finans_test; INSERT INTO journal(id,payload_hash) VALUES('broken-transfer',REPEAT('0',64)); INSERT INTO movements(journal_id,account_id,movement_date,movement_time,name,kind,amount_cents) VALUES('broken-transfer','bank','2026-10-09','00:00:00','Fault fixture','Transfer',-100);")
 ok('Broken legacy transfer stops migration',call('update_apply',{})[0]==422)

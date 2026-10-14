@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {cardPeriodRows,cardEventEffect,limitSegments,partyOptions,operationLabel} from '../src/v15-utils.mjs';
+import {cardPeriodRows,cardEventEffect,limitSegments,partyOptions,operationLabel} from '../src/operations.mjs';
 test('Cari options are scoped and never contain transfers or Other',()=>{assert.deepEqual(partyOptions('Tedarikçi'),['purchase_invoice','purchase_no_invoice','supplier_return','payment']);assert.equal(partyOptions('Personel').includes('transfer'),false);assert.deepEqual(partyOptions('Müşteri'),['sale','collection','customer_return']);});
 test('Bar uses remaining statement and reserves future installment liability',()=>{const s=limitSegments({limit_cents:8000000,statement:12000,unbilled_cents:800000,future_cents:500000,debt:25000,available_cents:5500000});assert.deepEqual([s.statement,s.period,s.available],[1200000,1300000,5500000]);assert.equal(s.widths.reduce((a,b)=>a+b),100)});
 test('Card credit and over-limit bars remain bounded',()=>{for(const c of [{limit_cents:100,statement:2,unbilled_cents:200,debt:4},{limit_cents:100,statement:0,unbilled_cents:0,debt:-2,available_cents:300}]){const s=limitSegments(c);assert.ok(s.widths.every(n=>n>=0&&n<=100));assert.equal(s.widths.reduce((a,b)=>a+b),100)}});

@@ -10,11 +10,11 @@ function grossPartyEffect(array $e): int {
 function settlementSign(array $e): int {
  return in_array($e['kind'],['Alacak','Borç']) ? ($e['kind']==='Alacak'?1:-1) : 0;
 }
-function v15PartyEffect(array $e): int {
+function partyEffect(array $e): int {
  $gross=grossPartyEffect($e);
  return $gross ? $gross-(($gross>0?1:-1)*(int)($e['settled_cents']??0)) : 0;
 }
-function v15CashEffect(array $e): int {
+function cashEffect(array $e): int {
  if (!empty($e['scheduled'])) return 0;
  $n=(int)$e['amount_cents'];
  if (!empty($e['settled_cents']) && !empty($e['account_id'])) return settlementSign($e)*(int)$e['settled_cents'];
@@ -22,23 +22,27 @@ function v15CashEffect(array $e): int {
  if (!empty($e['card_id']) && in_array($e['kind'],['Tahsilat','Ödeme'])) return 0;
  return match($e['kind']) {'Tahsilat'=>$n,'Ödeme','Kart ödemesi'=>-$n,default=>0};
 }
-function v15CardEffect(array $e): int {
+function cardEffect(array $e): int {
  if (!empty($e['scheduled'])) return 0;
  $n=(int)$e['amount_cents'];
  if (!empty($e['settled_cents']) && !empty($e['card_id'])) return -settlementSign($e)*(int)$e['settled_cents'];
  if (!empty($e['card_id']) && in_array($e['kind'],['Tahsilat','Ödeme'])) return $e['kind']==='Ödeme'?$n:-$n;
  return match($e['kind']) {'Kart harcaması','Nakit avans','Kart aktarımı'=>$n,'Kart iadesi','Kart ödemesi'=>-$n,default=>0};
 }
-function v15Allocations(array $events): array {
- $out=['matches'=>[],'open'=>[],'advances'=>[]];$groups=[];
- foreach($events as $e)if(!$e['cancelled']&&!empty($e['party_id'])&&($n=partyEffect($e))){ $lane='main';if(($e['return_mode']??'')==='later'&&in_array($e['operation'],['supplier_return','customer_return']))$lane='return-'.$e['id'];elseif(!empty($e['linked_id'])&&in_array($e['operation'],['collection','return_payment'])){foreach($events as $original)if($original['id']==$e['linked_id']&&($original['return_mode']??'')==='later')$lane='return-'.$original['id'];}$groups[$e['party_id'].'|'.$lane][]=$e+['net'=>$n];}
+function allocations(array $events): array {
+ $out=['matches'=>[],'open'=>[],'advances'=>[]];$groups=[];$byId=array_column($events,null,'id');
+ foreach($events as $e)if(!$e['cancelled']&&!empty($e['party_id'])&&($n=partyEffect($e))){ $lane='main';if(($e['return_mode']??'')==='later'&&in_array($e['operation'],['supplier_return','customer_return']))$lane='return-'.$e['id'];elseif(!empty($e['linked_id'])&&in_array($e['operation'],['collection','return_payment'])){$original=$byId[$e['linked_id']]??null;if($original&&($original['return_mode']??'')==='later')$lane='return-'.$original['id'];}$groups[$e['party_id'].'|'.$lane][]=$e+['net'=>$n];}
  foreach($groups as $group=>$rows){$pid=(int)explode('|',$group)[0];
   usort($rows,fn($a,$b)=>[$a['due_date']?:'9999-12-31',$a['event_date'],$a['id']]<=>[$b['due_date']?:'9999-12-31',$b['event_date'],$b['id']]);
   $pos=[];$neg=[];foreach($rows as $e){$e['left']=abs($e['net']);if($e['net']>0)$pos[]=$e;else $neg[]=$e;}
-  foreach($pos as &$p)foreach($neg as &$n){$used=min($p['left'],$n['left']);if(!$used)continue;$p['left']-=$used;$n['left']-=$used;
+  $pi=0;$ni=0;
+  while($pi<count($pos)&&$ni<count($neg)){
+   $p=&$pos[$pi];$n=&$neg[$ni];$used=min($p['left'],$n['left']);
+   $p['left']-=$used;$n['left']-=$used;
    $bill=in_array($p['kind'],['Ödeme','Tahsilat'])?$n:$p;$pay=$bill['id']===$p['id']?$n:$p;
    $out['matches'][]=['bill_id'=>(int)$bill['id'],'payment_id'=>(int)$pay['id'],'amount_cents'=>$used,'party_id'=>(int)$pid,'date'=>max($p['event_date'],$n['event_date'])];
-  }unset($p,$n);
+   if(!$p['left'])$pi++;if(!$n['left'])$ni++;unset($p,$n);
+  }
   foreach([...$pos,...$neg] as $e)if($e['left']){
    $out['open'][]=['id'=>(int)$e['id'],'partyId'=>(int)$pid,'name'=>$e['party_name']??'','desc'=>$e['description'],'type'=>$e['net']>0?'alacak':'borç','amount'=>$e['left']/100,'amount_cents'=>$e['left'],'due'=>$e['due_date']?:null];
    if(in_array($e['kind'],['Ödeme','Tahsilat']))$out['advances'][]=['id'=>(int)$e['id'],'party_id'=>(int)$pid,'party_name'=>$e['party_name']??'','kind'=>$e['net']>0?'Verilen avans':'Alınan avans','amount_cents'=>$e['left']];
@@ -46,7 +50,7 @@ function v15Allocations(array $events): array {
  }
  return $out;
 }
-function v15EventInput(PDO $db,array $b,?array $old): array {
+function eventInput(PDO $db,array $b,?array $old): array {
  $op=field($b,'operation',40) ?: ($old['operation']??'');
  $kinds=['purchase_invoice'=>'Borç','purchase_no_invoice'=>'Borç','supplier_return'=>'Alacak','sale'=>'Alacak','customer_return'=>'Borç','salary'=>'Borç','employee_purchase'=>'Alacak','employee_expense'=>'Alacak','collection'=>'Tahsilat','payment'=>'Ödeme','expense'=>'Ödeme','income'=>'Tahsilat','refund'=>'Tahsilat','transfer'=>'Virman','card_payment'=>'Kart ödemesi','cash_advance'=>'Nakit avans','card_transfer'=>'Kart aktarımı','opening'=>'Açılış','return_payment'=>'Ödeme'];
  if(!isset($kinds[$op]))throw new DomainException('İşlem türünü seçin.');
@@ -92,10 +96,10 @@ function v15EventInput(PDO $db,array $b,?array $old): array {
  $direction=field($b,'direction',10)?:'Alacak';if(!in_array($direction,['Alacak','Borç']))throw new DomainException('Bakiye yönü geçersiz.');
  return ['kind'=>$kind,'operation'=>$op,'amount_cents'=>$n,'settled_cents'=>$op==='employee_expense'?0:$settled,'event_date'=>$date,'event_time'=>$time,'period_date'=>$period,'due_date'=>$due,'party_id'=>$pid,'account_id'=>$account,'target_id'=>$target,'card_id'=>$card,'target_card_id'=>$targetCard,'linked_id'=>$link,'direction'=>$direction,'description'=>field($b,'description',1000),'category'=>'Genel','tag'=>field($b,'tag',80)?:'Genel','document_no'=>field($b,'document',160),'scheduled'=>$scheduled,'payment_purpose'=>field($b,'paymentPurpose',40),'return_mode'=>$returnMode];
 }
-function saveV15Event(PDO $db,array $b): array {
+function saveOperation(PDO $db,array $b): array {
  global $actor;$id=!empty($b['id'])?(int)$b['id']:null;permit($id?'edit':'create');$old=$id?row($db,'fin_events',$id):null;
  if($old){versionCheck($old,$b);if($old['cancelled'])throw new DomainException('İptal edilen kaydı önce geri açın.');}
- $v=v15EventInput($db,$b,$old);$reason=$id?field($b,'reason',1000,true):'';
+ $v=eventInput($db,$b,$old);$reason=$id?field($b,'reason',1000,true):'';
  if($id){$db->prepare('UPDATE fin_events SET '.implode(',',array_map(fn($k)=>"$k=?",array_keys($v))).',version=version+1 WHERE id=?')->execute([...array_values($v),$id]);audit($db,'event',(string)$id,'edit',$old,row($db,'fin_events',$id),$reason);return ['id'=>$id];}
  $count=(int)($b['installments']??1);if($count<1||$count>36)throw new DomainException('Taksit sayısı 1–36 olmalı.');
  if($count>1&&(!$v['card_id']||$v['scheduled']||in_array($v['operation'],['card_payment','cash_advance','card_transfer'])))throw new DomainException('Taksit yalnız kartla harcama veya iade için kullanılabilir.');
@@ -119,13 +123,15 @@ function saveStatement(PDO $db,array $b): array {
  $q=$db->prepare('SELECT * FROM card_statements WHERE id=?');$q->execute([$id]);$new=$q->fetch();audit($db,'statement',(string)$id,$old?'edit':'create',$old,$new,$reason);
  $db->prepare('UPDATE cards SET statement_date=?,due=?,version=version+1 WHERE id=?')->execute([$date,$due,$card['id']]);return ['id'=>$id];
 }
-function enhanceV15State(PDO $db,array $s): array {
+function enhanceCardState(PDO $db,array $s): array {
  $statements=$db->query('SELECT * FROM card_statements ORDER BY cut_date,id')->fetchAll();
+ $statementsByCard=[];foreach($statements as $st)$statementsByCard[$st['card_id']][]=$st;
+ $eventsByCard=[];foreach($s['events'] as $event){foreach(array_unique(array_filter([$event['card_id'],$event['target_card_id']])) as $id)$eventsByCard[$id][]=$event;}
  foreach($s['events'] as &$e){$e['tag']=$e['tag']?:'Genel';$e['period_date']=$e['period_date']?:$e['event_date'];$e['scheduled']=(bool)$e['scheduled'];$e['settled_cents']=(int)$e['settled_cents'];$e['target_card_id']=$e['target_card_id']?(int)$e['target_card_id']:null;$e['operation']=$e['operation']?:match($e['kind']){'Alacak'=>'sale','Borç'=>'purchase_no_invoice','Kart ödemesi'=>'card_payment','Virman'=>'transfer','Ödeme'=>'payment','Tahsilat'=>'collection','Açılış'=>'opening','Kart harcaması'=>'expense','Kart iadesi'=>'refund',default=>'expense'};}unset($e);
  foreach($s['cards'] as &$c){
-  $own=array_values(array_filter($statements,fn($r)=>$r['card_id']==$c['id']));$list=[];$priorDate=null;$latestPaid=0;$latestTotal=0;$latestRemaining=0;$latestDifference=0;
+  $own=$statementsByCard[$c['id']]??[];$cardEvents=$eventsByCard[$c['id']]??[];$list=[];$priorDate=null;$latestPaid=0;$latestTotal=0;$latestRemaining=0;$latestDifference=0;
   foreach($own as $si=>$st){$known=0;$paid=0;$paidAtNext=0;$nextCut=$own[$si+1]['cut_date']??null;
-   foreach($s['events'] as $e){if($e['cancelled']||$e['scheduled'])continue;$source=$e['card_id']==$c['id'];$destination=$e['target_card_id']==$c['id'];if(!$source&&!$destination)continue;
+   foreach($cardEvents as $e){if($e['cancelled']||$e['scheduled'])continue;$source=$e['card_id']==$c['id'];$destination=$e['target_card_id']==$c['id'];if(!$source&&!$destination)continue;
     $effect=$source?$e['card_effect']:-$e['amount_cents'];$repay=$destination||in_array($e['operation'],['card_payment'],true);
     $billing=$e['period_date'];if(!$repay&&$billing<=$st['cut_date']&&$e['event_date']<=$st['cut_date']&&(!$priorDate||$billing>$priorDate))$known+=$effect;
     if(!$repay&&$effect<0&&$e['event_date']>$st['cut_date']&&$billing<=$st['cut_date']&&(!$nextCut||$e['event_date']<=$nextCut)){$paid+=-$effect;$paidAtNext+=-$effect;}
@@ -137,7 +143,7 @@ function enhanceV15State(PDO $db,array $s): array {
    $list[]=$st+['known_cents'=>$known,'carry_cents'=>$carry,'difference_cents'=>$difference,'paid_cents'=>$paid,'paid_at_next_cents'=>$paidAtNext,'remaining_cents'=>$remaining];$priorDate=$st['cut_date'];$latestPaid=$paid;$latestTotal=(int)$st['total_cents'];$latestRemaining=$remaining;$latestDifference=$difference;
   }
   $current=0;$future=0;$postRepay=0;
-  foreach($s['events'] as $e){if($e['cancelled']||$e['scheduled'])continue;$source=$e['card_id']==$c['id'];$destination=$e['target_card_id']==$c['id'];if(!$source&&!$destination)continue;$effect=$source?$e['card_effect']:-$e['amount_cents'];
+  foreach($cardEvents as $e){if($e['cancelled']||$e['scheduled'])continue;$source=$e['card_id']==$c['id'];$destination=$e['target_card_id']==$c['id'];if(!$source&&!$destination)continue;$effect=$source?$e['card_effect']:-$e['amount_cents'];
    if($source&&$e['operation']==='card_payment'||$destination){if(!$own)$postRepay+=$effect;continue;}
    if(!$priorDate||$e['period_date']>$priorDate){if($e['period_date']>substr($s['today'],0,7).'-'.str_pad((string)min((int)$c['cut_day'],(int)date('t',strtotime($s['today']))),2,'0',STR_PAD_LEFT)&&$e['period_date']>$s['today'])$future+=$effect;else $current+=$effect;}
   }
@@ -149,7 +155,7 @@ function enhanceV15State(PDO $db,array $s): array {
  }unset($c);$s['schemaVersion']=7;return $s;
 }
 
-function seedV15Demo(PDO $db): array {
+function seedDemo(PDO $db): array {
  permit('admin');
  // Only administrator credentials and installation configuration survive the test reset.
  foreach(['audit_log','card_statements','fin_events','movements','party_entries','journal','claims','parties','cards','accounts','write_requests'] as $table){
@@ -163,7 +169,7 @@ function seedV15Demo(PDO $db): array {
  $parties=[];foreach([['Yıldız Tedarik','Tedarikçi'],['Ada Tasarım','Müşteri'],['Ayşe Demir','Personel'],['Atlas Danışmanlık','Müşteri']] as [$name,$type]){$db->prepare('INSERT INTO parties(name,title,type) VALUES(?,?,?)')->execute([$name,$name,$type]);$parties[]=(int)$db->lastInsertId();}
  $cards=[];foreach([['Garanti Bonus Kart','garanti','bonus','0823',8000000],['World Kart','yapikredi','world','1947',5000000],['Axess Kart','akbank','axess','6308',10000000]] as $c){$db->prepare("INSERT INTO cards(debt_cents,statement_cents,name,limit_cents,due,statement_date,opening_statement_date,cut_day,last_four,bank_code,program_code,network_code,holder) VALUES(0,0,?,?,'2026-10-20','2026-10-10','2026-10-10',10,?,?,?,'mastercard','Örnek Kullanıcı')")->execute([$c[0],$c[4],$c[3],$c[1],$c[2]]);$cards[]=(int)$db->lastInsertId();}
  $base=['amount'=>'1000','settled'=>'0','date'=>'2026-10-13','time'=>'10:00','description'=>'','account'=>'','cardId'=>'','target'=>'','due'=>'','tag'=>'Genel'];
- $add=function(array $b)use($db,$base){return saveV15Event($db,array_merge($base,$b,['requestId'=>sprintf('%08x-%04x-%04x-%04x-%012x',random_int(1,0xfffffff),random_int(0,65535),random_int(0,65535),random_int(0,65535),random_int(0,0xffffffffff))]));};
+ $add=function(array $b)use($db,$base){return saveOperation($db,array_merge($base,$b,['requestId'=>sprintf('%08x-%04x-%04x-%04x-%012x',random_int(1,0xfffffff),random_int(0,65535),random_int(0,65535),random_int(0,65535),random_int(0,0xffffffffff))]));};
  $add(['operation'=>'purchase_invoice','partyId'=>$parties[0],'amount'=>'10000','settled'=>'3000','account'=>'bank','description'=>'Kısmi ödenmiş mal alışı','due'=>'2026-10-18','tag'=>'Gıda']);
  $add(['operation'=>'purchase_no_invoice','partyId'=>$parties[0],'amount'=>'4000','description'=>'Vadesiz mal alışı','tag'=>'Kırtasiye']);
  $add(['operation'=>'supplier_return','partyId'=>$parties[0],'amount'=>'1000','description'=>'Borçtan mahsup mal iadesi']);

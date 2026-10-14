@@ -1,10 +1,10 @@
 import React,{useState,useRef,useLayoutEffect} from 'react';
-import {X,CalendarDays,ChevronLeft,ChevronRight,Landmark,CreditCard,Users} from 'lucide-react';
-import {DatePicker,Popover} from './DatePicker';
+import {X, CalendarDays, ChevronLeft, ChevronRight, Landmark, CreditCard, Users} from 'lucide-react';
+import {DatePicker, Popover} from './DatePicker';
 import {Sheet} from './ui';
 import {ListTools} from './ListTools';
-import {fmt,can} from './ui';
-import {dateAdd,weekStart,planItems,sortPlanItems} from './list-utils.mjs';
+import {fmt, can} from './ui';
+import {dateAdd, weekStart, planItems, sortPlanItems} from './list-utils.mjs';
 const label=d=>new Date(d+'T12:00:00Z').toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'});
 export function PaymentPlan({data,open,exportCSV,initialDue='all'}){
  const [view,setView]=useState('Aylık'),[anchor,setAnchor]=useState(initialDue==='late'?(planItems(data).filter(x=>x.date<data.today).sort((a,b)=>a.date.localeCompare(b.date))[0]?.date||data.today):data.today),[query,setQuery]=useState(''),[filters,setFilters]=useState(false),[type,setType]=useState(initialDue==='borç'?'Cari ödeme':initialDue==='alacak'?'Tahsilat':'Tümü'),[scope,setScope]=useState('Tümü'),[sort,setSort]=useState('date-asc');

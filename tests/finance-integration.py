@@ -143,5 +143,14 @@ ok('Missing rate stays null and is not invented',code==200 and entity('accounts'
 id=event(operation='sale',partyId=customer,amount='1000',settled='1000',time='15:43:21',document='FTR-123')
 e=entity('events',id);ok('Fully collected sale retains gross and zero net',e['amount_cents']==100000 and e['party_effect']==0)
 ok('Time and document persist exactly',e['event_time']=='15:43:21' and e['document_no']=='FTR-123')
-Path(__file__).resolve().parents[1].joinpath('.local-runtime/qa-state.json').write_text(json.dumps(state(),ensure_ascii=False))
+# Lightweight party search must retain full-state balances and escaped literal search.
+code,r=call('parties');s=state()
+ok('Party search balances match full state',code==200 and {p['id']:p['balance_cents'] for p in r['parties']}=={p['id']:p['balance_cents'] for p in s['parties']})
+ok('Party search totals retain global meaning',r['total']==len(s['parties']) and r['net_cents']==sum(p['balance_cents'] for p in s['parties']))
+code,r=call('parties',type='Tedarikçi')
+ok('Party search type filter preserved',code==200 and all(p['type']=='Tedarikçi' for p in r['parties']))
+code,r=post('party_save',name='QA_% literal',type='Müşteri',opening='0');assert code==200,r
+code,r=call('parties',q='QA_%')
+ok('Party search treats SQL wildcards literally',code==200 and [p['name'] for p in r['parties']]==['QA_% literal'])
+Path(os.environ['QA_STATE_PATH']).write_text(json.dumps(state(),ensure_ascii=False))
 print(json.dumps({'passed':len(checks),'failed':0}))

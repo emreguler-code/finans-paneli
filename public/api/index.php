@@ -33,25 +33,8 @@ function field(array $body,string $key,int $max=160,bool $required=false): strin
     if(!preg_match('//u',$s) || preg_match_all('/./us',$s)>$max || ($required&&$s==='')) fail('Alanı kontrol edin: '.$key);
     return $s;
 }
-function state(PDO $db): array {
-    // One consistent snapshot, including concurrent writes from other sessions.
-    $db->beginTransaction();
-    try {
-        $meta=$db->query('SELECT demo_date FROM app_meta WHERE id=1')->fetch();
-        $accounts=$db->query('SELECT a.*,a.opening_cents+COALESCE(SUM(m.amount_cents),0) AS balance FROM accounts a LEFT JOIN movements m ON m.account_id=a.id GROUP BY a.id,a.name,a.type,a.opening_cents,a.sort_order ORDER BY a.sort_order,a.id')->fetchAll();
-        $claims=$db->query('SELECT * FROM claims WHERE amount_cents>0 ORDER BY due,id')->fetchAll();
-        $cards=$db->query('SELECT * FROM cards ORDER BY id')->fetchAll();
-        $tx=$db->query('SELECT * FROM movements ORDER BY movement_date DESC,movement_time DESC,id DESC')->fetchAll();
-        $db->commit();
-        return ['today'=>$meta['demo_date']?:date('Y-m-d'),'demo'=>(bool)$meta['demo_date'],
-            'accounts'=>array_map(fn($r)=>['id'=>$r['id'],'name'=>$r['name'],'type'=>$r['type'],'balance'=>(int)$r['balance']/100],$accounts),
-            'claims'=>array_map(fn($r)=>['id'=>(int)$r['id'],'name'=>$r['name'],'desc'=>$r['description'],'type'=>$r['type'],'due'=>$r['due'],'amount'=>(int)$r['amount_cents']/100],$claims),
-            'cards'=>array_map(fn($r)=>['id'=>(int)$r['id'],'name'=>$r['name'],'due'=>$r['due'],'debt'=>(int)$r['debt_cents']/100,'statement'=>(int)$r['statement_cents']/100,'limit'=>(int)$r['limit_cents']/100],$cards),
-            'tx'=>array_map(fn($r)=>['id'=>(int)$r['id'],'date'=>$r['movement_date'],'time'=>substr($r['movement_time'],0,5),'name'=>$r['name'],'desc'=>$r['description'],'kind'=>$r['kind'],'account'=>$r['account_id'],'amount'=>(int)$r['amount_cents']/100,'category'=>$r['category'],'document'=>$r['document_no']],$tx)];
-    } catch(Throwable $e){if($db->inTransaction())$db->rollBack();throw $e;}
-}
 require __DIR__.'/v2/core.php';
-require __DIR__.'/v2/v15.php';
+require __DIR__.'/v2/finance.php';
 try {
     $db=new PDO('mysql:host='.$config['db_host'].';port='.($config['db_port']??3306).';dbname='.$config['db_name'].';charset=utf8mb4',$config['db_user'],$config['db_password'],[PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,PDO::ATTR_DEFAULT_FETCH_MODE=>PDO::FETCH_ASSOC,PDO::ATTR_EMULATE_PREPARES=>false]);
     $db->exec("SET time_zone = '+03:00'");

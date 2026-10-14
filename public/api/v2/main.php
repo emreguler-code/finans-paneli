@@ -1,7 +1,7 @@
 <?php
 if (!isset($action)) {http_response_code(404);exit;}
 permit('view');
-function eventInput(PDO $db,array $b,?array $old): array {
+function openingInput(PDO $db,array $b,?array $old): array {
  $kind=field($b,'kind',40,true);$kind=['Alış'=>'Borç','Satış'=>'Alacak'][$kind]??$kind;if(!in_array($kind,V2_KINDS,true))throw new DomainException('Geçersiz işlem yönü.');
  $amount=cents($b);if($amount<=0)throw new DomainException('Tutar sıfırdan büyük olmalı.');$date=validDate(field($b,'date',10,true));$time=field($b,'time',8)?:($old['event_time']??date('H:i:s'));if(!preg_match('/^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$/D',$time))throw new DomainException('Saat geçersiz.');if(strlen($time)===5)$time.=':00';
  $party=!empty($b['partyId'])?(int)$b['partyId']:null;$account=field($b,'account',40)?:null;$target=field($b,'target',40)?:null;$card=!empty($b['cardId'])?(int)$b['cardId']:null;$direction=field($b,'direction',10)?:'Alacak';if(!in_array($direction,['Alacak','Borç']))throw new DomainException('Bakiye yönü geçersiz.');
@@ -17,10 +17,10 @@ function eventInput(PDO $db,array $b,?array $old): array {
  return ['kind'=>$kind,'amount_cents'=>$amount,'event_date'=>$date,'event_time'=>$time,'due_date'=>$due,'party_id'=>$party,'account_id'=>$account,'target_id'=>$target,'card_id'=>$card,'direction'=>$direction,'description'=>field($b,'description',1000),'category'=>field($b,'category',80)?:'Diğer','document_no'=>field($b,'document',160)];
 }
 function saveEvent(PDO $db,array $b): array {
- if(!empty($b['operation']))return saveV15Event($db,$b);
+ if(!empty($b['operation']))return saveOperation($db,$b);
  if(($b['kind']??'')!=='Açılış')throw new DomainException('İşlem ekranı güncellendi; sayfayı yenileyip işlem türünü seçin.');
  global $actor;$id=!empty($b['id'])?(int)$b['id']:null;permit($id?'edit':'create');$old=$id?row($db,'fin_events',$id):null;if($old){versionCheck($old,$b);if($old['cancelled'])throw new DomainException('İptal edilen kaydı önce yönetici geri açmalı.');}
- $v=eventInput($db,$b,$old);
+ $v=openingInput($db,$b,$old);
  $v['period_date']=$v['event_date'];$reason=$id?field($b,'reason',1000,true):'';
  if($id){$db->prepare('UPDATE fin_events SET '.implode(',',array_map(fn($k)=>"$k=?",array_keys($v))).',version=version+1 WHERE id=?')->execute([...array_values($v),$id]);}
  else{$db->prepare('INSERT INTO fin_events(request_key,'.implode(',',array_keys($v)).',created_by) VALUES('.implode(',',array_fill(0,count($v)+2,'?')).')')->execute([requestKey($b),...array_values($v),$actor['id']]);$id=(int)$db->lastInsertId();}
@@ -78,7 +78,18 @@ function saveEntity(PDO $db,string $entity,array $b): array {
 if($method==='GET'){
  if($action==='state')reply(v2state($db));
  if($action==='audit'){permit('view');$entity=field($_GET,'entity',40,true);if($entity==='user')permit('admin');$q=$db->prepare('SELECT * FROM audit_log WHERE entity=? AND entity_id=? ORDER BY id DESC');$q->execute([$entity,field($_GET,'id',80,true)]);reply(['logs'=>$q->fetchAll()]);}
- if($action==='parties'){$search=field($_GET,'q',160);$type=field($_GET,'type',20);$data=v2state($db);$rows=$data['parties'];if($search&&preg_match_all('/./us',$search)>=3){$q=$db->prepare("SELECT id FROM parties WHERE name LIKE ? ESCAPE '=' OR title LIKE ? ESCAPE '='");$pattern='%'.strtr($search,['='=>'==','%'=>'=%','_'=>'=_']).'%';$q->execute([$pattern,$pattern]);$ids=$q->fetchAll(PDO::FETCH_COLUMN);$rows=array_values(array_filter($rows,fn($r)=>in_array($r['id'],$ids)));}if($type&&$type!=='Tümü')$rows=array_values(array_filter($rows,fn($r)=>$r['type']===$type));reply(['parties'=>$rows,'total'=>count($data['parties']),'net_cents'=>array_sum(array_column($data['parties'],'balance_cents'))]);}
+ if($action==='parties'){
+  $search=field($_GET,'q',160);$type=field($_GET,'type',20);$db->beginTransaction();$balances=[];
+  $events=$db->query('SELECT party_id,kind,amount_cents,direction,scheduled,settled_cents FROM fin_events WHERE cancelled=0 AND party_id IS NOT NULL')->fetchAll();
+  foreach($events as $event)$balances[$event['party_id']]=($balances[$event['party_id']]??0)+partyEffect($event);
+  $parties=$db->query('SELECT * FROM parties ORDER BY name,id')->fetchAll();$net=array_sum($balances);$total=count($parties);$rows=[];
+  $ids=null;if($search&&preg_match_all('/./us',$search)>=3){$q=$db->prepare("SELECT id FROM parties WHERE name LIKE ? ESCAPE '=' OR title LIKE ? ESCAPE '='");$pattern='%'.strtr($search,['='=>'==','%'=>'=%','_'=>'=_']).'%';$q->execute([$pattern,$pattern]);$ids=array_fill_keys($q->fetchAll(PDO::FETCH_COLUMN),true);}
+  foreach($parties as $party){if($ids!==null&&!isset($ids[$party['id']]))continue;if($type&&$type!=='Tümü'&&$party['type']!==$type)continue;
+   $party['id']=(int)$party['id'];$party['version']=(int)$party['version'];$party['active']=(bool)$party['active'];$party['balance_cents']=$balances[$party['id']]??0;$rows[]=$party;
+  }
+  $db->commit();reply(['parties'=>$rows,'total'=>$total,'net_cents'=>$net]);
+ }
+
  fail('İşlem bulunamadı.',404);
 }
 if(!in_array($action,['event_save','event_status','party_save','account_save','card_save','user_save','statement_save','demo_seed']))fail('Bu eski işlem yolu kaldırıldı. Sayfayı yenileyin.',410);
@@ -92,7 +103,7 @@ try{
  else{
  if($action==='event_save')$result=saveEvent($db,$body);
  elseif($action==='statement_save')$result=saveStatement($db,$body);
- elseif($action==='demo_seed')$result=seedV15Demo($db);
+ elseif($action==='demo_seed')$result=seedDemo($db);
  elseif($action==='event_status'){$id=(int)($body['id']??0);$old=row($db,'fin_events',$id);versionCheck($old,$body);$cancelled=(int)(bool)($body['cancelled']??true);$reason=field($body,'reason',1000,true);$db->prepare('UPDATE fin_events SET cancelled=?,version=version+1 WHERE id=?')->execute([$cancelled,$id]);audit($db,'event',(string)$id,$cancelled?'cancel':'restore',$old,row($db,'fin_events',$id),$reason);$result=['id'=>$id];}
  else $result=saveEntity($db,str_replace('_save','',$action),$body);
  // A card may carry credit after refunds; reflect it as negative debt rather than discarding real money.

@@ -1,6 +1,6 @@
-import React from 'react';
-import {AlertCircle,Landmark,Wallet,Pencil,ChevronRight} from 'lucide-react';
-import {fmt,can} from './ui';
+
+import {AlertCircle, Landmark, Wallet, Pencil, ChevronRight} from 'lucide-react';
+import {fmt, can} from './ui';
 import {dateLabel} from './DatePicker';
 export const BANKS=[{code:'garanti',name:'Garanti BBVA',programs:['bonus']},{code:'yapikredi',name:'Yapı Kredi',programs:['world']},{code:'akbank',name:'Akbank',programs:['axess']}];
 export const PROGRAMS={bonus:'Bonus',world:'World',axess:'Axess'};

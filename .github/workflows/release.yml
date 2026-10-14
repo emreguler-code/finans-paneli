@@ -27,8 +27,18 @@ jobs:
           while IFS= read -r -d '' file; do
             php -l "$file"
           done < <(find public -name '*.php' ! -name 'config.php' -print0)
+      - name: Test financial API and migration recovery
+        run: |
+          npm run test:api
+          npm run test:migrations
+      - name: Install Chromium for browser checks
+        run: npx playwright install --with-deps chromium
+      - name: Test desktop and mobile workflows
+        run: npm run test:browser
       - name: Package hosting files
         run: python3 scripts/package-release.py
+      - name: Test packaged hosting installation
+        run: npm run test:package
       - name: Verify archive
         run: |
           cd dist/releases
@@ -43,5 +53,5 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1 || gh release create "$GITHUB_REF_NAME" --title "Finans Paneli $GITHUB_REF_NAME" --notes "Kuruluma hazır hosting ZIP'i ve SHA-256 doğrulama dosyası. Kurulum talimatları ZIP içindedir. PHP 8.3+ ve MySQL/MariaDB gerekir."
+          gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1 || gh release create "$GITHUB_REF_NAME" --title "Finans Paneli $GITHUB_REF_NAME" --notes-file docs/RELEASE-NOTES.md
           gh release upload "$GITHUB_REF_NAME" dist/releases/* --clobber

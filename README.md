@@ -1,4 +1,4 @@
-# Finans Paneli 1.6.0
+# Finans Paneli 1.6.1
 
 Sade Netlik tasarımında cari hesaplar, banka/kasa, kredi kartları, ödeme planı ve raporlar. React/Vite arayüz; PHP/MySQL API. Banka bağlantısı yoktur.
 
@@ -13,7 +13,7 @@ npm ci
 npm test
 ```
 
-API için boş yerel veritabanına database/schema.sql yükleyin. public/api/config.example.php dosyasını public/api/config.php olarak kopyalayıp yalnızca yerel test bilgileri, rastgele kurulum anahtarı ve yerel HTTP için require_https=false ayarlayın. Yerel API üzerinden ilk yönetici kurulumunu yapın, ardından update.php akışıyla güncel şemaya (7) geçin. Ayrıntılı güncelleme akışı GUNCELLEME-1.6.md dosyasındadır. Üretim config dosyasını kopyalamayın. npm run dev PHP API'yi 8088 portunda başlatır ve Vite geliştirme sunucusunu açar; MySQL ayrıca çalışmalıdır.
+API için boş yerel veritabanına database/schema.sql yükleyin. public/api/config.example.php dosyasını public/api/config.php olarak kopyalayıp yalnızca yerel test bilgileri, rastgele kurulum anahtarı ve yerel HTTP için require_https=false ayarlayın. Yerel API üzerinden ilk yönetici kurulumunu yapın, ardından update.php akışıyla güncel şemaya (7) geçin. Ayrıntılı güncelleme akışı docs/GUNCELLEME.md dosyasındadır. Üretim config dosyasını kopyalamayın. npm run dev PHP API'yi 8088 portunda başlatır ve Vite geliştirme sunucusunu açar; MySQL ayrıca çalışmalıdır.
 
 ```sh
 npm run dev -- --host 127.0.0.1
@@ -37,4 +37,21 @@ Codex değişiklik yapmadan AGENTS.md dosyasını okumalıdır. Geçmiş sürüm
 
 `npm run release:package` derlenmiş arayüz, PHP API, boş şema ve Türkçe kurulum belgesini `dist/releases/finans-paneli-<sürüm>.zip` dosyasında toplar; yanında SHA-256 dosyası üretir. Gerçek `api/config.php` ve çalışma zamanı verileri pakete alınmaz. ZIP içindeki `hosting/` içeriği web dizinine yüklenir; diğer dosyalar web dizini dışında tutulur. Ayrıntılar [hosting kurulum belgesinde](docs/HOSTING-KURULUM.md).
 
-GitHub Actions `Hosting release` iş akışı `v<package.json sürümü>` etiketi GitHub'a gönderildiğinde testleri çalıştırır, paketi hazırlar ve GitHub Release'e ekler. Örneğin 1.6.0 için `v1.6.0`. İş akışı ve paketleme dosyaları önce ilgili commit'te bulunmalıdır. Actions'ın depoda etkin ve iş akışının Release yazma yetkisine sahip olması gerekir. Manuel `workflow_dispatch` çalıştırması yalnızca indirilebilir Actions artifact'ı üretir; Release yayımlamaz.
+GitHub Actions `Hosting release` iş akışı `v<package.json sürümü>` etiketi GitHub'a gönderildiğinde testleri çalıştırır, paketi hazırlar ve GitHub Release'e ekler. Örneğin 1.6.1 için `v1.6.1`. İş akışı ve paketleme dosyaları önce ilgili commit'te bulunmalıdır. Actions'ın depoda etkin ve iş akışının Release yazma yetkisine sahip olması gerekir. Manuel `workflow_dispatch` çalıştırması yalnızca indirilebilir Actions artifact'ı üretir; Release yayımlamaz.
+
+## İzole API ve tarayıcı testleri
+
+Docker gerekir. Test koşucusu kendi MariaDB/PHP konteynerlerini ve rastgele yerel kimlik bilgilerini oluşturur; mevcut `public/api/config.php` veya geliştirme veritabanına bağlanmaz. Her koşu sonrasında yalnızca oluşturduğu konteynerleri kaldırır. Test çıktıları Git dışında `.qa/` altında tutulur.
+
+```sh
+npm run test:api
+npm run test:migrations
+npm run release:package
+npm run test:package
+npx playwright install --with-deps chromium
+npm run test:browser
+```
+
+`test:api` sentetik veride finansal işlemleri; `test:migrations` eski verilerin korunmasını, yedeği, başarısız geçişi ve tekrar denemeyi; `test:browser` derlenmiş arayüzü masaüstü ve dar ekranlarda doğrular. `test:browser` öncesinde `npm run build` çalıştırın. Yerel Chromium kullanmak için `QA_BROWSER_BIN=/usr/bin/chromium` tanımlanabilir. Release iş akışı bu kontrollerin hepsini çalıştırır. Eski API sözleşmesi testleri `tests/historical/` altında ayrılmıştır.
+
+Statik çıktı yalnızca arayüz ve yerel fontları içerir; PHP/config dosyaları statik çıktıya kopyalanmaz. Sites adaptörü API sağlamaz. PHP hosting ZIP'i API'yi ayrıca paketler ve gerçek config dosyalarını hariç tutar.

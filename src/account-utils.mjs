@@ -19,8 +19,3 @@ export function kmhUsage(a) {
   const rate = a.daily_interest_rate === null || a.daily_interest_rate === undefined || a.daily_interest_rate === '' ? null : Number(a.daily_interest_rate);
   return {limit, used, available, percent:limit ? Math.min(100, used / limit * 100) : 0, dailyInterest:rate === null ? null : Math.round(used * rate / 100)};
 }
-export function exportRows(name, columns, rows) {
-  const text=[columns,...rows].map(row=>row.map(v=>'"'+String(v??'').replace(/^[=+@\-\t\r]/,"'$&").replaceAll('"','""')+'"').join(';')).join('\r\n');
-  const url=URL.createObjectURL(new Blob(['\ufeff'+text],{type:'text/csv;charset=utf-8'}));
-  const link=document.createElement('a');link.href=url;link.download=name+'.csv';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
-}

@@ -1,6 +1,6 @@
-import React,{useState} from 'react';
-import {ResponsiveContainer,BarChart,Bar,XAxis,YAxis,Tooltip,Legend} from 'recharts';
-import {fmt,tone} from './ui';
+import { useState } from 'react';
+import {ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend} from 'recharts';
+import {fmt, tone} from './ui';
 import {dateLabel} from './DatePicker';
 import {weekStart} from './list-utils.mjs';
 export function reportTotals(events){const active=events.filter(e=>!e.cancelled);return {incoming:active.reduce((s,e)=>s+Math.max(0,e.cash_effect||0),0),outgoing:active.reduce((s,e)=>s-Math.min(0,e.cash_effect||0),0),card:active.reduce((s,e)=>s+(e.card_id&&!['card_payment','cash_advance','card_transfer'].includes(e.operation)?Math.max(0,e.card_effect||0):0),0)}}

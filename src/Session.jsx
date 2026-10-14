@@ -1,5 +1,5 @@
-import React, {useState,useEffect} from 'react';
-import {ChartNoAxesCombined,LockKeyhole} from 'lucide-react';
+import { useState, useEffect } from 'react';
+import {ChartNoAxesCombined, LockKeyhole} from 'lucide-react';
 import {api} from './api';
 import {App} from './App';
 import {useViewport} from './ui';
@@ -16,6 +16,5 @@ export function Session() {
  return <LoginPanel session={session} error={error} busy={busy} submit={submit} load={load}/>;
 }
 export function LoginPanel({session,error='',busy=false,submit,load}) {
- useViewport();
  return <div className="auth-shell"><section className="panel auth-panel"><div className="brand"><span className="brand-mark"><ChartNoAxesCombined size={21}/></span><span>finans<span className="brand-period">.</span></span></div><h1>{session?.setupRequired?'İlk kurulum':session?'Çalışma alanına giriş':'Çalışma alanı yükleniyor'}</h1><p className="muted">{session?.setupRequired?'Veritabanına bağlanıldı. Yönetici hesabını oluştur.':'Hesaplarını ve kayıtlarını güvenle takip et.'}</p>{error&&<p className="form-error" role="alert">{error}</p>}{session?<form onSubmit={submit}>{session.setupRequired&&<label>Kurulum anahtarı<input type="password" name="token" required autoComplete="off"/></label>}<label>Kullanıcı adı<input name="username" required maxLength={80} autoComplete="username"/></label><label>Parola<input type="password" name="password" required minLength={session.setupRequired?12:1} maxLength={72} autoComplete={session.setupRequired?'new-password':'current-password'}/></label><button className="primary-button wide" disabled={busy}><LockKeyhole size={16}/>{busy?'İşleniyor…':session.setupRequired?'Hesabı oluştur':'Giriş yap'}</button></form>:error&&<button className="secondary-button" onClick={load}>Yeniden dene</button>}</section></div>;
 }
