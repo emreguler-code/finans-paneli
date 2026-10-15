@@ -12,7 +12,7 @@ Bu kaynak aktarımı, uygulamanın mevcut 1.6.0 sürümünü veri taşımadan s�
 - KMH limiti nakit değildir. Tahmini faiz, kullanıcı oran girdiyse negatif bakiye üzerinden bir günlük tahmindir; vergi/valör içermez ve otomatik muhasebeleşmez.
 
 ## Ortam ve doğrulama
-Node.js 22 ve npm; API için PHP 8.3+, pdo_mysql ve MySQL/MariaDB gerekir. Önce npm ci ve npm test çalıştırın. API/UI incelemesi için izole yerel veritabanı oluşturun; config.example.php'den yerel config.php hazırlayın. Gerçek hosting bilgisi veya gerçek kullanıcı şifresi kullanmayın. API kurulumu için README.md'yi izleyin. npm run dev PHP'yi 8088'de ve Vite'ı başlatır; yerel MySQL'i ayrıca başlatın.
+Node.js 24 ve npm; API için PHP 8.3+, pdo_mysql ve MySQL/MariaDB gerekir. Önce npm ci ve npm test çalıştırın. API/UI incelemesi için izole yerel veritabanı oluşturun; config.example.php'den yerel config.php hazırlayın. Gerçek hosting bilgisi veya gerçek kullanıcı şifresi kullanmayın. API kurulumu için README.md'yi izleyin. npm run dev PHP'yi 8088'de ve Vite'ı başlatır; yerel MySQL'i ayrıca başlatın.
 
 Tarihsel Python entegrasyonları `tests/historical/` altındadır; güncel kabul testleri olarak çalıştırmayın. Güncel API, migrasyon ve tarayıcı senaryoları README içindeki izole Docker koşucusuyla çalıştırılır. tests/fixtures/legacy-v1.json yalnızca sentetik geçiş testi verisidir; otomatik uygulama kurulumu bunun içeriğini yüklemez. İsteğe bağlı yönetici demo üretme özelliği korunmuştur, açılışta demo yüklenmez.
 
@@ -21,6 +21,6 @@ Aktarımda yeniden çalıştırılan kontroller ayrı aktarım raporunda belirti
 ## Codex'te ilk görev önerisi
 “AGENTS.md ve docs altındaki tasarım/devir notlarını oku. Önce uygulamayı izole boş veritabanında çalıştır, mevcut testleri çalıştır ve sonucu bildir. Ben istemeden hesap modelini, sütun sırasını, tasarım dilini veya canlı veriyi değiştirme.”
 
-## 1.6.1 bakım güncellemesi
+## 1.7.0 bakım güncellemesi
 
 Güncel test yolları ve komutları README içindedir. Eski API betikleri `tests/historical/` altında referans olarak tutulur. `scripts/test-integration.py` her koşu için ayrı Docker veritabanı ve PHP sunucusu başlatır; canlı/yüklü veritabanını hedeflemez. Şema 7'dir. CSS tek girişten, bileşen amaçlarına göre `src/styles/` altında yüklenir; tasarımın cascade sırası korunur.

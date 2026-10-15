@@ -1,6 +1,6 @@
 # Finans Paneli — paylaşılan hosting kurulumu
 
-PHP 8.3+, pdo_mysql, MySQL 8.0+ veya MariaDB 10.6+ ve HTTPS gerekir. Hostingde Node.js gerekmez.
+PHP 8.3+, pdo_mysql, MySQL/MariaDB ve HTTPS gerekir. Yeni kurulumlar için MySQL 8.4 LTS veya MariaDB 11.4 LTS önerilir. Hostingde Node.js gerekmez.
 
 ## Yeni kurulum
 
@@ -17,4 +17,4 @@ PHP 8.3+, pdo_mysql, MySQL 8.0+ veya MariaDB 10.6+ ve HTTPS gerekir. Hostingde N
 
 ## Paketi doğrulama
 
-ZIP ve `.sha256` dosyasını birlikte indirin; bulunduğunuz dizinde `sha256sum -c finans-paneli-1.6.1.zip.sha256` çalıştırın. Yeni sürümlerde dosya adındaki sürümü değiştirin.
+ZIP ve `.sha256` dosyasını birlikte indirin; bulunduğunuz dizinde `sha256sum -c finans-paneli-1.7.0.zip.sha256` çalıştırın. Yeni sürümlerde dosya adındaki sürümü değiştirin.

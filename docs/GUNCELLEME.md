@@ -1,6 +1,6 @@
 # Finans Paneli güncellemesi
 
-Yüklenecek sürüm ZIP dosya adında belirtilir. 1.6.1 bakım sürümü şema 7'yi kullanır; 1.6.0 kayıtları ve yönetici hesapları korunur.
+Yüklenecek sürüm ZIP dosya adında belirtilir. 1.7.0 sürümü şema 7'yi kullanır; mevcut 1.6.x kayıtları ve yönetici hesapları korunur. Şeması zaten 7 olan kurulumlarda yeni veritabanı migrasyonu gerekmez.
 
 1. Veritabanı ve mevcut dosyaları yedekleyin.
 2. ZIP içindeki `hosting/` içeriğini mevcut web dizinine yükleyin. Mevcut `api/config.php` dosyasını koruyun. `api/v2/migrations/` klasörünü de yükleyin.

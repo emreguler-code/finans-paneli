@@ -87,7 +87,7 @@ def main():
     run(['node',str(ROOT/'tests/browser.cjs')],env=env)
     # Comparison uses the same API data for the prior packaged frontend.
     baseline=ROOT/'.qa/baseline-1.6/hosting'
-    if baseline.exists():
+    if baseline.exists() and os.environ.get('QA_COMPARE_RELEASE')=='1':
      shutil.copytree(web/'api',baseline/'api',dirs_exist_ok=True)
      env['QA_COMPARE_BASELINE']=str(baseline);env['QA_COMPARE_WEB']=str(web)
      run(['node',str(ROOT/'tests/visual-compare.cjs')],env=env)

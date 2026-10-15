@@ -32,6 +32,7 @@ for name in filter(None, tracked):
         files[name] = source
         if name.startswith("database/migrations/"):
             files["hosting/api/v2/migrations/" + source.name] = source
+files["licenses/Embla-MIT.txt"] = ROOT / "docs/licenses/Embla-MIT.txt"
 files["licenses/Inter-OFL.txt"] = ROOT / "src/assets/fonts/OFL.txt"
 with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as z:
     for name, source in sorted(files.items()):

@@ -28,3 +28,5 @@ const fontCss = [400, 500, 600].map(weight => {
   return `@font-face{font-family:Inter;font-style:normal;font-weight:${weight};font-display:swap;src:url('./${file}') format('truetype')}`;
 }).join('\n');
 writeFileSync(path.join(assets, 'fonts.css'), fontCss);
+
+copyFileSync(path.join(root, 'src', 'styles', 'tokens.css'), path.join(assets, 'design-tokens.css'));

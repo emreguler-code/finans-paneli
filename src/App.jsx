@@ -1,5 +1,6 @@
 import { version } from '../package.json';
 
+import {ListTools} from './ListTools';
 import { Sheet } from './ui';
 import { collectAlerts, AlertNotice } from './Alerts';
 import { globalEventAmount } from './list-utils.mjs';
@@ -45,6 +46,7 @@ export function App({
     setFinanceContext(c);
     setDrawer(null);
   }
+  const [overviewFilters,setOverviewFilters]=useState(false);
   const [partyLabel, setPartyLabel] = useState('');
   const {
     accounts,
@@ -168,12 +170,12 @@ export function App({
               {a.name}
             </option>)}
         </select>
-        <ChevronDown size={12} />
+        <ChevronDown size={16} />
       </label>
     </div>;
   const recentEvents = fullData.events.filter(e => !e.cancelled && inPeriod({
     date: e.event_date
-  }) && (scope === 'all' || e.account_id === scope || e.target_id === scope) && `${e.description} ${e.party_name || ''} ${e.card_name || ''}`.toLocaleLowerCase('tr').includes(search.toLocaleLowerCase('tr'))).sort((a, b) => (b.event_date + b.event_time).localeCompare(a.event_date + a.event_time) || b.id - a.id).map(e => ({
+  }) && (kind==='all'||e.kind===kind) && (scope === 'all' || e.account_id === scope || e.target_id === scope) && `${e.description} ${e.party_name || ''} ${e.card_name || ''}`.toLocaleLowerCase('tr').includes(search.toLocaleLowerCase('tr'))).sort((a, b) => (b.event_date + b.event_time).localeCompare(a.event_date + a.event_time) || b.id - a.id).map(e => ({
     id: e.id,
     date: e.event_date,
     time: e.event_time.slice(0, 5),
@@ -229,13 +231,13 @@ export function App({
                 <span className="unit"> TL</span>
               </td>
               <td className="arrow-col">
-                <ChevronRight size={15} />
+                <ChevronRight size={16} />
               </td>
             </tr>)}
         </tbody>
       </table>
       {(short ? recentEvents : visible).length === 0 && <div className="empty">
-          <Search size={24} />
+          <Search size={18} />
           <b>Kayıt bulunamadı</b>
           <span>Arama veya filtreleri değiştirebilirsiniz.</span>
           <button className="text-action" onClick={() => {
@@ -303,10 +305,10 @@ export function App({
           }} contentStyle={{
             border: "1px solid #DDE3E8",
             borderRadius: 10,
-            fontSize: 13
+            fontSize: 12
           }} formatter={(v, n) => [money(v) + " TL", n]} />
               <Bar dataKey="incoming" name="Gelen para" fill="#087F8C" radius={[3, 3, 0, 0]} maxBarSize={14} isAnimationActive={false} />
-              <Bar dataKey="outgoing" name="Giden para" fill="#A8BBC3" radius={[3, 3, 0, 0]} maxBarSize={14} isAnimationActive={false} />
+              <Bar dataKey="outgoing" name="Giden para" fill="#596879" radius={[3, 3, 0, 0]} maxBarSize={14} isAnimationActive={false} />
             </BarChart>
           </ResponsiveContainer>}
       </div>
@@ -316,7 +318,7 @@ export function App({
           · Gerçekleşen
         </span>
         <button className="text-action" onClick={() => setPage("Raporlar")}>
-          Hareketleri incele <ArrowRight size={14} />
+          Hareketleri incele <ArrowRight size={16} />
         </button>
       </div>
     </section>;
@@ -362,11 +364,11 @@ export function App({
             {money(c.amount)}
             <small>TL</small>
           </span>
-          <ChevronRight size={14} />
+          <ChevronRight size={16} />
         </button>)}
       {soon.length === 0 && <p className="quiet-state">Yaklaşan ödeme yok.</p>}
       <div className="next-income">
-        <ArrowDownLeft size={15} />
+        <ArrowDownLeft size={16} />
         <span>{nextIncomeDate ? new Date(nextIncomeDate + "T12:00:00").toLocaleDateString("tr-TR", {
           day: "numeric",
           month: "long"
@@ -380,7 +382,7 @@ export function App({
   const accountsPanel = <section className="panel accounts-panel">
       <Heading title="Hesapların" sub="Bugün itibarıyla">
         <button className="icon-button" aria-label="Tüm hesapları gör" onClick={() => go("Hesaplar")}>
-          <ArrowUpRight size={17} />
+          <ArrowUpRight size={16} />
         </button>
       </Heading>
       {accounts.map(a => <button className="account-row" key={a.id} onClick={() => {
@@ -388,7 +390,7 @@ export function App({
       setScope(a.id);
     }}>
           <span className="account-icon">
-            {a.type === "Kasa" ? <Wallet size={17} /> : <Landmark size={17} />}
+            {a.type === "Kasa" ? <Wallet size={18} /> : <Landmark size={18} />}
           </span>
           <span>
             <b>{a.name}</b>
@@ -406,7 +408,7 @@ export function App({
         </div>
         <button onClick={() => go("Kredi kartları")}>
           {money(cards.reduce((s, c) => s + c.debt, 0))} TL{" "}
-          <ChevronRight size={14} />
+          <ChevronRight size={16} />
         </button>
       </div>
     </section>;
@@ -423,7 +425,7 @@ export function App({
         <div className="workspace-label">KİŞİSEL ÇALIŞMA ALANI</div>
         <nav aria-label="Ana navigasyon">
           {navigation.filter(([name]) => name !== 'Kullanıcılar' || can(fullData.user, 'admin')).map(([name, Icon]) => <button key={name} className={page === name ? "active" : ""} aria-current={page === name ? "page" : undefined} aria-label={name} onClick={() => go(name)}>
-              <Icon size={19} />
+              <Icon size={20} />
               <span>{name}</span>
               {name === "Ödeme Planı" && late.length > 0 && !compact && <em>{late.length}</em>}
             </button>)}
@@ -447,22 +449,11 @@ export function App({
       </aside>
       <div className="main-shell" inert={!!drawer}>
         <header className="topbar">
-          <div className="breadcrumb">
-            <span>Çalışma alanı</span>
-            <ChevronRight size={13} />
-            <b>{page}</b>{page === "Cari hesaplar" && partyLabel && <><ChevronRight size={13} /><span>{partyLabel}</span></>}
-          </div>
+          <div id="page-search-host" />
           <div className="top-actions">
-            <label className="search">
-              <Search size={16} />
-              <input id="search" aria-label="İşlemlerde ara" placeholder="İşlem veya kişi ara" value={search} onChange={e => setSearch(e.target.value)} onKeyDown={e => {
-              if (e.key === "Enter") setPage("Raporlar");
-            }} />
-              <kbd>Ctrl K</kbd>
-            </label>
             <div className="notification-holder">
               <button className="icon-button notification-button" aria-label="Bildirimleri aç" onClick={() => setBell(!bell)}>
-                <Bell size={19} />
+                <Bell size={18} />
                 {notifications.length > 0 && <i />}
               </button>
               {bell && <Sheet title="Bildirimler" onClose={() => setBell(false)}><div className="sheet-scroll notification-list">{notifications.length ? notifications.map(alert => <AlertNotice key={alert.id} alert={alert} onOpen={() => {
@@ -479,17 +470,18 @@ export function App({
           </div>
         </header>
         <main className="main-content">
+          {page === "Genel bakış" && <ListTools query={search} setQuery={setSearch} placeholder="Genel bakış hareketlerinde ara" filters={overviewFilters} setFilters={setOverviewFilters} resultCount={visible.length} reset={()=>{setSearch('');setScope('all');setKind('all')}}><label>Hesap<select value={scope} onChange={e=>setScope(e.target.value)}><option value="all">Tüm hesaplar</option>{accounts.map(a=><option key={a.id} value={a.id}>{a.name}</option>)}</select></label><label>İşlem<select value={kind} onChange={e=>setKind(e.target.value)}><option value="all">Tümü</option>{[...new Set(tx.map(t=>t.kind))].map(k=><option key={k}>{k}</option>)}</select></label></ListTools>}
           {page === "Genel bakış" && <div className="page-title">
             <div>
               <h1>{page === "Genel bakış" ? "Finansal görünüm" : page}</h1>
               <p>{descriptions[page]}</p>
             </div>
-            <button className="primary-button" disabled={!can(fullData.user, 'create')} onClick={() => openForm()}>
-              <Plus size={17} />
+            <button className="primary-button icon-only" aria-label="İşlem ekle" title="İşlem ekle" disabled={!can(fullData.user, 'create')} onClick={() => openForm()}>
+              <Plus size={18} />
               <span className="sr-only">İşlem ekle</span>
             </button>
           </div>}
-          {page !== "Genel bakış" ? <FinanceHub key={page} page={page} data={fullData} onState={applyState} notify={notify} open={openFinance} search={search} initialAccount={scope} initialDue={claimFilter} onLabel={setPartyLabel} /> : <>
+          {page !== "Genel bakış" ? <FinanceHub key={page} page={page} data={fullData} onState={applyState} notify={notify} open={openFinance} search="" initialAccount={scope} initialDue={claimFilter} onLabel={setPartyLabel} /> : <>
               <div className="snapshot-label">
                 <span>GÜNCEL DURUM</span>
                 <span>
@@ -535,7 +527,7 @@ export function App({
                 <section className="panel transactions-panel">
                   <Heading title="Son hareketler" sub="Tüm işlem türleri · Seçili dönem ve hesap kapsamı">
                     <button className="text-action" onClick={() => setPage("Raporlar")}>
-                      Tümünü gör <ArrowRight size={14} />
+                      Tümünü gör <ArrowRight size={16} />
                     </button>
                   </Heading>
                   {table(true)}
@@ -551,19 +543,19 @@ export function App({
       </div>
       <nav inert={!!drawer} className="mobile-nav" aria-label="Mobil navigasyon">
         {[["Genel bakış", "Özet", LayoutDashboard], ["Raporlar", "Raporlar", ChartNoAxesCombined], ["Tahsilat & Ödeme", "Ödeme", ArrowLeftRight]].map(([p, l, Icon]) => <button key={p} className={page === p ? "active" : ""} onClick={() => go(p)}>
-            <Icon size={21} />
+            <Icon size={20} />
             {l}
           </button>)}
         <button onClick={() => setMobileMore(!mobileMore)}>
-          <MoreHorizontal size={21} />
+          <MoreHorizontal size={20} />
           Diğer
         </button>
       </nav>
       {mobileMore && <div className="mobile-more">
           {navigation.filter(([name]) => !["Genel bakış", "Hareketler", "Raporlar", "Tahsilat & Ödeme"].includes(name) && (name !== "Kullanıcılar" || can(fullData.user, "admin"))).map(([name, Icon]) => <button key={name} onClick={() => go(name)}>
-              <Icon size={19} />
+              <Icon size={20} />
               {name}
-              <ChevronRight size={15} />
+              <ChevronRight size={16} />
             </button>)}
         </div>}
       {drawer && <div className="drawer-layer">
@@ -589,7 +581,7 @@ export function App({
                 </h2>
               </div>
               <button autoFocus className="icon-button" aria-label="Paneli kapat" onClick={() => setDrawer(null)}>
-                <X size={22} />
+                <X size={18} />
               </button>
             </div>
             {drawer.type === "tx" ? <>
@@ -708,7 +700,7 @@ export function App({
             <small>{toast.detail}</small>
           </div>
           <button className="icon-button" aria-label="Bildirimi kapat" onClick={() => setToast(null)}>
-            <X size={16} />
+            <X size={18} />
           </button>
         </div>}
     </div>;

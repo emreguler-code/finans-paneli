@@ -11,8 +11,8 @@ let activePage;const checks=[],errors=[];const ok=(name,test)=>{if(!test)throw E
  ok('Login fits 390px',await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
  await p.locator('input[name=username]').fill(process.env.QA_USERNAME);await p.locator('input[name=password]').fill(process.env.QA_PASSWORD);await p.getByRole('button',{name:'Giriş yap'}).click();await p.locator('.app').waitFor();
  await p.setViewportSize({width:1440,height:1000});
- const go=async name=>{await p.locator('.sidebar').getByRole('button',{name,exact:true}).click();await p.locator('.finance-page h1').filter({hasText:name}).waitFor();};
- await go('Cari hesaplar');await p.locator('.party-row').filter({hasText:'Ada Tasarım'}).click();await p.locator('.party-detail-header').waitFor();
+ const go=async name=>{await p.locator('.sidebar').getByRole('button',{name,exact:true}).click();if(name==='Cari hesaplar'&&await p.locator('.cari-back').count())await p.locator('.cari-back').click();await p.locator('.finance-page h1').filter({hasText:name}).waitFor();};
+ await go('Cari hesaplar');if(await p.locator('.party-row').count())await p.locator('.party-row').filter({hasText:'Ada Tasarım'}).click();await p.locator('.party-detail-header').waitFor();
  const headers=await p.locator('.party-ledger th').allTextContents();ok('Cari Tutar precedes Bakiye',headers.indexOf('Tutar')<headers.indexOf('Bakiye'));ok('Cari separate Etiket column',headers.includes('Etiket'));
  ok('Description has no automatic party name',!(await p.locator('.party-ledger td[data-label="Açıklama"]').allTextContents()).some(s=>s.includes('Ada Tasarım')));
  await p.getByRole('button',{name:'Cari bilgileri',exact:true}).click();ok('Cari information expands inline',await p.locator('.party-inline-info').isVisible()&&await p.getByRole('dialog').count()===0);
@@ -24,13 +24,14 @@ let activePage;const checks=[],errors=[];const ok=(name,test)=>{if(!test)throw E
  const picker=p.locator('.transaction-picker');ok('Cari sale positive',await picker.getByRole('button',{name:'Satış',exact:true}).evaluate(el=>el.classList.contains('effect-positive')));ok('Cari collection negative',await picker.getByRole('button',{name:'Tahsilat',exact:true}).evaluate(el=>el.classList.contains('effect-negative')));
  await p.locator('summary').filter({hasText:'Ek bilgiler'}).click();ok('Time and document inputs restored',await p.locator('input[name=time]').isVisible()&&await p.locator('input[name=document]').isVisible());
  await p.evaluate(()=>document.fonts.ready);await p.screenshot({path:out+'/entry-desktop.png'});await p.getByRole('button',{name:'Paneli kapat',exact:true}).last().click();
- await go('Hesaplar');ok('Account search in heading',await p.locator('.account-title .cari-search input').count()===1);ok('Archive hidden initially',await p.getByText('Arşiv dahil',{exact:true}).count()===0);
- await p.locator('.inventory-tools').getByRole('button',{name:'Filtrele',exact:true}).click();ok('Archive opens inline',await p.getByText('Arşiv dahil',{exact:true}).isVisible()&&await p.getByRole('dialog').count()===0);await p.locator('.inventory-tools').getByRole('button',{name:'Filtrele',exact:true}).click();
+ await go('Hesaplar');ok('One shared account search in topbar',await p.locator('.topbar #search').count()===1&&await p.locator('.account-title input').count()===0);ok('Archive hidden initially',await p.getByText('Arşiv dahil',{exact:true}).count()===0);
+ await p.locator('.topbar').getByRole('button',{name:'Filtrele',exact:true}).click();ok('Archive opens inline',await p.getByText('Arşiv dahil',{exact:true}).isVisible()&&await p.getByRole('dialog').count()===0);await p.locator('.topbar').getByRole('button',{name:'Filtrele',exact:true}).click();
  ok('Account actions on card',await p.locator('.carousel-active .account-card-actions').isVisible());
- const center=await p.locator('.carousel-active h2').innerText();await p.getByRole('button',{name:'Sonraki hesap',exact:true}).click();ok('Carousel next selects another account',(await p.locator('.carousel-active h2').innerText())!==center);
+ const center=await p.locator('.carousel-active h2').innerText();await p.getByRole('button',{name:'Sonraki hesap',exact:true}).click();await p.waitForFunction(name=>document.querySelector('.carousel-active h2')?.textContent!==name,center);ok('Carousel next selects another account',(await p.locator('.carousel-active h2').innerText())!==center);
  await p.evaluate(()=>document.fonts.ready);await p.screenshot({path:out+'/accounts-desktop.png',fullPage:true});
- await p.locator('.account-title input').fill('KMH');await p.locator('.kmh-card-body').waitFor();ok('KMH limit and daily warning',await p.locator('.kmh-card-body').isVisible()&&await p.locator('.alert-notice').filter({hasText:'Günlük tahmini faiz'}).isVisible());await p.evaluate(()=>document.fonts.ready);await p.screenshot({path:out+'/kmh-desktop.png'});await p.locator('.account-title input').fill('');
- await p.locator('.ledger-view').getByRole('button',{name:'Filtrele',exact:true}).click();ok('Account kind and creator filters restored',await p.getByRole('dialog').getByRole('combobox',{name:/Ekleyen kişi/}).isVisible()&&await p.getByRole('dialog').getByRole('combobox',{name:/^İşlem/}).isVisible());await p.getByRole('button',{name:'Paneli kapat',exact:true}).last().click();
+ await p.locator('#search').fill('KMH');await p.locator('#search').press('Enter');await p.locator('.kmh-card-body').waitFor();ok('KMH limit and daily warning',await p.locator('.kmh-card-body').isVisible()&&await p.locator('.alert-notice').filter({hasText:'Günlük tahmini faiz'}).isVisible());await p.evaluate(()=>document.fonts.ready);await p.screenshot({path:out+'/kmh-desktop.png'});await p.locator('#search').fill('');await p.locator('#search').press('Enter');
+ await p.locator('.topbar').getByRole('button',{name:'Filtrele',exact:true}).click();await p.getByRole('combobox',{name:'Arama kapsamı',exact:true}).selectOption('movements');
+ ok('Account kind and creator filters restored',await p.locator('.search-filter-panel').getByRole('combobox',{name:/Ekleyen kişi/}).isVisible()&&await p.locator('.search-filter-panel').getByRole('combobox',{name:/^İşlem/}).isVisible());await p.locator('.search-filter-panel').getByRole('button',{name:'Ara',exact:true}).click();
  await p.locator('.ledger-view').getByRole('button',{name:'Sırala',exact:true}).click();ok('Ascending amount restored',await p.getByRole('button',{name:'Tutar: düşükten yükseğe',exact:true}).isVisible());await p.getByRole('button',{name:'Tutar: düşükten yükseğe',exact:true}).click();
  await go('Kredi kartları');ok('Default current period',await p.getByRole('button',{name:'Dönem içi işlemler',exact:true}).getAttribute('aria-pressed')==='true');ok('Bank and program marks together',await p.locator('.carousel-active .face-mark svg').count()>=2);await p.evaluate(()=>document.fonts.ready);await p.screenshot({path:out+'/cards-desktop.png',fullPage:true});
  await p.getByRole('button',{name:'Bildirimleri aç',exact:true}).click();ok('Global KMH notification',await p.getByRole('dialog').locator('.alert-notice').filter({hasText:'KMH Deneme'}).count()===1);await p.evaluate(()=>document.fonts.ready);await p.screenshot({path:out+'/notifications.png'});await p.getByRole('button',{name:'Paneli kapat',exact:true}).last().click();
@@ -40,24 +41,25 @@ let activePage;const checks=[],errors=[];const ok=(name,test)=>{if(!test)throw E
   for(const name of ['Hesaplar','Kredi kartları','Cari hesaplar','Raporlar','Ödeme Planı']){
    if(size<=760){const nav=p.locator('.mobile-nav');const b=nav.getByRole('button',{name,exact:true});if(await b.count())await b.click();else{await nav.getByRole('button',{name:'Diğer',exact:true}).click();await p.locator('.mobile-more').getByRole('button',{name,exact:true}).click();}}
    else await go(name);
-   await p.locator('.finance-page h1').filter({hasText:name}).waitFor();
+   if(name==='Cari hesaplar'&&await p.locator('.cari-back').count())await p.locator('.cari-back').click();await p.locator('.finance-page h1').filter({hasText:name}).waitFor();
    await p.evaluate(()=>document.fonts.ready);await p.screenshot({path:out+'/'+name.replaceAll(' ','-')+'-'+size+'.png',fullPage:true});
    const info=await p.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth,overflow:[...document.querySelectorAll('body *')].filter(e=>{const r=e.getBoundingClientRect();return r.right>innerWidth+1&&r.width>0&&!e.closest('.carousel-track,.cari-table-scroll,.sidebar')}).map(e=>e.className).slice(0,12)}));
    ok(name+' fits '+size,info.scroll<=size);fs.writeFileSync(out+'/layout-'+size+'-'+name.replaceAll(' ','-')+'.json',JSON.stringify(info));
   }
  }
  for(const size of [390,320]){
-  await p.setViewportSize({width:size,height:844});await p.locator('.mobile-nav').getByRole('button',{name:'Diğer',exact:true}).click();await p.locator('.mobile-more').getByRole('button',{name:'Cari hesaplar',exact:true}).click();await p.locator('.party-row').filter({hasText:'Ada Tasarım'}).click();await p.locator('.party-ledger tbody tr').first().waitFor();
+  await p.setViewportSize({width:size,height:844});await p.locator('.mobile-nav').getByRole('button',{name:'Diğer',exact:true}).click();await p.locator('.mobile-more').getByRole('button',{name:'Cari hesaplar',exact:true}).click();if(await p.locator('.party-row').count())await p.locator('.party-row').filter({hasText:'Ada Tasarım'}).click();await p.locator('.party-ledger tbody tr').first().waitFor();
   ok('Cari header balance fits '+size,await p.locator('.party-header-balance .cari-total').evaluate(el=>{const r=el.getBoundingClientRect(),par=el.closest('.party-detail-header').getBoundingClientRect();return r.right<=par.right&&el.scrollWidth<=el.clientWidth+1}));
   const first=p.locator('.party-ledger tbody tr').first();ok('Gross sale shown at '+size,(await first.locator('[data-label="Tutar"]').innerText()).includes('18.500,00'));
   const clipped=await first.locator('[data-label="Tutar"]').evaluate(el=>{const r=el.getBoundingClientRect(),row=el.closest('tr').getBoundingClientRect();return r.left<row.left||r.right>row.right+1||el.scrollWidth>el.clientWidth+1});ok('Cari amount not clipped at '+size,!clipped);
   await first.click();await p.locator('.ledger-action-row').waitFor();ok('Mobile stripe covers action area '+size,await p.locator('.ledger-action-row td').evaluate(el=>getComputedStyle(el).boxShadow.includes('3px')));await p.evaluate(()=>document.fonts.ready);await p.screenshot({path:out+'/cari-mobile-'+size+'.png',fullPage:true});await p.screenshot({path:out+'/cari-viewport-'+size+'.png'});
   await p.locator('.mobile-nav').getByRole('button',{name:'Diğer',exact:true}).click();await p.locator('.mobile-more').getByRole('button',{name:'Hesaplar',exact:true}).click();await p.locator('.carousel-active').waitFor();
+  await p.locator('.topbar').getByRole('button',{name:'Filtrele',exact:true}).click();await p.getByRole('combobox',{name:'Arama kapsamı',exact:true}).selectOption('accounts');await p.locator('#search').fill('Günlük');await p.locator('.search-filter-panel').getByRole('button',{name:'Ara',exact:true}).click();
   await p.evaluate(()=>document.fonts.ready);await p.screenshot({path:out+'/accounts-viewport-'+size+'.png'});
   const cells=p.locator('.ledger-view td[data-label="Tutar"]');ok('Bank amounts not clipped at '+size,await cells.evaluateAll(els=>els.every(el=>{const r=el.getBoundingClientRect(),row=el.closest('tr').getBoundingClientRect();return r.right<=row.right+1&&el.scrollWidth<=el.clientWidth+1})));
   const visible=await p.locator('.ledger-view tbody tr').evaluateAll(els=>els.filter(el=>{const r=el.getBoundingClientRect();return r.top<innerHeight-64&&r.bottom>0}).length);ok('Movement visible on account opening at '+size,visible>0);
  }
- await p.locator('.mobile-nav').getByRole('button',{name:'Diğer',exact:true}).click();await p.locator('.mobile-more').getByRole('button',{name:'Cari hesaplar',exact:true}).click();await p.locator('.party-row').filter({hasText:'Ada Tasarım'}).click();await p.getByRole('button',{name:'Yeni kayıt ekle',exact:true}).click();await p.getByRole('dialog').waitFor();
+ await p.locator('.mobile-nav').getByRole('button',{name:'Diğer',exact:true}).click();await p.locator('.mobile-more').getByRole('button',{name:'Cari hesaplar',exact:true}).click();if(await p.locator('.party-row').count())await p.locator('.party-row').filter({hasText:'Ada Tasarım'}).click();await p.getByRole('button',{name:'Yeni kayıt ekle',exact:true}).click();await p.getByRole('dialog').waitFor();
  await p.setViewportSize({width:320,height:568});ok('Small-screen entry dialog bounded',await p.locator('.finance-sheet').evaluate(el=>{const r=el.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight}));
  await p.getByRole('button',{name:'İşlem tarihi',exact:true}).click();await p.getByRole('dialog',{name:'İşlem tarihi',exact:true}).waitFor();await p.evaluate(()=>document.fonts.ready);await p.screenshot({path:out+'/date-mobile.png'});
  ok('Nested calendar fits small screen',await p.getByRole('dialog',{name:'İşlem tarihi',exact:true}).evaluate(el=>{const r=el.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight}));await p.getByRole('button',{name:'Paneli kapat',exact:true}).last().click();await p.getByRole('button',{name:'Paneli kapat',exact:true}).last().click();ok('Scroll restored after nested dialogs',await p.evaluate(()=>document.body.style.overflow!=='hidden'));
@@ -65,23 +67,89 @@ let activePage;const checks=[],errors=[];const ok=(name,test)=>{if(!test)throw E
  await p.setViewportSize({width:390,height:844});await p.getByRole('button',{name:'Yeni kayıt ekle',exact:true}).click();await p.locator('input[name=amount]').fill('12345,67');ok('Amount groups live in actual form',await p.locator('input[name=amount]').inputValue()==='12.345,67');await p.getByLabel('Açıklama (isteğe bağlı)',{exact:true}).fill('Canlı giriş doğrulaması');await p.locator('summary').filter({hasText:'Ek bilgiler'}).click();await p.locator('input[name=time]').fill('14:22:33');await p.locator('input[name=document]').fill('FTR-LIVE');await p.getByRole('button',{name:'Kaydet',exact:true}).click();await p.getByRole('dialog').waitFor({state:'hidden'});
  const saved=await (await p.request.get(base+'/api/index.php?action=state')).json();const entry=saved.events.find(e=>e.description==='Canlı giriş doğrulaması');ok('Browser form saves amount/time/document to PHP',entry?.amount_cents===1234567&&entry.event_time==='14:22:33'&&entry.document_no==='FTR-LIVE');
  await p.locator('.mobile-nav').getByRole('button',{name:'Diğer',exact:true}).click();await p.locator('.mobile-more').getByRole('button',{name:'Hesaplar',exact:true}).click();
+ await p.locator('.topbar').getByRole('button',{name:'Filtrele',exact:true}).click();await p.getByRole('combobox',{name:'Arama kapsamı',exact:true}).selectOption('accounts');await p.locator('.search-filter-panel').getByRole('button',{name:'Ara',exact:true}).click();
+ await p.locator('#search').fill('');await p.locator('#search').press('Enter');
  const download=await Promise.all([p.waitForEvent('download'),p.locator('.inventory-tools').getByRole('button',{name:'CSV indir',exact:true}).click()]);ok('Inventory CSV retained',download[0].suggestedFilename()==='hesaplar.csv');await download[0].saveAs(out+'/inventory.csv');
- const vp=await p.locator('.carousel-viewport').boundingBox(),beforeDrag=await p.locator('.carousel-active h2').innerText();await p.mouse.move(vp.x+vp.width/2,vp.y+60);await p.mouse.down();await p.mouse.move(vp.x+vp.width/2-90,vp.y+60,{steps:8});await p.mouse.up();ok('Mouse drag changes active account',await p.locator('.carousel-active h2').innerText()!==beforeDrag);
+ const vp=await p.locator('.carousel-viewport').boundingBox(),beforeDrag=await p.locator('.carousel-active h2').innerText();await p.mouse.move(vp.x+vp.width/2,vp.y+60);await p.mouse.down();await p.mouse.move(vp.x+vp.width/2-90,vp.y+60,{steps:8});await p.mouse.up();await p.waitForFunction(name=>document.querySelector('.carousel-active h2')?.textContent!==name,beforeDrag);ok('Mouse drag changes active account',await p.locator('.carousel-active h2').innerText()!==beforeDrag);
  const touchContext=await browser.newContext({storageState:await context.storageState(),viewport:{width:390,height:844},isMobile:true,hasTouch:true,locale:'tr-TR',timezoneId:'Europe/Istanbul'});const touchPage=await touchContext.newPage();await touchPage.goto(base);await touchPage.locator('.app').waitFor();await touchPage.locator('.mobile-nav').getByRole('button',{name:'Diğer',exact:true}).click();await touchPage.locator('.mobile-more').getByRole('button',{name:'Hesaplar',exact:true}).click();
- const tr=await touchPage.locator('.carousel-viewport').boundingBox(),beforeTouch=await touchPage.locator('.carousel-active h2').innerText(),cdp=await touchContext.newCDPSession(touchPage);await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:tr.x+tr.width/2,y:tr.y+60}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:tr.x+tr.width/2-90,y:tr.y+60}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});ok('Emulated touch swipe changes active account',await touchPage.locator('.carousel-active h2').innerText()!==beforeTouch);await touchContext.close();
+ const tr=await touchPage.locator('.carousel-viewport').boundingBox(),beforeTouch=await touchPage.locator('.carousel-active h2').innerText(),cdp=await touchContext.newCDPSession(touchPage);await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:tr.x+tr.width/2,y:tr.y+60}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:tr.x+tr.width/2-90,y:tr.y+60}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await touchPage.waitForFunction(name=>document.querySelector('.carousel-active h2')?.textContent!==name,beforeTouch);ok('Emulated touch swipe changes active account',await touchPage.locator('.carousel-active h2').innerText()!==beforeTouch);await touchContext.close();
  // Extracted entity forms and read-only details retain their shared modal behavior.
  await p.setViewportSize({width:1440,height:1000});await go('Cari hesaplar');
  await p.getByRole('button',{name:'Yeni kayıt ekle',exact:true}).click();await p.getByRole('dialog').waitFor();
  await p.locator('input[name=name]').fill('Form testi');await p.locator('summary').filter({hasText:'Açılış bakiyesi'}).click();
  await p.locator('input[name=opening]').fill('1234,56');ok('Entity money input shares live grouping',await p.locator('input[name=opening]').inputValue()==='1.234,56');
  await p.getByRole('button',{name:'Paneli kapat',exact:true}).last().click();
- await p.locator('.party-row').filter({hasText:'Ada Tasarım'}).click();await p.getByRole('button',{name:'Düzenle',exact:true}).first().click();
+ if(await p.locator('.party-row').count())await p.locator('.party-row').filter({hasText:'Ada Tasarım'}).click();await p.getByRole('button',{name:'Düzenle',exact:true}).first().click();
  ok('Party edit form retains entity details',await p.locator('input[name=name]').inputValue()==='Ada Tasarım');await p.getByRole('button',{name:'Paneli kapat',exact:true}).last().click();
  await go('Hesaplar');await p.locator('.carousel-active .account-card-actions').getByRole('button',{name:'Hesap bilgileri',exact:true}).click();
  ok('Account details and audit use extracted dialog',await p.getByRole('dialog').locator('.cari-info').count()===1);await p.getByRole('button',{name:'Paneli kapat',exact:true}).last().click();
  await go('Kullanıcılar');await p.getByRole('button',{name:'Yeni kayıt ekle',exact:true}).click();
  ok('User form retains role and password fields',await p.locator('input[name=password]').isVisible()&&await p.getByRole('dialog').getByRole('combobox',{name:'Rol',exact:true}).isVisible());
  await p.getByRole('button',{name:'Paneli kapat',exact:true}).last().click();
+ // Approved Sade Netlik roles are verified on rendered controls, not CSS text.
+ for(const width of [1440,768,390,320]){
+  await p.setViewportSize({width,height:1000});
+  const navigate=async name=>{
+   if(width>760)await p.locator('.sidebar').getByRole('button',{name,exact:true}).click();
+   else if(name==='Raporlar')await p.locator('.mobile-nav').getByRole('button',{name:'Raporlar',exact:true}).click();
+   else {await p.locator('.mobile-nav').getByRole('button',{name:'Diğer',exact:true}).click();await p.locator('.mobile-more').getByRole('button',{name,exact:true}).click();}
+   await p.locator('.finance-page h1').waitFor();
+  };
+  for(const name of ['Cari hesaplar','Hesaplar','Kredi kartları','Ödeme Planı','Raporlar']){
+   await navigate(name);
+   ok(name+' heading follows typography role at '+width,await p.locator('.finance-page h1').evaluate(el=>parseFloat(getComputedStyle(el).fontSize))===(width<=760?24:27));
+   if(width<=760)ok(name+' tool touch areas at '+width,await p.locator('.common-toolbar .list-icon').evaluateAll(els=>els.every(el=>{const r=el.getBoundingClientRect();return r.width>=44&&r.height>=44})));
+   if(name==='Hesaplar'||name==='Kredi kartları'){
+    await p.waitForTimeout(150);
+    const cardBox=await p.locator('.carousel-active .account-face').evaluate(el=>({scroll:el.scrollHeight,client:el.clientHeight}));
+    ok(name+' card stays readable at '+width+' '+JSON.stringify(cardBox),cardBox.scroll<=cardBox.client+1);
+    ok(name+' carousel contains active card at '+width,await p.locator('.carousel-viewport').evaluate(el=>el.getBoundingClientRect().height>=el.querySelector('.carousel-active .account-face').getBoundingClientRect().height));
+    if(width<=760)ok(name+' arrows clear card content at '+width,await p.locator('.account-carousel').evaluate(el=>{const card=el.querySelector('.carousel-active .account-face').getBoundingClientRect();return [...el.querySelectorAll('.carousel-arrow')].every(b=>b.getBoundingClientRect().top>=card.bottom)}));
+   }
+   if(name==='Raporlar'){
+    ok('Report grid follows 4/2/1 columns at '+width,await p.locator('.report-metrics').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length)===(width>1100?4:width>760?2:1));
+    await p.locator('.report-metrics .cari-total').first().evaluate(el=>{el.firstChild.textContent='999.999.999,99 ';});
+    ok('Large report amount stays together at '+width,await p.locator('.report-metrics .cari-total').first().evaluate(el=>getComputedStyle(el).whiteSpace==='nowrap'&&el.scrollWidth<=el.clientWidth+1));
+   }
+  }
+ }
+ // Shared search applies drafts once, retains each page separately and preserves balances.
+ await p.setViewportSize({width:1440,height:1000});await go('Cari hesaplar');
+ const partyCount=await p.locator('.party-row').count();
+ await p.locator('#search').fill('Ada');ok('Typing search does not apply before Enter',await p.locator('.party-row').count()===partyCount);
+ await p.locator('#search').press('Enter');await p.waitForFunction(()=>document.querySelectorAll('.party-row').length===1);
+ ok('Cari search applies in current page',await p.locator('.party-row').count()===1);
+ await go('Kullanıcılar');ok('User page does not inherit cari query',await p.locator('#search').inputValue()==='');
+ await p.locator('.topbar').getByRole('button',{name:'Filtrele',exact:true}).click();const userCount=await p.locator('.finance-due').count();
+ await p.getByRole('combobox',{name:'Durum',exact:true}).selectOption('inactive');ok('Filter draft leaves results unchanged',await p.locator('.finance-due').count()===userCount);
+ await p.keyboard.press('Escape');ok('Escape cancels draft and restores focus',await p.locator('.search-filter-panel').count()===0&&await p.locator('#search').evaluate(el=>el===document.activeElement));
+ await p.locator('.topbar').getByRole('button',{name:'Filtrele',exact:true}).click();ok('Cancelled filter value is discarded',await p.getByRole('combobox',{name:'Durum',exact:true}).inputValue()==='Tümü');
+ await p.getByRole('combobox',{name:'Durum',exact:true}).selectOption('inactive');await p.locator('.search-filter-panel').getByRole('button',{name:'Ara',exact:true}).click();ok('Apply closes filters and shows applied chip',await p.locator('.search-filter-panel').count()===0&&(await p.locator('.search-chips').innerText()).includes('Pasif'));
+ await p.locator('.search-chips').getByRole('button',{name:'Temizle',exact:true}).click();ok('Clear restores user list',await p.locator('.finance-due').count()===userCount);
+ await go('Cari hesaplar');ok('Cari query survives page navigation',await p.locator('#search').inputValue()==='Ada'&&await p.locator('.party-row').count()===1);await p.locator('.search-chips').getByRole('button',{name:'Temizle',exact:true}).click();
+ await p.keyboard.press('Control+k');ok('Shortcut focuses shared search',await p.locator('#search').evaluate(el=>el===document.activeElement));
+ await go('Hesaplar');await p.locator('.topbar').getByRole('button',{name:'Filtrele',exact:true}).click();await p.getByRole('combobox',{name:'Arama kapsamı',exact:true}).selectOption('accounts');await p.locator('#search').fill('Günlük');await p.locator('.search-filter-panel').getByRole('button',{name:'Ara',exact:true}).click();
+ const realBalance=await p.locator('.carousel-active .account-face-balance').innerText();
+ await p.locator('.topbar').getByRole('button',{name:'Filtrele',exact:true}).click();await p.getByRole('combobox',{name:'Arama kapsamı',exact:true}).selectOption('movements');await p.locator('#search').fill('bulunamayacak-islem');ok('Changing scope is staged',await p.locator('.carousel-active .account-face-balance').innerText()===realBalance);await p.locator('.search-filter-panel').getByRole('button',{name:'Ara',exact:true}).click();
+ ok('Movement search leaves actual balance intact',await p.locator('.carousel-active .account-face-balance').innerText()===realBalance);
+ ok('Movement query filters only ledger',await p.locator('.ledger-view tbody tr').count()===0&&await p.locator('.carousel-slide').count()>1);
+ await p.locator('.search-chips').getByRole('button',{name:'Temizle',exact:true}).click();
+ await go('Ödeme Planı');
+ ok('Calendar count visible in monthly cells',await p.locator('.plan-count').first().isVisible());
+ ok('Calendar monthly cells show payment and collection summaries',await p.locator('.calendar-total.danger-text').count()>0&&await p.locator('.calendar-total.positive').count()>0);
+ const day=p.locator('.plan-day').filter({has:p.locator('.calendar-preview')}).first();const dayLabel=await day.getAttribute('aria-label');await day.click();ok('Day selection opens persistent agenda',await p.locator('.selected-day-panel h2').innerText()===dayLabel.split(',')[0]&&await p.locator('.plan-bubble').count()===0);
+ const selectedLabel=await p.locator('.selected-day-panel h2').innerText();await p.getByRole('button',{name:'Haftalık',exact:true}).click();ok('View switch preserves selected date',await p.locator('.selected-day-panel h2').innerText()===selectedLabel);await p.getByRole('button',{name:'Aylık',exact:true}).click();
+ await p.screenshot({path:out+'/calendar-selected-desktop.png',fullPage:true});
+ await p.getByRole('button',{name:'Yaklaşanlara dön',exact:true}).click();ok('Upcoming agenda replaces account balances',await p.locator('.plan-aside').getByText('Hesaplarım',{exact:true}).count()===0);
+ await p.locator('#search').fill('Ada');await p.locator('#search').press('Enter');ok('Calendar search filters agenda and summaries',await p.locator('.plan-agenda-item').evaluateAll(els=>els.every(el=>el.textContent.includes('Ada'))));
+ await p.locator('.search-chips').getByRole('button',{name:'Temizle',exact:true}).click();await p.getByRole('button',{name:'Sonraki dönem',exact:true}).click();
+ const monthDate=p.getByRole('button',{name:'Takvim tarihi',exact:true});await monthDate.click();await p.getByRole('dialog').getByRole('combobox',{name:'Ay',exact:true}).selectOption('7');await p.getByRole('dialog').getByRole('combobox',{name:'Yıl',exact:true}).selectOption('2026');await p.getByRole('dialog').locator('[data-day="2026-08-15"]').click();
+ ok('Six-week month retains readable rows',await p.locator('.plan-day').count()===42&&await p.locator('.plan-day').first().evaluate(el=>el.getBoundingClientRect().height>=140));
+ await p.getByRole('button',{name:'Bugün',exact:true}).click();
+ await p.locator('.sidebar').getByRole('button',{name:'Genel bakış',exact:true}).click();const overviewAdd=await p.locator('.page-title').getByRole('button',{name:'İşlem ekle',exact:true}).boundingBox();await go('Cari hesaplar');const partyAdd=await p.getByRole('button',{name:'Yeni kayıt ekle',exact:true}).boundingBox();ok('Overview add button matches other pages',overviewAdd.width===44&&overviewAdd.height===44&&partyAdd.width===44&&partyAdd.height===44);
+ await p.screenshot({path:out+'/shared-search-desktop.png',fullPage:true});
+ for(const width of [390,320]){await p.setViewportSize({width,height:844});await p.locator('.mobile-nav').getByRole('button',{name:'Diğer',exact:true}).click();await p.locator('.mobile-more').getByRole('button',{name:'Ödeme Planı',exact:true}).click();await p.locator('.plan-day').filter({has:p.locator('.calendar-cell-content')}).first().click();ok('Mobile selected-day agenda follows calendar '+width,await p.locator('.plan-aside').evaluate(el=>el.getBoundingClientRect().top>=el.previousElementSibling.getBoundingClientRect().bottom));await p.locator('.topbar').getByRole('button',{name:'Filtrele',exact:true}).click();ok('Mobile filter panel matches search width '+width,await p.locator('.page-search').evaluate(el=>Math.abs(el.querySelector('.page-search-row').getBoundingClientRect().width-el.querySelector('.search-filter-panel').getBoundingClientRect().width)<2));await p.screenshot({path:out+'/shared-filters-'+width+'.png',fullPage:true});await p.locator('.search-filter-panel').getByRole('button',{name:'Vazgeç',exact:true}).click();}
+
  ok('Bundled Inter loaded',await p.evaluate(()=>document.fonts.check('14px Inter')));
  ok('No runtime React errors',errors.length===0);
  await browser.close();fs.writeFileSync(out+'/checks.json',JSON.stringify({passed:checks.length,browser:browser.version(),compiled:true,checks,errors},null,2));

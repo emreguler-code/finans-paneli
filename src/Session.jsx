@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import {ChartNoAxesCombined, LockKeyhole} from 'lucide-react';
 import {api} from './api';
 import {App} from './App';
+import {SearchStateProvider} from './SearchState';
 import {useViewport} from './ui';
 export function Session() {
  useViewport();
@@ -12,7 +13,7 @@ export function Session() {
  async function submit(e){e.preventDefault();if(busy)return;setBusy(true);setError('');try{const values=Object.fromEntries(new FormData(e.currentTarget));await api(session.setupRequired?'setup':'login',values);await load();}catch(e){setError(e.message);}finally{setBusy(false);}}
  async function logout(){try{await api('logout',{});setData(null);await load();}catch(e){setError(e.message);}}
  if(upgrade&&session?.user)return <div className="auth-shell"><section className="panel auth-panel"><h1>Güncelleme hazır</h1><p className="muted">{error}</p>{session.user.role==='admin'?<a className="primary-button" href="update.php">Güncelleme ekranını aç</a>:<p>Yöneticinizin güncellemeyi tamamlamasını bekleyin.</p>}<button className="text-button" onClick={()=>{setUpgrade(false);load()}}>Yeniden kontrol et</button></section></div>;
- if(data&&session?.user)return <App initialData={data} onLogout={logout}/>;
+ if(data&&session?.user)return <SearchStateProvider><App initialData={data} onLogout={logout}/></SearchStateProvider>;
  return <LoginPanel session={session} error={error} busy={busy} submit={submit} load={load}/>;
 }
 export function LoginPanel({session,error='',busy=false,submit,load}) {

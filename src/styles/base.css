@@ -3,7 +3,7 @@
   color: #202c39;
   background: #f5f7f8;
   font-synthesis: none;
-  font-size: 14px;
+  font-size: var(--text-body);
   line-height: 1.5;
   --ink: #202c39;
   --muted: #596879;
@@ -45,21 +45,22 @@ p {
   margin: 0;
 }
 h1 {
-  font-size: 27px;
+  font-size: var(--text-page);
   line-height: 1.3;
   letter-spacing: -0.8px;
   font-weight: 600;
 }
 h2 {
-  font-size: 16px;
+  font-size: var(--text-section);
   font-weight: 600;
   letter-spacing: -0.15px;
 }
 h3 {
-  font-size: 16px;
+  font-size: var(--text-subsection);
+  font-weight: 500;
 }
 small {
-  font-size: 14px;
+  font-size: var(--text-small);
 }
 svg {
   flex-shrink: 0;
@@ -70,7 +71,6 @@ strong {
 }
 .muted {
   color: var(--muted);
-  font-size: 14px;
 }
 .positive {
   color: var(--green) !important;
@@ -123,7 +123,7 @@ strong {
   color: var(--brand);
 }
 .workspace-label {
-  font-size: 11px;
+  font-size: var(--text-small);
   letter-spacing: 1px;
   color: var(--muted);
   margin: 0 12px 13px;
@@ -143,9 +143,9 @@ strong {
   text-align: left;
   padding: 12px;
   color: var(--muted);
-  border-radius: 8px;
+  border-radius: var(--radius-control);
   white-space: nowrap;
-  font-size: 14px;
+  font-size: var(--text-body);
 }
 .sidebar button:hover {
   background: #e4ecef;
@@ -157,10 +157,10 @@ strong {
 }
 .sidebar button em {
   font-style: normal;
-  border-radius: 5px;
+  border-radius: var(--radius-control);
   color: var(--red);
   background: #f5e1e1;
-  font-size: 12px;
+  font-size: var(--text-small);
   padding: 0 5px;
   margin-left: auto;
 }
@@ -168,14 +168,14 @@ strong {
   margin-top: auto;
 }
 .sidebar-bottom button {
-  font-size: 14px;
+  font-size: var(--text-body);
   padding: 10px 12px;
 }
 .demo-note {
   display: flex;
   align-items: center;
   gap: 7px;
-  font-size: 11px;
+  font-size: var(--text-small);
   color: var(--muted);
   padding: 17px 12px 0;
   border-top: 1px solid #d8e0e5;
@@ -216,7 +216,7 @@ strong {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 32px;
+  padding: 0 var(--page-gutter);
   gap: 15px;
   position: sticky;
   top: 0;
@@ -226,7 +226,7 @@ strong {
   display: flex;
   align-items: center;
   gap: 12px;
-  font-size: 14px;
+  font-size: var(--text-body);
   color: var(--muted);
 }
 .breadcrumb b {
@@ -248,23 +248,23 @@ strong {
   width: 166px;
   background: transparent;
   padding: 6px 0;
-  font-size: 14px;
+  font-size: var(--text-body);
 }
 .search kbd {
-  font-size: 11px;
+  font-size: var(--text-small);
   color: var(--muted);
   background: #f2f5f7;
   border: 1px solid #e3e8ec;
-  border-radius: 4px;
+  border-radius: var(--radius-control);
   padding: 2px 5px;
 }
 .icon-button {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 33px;
-  height: 33px;
-  border-radius: 7px;
+  width: var(--control-compact);
+  height: var(--control-compact);
+  border-radius: var(--radius-control);
   color: var(--muted);
 }
 .icon-button:hover {
@@ -293,7 +293,7 @@ strong {
   background: var(--line);
 }
 .date-label {
-  font-size: 14px;
+  font-size: var(--text-body);
   white-space: nowrap;
   color: var(--muted);
 }
@@ -309,7 +309,7 @@ strong {
   background: white;
   border: 1px solid var(--line);
   box-shadow: 0 12px 35px #202c3915;
-  border-radius: 12px;
+  border-radius: var(--radius-panel);
   padding: 18px;
   z-index: 50;
 }
@@ -327,13 +327,13 @@ strong {
 .notification-pop button small {
   display: block;
   color: var(--muted);
-  font-size: 14px;
+  font-size: var(--text-body);
 }
 .notification-pop button > svg:last-child {
   margin-left: auto;
 }
 .main-content {
-  padding: 27px 32px 20px;
+  padding: var(--space-6) var(--page-gutter) var(--space-6);
   max-width: 1500px;
   margin: 0 auto;
 }
@@ -341,11 +341,11 @@ strong {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: var(--space-3);
   margin-bottom: 24px;
 }
 .page-title p {
-  font-size: 14px;
+  font-size: var(--text-body);
   color: var(--muted);
   margin-top: 5px;
 }
@@ -355,11 +355,11 @@ strong {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  border-radius: 8px;
+  border-radius: var(--radius-control);
   white-space: nowrap;
   padding: 10px 14px;
-  font-size: 14px;
-  min-height: 38px;
+  font-size: var(--text-body);
+  min-height: var(--control-size);
   font-weight: 500;
 }
 .primary-button {
@@ -379,7 +379,7 @@ strong {
 }
 .text-action {
   color: var(--brand);
-  font-size: 14px;
+  font-size: var(--text-body);
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -394,7 +394,7 @@ strong {
   align-items: center;
   justify-content: space-between;
   color: var(--muted);
-  font-size: 11px;
+  font-size: var(--text-small);
   letter-spacing: 0.8px;
   margin-bottom: 9px;
 }
@@ -403,7 +403,7 @@ strong {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
+  font-size: var(--text-small);
 }
 .snapshot-label i {
   width: 5px;
@@ -416,7 +416,7 @@ strong {
   grid-template-columns: 1.16fr 1fr 1fr 1.15fr;
   background: #fff;
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--radius-panel);
   padding: 20px 0;
   margin-bottom: 22px;
 }
@@ -432,12 +432,12 @@ strong {
   display: flex;
   align-items: center;
   gap: 7px;
-  font-size: 14px;
+  font-size: var(--text-body);
   color: var(--muted);
   white-space: nowrap;
 }
 .metric-value {
-  font-size: 29px;
+  font-size: var(--text-value);
   letter-spacing: -1px;
   font-weight: 500;
   line-height: 1.3;
@@ -448,14 +448,14 @@ strong {
   color: #076a75;
 }
 .metric-value span {
-  font-size: 14px;
+  font-size: var(--text-body);
   letter-spacing: 0;
   color: var(--muted);
   margin-left: 7px;
   font-weight: 400;
 }
 .metric-note {
-  font-size: 11px;
+  font-size: var(--text-small);
   color: var(--muted);
   line-height: 1.4;
 }
@@ -463,8 +463,8 @@ strong {
   background: #fafcfc;
 }
 .tiny-badge {
-  font-size: 11px;
-  border-radius: 4px;
+  font-size: var(--text-small);
+  border-radius: var(--radius-control);
   padding: 2px 5px;
   background: #fff1da;
   color: #955f12;
@@ -478,19 +478,19 @@ strong {
 .panel {
   background: white;
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--radius-panel);
   min-width: 0;
   overflow: hidden;
 }
 .panel-heading {
-  padding: 19px 21px 0;
+  padding: var(--panel-padding) var(--panel-padding) 0;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
 }
 .panel-heading p {
-  font-size: 12px;
+  font-size: var(--text-small);
   color: var(--muted);
   margin-top: 3px;
 }
@@ -500,11 +500,11 @@ strong {
   flex-wrap: wrap;
 }
 .select-wrap {
-  border: 1px solid #e0e6eb;
+  border: 1px solid var(--control-border);
   display: flex;
   align-items: center;
   gap: 5px;
-  border-radius: 6px;
+  border-radius: var(--radius-control);
   padding: 4px 7px;
   color: var(--muted);
   background: #fff;
@@ -515,7 +515,7 @@ strong {
   border: 0;
   background: transparent;
   color: var(--ink);
-  font-size: 11px;
+  font-size: var(--text-small);
   padding: 3px 0;
   max-width: 150px;
 }
@@ -525,7 +525,7 @@ strong {
   padding: 21px 23px 0;
 }
 .flow-totals > div > span {
-  font-size: 11px;
+  font-size: var(--text-small);
   color: var(--muted);
   display: flex;
   align-items: center;
@@ -539,7 +539,7 @@ strong {
   margin-top: 3px;
 }
 .flow-totals strong small {
-  font-size: 11px;
+  font-size: var(--text-small);
   font-weight: 400;
   color: var(--muted);
 }
@@ -574,14 +574,14 @@ strong {
   gap: 10px;
   padding: 12px 22px 15px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: var(--text-small);
   border-top: 1px solid #f0f3f5;
 }
 .count {
   background: #f0f4f6;
   padding: 2px 7px;
-  border-radius: 6px;
-  font-size: 12px;
+  border-radius: var(--radius-control);
+  font-size: var(--text-small);
   color: var(--muted);
 }
 .attention-panel .panel-heading {
@@ -607,16 +607,16 @@ strong {
   border: 1px solid #f1dddc;
   background: #fffafa;
   padding: 12px;
-  border-radius: 8px;
+  border-radius: var(--radius-control);
   margin-bottom: 15px;
 }
 .status-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 33px;
-  height: 33px;
-  border-radius: 9px;
+  width: var(--control-compact);
+  height: var(--control-compact);
+  border-radius: var(--radius-control);
   flex-shrink: 0;
 }
 .danger {
@@ -633,16 +633,16 @@ strong {
 }
 .attention-copy b {
   display: block;
-  font-size: 14px;
+  font-size: var(--text-body);
 }
 .attention-copy small {
   display: block;
   color: var(--muted);
-  font-size: 11px;
+  font-size: var(--text-small);
   margin-top: 2px;
 }
 .attention-copy > span {
-  font-size: 14px;
+  font-size: var(--text-body);
   display: flex;
   gap: 7px;
   margin-top: 5px;
@@ -651,10 +651,10 @@ strong {
 .attention-copy em {
   font-style: normal;
   color: var(--red);
-  font-size: 11px;
+  font-size: var(--text-small);
 }
 .section-eyebrow {
-  font-size: 11px;
+  font-size: var(--text-small);
   color: var(--muted);
   letter-spacing: 0.8px;
   margin: 0 21px 1px;
@@ -662,28 +662,28 @@ strong {
 .due-date {
   width: 31px;
   background: #f5f7f8;
-  border-radius: 6px;
+  border-radius: var(--radius-control);
   padding: 3px 5px;
   text-align: center;
   line-height: 1.25;
 }
 .due-date b {
-  font-size: 16px;
+  font-size: var(--text-section);
 }
 .due-date small {
   display: block;
-  font-size: 11px;
+  font-size: var(--text-small);
   color: var(--muted);
 }
 .due-value {
-  font-size: 14px;
+  font-size: var(--text-body);
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
   text-align: right;
 }
 .due-value small {
   display: block;
-  font-size: 11px;
+  font-size: var(--text-small);
   color: var(--muted);
 }
 .next-income {
@@ -691,7 +691,7 @@ strong {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 11px;
+  font-size: var(--text-small);
   color: var(--muted);
 }
 .next-income svg {
@@ -700,7 +700,7 @@ strong {
 .next-income strong {
   margin-left: auto;
   color: var(--green);
-  font-size: 11px;
+  font-size: var(--text-small);
   white-space: nowrap;
 }
 .quiet-state {
@@ -720,7 +720,7 @@ table {
   text-align: left;
 }
 th {
-  font-size: 11px;
+  font-size: var(--text-small);
   font-weight: 400;
   color: var(--muted);
   padding: 10px 12px;
@@ -734,7 +734,7 @@ td:first-child {
 td {
   padding: 11px 12px;
   border-bottom: 1px solid #edf1f4;
-  font-size: 14px;
+  font-size: var(--text-body);
   vertical-align: middle;
 }
 tbody tr:last-child td {
@@ -747,7 +747,7 @@ tbody tr:hover {
 td small {
   display: block;
   color: var(--muted);
-  font-size: 11px;
+  font-size: var(--text-small);
   line-height: 1.6;
 }
 .numeric {
@@ -757,7 +757,7 @@ td small {
   font-weight: 500;
 }
 .unit {
-  font-size: 11px;
+  font-size: var(--text-small);
   color: var(--muted);
   font-weight: 400;
 }
@@ -770,18 +770,18 @@ td small {
 .date-cell {
   white-space: nowrap;
   width: 77px;
-  font-size: 12px;
+  font-size: var(--text-small);
 }
 .row-link {
   padding: 0;
   text-align: left;
-  font-size: 14px;
+  font-size: var(--text-body);
 }
 .row-link:hover {
   color: var(--brand);
 }
 .account-col span {
-  font-size: 11px;
+  font-size: var(--text-small);
   color: var(--muted);
   white-space: nowrap;
 }
@@ -809,7 +809,7 @@ td small {
 .account-icon {
   width: 32px;
   height: 32px;
-  border-radius: 9px;
+  border-radius: var(--radius-control);
   background: #f0f4f6;
   color: var(--muted);
   display: flex;
@@ -818,22 +818,22 @@ td small {
   flex-shrink: 0;
 }
 .account-row b {
-  font-size: 14px;
+  font-size: var(--text-body);
 }
 .account-row small {
   display: block;
-  font-size: 11px;
+  font-size: var(--text-small);
   color: var(--muted);
 }
 .account-row strong {
   margin-left: auto;
-  font-size: 14px;
+  font-size: var(--text-body);
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
 }
 .account-row strong small {
   display: inline;
-  font-size: 11px;
+  font-size: var(--text-small);
 }
 .account-row:hover {
   background: #fafcfc;
@@ -850,16 +850,16 @@ td small {
   color: var(--muted);
 }
 .card-mini b {
-  font-size: 12px;
+  font-size: var(--text-small);
 }
 .card-mini small {
   display: block;
-  font-size: 11px;
+  font-size: var(--text-small);
   color: var(--muted);
 }
 .card-mini button {
   margin-left: auto;
-  font-size: 12px;
+  font-size: var(--text-small);
   white-space: nowrap;
   display: flex;
   align-items: center;
@@ -868,7 +868,7 @@ td small {
 footer {
   display: flex;
   justify-content: space-between;
-  font-size: 11px;
+  font-size: var(--text-small);
   color: var(--muted);
 }
 .list-toolbar,
@@ -884,7 +884,7 @@ footer {
   margin-bottom: 0;
 }
 .list-toolbar select {
-  font-size: 14px;
+  font-size: var(--text-body);
 }
 .filter-panel {
   padding: 17px 20px;
@@ -899,8 +899,8 @@ footer {
 }
 .filter-panel select {
   padding: 7px;
-  border: 1px solid var(--line);
-  border-radius: 6px;
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius-control);
   background: white;
 }
 .segmented {
@@ -912,9 +912,9 @@ footer {
 .segmented button {
   padding: 9px 16px;
   background: #edf1f3;
-  border-radius: 8px;
+  border-radius: var(--radius-control);
   color: var(--muted);
-  font-size: 14px;
+  font-size: var(--text-body);
 }
 .segmented .selected {
   color: #076a75;
@@ -933,30 +933,30 @@ footer {
   background: #f8fbfc;
 }
 .claim-row b {
-  font-size: 14px;
+  font-size: var(--text-body);
 }
 .claim-row small {
   display: block;
   color: var(--muted);
-  font-size: 12px;
+  font-size: var(--text-small);
 }
 .claim-row > div {
   flex: 1;
 }
 .claim-row strong {
   font-variant-numeric: tabular-nums;
-  font-size: 16px;
+  font-size: var(--text-section);
   min-width: 115px;
   text-align: right;
 }
 .claim-type {
-  font-size: 12px;
+  font-size: var(--text-small);
   color: var(--muted);
   width: 60px;
 }
 .claim-due {
   width: 95px;
-  font-size: 14px;
+  font-size: var(--text-body);
 }
 .info-note {
   display: flex;
@@ -965,8 +965,8 @@ footer {
   background: #eaf2f4;
   padding: 15px 18px;
   margin-bottom: 18px;
-  border-radius: 9px;
-  font-size: 14px;
+  border-radius: var(--radius-control);
+  font-size: var(--text-body);
 }
 .account-grid {
   display: grid;
@@ -982,7 +982,7 @@ footer {
 }
 .account-detail p {
   color: var(--muted);
-  font-size: 14px;
+  font-size: var(--text-body);
 }
 .big-balance {
   font-size: 31px;
@@ -990,7 +990,7 @@ footer {
   margin: 18px 0;
 }
 .big-balance small {
-  font-size: 14px;
+  font-size: var(--text-body);
 }
 .account-buttons {
   display: flex;
@@ -1012,7 +1012,7 @@ footer {
   margin-bottom: 25px;
 }
 .compact-card-head p {
-  font-size: 14px;
+  font-size: var(--text-body);
   color: var(--muted);
 }
 .card-stat-row {
@@ -1023,7 +1023,7 @@ footer {
 }
 .card-stat-row span {
   display: block;
-  font-size: 12px;
+  font-size: var(--text-small);
   color: var(--muted);
 }
 .card-stat-row b {
@@ -1053,7 +1053,7 @@ footer {
   display: flex;
   justify-content: space-between;
   gap: 10px;
-  font-size: 11px;
+  font-size: var(--text-small);
   color: var(--muted);
   margin: 8px 0 23px;
 }
@@ -1063,13 +1063,13 @@ footer {
 .breakdown > div:first-child {
   display: flex;
   justify-content: space-between;
-  font-size: 14px;
+  font-size: var(--text-body);
 }
 .breakdown .usage-track {
   margin-top: 8px;
 }
 .report-heading .muted {
-  font-size: 14px;
+  font-size: var(--text-body);
 }
 .drawer-layer {
   position: fixed;
@@ -1092,7 +1092,7 @@ footer {
   width: 440px;
   max-width: 100%;
   background: white;
-  padding: 27px 29px;
+  padding: var(--panel-padding);
   overflow-y: auto;
   box-shadow: -15px 0 50px #202c3915;
 }
@@ -1100,16 +1100,16 @@ footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 22px;
+  padding-bottom: var(--space-5);
   border-bottom: 1px solid var(--line);
-  margin-bottom: 23px;
+  margin-bottom: var(--space-5);
 }
 .drawer-heading h2 {
-  font-size: 21px;
+  font-size: var(--text-dialog);
   margin-top: 4px;
 }
 .eyebrow {
-  font-size: 11px;
+  font-size: var(--text-small);
   letter-spacing: 1px;
   color: var(--muted);
 }
@@ -1119,20 +1119,20 @@ footer {
   align-items: center;
   background: #f1f6f7;
   padding: 10px 12px;
-  border-radius: 7px;
+  border-radius: var(--radius-control);
   color: #076a75;
-  font-size: 14px;
+  font-size: var(--text-body);
   margin-bottom: 22px;
 }
 .form-context span {
   margin-left: auto;
-  font-size: 11px;
+  font-size: var(--text-small);
   color: var(--muted);
 }
 form label {
   display: block;
-  margin-bottom: 17px;
-  font-size: 14px;
+  margin-bottom: var(--space-5);
+  font-size: var(--text-body);
   font-weight: 500;
 }
 form label > span {
@@ -1145,13 +1145,13 @@ form textarea {
   display: block;
   width: 100%;
   margin-top: 7px;
-  border: 1px solid #cad5dd;
+  border: 1px solid var(--control-border);
   padding: 10px 12px;
-  border-radius: 7px;
+  border-radius: var(--radius-control);
   background: white;
   color: var(--ink);
-  font-size: 14px;
-  min-height: 42px;
+  font-size: var(--text-body);
+  min-height: var(--control-size);
 }
 form textarea {
   min-height: 72px;
@@ -1170,7 +1170,7 @@ form input[inputmode="decimal"] {
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
   color: var(--brand);
-  font-size: 14px;
+  font-size: var(--text-body);
 }
 .extra-toggle > svg:last-child {
   margin-left: auto;
@@ -1185,7 +1185,7 @@ form input[inputmode="decimal"] {
   padding-top: 24px;
 }
 .form-help {
-  font-size: 12px;
+  font-size: var(--text-small);
   color: var(--muted);
   margin-top: 22px;
 }
@@ -1193,17 +1193,17 @@ form input[inputmode="decimal"] {
   padding: 10px;
   color: var(--red);
   background: #fbecec;
-  font-size: 14px;
-  border-radius: 6px;
+  font-size: var(--text-body);
+  border-radius: var(--radius-control);
 }
 .detail-amount {
-  font-size: 36px;
+  font-size: var(--text-value);
   font-variant-numeric: tabular-nums;
   letter-spacing: -1px;
   margin: 20px 0;
 }
 .detail-amount small {
-  font-size: 16px;
+  font-size: var(--text-section);
 }
 dl {
   margin: 25px 0;
@@ -1213,7 +1213,7 @@ dl > div {
   border-bottom: 1px solid #edf1f4;
   display: flex;
   gap: 15px;
-  font-size: 14px;
+  font-size: var(--text-body);
 }
 dt {
   color: var(--muted);
@@ -1243,24 +1243,24 @@ dd {
   padding: 15px;
   background: white;
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--radius-panel);
   box-shadow: 0 8px 30px #202c391a;
   max-width: calc(100% - 30px);
 }
 .toast b {
   display: block;
-  font-size: 14px;
+  font-size: var(--text-body);
 }
 .toast small {
   display: block;
   color: var(--muted);
-  font-size: 12px;
+  font-size: var(--text-small);
 }
 .mobile-nav,
 .mobile-more {
   display: none;
 }
-@media (max-width: 1200px) {
+@media (max-width:1100px) {
   .app {
     --sidebar: 196px;
   }
@@ -1268,12 +1268,12 @@ dd {
     --sidebar: 72px;
   }
   .main-content {
-    padding-left: 24px;
-    padding-right: 24px;
+    padding-left: var(--page-gutter);
+    padding-right: var(--page-gutter);
   }
   .topbar {
-    padding-left: 24px;
-    padding-right: 24px;
+    padding-left: var(--page-gutter);
+    padding-right: var(--page-gutter);
   }
   .dashboard-grid {
     grid-template-columns: minmax(0, 1.7fr) minmax(285px, 1fr);
@@ -1283,7 +1283,7 @@ dd {
     padding: 0 17px;
   }
   .metric-value {
-    font-size: 26px;
+    font-size: var(--text-value-mobile);
   }
   .flow-panel .panel-heading {
     flex-wrap: wrap;
@@ -1360,7 +1360,7 @@ dd {
   }
   .topbar {
     height: 58px;
-    padding: 0 18px;
+    padding: 0 var(--page-gutter);
   }
   .breadcrumb > span,
   .breadcrumb > svg,
@@ -1370,31 +1370,31 @@ dd {
     display: none;
   }
   .breadcrumb b {
-    font-size: 14px;
+    font-size: var(--text-body);
   }
   .search input {
     width: 135px;
-    font-size: 14px;
+    font-size: var(--text-body);
   }
   .top-actions {
     gap: 8px;
   }
   .main-content {
-    padding: 22px 18px 90px;
+    padding: var(--space-4) var(--page-gutter) 90px;
   }
   .page-title {
     margin-bottom: 23px;
-    gap: 12px;
+    gap: var(--space-3);
   }
   .page-title h1 {
-    font-size: 23px;
+    font-size: var(--text-page-mobile);
   }
   .page-title p {
-    font-size: 14px;
+    font-size: var(--text-body);
     max-width: 245px;
   }
   .page-title .primary-button {
-    font-size: 12px;
+    font-size: var(--text-small);
     padding: 9px 10px;
     gap: 5px;
   }
@@ -1414,20 +1414,20 @@ dd {
     padding: 0 17px;
   }
   .metric-label {
-    font-size: 12px;
+    font-size: var(--text-small);
   }
   .metric-value {
-    font-size: 27px;
+    font-size: var(--text-value-mobile);
   }
   .metric-note {
-    font-size: 11px;
+    font-size: var(--text-small);
     max-width: 145px;
   }
   .snapshot-label {
-    font-size: 11px;
+    font-size: var(--text-small);
   }
   .snapshot-label > span:last-child {
-    font-size: 11px;
+    font-size: var(--text-small);
   }
   .panel-heading {
     padding-left: 18px;
@@ -1450,7 +1450,7 @@ dd {
     gap: 6px;
   }
   .select-wrap select {
-    font-size: 12px;
+    font-size: var(--text-small);
   }
   .chart {
     height: 200px;
@@ -1460,25 +1460,25 @@ dd {
     padding-bottom: 15px;
   }
   .next-income {
-    font-size: 12px;
+    font-size: var(--text-small);
   }
   .next-income strong {
-    font-size: 12px;
+    font-size: var(--text-small);
   }
   .attention-copy b {
-    font-size: 14px;
+    font-size: var(--text-body);
   }
   .attention-copy small {
-    font-size: 12px;
+    font-size: var(--text-small);
   }
   .section-eyebrow {
-    font-size: 11px;
+    font-size: var(--text-small);
   }
   .attention-copy > span {
-    font-size: 14px;
+    font-size: var(--text-body);
   }
   .due-value {
-    font-size: 14px;
+    font-size: var(--text-body);
   }
   .account-col,
   .arrow-col {
@@ -1504,13 +1504,13 @@ dd {
   }
   .account-row strong,
   .account-row b {
-    font-size: 14px;
+    font-size: var(--text-body);
   }
   .account-row small {
-    font-size: 12px;
+    font-size: var(--text-small);
   }
   footer {
-    font-size: 11px;
+    font-size: var(--text-small);
     gap: 10px;
   }
   .mobile-nav {
@@ -1530,7 +1530,7 @@ dd {
     flex-direction: column;
     align-items: center;
     gap: 4px;
-    font-size: 11px;
+    font-size: var(--text-small);
     color: var(--muted);
     min-width: 67px;
     padding: 4px 7px;
@@ -1546,7 +1546,7 @@ dd {
     z-index: 65;
     background: white;
     border: 1px solid var(--line);
-    border-radius: 12px;
+    border-radius: var(--radius-panel);
     box-shadow: 0 10px 30px #202c3920;
     padding: 10px;
     display: block;
@@ -1557,7 +1557,7 @@ dd {
     align-items: center;
     gap: 10px;
     padding: 13px;
-    font-size: 14px;
+    font-size: var(--text-body);
     text-align: left;
   }
   .mobile-more button > svg:last-child {
@@ -1587,12 +1587,12 @@ dd {
     min-width: 135px;
   }
   .claim-row strong {
-    font-size: 14px;
+    font-size: var(--text-body);
     min-width: 90px;
   }
   .claim-due {
     width: auto;
-    font-size: 12px;
+    font-size: var(--text-small);
   }
   .claim-row > svg:last-child {
     display: none;
@@ -1607,7 +1607,7 @@ dd {
     font-size: 17px;
   }
   .drawer {
-    padding: 24px 22px;
+    padding: var(--panel-padding);
     width: 100%;
   }
   .notification-pop {
@@ -1621,7 +1621,7 @@ dd {
     flex-wrap: wrap;
   }
   .report-heading .muted {
-    font-size: 14px;
+    font-size: var(--text-body);
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -1633,35 +1633,35 @@ dd {
 
 /* Compact controls retain legibility without displacing the data region. */
 .select-wrap select {
-  font-size: 12px;
+  font-size: var(--text-small);
 }
 .flow-panel .panel-heading {
   flex-wrap: wrap;
 }
 .metric-note {
   min-height: 34px;
-  font-size: 12px;
+  font-size: var(--text-small);
 }
 .metric-value {
-  font-size: 30px;
+  font-size: var(--text-value);
 }
 .metric-value span {
-  font-size: 12px;
+  font-size: var(--text-small);
 }
 .table-wrap td small,
 .account-col span {
-  font-size: 12px;
+  font-size: var(--text-small);
 }
 .account-row small,
 .card-mini small {
-  font-size: 12px;
+  font-size: var(--text-small);
 }
 .next-income {
   flex-wrap: wrap;
-  font-size: 11px;
+  font-size: var(--text-small);
 }
 .next-income strong {
-  font-size: 12px;
+  font-size: var(--text-small);
 }
 .account-row {
   gap: 8px;
@@ -1682,37 +1682,37 @@ dd {
   font-size: 23px;
 }
 .flow-totals strong small {
-  font-size: 12px;
+  font-size: var(--text-small);
 }
 .flow-totals > div > span {
-  font-size: 12px;
+  font-size: var(--text-small);
 }
 .primary-button,
 .secondary-button {
-  font-size: 14px;
+  font-size: var(--text-body);
 }
 .summary .metric-label {
-  font-size: 14px;
+  font-size: var(--text-body);
   white-space: normal;
 }
 .tiny-badge {
   white-space: nowrap;
 }
 .snapshot-label {
-  font-size: 11px;
+  font-size: var(--text-small);
 }
 .panel-heading p {
-  font-size: 12px;
+  font-size: var(--text-small);
 }
 @media (max-width: 760px) {
   .metric-label {
-    font-size: 12px !important;
+    font-size: var(--text-small) !important;
   }
   .metric-value {
-    font-size: 27px;
+    font-size: var(--text-value-mobile);
   }
   .metric-note {
-    font-size: 11px;
+    font-size: var(--text-small);
   }
   .flow-totals {
     gap: 12px;
@@ -1721,24 +1721,24 @@ dd {
     font-size: 20px;
   }
   .flow-totals > div > span {
-    font-size: 11px;
+    font-size: var(--text-small);
   }
   .flow-totals .net {
     padding-left: 12px;
   }
   .primary-button,
   .secondary-button {
-    font-size: 13px;
+    font-size: var(--text-body);
   }
   .card-mini button {
     margin-left: 27px;
   }
   .row-link {
-    font-size: 13px;
+    font-size: var(--text-body);
   }
   .numeric {
-    font-size: 13px;
+    font-size: var(--text-body);
   }
 }
 
-.auth-shell{min-height:100dvh;display:grid;place-items:center;padding:24px}.auth-panel{padding:32px;width:420px;max-width:100%}.auth-panel .brand{margin:0 0 28px}.auth-panel h1{font-size:23px;margin-bottom:8px}.auth-panel form{margin-top:24px}.auth-panel .form-error{margin-top:18px}.auth-panel .muted{line-height:1.7}button:disabled{opacity:.6;cursor:wait}
+.auth-shell{min-height:100dvh;display:grid;place-items:center;padding:24px}.auth-panel{padding:32px;width:420px;max-width:100%}.auth-panel .brand{margin:0 0 28px}.auth-panel h1{font-size:var(--text-page);margin-bottom:8px}.auth-panel form{margin-top:24px}.auth-panel .form-error{margin-top:18px}.auth-panel .muted{line-height:1.7}button:disabled{opacity:.6;cursor:wait}

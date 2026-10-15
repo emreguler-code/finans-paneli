@@ -20,6 +20,6 @@ export function collectAlerts(data) {
 }
 export function AlertNotice({alert,onOpen}) {
   if(!alert)return null;
-  const content=<><CircleAlert size={17}/><span><strong>{alert.title}</strong><small>{alert.detail}</small></span>{onOpen&&<ChevronRight size={15}/>}</>;
+  const content=<><CircleAlert size={18}/><span><strong>{alert.title}</strong><small>{alert.detail}</small></span>{onOpen&&<ChevronRight size={16}/>}</>;
   return onOpen?<button className={'alert-notice '+alert.level} onClick={onOpen}>{content}</button>:<div className={'alert-notice '+alert.level} role="status">{content}</div>;
 }

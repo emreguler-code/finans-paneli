@@ -1,4 +1,4 @@
-# Finans Paneli 1.6.1
+# Finans Paneli 1.7.0
 
 Sade Netlik tasarımında cari hesaplar, banka/kasa, kredi kartları, ödeme planı ve raporlar. React/Vite arayüz; PHP/MySQL API. Banka bağlantısı yoktur.
 
@@ -6,7 +6,7 @@ Bu depo kullanıcı/işlem veritabanı, yönetici şifresi veya hosting erişim 
 
 ## Geliştirme
 
-Node.js 22, PHP 8.3+ (pdo_mysql), MySQL/MariaDB gerekir.
+Node.js 24, PHP 8.3+ (pdo_mysql), MySQL/MariaDB gerekir.
 
 ```sh
 npm ci
@@ -37,7 +37,7 @@ Codex değişiklik yapmadan AGENTS.md dosyasını okumalıdır. Geçmiş sürüm
 
 `npm run release:package` derlenmiş arayüz, PHP API, boş şema ve Türkçe kurulum belgesini `dist/releases/finans-paneli-<sürüm>.zip` dosyasında toplar; yanında SHA-256 dosyası üretir. Gerçek `api/config.php` ve çalışma zamanı verileri pakete alınmaz. ZIP içindeki `hosting/` içeriği web dizinine yüklenir; diğer dosyalar web dizini dışında tutulur. Ayrıntılar [hosting kurulum belgesinde](docs/HOSTING-KURULUM.md).
 
-GitHub Actions `Hosting release` iş akışı `v<package.json sürümü>` etiketi GitHub'a gönderildiğinde testleri çalıştırır, paketi hazırlar ve GitHub Release'e ekler. Örneğin 1.6.1 için `v1.6.1`. İş akışı ve paketleme dosyaları önce ilgili commit'te bulunmalıdır. Actions'ın depoda etkin ve iş akışının Release yazma yetkisine sahip olması gerekir. Manuel `workflow_dispatch` çalıştırması yalnızca indirilebilir Actions artifact'ı üretir; Release yayımlamaz.
+GitHub Actions `Hosting release` iş akışı `v<package.json sürümü>` etiketi GitHub'a gönderildiğinde testleri çalıştırır, paketi hazırlar ve GitHub Release'e ekler. Örneğin 1.7.0 için `v1.7.0`. İş akışı ve paketleme dosyaları önce ilgili commit'te bulunmalıdır. Actions'ın depoda etkin ve iş akışının Release yazma yetkisine sahip olması gerekir. Manuel `workflow_dispatch` çalıştırması yalnızca indirilebilir Actions artifact'ı üretir; Release yayımlamaz.
 
 ## İzole API ve tarayıcı testleri
 
@@ -55,3 +55,7 @@ npm run test:browser
 `test:api` sentetik veride finansal işlemleri; `test:migrations` eski verilerin korunmasını, yedeği, başarısız geçişi ve tekrar denemeyi; `test:browser` derlenmiş arayüzü masaüstü ve dar ekranlarda doğrular. `test:browser` öncesinde `npm run build` çalıştırın. Yerel Chromium kullanmak için `QA_BROWSER_BIN=/usr/bin/chromium` tanımlanabilir. Release iş akışı bu kontrollerin hepsini çalıştırır. Eski API sözleşmesi testleri `tests/historical/` altında ayrılmıştır.
 
 Statik çıktı yalnızca arayüz ve yerel fontları içerir; PHP/config dosyaları statik çıktıya kopyalanmaz. Sites adaptörü API sağlamaz. PHP hosting ZIP'i API'yi ayrıca paketler ve gerçek config dosyalarını hariç tutar.
+
+Salt refaktörlerde önceki yayımlanmış arayüzle piksel karşılaştırması ayrıca `QA_COMPARE_RELEASE=1` ile etkinleştirilir; onaylı tasarım değişikliklerinde eski ekranın birebir aynı olması beklenmez.
+
+GitHub API erişimi olmayan istemciler için etiketli yayınların sonucu `release-status/v<sürüm>` açıklamalı Git etiketine kaydedilir. Bu otomatik kayıt iş akışı sonucunu, yayın bağlantısını ve paket SHA-256 değerini içerir; uygulama sürüm etiketi `v<sürüm>` olmaya devam eder.

@@ -1,4 +1,5 @@
-import { useRef, useState } from 'react';
+import useEmblaCarousel from 'embla-carousel-react';
+import { useRef, useState, useLayoutEffect, useEffect, useCallback } from 'react';
 import {ChevronLeft, ChevronRight, Wallet, Info, Pencil} from 'lucide-react';
 import {BankMark, ProgramMark, bankName} from './BankCards';
 import {fmt, tone, can} from './ui';
@@ -12,13 +13,28 @@ export function AccountFace({item:a,isCard,actions}){
  <footer>{isCard?<><span>Hesap kesim<strong>{dateLabel(a.statement_date)}</strong></span><span>Son ödeme<strong>{dateLabel(a.due)}</strong></span></>:<><span>Hesap türü<strong title={a.type}>{isKmh(a)?'KMH':a.type}</strong></span>{hasMaturity(a)&&<span>Vade sonu<strong>{dateLabel(a.maturity_date)}</strong></span>}</>}</footer></section>;
 }
 export function AccountCarousel({items,selected,onSelect,isCard,data,open}){
- const drag=useRef(null),[offset,setOffset]=useState(0);const idx=Math.max(0,items.findIndex(a=>a.id===selected));const active=items[idx];
- function step(n){if(items.length>1)onSelect(items[(idx+n+items.length)%items.length].id);setOffset(0)}
- const down=e=>{if(e.target.closest('button'))return;if(e.button!==undefined&&e.button!==0)return;drag.current={x:e.clientX,y:e.clientY};e.currentTarget.setPointerCapture(e.pointerId)};
- const move=e=>{if(drag.current)setOffset(Math.max(-90,Math.min(90,e.clientX-drag.current.x)))};
- const up=e=>{if(!drag.current)return;const dx=e.clientX-drag.current.x,dy=e.clientY-drag.current.y;drag.current=null;if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy))step(dx<0?1:-1);setOffset(0)};
+ const idx=Math.max(0,items.findIndex(a=>a.id===selected)),active=items[idx];
+ const selectedRef=useRef(selected),onSelectRef=useRef(onSelect);selectedRef.current=selected;onSelectRef.current=onSelect;
+ const itemsRef=useRef(items);itemsRef.current=items;
+ const [emblaRef,embla]=useEmblaCarousel({loop:items.length>2,align:'center',containScroll:false,startIndex:idx,watchDrag:(_api,event)=>!event.target.closest('button,a,input,select'),duration:window.matchMedia('(prefers-reduced-motion: reduce)').matches?0:25});
+ const viewport=useRef(null),[settled,setSettled]=useState(idx);
+ const setViewport=useCallback(node=>{viewport.current=node;emblaRef(node)},[emblaRef]);
+ useEffect(()=>{
+  if(!embla)return;
+  const settle=()=>{const index=embla.selectedScrollSnap();setSettled(index);const item=itemsRef.current[index];if(item&&item.id!==selectedRef.current)onSelectRef.current(item.id)};
+  const reInit=()=>{const index=Math.max(0,itemsRef.current.findIndex(item=>item.id===selectedRef.current));embla.scrollTo(index,true);setSettled(index)};
+  embla.on('settle',settle);embla.on('reInit',reInit);
+  return()=>{embla.off('settle',settle);embla.off('reInit',reInit)};
+ },[embla]);
+ useEffect(()=>{if(embla&&idx!==embla.selectedScrollSnap())embla.scrollTo(idx,true);setSettled(idx)},[embla,selected,idx,items.length]);
+ useLayoutEffect(()=>{
+  const frame=viewport.current,card=frame?.querySelector('.carousel-active .account-face');if(!card)return;
+  const resize=()=>frame.style.setProperty('--active-card-height',Math.ceil(card.getBoundingClientRect().height)+12+'px');
+  const observer=new ResizeObserver(resize);observer.observe(card);resize();return()=>observer.disconnect();
+ },[active?.id,isCard,items.length]);
+ function step(n){if(!embla||items.length<2)return;const target=(embla.selectedScrollSnap()+n+items.length)%items.length;embla.scrollTo(target)}
  if(!active)return <p className="empty">Hesap bulunamadı.</p>;
  return <div className={"carousel-area "+(!isCard?"compact-bank-carousel":"")}><div className="account-carousel" role="region" aria-label={isCard?'Kredi kartları':'Hesaplar'} onKeyDown={e=>{if(e.target===e.currentTarget&&e.key==='ArrowRight')step(1);if(e.target===e.currentTarget&&e.key==='ArrowLeft')step(-1)}} tabIndex={0}>
- <div className="carousel-viewport" onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={()=>{drag.current=null;setOffset(0)}}><div className="carousel-track" style={{transform:`translateX(calc(-50% + ${offset}px))`}}>{items.length>1&&<div className="carousel-neighbor" aria-hidden="true"><AccountFace item={items[(idx-1+items.length)%items.length]} isCard={isCard}/></div>}<div className="carousel-active"><AccountFace item={active} isCard={isCard} actions={!isCard&&<><button className="icon-button" title="Hesap bilgileri" aria-label="Hesap bilgileri" onClick={()=>open({entity:'account',mode:'view',item:active})}><Info size={16}/></button>{can(data.user,'edit')&&<button className="icon-button" title="Hesabı düzenle" aria-label="Hesabı düzenle" onClick={()=>open({entity:'account',item:active})}><Pencil size={15}/></button>}</>}/></div>{items.length>1&&<div className="carousel-neighbor" aria-hidden="true"><AccountFace item={items[(idx+1)%items.length]} isCard={isCard}/></div>}</div></div>
- <button className="carousel-arrow previous" disabled={items.length<2} aria-label="Önceki hesap" onClick={()=>step(-1)}><ChevronLeft size={19}/></button><button className="carousel-arrow next" disabled={items.length<2} aria-label="Sonraki hesap" onClick={()=>step(1)}><ChevronRight size={19}/></button></div><div className="carousel-caption"><span aria-live="polite">{idx+1} / {items.length} · {active.name}</span>{isCard&&<div><button className="list-icon" title="Hesap bilgileri" aria-label="Hesap bilgileri" onClick={()=>open({entity:isCard?'card':'account',mode:'view',item:active})}><Info size={17}/></button>{can(data.user,'edit')&&<button className="list-icon" title="Hesabı düzenle" aria-label="Hesabı düzenle" onClick={()=>open({entity:isCard?'card':'account',item:active})}><Pencil size={16}/></button>}</div>}</div></div>;
+ <div ref={setViewport} className="carousel-viewport"><div className="carousel-track">{items.map((item,index)=><div key={item.id} className={'carousel-slide '+(index===idx?'carousel-active':'carousel-neighbor')} aria-hidden={index!==idx} inert={index!==idx?true:undefined}><AccountFace item={item} isCard={isCard} actions={index===idx&&!isCard&&<><button className="icon-button" title="Hesap bilgileri" aria-label="Hesap bilgileri" onClick={()=>open({entity:'account',mode:'view',item})}><Info size={18}/></button>{can(data.user,'edit')&&<button className="icon-button" title="Hesabı düzenle" aria-label="Hesabı düzenle" onClick={()=>open({entity:'account',item})}><Pencil size={18}/></button>}</>}/></div>)}</div></div>
+ <button className="carousel-arrow previous" disabled={items.length<2} aria-label="Önceki hesap" onClick={()=>step(-1)}><ChevronLeft size={16}/></button><button className="carousel-arrow next" disabled={items.length<2} aria-label="Sonraki hesap" onClick={()=>step(1)}><ChevronRight size={16}/></button></div><div className="carousel-caption"><span aria-live="polite">{settled+1} / {items.length} · {active.name}</span>{isCard&&<div><button className="list-icon" title="Hesap bilgileri" aria-label="Hesap bilgileri" onClick={()=>open({entity:isCard?'card':'account',mode:'view',item:active})}><Info size={18}/></button>{can(data.user,'edit')&&<button className="list-icon" title="Hesabı düzenle" aria-label="Hesabı düzenle" onClick={()=>open({entity:isCard?'card':'account',item:active})}><Pencil size={18}/></button>}</div>}</div></div>;
 }
