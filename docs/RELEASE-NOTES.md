@@ -1,6 +1,6 @@
 # Finans Paneli 1.7.2
 
-Ortak aramada 3 karakter / 300 ms otomatik arama, büyüteç düğmesi ve hareket paneliyle aynı kenarlık rengi. Fat. Alış / Fatsız. Alış etiketleri ve daha dar işlem alanı.
+Sayfa geçişinde ortak aramanın kısa süreliğine içerikte belirmesi engellendi. Ortak aramada 3 karakter / 300 ms otomatik arama, büyüteç düğmesi ve hareket paneliyle aynı kenarlık rengi. Fat. Alış / Fatsız. Alış etiketleri ve daha dar işlem alanı.
 
 Hesap uyarıları ayrılmış sağ sütunda tüm aktif banka/kasa/KMH hesapları için görünür. Uyarı ilgili hesabı, sekmeyi ve hareket satırını açar; hareketsiz uyarılar hesap bilgisini gösterir. Dar ekranda sabit Uyarılar düğmesi vardır. Tablet hareket açıklamalarının harf harf bölünmesi giderildi.
 

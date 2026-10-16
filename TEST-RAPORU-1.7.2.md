@@ -85,3 +85,5 @@ Doğrulama Chromium 154, PHP 8.3 ve MariaDB 11.4 ile yerelde yapıldı. Fiziksel
 ## Paket üzerinden demo yenileme kabulü
 
 Paketin kendi update.php ekranından kutu işaretlenmeden silme yapılmadığı, ardından iki kez demo yenilendiğinde her seferinde 588 kayıt / 4 hesap / 10 cari / 3 kart oluştuğu doğrulandı. Eski doğrulama işlemi silindi; kayıtlar çoğalmadı. Her iki yenileme sonrasında aynı yönetici şifresiyle giriş başarılı. Bu akış 12 ek paket arayüz kontrolüyle denetlenir. Paket ayrıca kapsamlı demoda 641 finansal kontrolden geçer.
+
+GitHub'ın Chromium 156 denetimi, sayfa geçişinde ortak aramanın üst alana taşınmadan önce içerikte kısa süreliğine çizilebildiğini yakaladı. Portal yerleşimi useLayoutEffect ile ilk boyamadan önce tamamlanacak şekilde düzeltildi; tek arama alanı denetimi korunur.

@@ -1,4 +1,4 @@
-import {Children,cloneElement,isValidElement,useEffect,useRef,useState} from 'react';
+import {Children,cloneElement,isValidElement,useEffect,useLayoutEffect,useRef,useState} from 'react';
 import {createPortal} from 'react-dom';
 import {Search, SlidersHorizontal, ArrowDownUp, Download, X} from 'lucide-react';
 import {Sheet} from './ui';
@@ -34,7 +34,7 @@ export function ListTools({query,setQuery,placeholder='Hareketlerde ara',filters
  const querySetter=useRef(setQuery);querySetter.current=setQuery;
  const [composing,setComposing]=useState(false);
  const input=useRef(null),fields=fieldsIn(children),applied=fields.filter(active);
- useEffect(()=>{setHost(document.getElementById('page-search-host'))},[]);
+ useLayoutEffect(()=>{setHost(document.getElementById('page-search-host'))},[]);
  useEffect(()=>setText(query),[query]);
  useEffect(()=>{const q=text.trim();if(filters||composing||q===query||(q.length>0&&q.length<3))return;const timer=setTimeout(()=>querySetter.current(q),300);return()=>clearTimeout(timer)},[text,query,filters,composing]);
  function close(){setFilters(false);setDraft({});setError('');input.current?.focus()}
