@@ -150,6 +150,53 @@ let activePage;const checks=[],errors=[];const ok=(name,test)=>{if(!test)throw E
  await p.screenshot({path:out+'/shared-search-desktop.png',fullPage:true});
  for(const width of [390,320]){await p.setViewportSize({width,height:844});await p.locator('.mobile-nav').getByRole('button',{name:'Diğer',exact:true}).click();await p.locator('.mobile-more').getByRole('button',{name:'Ödeme Planı',exact:true}).click();await p.locator('.plan-day').filter({has:p.locator('.calendar-cell-content')}).first().click();ok('Mobile selected-day agenda follows calendar '+width,await p.locator('.plan-aside').evaluate(el=>el.getBoundingClientRect().top>=el.previousElementSibling.getBoundingClientRect().bottom));await p.locator('.topbar').getByRole('button',{name:'Filtrele',exact:true}).click();ok('Mobile filter panel matches search width '+width,await p.locator('.page-search').evaluate(el=>Math.abs(el.querySelector('.page-search-row').getBoundingClientRect().width-el.querySelector('.search-filter-panel').getBoundingClientRect().width)<2));await p.screenshot({path:out+'/shared-filters-'+width+'.png',fullPage:true});await p.locator('.search-filter-panel').getByRole('button',{name:'Vazgeç',exact:true}).click();}
 
+ // Restore previous controls and validate one shared header on every page.
+ const navigateLayout=async(name,width)=>{
+  if(width>760)await p.locator('.sidebar').getByRole('button',{name,exact:true}).click();
+  else {const direct={'Genel bakış':'Özet','Raporlar':'Raporlar','Tahsilat & Ödeme':'Ödeme'}[name];if(direct)await p.locator('.mobile-nav').getByRole('button',{name:direct,exact:true}).click();else{await p.locator('.mobile-nav').getByRole('button',{name:'Diğer',exact:true}).click();await p.locator('.mobile-more').getByRole('button',{name,exact:true}).click();}}
+  await p.locator('main h1').first().waitFor();if(name==='Cari hesaplar'&&await p.locator('.cari-back').count())await p.locator('.cari-back').click();
+ };
+ for(const width of [2540,1920,1440,768,390,320]){
+  await p.setViewportSize({width,height:1000});
+  for(const name of ['Genel bakış','Cari hesaplar','Tahsilat & Ödeme','Ödeme Planı','Hesaplar','Kredi kartları','Raporlar','Kullanıcılar']){
+   await navigateLayout(name,width);
+   ok(name+' has one search and no duplicate reset '+width,await p.locator('main input[aria-label*=ara]').count()===0&&await p.locator('.topbar #search').count()===1&&await p.getByRole('button',{name:'Filtreleri sıfırla',exact:true}).count()===0);
+   const geometry=await p.locator('.page-search-row').evaluate(el=>{const parts=[el.querySelector('.cari-search'),...el.querySelectorAll(':scope>button')].map(e=>e.getBoundingClientRect());return parts.every(r=>Math.abs(r.height-44)<1&&Math.abs(r.top-parts[0].top)<1)});
+   ok(name+' search controls align at 44px '+width,geometry);
+   const titleAdd=p.locator('main .page-title .primary-button').first();if(await titleAdd.count())ok(name+' add action shares title row '+width,await titleAdd.evaluate(el=>{const action=el.getBoundingClientRect(),heading=el.closest('.page-title').firstElementChild.getBoundingClientRect();return action.top<heading.bottom&&action.left>=heading.right+4}));
+   ok(name+' frame aligns with search '+width,await p.evaluate(()=>{const main=document.querySelector('.main-content'),box=main.getBoundingClientRect(),style=getComputedStyle(main),search=document.querySelector('.page-search-row').getBoundingClientRect();return Math.abs(search.left-box.left-parseFloat(style.paddingLeft))<2&&document.documentElement.scrollWidth<=innerWidth}));
+   if(width>760)ok(name+' restores date '+width,await p.locator('.date-label').isVisible()&&(await p.locator('.date-label').innerText()).includes('2026'));
+   for(const bar of await p.locator('.ledger-view .content-tools').all())ok(name+' ledger tools align right '+width,await bar.evaluate(el=>{const panel=el.closest('.ledger-view').getBoundingClientRect(),tools=el.querySelector('.cari-toolbar-actions').getBoundingClientRect();return panel.right-tools.right>=0&&panel.right-tools.right<=24}));
+   if(name==='Raporlar')await p.waitForTimeout(1600);
+   await p.screenshot({path:out+'/layout-review-'+name.replaceAll(' ','-')+'-'+width+'.png',fullPage:true});
+  }
+ }
+ await p.setViewportSize({width:1440,height:1000});await navigateLayout('Genel bakış',1440);
+ ok('Shortcut hint restored',await p.locator('.page-search kbd').isVisible());
+ ok('Overview title has no orphan toolbar above it',await p.locator('main>.content-tools').count()===0&&await p.locator('.main-content').evaluate(el=>{const title=el.querySelector('.page-title').getBoundingClientRect();return title.top-el.getBoundingClientRect().top<=32}));
+ const overviewState=await(await p.request.get(base+'/api/index.php?action=state')).json();const scheduledNames=overviewState.events.filter(e=>e.scheduled).map(e=>e.description);
+ const recentText=await p.locator('.transactions-panel tbody').innerText();ok('Recent activity excludes planned records',scheduledNames.every(name=>!name||!recentText.includes(name))&&await p.locator('.transactions-panel tbody tr').count()>0);
+ ok('Outgoing legend matches chart series',await p.evaluate(()=>{const legend=document.querySelector('.legend.outgoing'),bar=document.querySelector('.flow-panel .recharts-bar:nth-of-type(2) path');const paths=[...document.querySelectorAll('.flow-panel .recharts-bar path')];return paths.some(path=>getComputedStyle(path).fill===getComputedStyle(legend).backgroundColor)}));
+ await navigateLayout('Hesaplar',1440);await p.locator('.topbar').getByRole('button',{name:'Filtrele',exact:true}).click();await p.getByRole('combobox',{name:'Arama kapsamı',exact:true}).selectOption('accounts');await p.locator('.search-filter-panel').getByRole('button',{name:'Ara',exact:true}).click();
+ await p.getByRole('group',{name:'Hesap listesi araçları',exact:true}).getByRole('button',{name:'Sırala',exact:true}).click();ok('Inventory sort remains independently available',await p.getByRole('button',{name:'Ad: A–Z',exact:true}).isVisible());await p.getByRole('button',{name:'Ad: A–Z',exact:true}).click();
+ await p.getByRole('group',{name:'Hareket araçları',exact:true}).getByRole('button',{name:'Sırala',exact:true}).click();ok('Movement sort remains available in account search scope',await p.getByRole('button',{name:'Tutar: düşükten yükseğe',exact:true}).isVisible());await p.getByRole('button',{name:'Tutar: düşükten yükseğe',exact:true}).click();
+ const movementDownload=await Promise.all([p.waitForEvent('download'),p.getByRole('group',{name:'Hareket araçları',exact:true}).getByRole('button',{name:'CSV indir',exact:true}).click()]);ok('Movement CSV keeps its own context',movementDownload[0].suggestedFilename()==='hesap-hareketleri.csv');
+ await navigateLayout('Raporlar',1440);await p.locator('.topbar').getByRole('button',{name:'Filtrele',exact:true}).click();await p.getByRole('combobox',{name:'Hesap',exact:true}).selectOption({label:'KMH Deneme Hesabı'});await p.locator('.search-filter-panel').getByRole('button',{name:'Ara',exact:true}).click();
+ await navigateLayout('Genel bakış',1440);await p.locator('.account-row').first().click();await p.locator('.finance-page h1').filter({hasText:'Raporlar'}).waitFor();await p.locator('.topbar').getByRole('button',{name:'Filtrele',exact:true}).click();ok('Dashboard account keeps original report destination and overrides saved scope',(await p.getByRole('combobox',{name:'Hesap',exact:true}).locator('option:checked').innerText())==='Günlük hesap');await p.locator('.search-filter-panel').getByRole('button',{name:'Vazgeç',exact:true}).click();
+ await navigateLayout('Hesaplar',1440);await p.locator('.topbar').getByRole('button',{name:'Filtrele',exact:true}).click();await p.getByRole('combobox',{name:'Arama kapsamı',exact:true}).selectOption('accounts');await p.locator('#search').fill('Günlük');await p.locator('.search-filter-panel').getByRole('button',{name:'Ara',exact:true}).click();
+ await p.getByRole('button',{name:'Bildirimleri aç',exact:true}).click();await p.getByRole('dialog').locator('.alert-notice').filter({hasText:'KMH Deneme Hesabı'}).click();await p.locator('.carousel-active h2').filter({hasText:'KMH Deneme Hesabı'}).waitFor();ok('Notification destination overrides saved account and query',await p.locator('#search').inputValue()==='');
+ await navigateLayout('Ödeme Planı',1440);await p.locator('#search').fill('bulunamayacak-plan');await p.locator('#search').press('Enter');await navigateLayout('Genel bakış',1440);await p.locator('.summary button.metric').first().click();await p.locator('.topbar').getByRole('button',{name:'Filtrele',exact:true}).click();ok('Dashboard receivables override remembered plan query',await p.locator('#search').inputValue()===''&&await p.getByRole('combobox',{name:'Tür',exact:true}).inputValue()==='Tahsilat');await p.locator('.search-filter-panel').getByRole('button',{name:'Vazgeç',exact:true}).click();
+
+ // The updater distinguishes uploading application files from a schema migration.
+ await p.setViewportSize({width:1440,height:1000});await p.goto(base+'/update.php');
+ await p.locator('#status').filter({hasText:'Veritabanı güncel (şema 7)'}).waitFor();
+ ok('Current schema has no misleading update action',!await p.locator('#run').isVisible()&&await p.locator('#run').isDisabled());
+ ok('Updater explains files are installed separately',(await p.locator('main').innerText()).includes('Uygulama dosyalarını indirmez veya yüklemez.'));
+ ok('Demo renewal remains opt-in',!await p.locator('#demo').isChecked());await p.screenshot({path:out+'/updater-current-desktop.png'});
+ await p.setViewportSize({width:320,height:844});await p.screenshot({path:out+'/updater-current-mobile.png',fullPage:true});ok('Updater fits 320px',await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+ await p.route('**/api/index.php?action=update_status',route=>route.fulfill({json:{version:6,target:7,backupReady:false}}));await p.reload();await p.getByRole('button',{name:'Veritabanını güncelle',exact:true}).waitFor();
+ ok('Older schema offers enabled migration',await p.locator('#run').isEnabled()&&(await p.locator('#status').innerText()).includes('6 → 7'));
+ await p.unroute('**/api/index.php?action=update_status');await p.reload();await p.locator('#status').filter({hasText:'Veritabanı güncel (şema 7)'}).waitFor();
  ok('Bundled Inter loaded',await p.evaluate(()=>document.fonts.check('14px Inter')));
  ok('No runtime React errors',errors.length===0);
  await browser.close();fs.writeFileSync(out+'/checks.json',JSON.stringify({passed:checks.length,browser:browser.version(),compiled:true,checks,errors},null,2));

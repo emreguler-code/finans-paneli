@@ -17,4 +17,4 @@ PHP 8.3+, pdo_mysql, MySQL/MariaDB ve HTTPS gerekir. Yeni kurulumlar için MySQL
 
 ## Paketi doğrulama
 
-ZIP ve `.sha256` dosyasını birlikte indirin; bulunduğunuz dizinde `sha256sum -c finans-paneli-1.7.0.zip.sha256` çalıştırın. Yeni sürümlerde dosya adındaki sürümü değiştirin.
+ZIP ve `.sha256` dosyasını birlikte indirin; bulunduğunuz dizinde `sha256sum -c finans-paneli-1.7.1.zip.sha256` çalıştırın. Yeni sürümlerde dosya adındaki sürümü değiştirin.

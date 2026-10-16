@@ -17,11 +17,7 @@ form input,form select,.date-trigger{min-height:var(--control-size)}
  .icon-button,.list-icon,.icon-only,.carousel-arrow{width:var(--control-size);height:var(--control-size)}
  .ledger-actions .icon-button{width:var(--control-size);height:var(--control-size);min-height:var(--control-size)}
  .ledger-actions{padding:var(--space-1) var(--space-2);gap:var(--space-1)}
- .bank-account-page .inventory-tools .common-toolbar{flex-wrap:wrap}
- .bank-account-page .inventory-tools .common-toolbar .cari-search{flex-basis:100%;min-width:0}
  .account-title-actions{gap:var(--space-2)}
- .inventory-tools .cari-toolbar-actions{gap:var(--space-1)}
- .inventory-tools .shared-filters{padding:var(--space-3)}
  .account-title-actions>.primary-button{width:var(--control-size);padding:0}
  .plan-panel .common-toolbar{flex-wrap:wrap}
  .plan-panel .common-toolbar .cari-toolbar-actions{width:auto;gap:var(--space-1)}
@@ -48,10 +44,6 @@ form input,form select,.date-trigger{min-height:var(--control-size)}
 }
 
 /* One search surface for the current page, with an inline filter panel. */
-.topbar{height:auto;min-height:76px;align-items:flex-start;padding:16px var(--page-gutter);gap:16px}
-#page-search-host{flex:1;min-width:0}
-.topbar .top-actions{flex:0 0 auto;padding-top:6px}
-.topbar .date-label,.topbar .header-divider{display:none}
 .page-search{width:100%;min-width:0}
 .page-search-row{display:flex;align-items:center;gap:8px;width:100%}
 .page-search-row .cari-search{flex:1;min-width:0;width:auto;border:1px solid var(--control-border);border-radius:8px;background:#fff;min-height:44px;padding:0 12px;display:flex;align-items:center;gap:8px}
@@ -66,14 +58,9 @@ form input,form select,.date-trigger{min-height:var(--control-size)}
 .search-filter-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
 .search-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
 .search-chips>button{display:flex;align-items:center;gap:6px;padding:4px 8px;background:#e7f2f3;color:var(--brand);border-radius:8px;font-size:12px;max-width:100%;overflow-wrap:anywhere}
-.content-tools{justify-content:flex-end;min-height:48px}
-.content-tools .cari-toolbar-actions{margin-left:auto}
 .page-title>.primary-button.icon-only{width:44px;height:44px;min-width:44px;padding:0;flex-shrink:0}
-.account-title-actions .inventory-tools .content-tools{padding:0}
-.carousel-track{position:relative;left:auto;top:8px;align-items:center;transition:none;gap:20px}
 .carousel-slide{min-width:0;flex:0 0 408px}
 .carousel-slide .account-face{width:100%}
-.carousel-viewport{overflow:hidden;touch-action:pan-y pinch-zoom}
 /* Calendar cells keep a readable minimum instead of shrinking to the viewport. */
 .plan-grid{height:auto!important;--calendar-row-min:144px}
 .plan-day{min-height:var(--calendar-row-min);height:auto;justify-content:flex-start;text-align:left;padding:10px;overflow:hidden}
@@ -99,8 +86,6 @@ form input,form select,.date-trigger{min-height:var(--control-size)}
 .plan-extra-controls{flex-wrap:wrap}
 @media(max-width:1100px){.plan-layout{grid-template-columns:minmax(0,1fr)}.plan-aside{display:block}.calendar-total{flex-direction:column}}
 @media(max-width:760px){
- .topbar{padding:12px;gap:8px;min-height:68px}
- .topbar .top-actions{padding-top:0}
  .page-search-row{gap:4px}
  .page-search-row .cari-search{padding:0 8px}
  .page-search-row input{font-size:16px}
@@ -138,3 +123,46 @@ form input,form select,.date-trigger{min-height:var(--control-size)}
 .dot-calendar .plan-day header{width:100%;flex-direction:row;justify-content:space-between}
 .dot-calendar .plan-day header .plan-count{background:#edf1f3;border-radius:4px;padding:0 3px;line-height:18px}
 @media(max-width:760px){.dot-calendar .plan-day header .calendar-count-label{display:none}.dot-calendar.plan-grid.monthly .plan-day,.dot-calendar.plan-grid.weekly .plan-day{padding:6px 3px}.dot-calendar .plan-day header{gap:2px}.dot-calendar .plan-day header .plan-count{padding:0 2px}}
+
+/* The header and page share one fluid frame. Only the breadcrumb was removed. */
+.topbar{height:auto;min-height:76px;padding:0;display:block}
+.topbar-inner{display:flex;align-items:flex-start;gap:16px;max-width:1500px;width:100%;padding:16px var(--page-gutter);margin:0 auto}
+.main-content{width:100%}
+#page-search-host{flex:1;min-width:0}
+.topbar .top-actions{flex:0 0 auto;display:flex;align-items:center;gap:12px;padding:0;min-height:44px}
+.topbar .date-label{display:block;font-size:var(--text-body);line-height:1.5}
+.topbar .date-label b{display:inline;margin-left:7px}
+.topbar .header-divider{display:block}
+.page-search-row .cari-search{height:44px;min-height:44px;margin:0}
+.page-search-row .cari-search input{height:42px;min-height:0;margin:0;padding:0;border:0}
+.page-search-row kbd{flex-shrink:0;font-size:12px;line-height:20px;color:var(--muted);background:#f2f5f7;border:1px solid var(--line);border-radius:4px;padding:0 4px}
+.page-search-row>.list-icon,.page-search-row>.search-submit{height:44px;min-height:44px;margin:0}
+.content-tools{display:flex;align-items:center;justify-content:flex-end;gap:8px;width:100%;min-width:0;padding:12px 16px}
+.content-tools .cari-toolbar-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;width:auto;margin:0;padding:0}
+.content-tools .list-icon{width:44px;height:44px;min-height:44px}
+.account-title-actions .content-tools{width:auto;padding:0;flex:none}
+.account-page{gap:16px}
+.account-page .carousel-arrow{top:100%;width:44px;height:44px}
+.account-page .carousel-arrow.previous{left:8px}
+.account-page .carousel-arrow.next{right:8px}
+.account-page .carousel-caption{min-height:52px;padding:4px 60px;margin:0}
+@media(max-width:1100px){.topbar-inner{gap:12px}.topbar .date-label{font-size:12px}.page-search-row kbd{display:none}}
+@media(max-width:760px){
+ .topbar{min-height:68px;padding:0}
+ .topbar-inner{padding:12px;gap:8px}
+ .topbar .date-label,.topbar .header-divider{display:none}
+ .topbar .top-actions{flex:0 0 auto;min-height:44px}
+ .page-search-row kbd{display:none}
+ .content-tools{padding:8px 12px}
+ .content-tools .cari-toolbar-actions{width:auto;gap:8px}
+ .account-title-actions{gap:8px}
+ .account-title-actions .content-tools .cari-toolbar-actions{gap:4px}
+ .account-page .carousel-arrow.previous{left:0}
+ .account-page .carousel-arrow.next{right:0}
+ .account-page .carousel-caption{padding:4px 52px}
+}
+@media(max-width:760px){
+ .main-content>.page-title,.finance-page .page-title:not(.party-detail-header){flex-direction:row;flex-wrap:nowrap;align-items:flex-start}
+ .main-content>.page-title>div:first-child,.finance-page .page-title:not(.party-detail-header)>div:first-child{flex:1;min-width:0}
+ .finance-page .page-title:not(.party-detail-header)>.cari-actions{flex:0 0 auto;width:auto}
+}

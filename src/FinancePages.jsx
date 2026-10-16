@@ -81,6 +81,7 @@ export function FinancePages({
       c.abort();
     };
   }, [query, search, type, data, cari, selected]);
+  useEffect(()=>{if(initialAccount!=='all'){setAccount(initialAccount);setSelectedDay(null)}},[initialAccount]);
   function reset() {
     setQuery('');
     setType('Tümü');
@@ -145,7 +146,7 @@ export function FinancePages({
         setFrom(r.from);
         setTo(r.to);
         setSelectedDay(null);
-      }} /></label>{party && <><label>Vade<select value={duePresence} onChange={e => setDuePresence(e.target.value)}>{[['all', 'Tümü'], ['dated', 'Vadesi belirtilmiş'], ['undated', 'Vadesiz']].map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></label><label>Kapama durumu<select value={dueClosure} onChange={e => setDueClosure(e.target.value)}>{[['all', 'Tümü'], ['open', 'Açık'], ['partial', 'Kısmen kapanmış'], ['closed', 'Kapanmış']].map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></label><label>Vade durumu<select value={dueFilter} onChange={e => setDueFilter(e.target.value)}>{[['all', 'Tümü'], ['soon', 'Vadesi yaklaşan (7 gün)'], ['today', 'Vadesi bugün'], ['late', 'Gecikmiş']].map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></label></>}<label className="check-label"><input type="checkbox" checked={cancelled} onChange={e => setCancelled(e.target.checked)} />İptal edilenleri göster</label></ListTools>;
+      }} /></label>{party && <><label>Vade<select value={duePresence} onChange={e => setDuePresence(e.target.value)}>{[['all', 'Tümü'], ['dated', 'Vadesi belirtilmiş'], ['undated', 'Vadesiz']].map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></label><label>Kapama durumu<select value={dueClosure} onChange={e => setDueClosure(e.target.value)}>{[['all', 'Tümü'], ['open', 'Açık'], ['partial', 'Kısmen kapanmış'], ['closed', 'Kapanmış']].map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></label><label>Vade durumu<select value={dueFilter} onChange={e => setDueFilter(e.target.value)}>{[['all', 'Tümü'], ['soon', 'Vadesi yaklaşan (7 gün)'], ['today', 'Vadesi bugün'], ['late', 'Gecikmiş']].map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></label></>}<label className="check-label"><input type="checkbox" checked={cancelled} data-filter-default={true} onChange={e => setCancelled(e.target.checked)} />İptal edilenleri göster</label></ListTools>;
   const table = <Ledger events={events.filter(e => !e.scheduled)} data={data} open={open} toolbar={toolbar} amount={amount} accountLabel={accountLabel} party={Boolean(party)} global={!party} />;
   const latest = new Map();
   for (const e of data.events) if (e.party_id) latest.set(e.party_id, Math.max(latest.get(e.party_id) || 0, e.id));

@@ -173,7 +173,7 @@ export function App({
         <ChevronDown size={16} />
       </label>
     </div>;
-  const recentEvents = fullData.events.filter(e => !e.cancelled && inPeriod({
+  const recentEvents = fullData.events.filter(e => !e.cancelled && !e.scheduled && e.event_date<=TODAY && inPeriod({
     date: e.event_date
   }) && (kind==='all'||e.kind===kind) && (scope === 'all' || e.account_id === scope || e.target_id === scope) && `${e.description} ${e.party_name || ''} ${e.card_name || ''}`.toLocaleLowerCase('tr').includes(search.toLocaleLowerCase('tr'))).sort((a, b) => (b.event_date + b.event_time).localeCompare(a.event_date + a.event_time) || b.id - a.id).map(e => ({
     id: e.id,
@@ -308,7 +308,7 @@ export function App({
             fontSize: 12
           }} formatter={(v, n) => [money(v) + " TL", n]} />
               <Bar dataKey="incoming" name="Gelen para" fill="#087F8C" radius={[3, 3, 0, 0]} maxBarSize={14} isAnimationActive={false} />
-              <Bar dataKey="outgoing" name="Giden para" fill="#596879" radius={[3, 3, 0, 0]} maxBarSize={14} isAnimationActive={false} />
+              <Bar dataKey="outgoing" name="Giden para" fill="var(--muted)" radius={[3, 3, 0, 0]} maxBarSize={14} isAnimationActive={false} />
             </BarChart>
           </ResponsiveContainer>}
       </div>
@@ -448,7 +448,7 @@ export function App({
         </div>
       </aside>
       <div className="main-shell" inert={!!drawer}>
-        <header className="topbar">
+        <header className="topbar"><div className="topbar-inner">
           <div id="page-search-host" />
           <div className="top-actions">
             <div className="notification-holder">
@@ -462,13 +462,13 @@ export function App({
                 }} />) : <p className="muted">Dikkat gerektiren bildirim yok.</p>}</div></Sheet>}
             </div>
             <span className="header-divider" />
-            <span className="date-label">
+            <span className="date-label" aria-label="Çalışma alanı tarihi">
               {fullDate} <b>{dateObj.toLocaleDateString("tr-TR", {
                 weekday: "long"
               })}</b>
             </span>
           </div>
-        </header>
+        </div></header>
         <main className="main-content">
           {page === "Genel bakış" && <ListTools query={search} setQuery={setSearch} placeholder="Genel bakış hareketlerinde ara" filters={overviewFilters} setFilters={setOverviewFilters} resultCount={visible.length} reset={()=>{setSearch('');setScope('all');setKind('all')}}><label>Hesap<select value={scope} onChange={e=>setScope(e.target.value)}><option value="all">Tüm hesaplar</option>{accounts.map(a=><option key={a.id} value={a.id}>{a.name}</option>)}</select></label><label>İşlem<select value={kind} onChange={e=>setKind(e.target.value)}><option value="all">Tümü</option>{[...new Set(tx.map(t=>t.kind))].map(k=><option key={k}>{k}</option>)}</select></label></ListTools>}
           {page === "Genel bakış" && <div className="page-title">

@@ -561,7 +561,7 @@ strong {
   background: var(--brand);
 }
 .legend.outgoing {
-  background: #a8bbc3;
+  background: var(--muted);
 }
 .chart {
   height: 177px;

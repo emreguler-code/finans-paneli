@@ -1,3 +1,19 @@
+# Finans Paneli 1.7.1
+
+16 Ekim 2026. 1.7.0 arayüz gerilemelerini ve güncelleme ekranının açıklamasını düzelten bakım sürümü.
+
+- Sağ üst tarih/gün bilgisi ve masaüstü Ctrl K ipucu geri getirildi. Tek ortak arama ve onaylı filtre davranışı korundu.
+- Arama, filtre ve Ara düğmeleri tüm sayfalarda aynı 44 px satıra hizalandı; arama ve içerik aynı esnek çerçeveyi kullanır. Mobil ekle düğmeleri başlıkla aynı satırdadır.
+- Genel bakıştaki gereksiz sıfırlama satırı kaldırıldı. Hesap/kart listesi ile hareket tablosunun sıralama ve CSV araçları yeniden bağımsızdır; tablo araçları sağa hizalanır.
+- Carousel kenar maskesi/silikliği, ok yerleşimi ve bölüm boşlukları düzeltildi. Embla korunur.
+- Grafik sütunu ve gösterge rengi eşitlendi. Son hareketler planlanan ve ileri tarihli kayıtları göstermez; planlar ödeme takviminde ve gelecek dönem sekmelerinde kalır.
+- Hatırlanan filtreler açık gezinme hedeflerini geçersiz kılmaz; hesap/bildirim/ödeme türü geçişleri düzeltildi.
+- Güncelleme ekranı, dosya yüklemesi ile veritabanı migrasyonunu açıkça ayırır. Şema güncelse gereksiz güncelleme düğmesi gösterilmez; eski şemada etkinleşir.
+
+Veritabanı şeması 7 olarak kalır. Mevcut yönetici, işlem verileri ve api/config.php korunur. ZIP içindeki hosting/ içeriğini yükleyin; şema zaten 7 ise ek veritabanı işlemi gerekmez. Önce dosya/veritabanı yedeği alın; demo yenileme seçeneğini kapalı bırakın.
+
+---
+
 # Finans Paneli 1.7.0
 
 15 Ekim 2026. Arama, kart gezinmesi ve ödeme takvimini birleştiren arayüz ve bakım sürümü.
