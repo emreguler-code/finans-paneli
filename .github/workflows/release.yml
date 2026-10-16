@@ -17,29 +17,39 @@ jobs:
           node-version: '24'
           cache: npm
       - name: Validate release tag
+        id: validate
         if: startsWith(github.ref, 'refs/tags/')
         run: |
           test "$GITHUB_REF_NAME" = "v$(node -p "require('./package.json').version")"
-      - run: npm ci
-      - run: npm test
+      - id: dependencies
+        run: npm ci
+      - id: tests
+        run: npm test
       - name: Check PHP syntax
+        id: php
         run: |
           while IFS= read -r -d '' file; do
             php -l "$file"
           done < <(find public -name '*.php' ! -name 'config.php' -print0)
       - name: Test financial API and migration recovery
+        id: api
         run: |
           npm run test:api
           npm run test:migrations
       - name: Install Chromium for browser checks
+        id: chromium
         run: npx playwright install --with-deps chromium
       - name: Test desktop and mobile workflows
+        id: browser
         run: npm run test:browser
       - name: Package hosting files
+        id: package
         run: python3 scripts/package-release.py
       - name: Test packaged hosting installation
+        id: installcheck
         run: npm run test:package
       - name: Verify archive
+        id: archive
         run: |
           cd dist/releases
           sha256sum -c *.sha256
@@ -49,6 +59,7 @@ jobs:
           name: hosting-package
           path: dist/releases/*
       - name: Publish GitHub release
+        id: publish
         if: startsWith(github.ref, 'refs/tags/')
         env:
           GH_TOKEN: ${{ github.token }}
@@ -68,6 +79,7 @@ jobs:
         if: always() && startsWith(github.ref, 'refs/tags/')
         env:
           RELEASE_RESULT: ${{ job.status }}
+          STEP_RESULTS: ${{ toJSON(steps) }}
         run: |
           python3 - <<'PYCODE'
           import json, os
@@ -75,6 +87,9 @@ jobs:
           tag = os.environ['GITHUB_REF_NAME']
           repository = os.environ['GITHUB_REPOSITORY']
           receipt = {'tag': tag, 'status': os.environ['RELEASE_RESULT'], 'run': f"https://github.com/{repository}/actions/runs/{os.environ['GITHUB_RUN_ID']}", 'release': f"https://github.com/{repository}/releases/tag/{tag}"}
+          receipt['commit'] = os.environ['GITHUB_SHA']
+          receipt['steps'] = {key: value.get('conclusion') for key, value in json.loads(os.environ['STEP_RESULTS']).items()}
+          receipt['failedChecks'] = {str(p): p.read_text()[:5000] for p in Path('.qa').glob('*/browser/failure.txt')}
           checksums = list(Path('dist/releases').glob('*.sha256'))
           if checksums:
               receipt['checksums'] = {p.name: p.read_text().strip() for p in checksums}
