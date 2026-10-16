@@ -116,8 +116,7 @@ let activePage;const checks=[],errors=[];const ok=(name,test)=>{if(!test)throw E
  }
  // Shared search applies drafts once, retains each page separately and preserves balances.
  await p.setViewportSize({width:1440,height:1000});await go('Cari hesaplar');
- const partyCount=await p.locator('.party-row').count();
- await p.locator('#search').fill('Ada');ok('Typing search does not apply before Enter',await p.locator('.party-row').count()===partyCount);
+ await p.locator('#search').fill('Ada');await p.waitForFunction(()=>document.querySelectorAll('.party-row').length===1);ok('Cari search applies automatically after debounce',await p.locator('.party-row').count()===1);
  await p.locator('#search').press('Enter');await p.waitForFunction(()=>document.querySelectorAll('.party-row').length===1);
  ok('Cari search applies in current page',await p.locator('.party-row').count()===1);
  await go('Kullanıcılar');ok('User page does not inherit cari query',await p.locator('#search').inputValue()==='');

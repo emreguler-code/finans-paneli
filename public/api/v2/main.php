@@ -103,7 +103,7 @@ try{
  else{
  if($action==='event_save')$result=saveEvent($db,$body);
  elseif($action==='statement_save')$result=saveStatement($db,$body);
- elseif($action==='demo_seed')$result=seedDemo($db);
+ elseif($action==='demo_seed')$result=seedDemo($db,($body['profile']??'comprehensive')!=='compact');
  elseif($action==='event_status'){$id=(int)($body['id']??0);$old=row($db,'fin_events',$id);versionCheck($old,$body);$cancelled=(int)(bool)($body['cancelled']??true);$reason=field($body,'reason',1000,true);$db->prepare('UPDATE fin_events SET cancelled=?,version=version+1 WHERE id=?')->execute([$cancelled,$id]);audit($db,'event',(string)$id,$cancelled?'cancel':'restore',$old,row($db,'fin_events',$id),$reason);$result=['id'=>$id];}
  else $result=saveEntity($db,str_replace('_save','',$action),$body);
  // A card may carry credit after refunds; reflect it as negative debt rather than discarding real money.

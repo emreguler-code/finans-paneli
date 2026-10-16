@@ -1,6 +1,6 @@
 {
   "name": "finans-v1",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "private": true,
   "type": "module",
   "scripts": {
@@ -14,6 +14,9 @@
     "test:api": "python3 scripts/test-integration.py api",
     "test:migrations": "python3 scripts/test-integration.py migrations",
     "test:browser": "python3 scripts/test-integration.py browser",
+    "test:demo": "python3 scripts/test-integration.py demo",
+    "demo:stop": "python3 scripts/stop-demo.py",
+    "demo:start": "python3 scripts/test-integration.py demo --keep",
     "test:package": "python3 scripts/test-integration.py package"
   },
   "dependencies": {

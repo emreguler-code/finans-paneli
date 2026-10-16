@@ -166,3 +166,20 @@ form input,form select,.date-trigger{min-height:var(--control-size)}
  .main-content>.page-title>div:first-child,.finance-page .page-title:not(.party-detail-header)>div:first-child{flex:1;min-width:0}
  .finance-page .page-title:not(.party-detail-header)>.cari-actions{flex:0 0 auto;width:auto}
 }
+
+/* 1.7.2 shared search and reserved account warning column. */
+.page-search-row .cari-search{border-color:var(--line)}
+.page-search-row .search-submit{width:var(--control-size);min-width:var(--control-size);padding:0;flex-shrink:0}
+.ledger-view .cari-entry-kind .cari-badge{width:100px;min-width:100px;max-width:100px}
+.account-workspace{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:var(--space-5);align-items:start}
+.account-main{min-width:0}
+.account-alerts{position:sticky;top:100px;padding:16px;max-height:calc(100dvh - 200px);overflow-y:auto}
+.account-alerts h2{font-size:var(--text-section);margin:0 0 16px;display:flex;justify-content:space-between}
+.account-alerts .alert-notice{width:100%;margin:0 0 12px;text-align:left;align-items:flex-start}
+.account-alerts .alert-notice span{min-width:0;overflow-wrap:anywhere}
+.account-alerts .alert-notice>svg{flex-shrink:0}
+.mobile-alert-trigger{display:none}
+@media(max-width:1100px){.account-workspace{grid-template-columns:minmax(0,1fr)}.account-alerts{display:none}.mobile-alert-trigger{display:flex;position:fixed;bottom:80px;right:16px;z-index:25;box-shadow:0 4px 12px #202c3920}}
+
+.ledger-view .cari-entry-kind{grid-template-columns:100px 4px minmax(50px,1fr)}
+@media(min-width:761px){.ledger-view .finance-table{min-width:900px}.ledger-view .party-ledger{min-width:1000px}.ledger-view th:nth-child(3),.ledger-view .party-ledger th:nth-child(4){width:200px}.ledger-view .party-ledger th:nth-child(3){width:100px}}

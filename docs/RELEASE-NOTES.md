@@ -1,3 +1,15 @@
+# Finans Paneli 1.7.2
+
+Ortak aramada 3 karakter / 300 ms otomatik arama, büyüteç düğmesi ve hareket paneliyle aynı kenarlık rengi. Fat. Alış / Fatsız. Alış etiketleri ve daha dar işlem alanı.
+
+Hesap uyarıları ayrılmış sağ sütunda tüm aktif banka/kasa/KMH hesapları için görünür. Uyarı ilgili hesabı, sekmeyi ve hareket satırını açar; hareketsiz uyarılar hesap bilgisini gösterir. Dar ekranda sabit Uyarılar düğmesi vardır. Tablet hareket açıklamalarının harf harf bölünmesi giderildi.
+
+Kesim sonrası kartlar arası borç aktarımının kaynak kartta eski ekstreye girmesi düzeltildi; hedef karttaki ödeme görünümü korunur. Ekstre listesine önceki dönem borcunu görünür kılan devir satırı eklendi; mevcut borç hesabı değişmedi.
+
+Paket içindeki update.php → Demo verilerini yenile seçeneği eski kayıtları silip 588 kayıtlı yeni demoyu oluşturur; yönetici şifresi korunur. İsteğe bağlı yönetici demo yenilemesi yedi aylık kapsamlı sentetik veri oluşturur; finans uzlaştırması, ay/hafta raporları ve yoğun veri tarayıcı kontrolleri eklendi. Şema 7, yönetici ve config korunur. Demo yenilemesi işlem verilerini siler; yalnız bu açık seçenek seçilince çalışır.
+
+---
+
 # Finans Paneli 1.7.1
 
 16 Ekim 2026. 1.7.0 arayüz gerilemelerini ve güncelleme ekranının açıklamasını düzelten bakım sürümü.

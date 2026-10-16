@@ -10,7 +10,7 @@ def free_port():
  with socket.socket() as sock:
   sock.bind(('127.0.0.1',0));return sock.getsockname()[1]
 def main():
- parser=argparse.ArgumentParser();parser.add_argument('suite',choices=['api','migrations','browser','package']);args=parser.parse_args()
+ parser=argparse.ArgumentParser();parser.add_argument('suite',choices=['api','migrations','browser','package','demo']);parser.add_argument('--keep',action='store_true',help='Keep this isolated demo running');args=parser.parse_args()
  ident=uuid.uuid4().hex[:12];runtime=ROOT/'.qa'/ident;runtime.mkdir(parents=True)
  names=[];db_name='finans-qa-db-'+ident;api_name='finans-qa-php-'+ident
  password=secrets.token_hex(24);token=secrets.token_hex(32);admin=secrets.token_hex(24)
@@ -40,9 +40,9 @@ def main():
    shutil.copytree(ROOT/'public',web,ignore=shutil.ignore_patterns('config.php'))
    migrations=web/'api/v2/migrations';migrations.mkdir();shutil.copyfile(ROOT/'database/migrations/002-cari.sql',migrations/'002-cari.sql')
   config=web/'api/config.php';config.write_text("<?php\nreturn "+"['db_host'=>'127.0.0.1','db_port'=>"+str(db_port)+",'db_name'=>'finans_test','db_user'=>'root','db_password'=>'"+password+"','setup_token'=>'"+token+"','require_https'=>false];\n");config.chmod(0o600)
-  if args.suite in ['api','browser']:
+  if args.suite in ['api','browser','demo']:
    sql('USE finans_test;'+(ROOT/'database/schema.sql').read_text())
-  if args.suite=='browser':
+  if args.suite in ['browser','demo']:
    for source in (ROOT/'dist/client').iterdir():
     if source.is_dir():shutil.copytree(source,web/source.name,dirs_exist_ok=True)
     else:shutil.copyfile(source,web/source.name)
@@ -64,6 +64,9 @@ def main():
      response=urllib.request.urlopen(f'http://127.0.0.1:{api_port}'+path)
      assert response.status==200 and response.read(), path
     print('PASS packaged frontend, updater and local font stylesheet')
+    env.update(QA_BASE_URL=f'http://127.0.0.1:{api_port}',QA_USERNAME=env['API_TEST_USERNAME'],QA_PASSWORD=admin,QA_OUTPUT_DIR=str(runtime/'package-demo'))
+    run(['python3',str(ROOT/'tests/demo-audit.py')],env=env)
+    run(['node',str(ROOT/'tests/demo-updater.cjs')],env=env)
   else:
    for _ in range(100):
     try:
@@ -81,7 +84,7 @@ def main():
     # Browser acceptance initializes its own fixture, independent of API-suite mutations.
     session=json.load(opener.open(env['API_TEST_URL']+'?action=session'))
     json.load(opener.open(urllib.request.Request(env['API_TEST_URL']+'?action=update_apply',data=b'{}',headers={'Content-Type':'application/json','X-CSRF-Token':session['csrf']})))
-    payload=json.dumps({'requestId':str(uuid.uuid4())}).encode()
+    payload=json.dumps({'requestId':str(uuid.uuid4()),'profile':'compact'}).encode()
     json.load(opener.open(urllib.request.Request(env['API_TEST_URL']+'?action=demo_seed',data=payload,headers={'Content-Type':'application/json','X-CSRF-Token':session['csrf']})))
     env.update(QA_BASE_URL=f'http://127.0.0.1:{api_port}',QA_USERNAME=env['API_TEST_USERNAME'],QA_PASSWORD=admin,QA_OUTPUT_DIR=str(runtime/'browser'))
     run(['node',str(ROOT/'tests/browser.cjs')],env=env)
@@ -91,9 +94,18 @@ def main():
      shutil.copytree(web/'api',baseline/'api',dirs_exist_ok=True)
      env['QA_COMPARE_BASELINE']=str(baseline);env['QA_COMPARE_WEB']=str(web)
      run(['node',str(ROOT/'tests/visual-compare.cjs')],env=env)
+  if args.suite=='demo':
+   env.update(QA_BASE_URL=f'http://127.0.0.1:{api_port}',QA_USERNAME=env['API_TEST_USERNAME'],QA_PASSWORD=admin,QA_OUTPUT_DIR=str(runtime/'demo'))
+   run(['python3',str(ROOT/'tests/demo-audit.py')],env=env)
+   run(['node',str(ROOT/'tests/demo-browser.cjs')],env=env)
+   if args.keep:
+    local=runtime/'local-session.json';local.write_text(json.dumps({'url':env['QA_BASE_URL'],'username':env['QA_USERNAME'],'password':admin,'containers':names}));local.chmod(0o600)
+    (ROOT/'.qa/current-demo').write_text(str(runtime))
+    print('Isolated demo retained; local session details in ignored runtime directory')
   print(f'PASS {args.suite}: isolated services and fixtures; output {runtime.relative_to(ROOT)}')
  finally:
-  for name in reversed(names):subprocess.run(['docker','rm','-f',name],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+  retained=args.suite=='demo' and args.keep and (runtime/'local-session.json').exists()
+  for name in ([] if retained else reversed(names)):subprocess.run(['docker','rm','-f',name],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
   for secret in [runtime/'db.env',runtime/'web/api/config.php']+([ROOT/'.qa/baseline-1.6/hosting/api/config.php'] if args.suite=='browser' else []):
-   secret.unlink(missing_ok=True)
+   if not retained:secret.unlink(missing_ok=True)
 if __name__=='__main__':main()

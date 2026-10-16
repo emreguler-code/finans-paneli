@@ -155,7 +155,7 @@ function enhanceCardState(PDO $db,array $s): array {
  }unset($c);$s['schemaVersion']=7;return $s;
 }
 
-function seedDemo(PDO $db): array {
+function seedDemo(PDO $db,bool $comprehensive=true): array {
  permit('admin');
  // Only administrator credentials and installation configuration survive the test reset.
  foreach(['audit_log','card_statements','fin_events','movements','party_entries','journal','claims','parties','cards','accounts','write_requests'] as $table){
@@ -188,5 +188,36 @@ function seedDemo(PDO $db): array {
  $add(['operation'=>'expense','account'=>'bank','amount'=>'2800','description'=>'Planlanan kira','date'=>'2026-10-25','due'=>'2026-10-25','scheduled'=>true]);
  $add(['operation'=>'income','account'=>'cash','amount'=>'1200','description'=>'Planlanan kasa girişi','date'=>'2026-10-19','due'=>'2026-10-19','scheduled'=>true]);
  $add(['operation'=>'transfer','account'=>'bank','target'=>'cash','amount'=>'5000','description'=>'Kasaya para aktarımı']);
- audit($db,'system','demo','create',null,['demo'=>true],'Yönetici girişi korunarak Finans 1.6 deneme verileri oluşturuldu');return ['demoReady'=>true];
+ if($comprehensive){
+  // Deterministic fictional history; all financial facts go through normal validation/audit.
+  $db->exec("UPDATE accounts SET opening_cents=50000000 WHERE id='bank'");
+  $more=[];foreach([['Poyraz Gıda','Tedarikçi'],['Mavi Ofis','Tedarikçi'],['Lale Mimarlık','Müşteri'],['Deniz Yazılım','Müşteri'],['Ece Yılmaz','Personel'],['Can Kaya','Personel']] as [$name,$type]){$db->prepare('INSERT INTO parties(name,title,type) VALUES(?,?,?)')->execute([$name,$name,$type]);$more[]=(int)$db->lastInsertId();}
+  for($month=4;$month<=10;$month++){
+   $last=$month===10?13:27;
+   for($day=1;$day<=$last;$day+=2){
+    $date=sprintf('2026-%02d-%02d',$month,$day);$suffix=sprintf('%02d%02d',$month,$day);$tag=['Gıda','Kırtasiye','Otomotiv'][($day+$month)%3];
+    $common=['date'=>$date,'time'=>sprintf('%02d:%02d',9+$day%8,$day%60),'document'=>'DEMO-'.$suffix,'tag'=>$tag];
+    $add(array_merge($common,['operation'=>'income','account'=>'bank','amount'=>(string)(1200+$month*31+$day*7),'description'=>'Demo '.$suffix.' hizmet tahsilatı']));
+    $add(array_merge($common,['operation'=>'expense','account'=>$day%3?'bank':'cash','amount'=>(string)(150+$day*11),'description'=>'Demo '.$suffix.' işletme gideri']));
+    $add(array_merge($common,['operation'=>$day%3?'purchase_invoice':'purchase_no_invoice','partyId'=>$more[intdiv($day,2)%2],'amount'=>(string)(900+$day*13),'settled'=>'200','account'=>'bank','due'=>date('Y-m-d',strtotime($date.' +20 days')),'description'=>'Demo '.$suffix.' stok alışı']));
+    $add(array_merge($common,['operation'=>'sale','partyId'=>$more[2+intdiv($day,2)%2],'amount'=>(string)(1800+$day*17),'settled'=>'600','account'=>'cash','due'=>date('Y-m-d',strtotime($date.' +15 days')),'description'=>'Demo '.$suffix.' proje satışı']));
+    $add(array_merge($common,['operation'=>'expense','cardId'=>$cards[$day%3],'amount'=>(string)(250+$day*9),'description'=>'Demo '.$suffix.' kart harcaması']));
+    if($day%5===0)$add(array_merge($common,['operation'=>'transfer','account'=>'bank','target'=>'cash','amount'=>'375','description'=>'Demo '.$suffix.' kasa aktarımı']));
+    if($day%7===0)$add(array_merge($common,['operation'=>'refund','cardId'=>$cards[$day%3],'amount'=>'75','description'=>'Demo '.$suffix.' kart iadesi']));
+   }
+   foreach([$more[4],$more[5]] as $employee){$add(['operation'=>'salary','partyId'=>$employee,'amount'=>'18000','date'=>sprintf('2026-%02d-01',$month),'description'=>'Demo aylık maaş tahakkuku']);$add(['operation'=>'payment','partyId'=>$employee,'account'=>'bank','amount'=>'15000','date'=>sprintf('2026-%02d-05',$month),'description'=>'Demo aylık maaş ödemesi']);}
+  }
+  $add(['operation'=>'expense','account'=>'kmh','amount'=>'250','description'=>'Demo KMH kullanımı']);
+  $add(['operation'=>'income','account'=>'kmh','amount'=>'100','description'=>'Demo KMH geri yatırma']);
+  foreach($cards as $index=>$card){
+   for($month=4;$month<=9;$month++){$st=saveStatement($db,['cardId'=>$card,'date'=>sprintf('2026-%02d-10',$month),'due'=>sprintf('2026-%02d-20',$month),'total'=>(string)(1700+$month*100+$index*50)]);$add(['operation'=>'card_payment','cardId'=>$card,'account'=>'bank','linkedId'=>$st['id'],'amount'=>(string)(1000+$month*50),'date'=>sprintf('2026-%02d-18',$month),'description'=>'Demo geçmiş ekstre ödemesi']);}
+   // Restore current statement pointer after historical statements are entered.
+   $db->prepare("UPDATE cards SET statement_date='2026-10-10',due='2026-10-20' WHERE id=?")->execute([$card]);
+  }
+  for($day=14;$day<=28;$day+=2)foreach(['bank','cash','kmh'] as $account)$add(['operation'=>$account==='cash'?'income':'expense','account'=>$account,'amount'=>(string)(450+$day*20),'date'=>sprintf('2026-10-%02d',$day),'scheduled'=>true,'description'=>'Demo planlanan '.$account.' '.$day]);
+  $add(['operation'=>'cash_advance','cardId'=>$cards[1],'account'=>'cash','amount'=>'1200','description'=>'Demo karttan nakit avans']);
+  $add(['operation'=>'card_transfer','cardId'=>$cards[2],'targetCardId'=>$cards[1],'amount'=>'500','description'=>'Demo kart borcu aktarımı']);
+  $add(['operation'=>'expense','cardId'=>$cards[2],'amount'=>'1234.57','installments'=>6,'description'=>'Demo kuruşlu altı taksit']);
+ }
+ audit($db,'system','demo','create',null,['demo'=>true,'profile'=>$comprehensive?'comprehensive':'compact'],'Yönetici girişi korunarak sentetik deneme verileri oluşturuldu');return ['demoReady'=>true];
 }

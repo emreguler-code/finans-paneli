@@ -1,4 +1,4 @@
-# Finans Paneli 1.7.1
+# Finans Paneli 1.7.2
 
 Sade Netlik tasarımında cari hesaplar, banka/kasa, kredi kartları, ödeme planı ve raporlar. React/Vite arayüz; PHP/MySQL API. Banka bağlantısı yoktur.
 
@@ -37,7 +37,7 @@ Codex değişiklik yapmadan AGENTS.md dosyasını okumalıdır. Geçmiş sürüm
 
 `npm run release:package` derlenmiş arayüz, PHP API, boş şema ve Türkçe kurulum belgesini `dist/releases/finans-paneli-<sürüm>.zip` dosyasında toplar; yanında SHA-256 dosyası üretir. Gerçek `api/config.php` ve çalışma zamanı verileri pakete alınmaz. ZIP içindeki `hosting/` içeriği web dizinine yüklenir; diğer dosyalar web dizini dışında tutulur. Ayrıntılar [hosting kurulum belgesinde](docs/HOSTING-KURULUM.md).
 
-GitHub Actions `Hosting release` iş akışı `v<package.json sürümü>` etiketi GitHub'a gönderildiğinde testleri çalıştırır, paketi hazırlar ve GitHub Release'e ekler. Örneğin 1.7.1 için `v1.7.1`. İş akışı ve paketleme dosyaları önce ilgili commit'te bulunmalıdır. Actions'ın depoda etkin ve iş akışının Release yazma yetkisine sahip olması gerekir. Manuel `workflow_dispatch` çalıştırması yalnızca indirilebilir Actions artifact'ı üretir; Release yayımlamaz.
+GitHub Actions `Hosting release` iş akışı `v<package.json sürümü>` etiketi GitHub'a gönderildiğinde testleri çalıştırır, paketi hazırlar ve GitHub Release'e ekler. Örneğin 1.7.2 için `v1.7.2`. İş akışı ve paketleme dosyaları önce ilgili commit'te bulunmalıdır. Actions'ın depoda etkin ve iş akışının Release yazma yetkisine sahip olması gerekir. Manuel `workflow_dispatch` çalıştırması yalnızca indirilebilir Actions artifact'ı üretir; Release yayımlamaz.
 
 ## İzole API ve tarayıcı testleri
 
@@ -47,8 +47,8 @@ Docker gerekir. Test koşucusu kendi MariaDB/PHP konteynerlerini ve rastgele yer
 npm run test:api
 npm run test:migrations
 npm run release:package
-npm run test:package
 npx playwright install --with-deps chromium
+npm run test:package
 npm run test:browser
 ```
 
@@ -59,3 +59,16 @@ Statik çıktı yalnızca arayüz ve yerel fontları içerir; PHP/config dosyala
 Salt refaktörlerde önceki yayımlanmış arayüzle piksel karşılaştırması ayrıca `QA_COMPARE_RELEASE=1` ile etkinleştirilir; onaylı tasarım değişikliklerinde eski ekranın birebir aynı olması beklenmez.
 
 GitHub API erişimi olmayan istemciler için etiketli yayınların sonucu `release-status/v<sürüm>` açıklamalı Git etiketine kaydedilir. Bu otomatik kayıt iş akışı sonucunu, yayın bağlantısını ve paket SHA-256 değerini içerir; uygulama sürüm etiketi `v<sürüm>` olmaya devam eder.
+
+## Kapsamlı yerel demo ve çapraz kontrol
+
+```sh
+npm run build
+npm run test:demo  # izole demo, finans uzlaştırması ve tarayıcı kontrolleri; sonra temizler
+npm run demo:start # aynı kontrolleri çalıştırır, başarılı yerel demoyu çalışır bırakır
+npm run demo:stop
+```
+
+Yerel Chromium gerekiyorsa `QA_BROWSER_BIN=/usr/bin/chromium` tanımlayın. Docker gereklidir. Kapsamlı demo Nisan–Ekim 2026 geçmişi, 4 banka/kasa/KMH hesabı, 10 cari, 3 kart, geçmiş ekstreler ve gelecek taksitler içerir. Tarih 13 Ekim 2026'ya sabitlenir. Normal demo yenileme de bu geniş profili oluşturur; mevcut verileri silen yönetici onayı korunur. `profile=compact` yalnız küçük kabul testi fixture'ıdır.
+
+Çalışır demo ve giriş bilgileri yalnız Git dışında `.qa/current-demo` dosyasının gösterdiği klasördeki `local-session.json` içinde saklanır. Bu dosyayı paylaşmayın. Yerel sunucu yalnız 127.0.0.1'de dinler; dış hosting yayını değildir. `demo:stop` yalnız bu demo koşusunun konteynerlerini ve yerel kimlik bilgilerini kaldırır. Ortam yeniden başlarsa `demo:start` yeniden çalıştırılır. Ayrıntılı bulgular `TEST-RAPORU-1.7.2.md` içindedir.

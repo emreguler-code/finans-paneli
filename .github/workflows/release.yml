@@ -42,6 +42,9 @@ jobs:
       - name: Test desktop and mobile workflows
         id: browser
         run: npm run test:browser
+      - name: Reconcile comprehensive demo and reports
+        id: demo
+        run: npm run test:demo
       - name: Package hosting files
         id: package
         run: python3 scripts/package-release.py
@@ -89,7 +92,7 @@ jobs:
           receipt = {'tag': tag, 'status': os.environ['RELEASE_RESULT'], 'run': f"https://github.com/{repository}/actions/runs/{os.environ['GITHUB_RUN_ID']}", 'release': f"https://github.com/{repository}/releases/tag/{tag}"}
           receipt['commit'] = os.environ['GITHUB_SHA']
           receipt['steps'] = {key: value.get('conclusion') for key, value in json.loads(os.environ['STEP_RESULTS']).items()}
-          receipt['failedChecks'] = {str(p): p.read_text()[:5000] for p in Path('.qa').glob('*/browser/failure.txt')}
+          receipt['failedChecks'] = {str(p): p.read_text()[:5000] for p in Path('.qa').glob('*/*/failure.txt')}
           receipt['failedLayouts'] = {str(p): json.loads(p.read_text()) for p in Path('.qa').glob('*/browser/failure-layout.json')}
           checksums = list(Path('dist/releases').glob('*.sha256'))
           if checksums:

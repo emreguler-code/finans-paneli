@@ -1,6 +1,6 @@
 # Finans Paneli güncellemesi
 
-Yüklenecek sürüm ZIP dosya adında belirtilir. 1.7.1 sürümü şema 7'yi kullanır; mevcut 1.6.x / 1.7.0 kayıtları ve yönetici hesapları korunur. Şeması zaten 7 olan kurulumlarda yeni veritabanı migrasyonu gerekmez.
+Yüklenecek sürüm ZIP dosya adında belirtilir. 1.7.2 sürümü şema 7'yi kullanır; mevcut 1.6.x / 1.7.x kayıtları ve yönetici hesapları korunur. Şeması zaten 7 olan kurulumlarda yeni veritabanı migrasyonu gerekmez.
 
 1. Veritabanı ve mevcut dosyaları yedekleyin.
 2. ZIP içindeki `hosting/` içeriğini mevcut web dizinine yükleyin. Mevcut `api/config.php` dosyasını koruyun. `api/v2/migrations/` klasörünü de yükleyin.
@@ -8,3 +8,14 @@ Yüklenecek sürüm ZIP dosya adında belirtilir. 1.7.1 sürümü şema 7'yi kul
 4. Sayfayı yenileyip giriş, hesaplar, cari hareketler ve ödeme planını kontrol edin.
 
 Yeni kurulum için ZIP içindeki `KURULUM.md` belgesini kullanın. Eski kurulumdaki dosyaları rastgele silmeyin; önce yedek alın. Artık kullanılmayan `api/cari.php` ve `api/v2/v15.php`, yedek aldıktan ve yeni dosyaları yükledikten sonra eski kurulumunuzdan kaldırılabilir.
+
+## Eski demoyu silip kapsamlı demoyu yüklemek
+
+1. Önce dosya ve veritabanı yedeğinizi alın; `hosting/` dosyalarını yükleyip mevcut `api/config.php` dosyasını koruyun.
+2. Yönetici olarak `update.php` sayfasına girin. Şema 7 güncelse **Veritabanını güncelle** düğmesinin görünmemesi normaldir; **Demo verilerini yenile** düğmesi kullanılabilir.
+3. **Mevcut cari, hesap, kart ve işlem kayıtlarını silip kapsamlı demo verilerini oluştur** kutusunu işaretleyin ve **Demo verilerini yenile** düğmesine basın.
+4. Başarı mesajını bekleyip uygulamaya dönün ve sayfayı yenileyin.
+
+Bu işlem mevcut finansal kayıtları siler; gerçek verileriniz varsa demo seçeneğini kullanmayın. Yönetici hesapları, mevcut şifreleri ve kurulum yapılandırması korunur. Yönetici dışındaki demo kullanıcıları da temizlenir. Paket yedi aylık, 588 kayıtlı kapsamlı demoyu üreten kodu içerir: 4 hesap, 10 cari, 3 kredi kartı, geçmiş ekstreler, iadeler, kısmi ödemeler, planlı hareketler ve gelecek taksitler. Aynı işlem tekrar yapılırsa önceki demo değiştirilir; kayıtlar çoğaltılmaz. Demo günü 13 Ekim 2026'dır.
+
+Demo ayrı bir SQL dökümünü elle yüklemeyi gerektirmez; paket içindeki API oluşturur. Normal dosya güncellemesi demoyu kendiliğinden yüklemez.

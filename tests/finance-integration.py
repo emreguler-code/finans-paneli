@@ -26,7 +26,7 @@ call('session')
 code,r=call('login',dict(username=os.environ['API_TEST_USERNAME'],password=os.environ['API_TEST_PASSWORD']));assert code==200,r
 code,r=call('update_apply',{});ok('Schema 7 update succeeds',code==200)
 ok('Schema 7 active',state()['schemaVersion']==7)
-code,r=post('demo_seed');assert code==200,r
+code,r=post('demo_seed',profile='compact');assert code==200,r
 ok('Demo seed succeeds',r.get('demoReady'))
 ok('Administrator login survives demo reset',call('login',dict(username=os.environ['API_TEST_USERNAME'],password=os.environ['API_TEST_PASSWORD']))[0]==200)
 s=state();ok('Demo has 4 accounts including KMH and 3 cards',len(s['accounts'])==4 and len(s['cards'])==3)

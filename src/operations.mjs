@@ -6,7 +6,7 @@ export const cardEventEffect=(e,id)=>Number(e.target_card_id)===Number(id)?-e.am
 export function cardPeriodRows(events,card,tab,statement,today){
  const rows=events.filter(e=>e.card_id===card.id||e.target_card_id===card.id);
  const before=(card.statements||[]).filter(s=>s.cut_date<(statement?.cut_date||card.statement_date)).at(-1)?.cut_date||'2000-01-01';
- if(tab==='Ekstre')return rows.filter(e=>!e.scheduled&&((e.operation==='card_payment'||e.operation==='card_transfer')?(statement?Number(e.linked_id)===Number(statement.id)||!e.linked_id&&e.event_date>statement.cut_date:false):(e.period_date||e.event_date)<=(statement?.cut_date||card.statement_date)&&(e.period_date||e.event_date)>before));
+ if(tab==='Ekstre')return rows.filter(e=>!e.scheduled&&((e.operation==='card_payment'||e.operation==='card_transfer'&&Number(e.target_card_id)===Number(card.id))?(statement?Number(e.linked_id)===Number(statement.id)||!e.linked_id&&e.event_date>statement.cut_date:false):(e.period_date||e.event_date)<=(statement?.cut_date||card.statement_date)&&(e.period_date||e.event_date)>before));
  if(tab==='Gelecek Dönem')return rows.filter(e=>!e.scheduled&&(e.period_date||e.event_date)>today);
  return rows.filter(e=>!e.scheduled&&(e.period_date||e.event_date)>(card.statement_date||'2000-01-01')&&(e.period_date||e.event_date)<=today||!e.scheduled&&['card_payment','card_transfer'].includes(e.operation)&&e.event_date===today);
 }

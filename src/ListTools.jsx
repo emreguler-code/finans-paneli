@@ -31,9 +31,12 @@ const active=f=>f.range?Boolean(f.value.from||f.value.to):f.check?f.value!==f.em
 const valueLabel=f=>f.range?[f.value.from,f.value.to].filter(Boolean).join(' – '):f.check?(f.value?'Evet':'Hayır'):f.options.find(x=>String(x.value)===String(f.value))?.label||f.value;
 export function ListTools({query,setQuery,placeholder='Hareketlerde ara',filters,setFilters,reset,sort,setSort,sortOptions=[],csv,children,resultCount,scopeControl,searchEnabled=true,showActions=true}){
  const [host,setHost]=useState(null),[text,setText]=useState(query),[draft,setDraft]=useState({}),[error,setError]=useState('');
+ const querySetter=useRef(setQuery);querySetter.current=setQuery;
+ const [composing,setComposing]=useState(false);
  const input=useRef(null),fields=fieldsIn(children),applied=fields.filter(active);
  useEffect(()=>{setHost(document.getElementById('page-search-host'))},[]);
  useEffect(()=>setText(query),[query]);
+ useEffect(()=>{const q=text.trim();if(filters||composing||q===query||(q.length>0&&q.length<3))return;const timer=setTimeout(()=>querySetter.current(q),300);return()=>clearTimeout(timer)},[text,query,filters,composing]);
  function close(){setFilters(false);setDraft({});setError('');input.current?.focus()}
  function apply(event){event?.preventDefault();
   for(const f of fields){const value=draft[f.key]??f.value;if(f.range&&value.from&&value.to&&value.from>value.to){setError('Başlangıç tarihi bitiş tarihinden sonra olamaz.');return}}
@@ -42,9 +45,9 @@ export function ListTools({query,setQuery,placeholder='Hareketlerde ara',filters
  function clear(){reset();setText('');close()}
  const search=<div className="page-search" onKeyDown={e=>{if(e.key==='Escape'&&!e.target.closest('[role=dialog]')){e.stopPropagation();setText(query);close()}else if(e.key==='Enter'&&filters&&!e.target.closest('button,select,[role=dialog]'))apply(e)}}>
   <form className="page-search-row" role="search" onSubmit={apply}>
-   <label className="cari-search"><Search size={18}/><input ref={input} id="search" aria-label={placeholder} placeholder={placeholder} value={text} onChange={e=>setText(e.target.value)} aria-keyshortcuts="Control+k Meta+k"/><kbd aria-hidden="true">Ctrl K</kbd></label>
+   <label className="cari-search"><Search size={18}/><input ref={input} id="search" aria-label={placeholder} placeholder={placeholder} value={text} onChange={e=>setText(e.target.value)} onCompositionStart={()=>setComposing(true)} onCompositionEnd={e=>{setComposing(false);setText(e.currentTarget.value)}} aria-keyshortcuts="Control+k Meta+k"/><kbd aria-hidden="true">Ctrl K</kbd></label>
    <button type="button" className={'list-icon '+(filters||applied.length?'active':'')} aria-label="Filtrele" title="Filtrele" aria-expanded={filters} aria-controls="page-search-filters" onClick={()=>{if(filters)close();else{setDraft({});setError('');setFilters(true)}}}><SlidersHorizontal size={18}/>{applied.length>0&&<span className="filter-count">{applied.length}</span>}</button>
-   <button className="primary-button search-submit" type="submit">Ara</button>
+   <button className="primary-button search-submit icon-only" type="submit" aria-label="Ara" title="Ara"><Search size={18}/></button>
   </form>
   {(query||applied.length>0)&&<div className="search-chips">{query&&<button type="button" onClick={()=>{setQuery('');setText('')}}>Arama: {query}<X size={14}/></button>}{applied.map(f=><button type="button" key={f.key} onClick={()=>f.change(f.empty)}>{f.label}{valueLabel(f)?': '+valueLabel(f):''}<X size={14}/></button>)}<button type="button" className="text-button" onClick={clear}>Temizle</button></div>}
   {filters&&<div id="page-search-filters" className="search-filter-panel"><div className="finance-filters shared-filters">{scopeControl}{renderFields(children,fields,draft,setDraft)}</div>{error&&<p role="alert" className="cari-error">{error}</p>}<div className="search-filter-actions"><button type="button" className="secondary-button" onClick={()=>{setText(query);close()}}>Vazgeç</button><button type="button" className="secondary-button" onClick={clear}>Temizle</button><button type="button" className="primary-button" onClick={apply}>Ara</button></div></div>}
