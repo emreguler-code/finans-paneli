@@ -90,6 +90,7 @@ jobs:
           receipt['commit'] = os.environ['GITHUB_SHA']
           receipt['steps'] = {key: value.get('conclusion') for key, value in json.loads(os.environ['STEP_RESULTS']).items()}
           receipt['failedChecks'] = {str(p): p.read_text()[:5000] for p in Path('.qa').glob('*/browser/failure.txt')}
+          receipt['failedLayouts'] = {str(p): json.loads(p.read_text()) for p in Path('.qa').glob('*/browser/failure-layout.json')}
           checksums = list(Path('dist/releases').glob('*.sha256'))
           if checksums:
               receipt['checksums'] = {p.name: p.read_text().strip() for p in checksums}

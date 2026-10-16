@@ -5,6 +5,7 @@
 - Sağ üst tarih/gün bilgisi ve masaüstü Ctrl K ipucu geri getirildi. Tek ortak arama ve onaylı filtre davranışı korundu.
 - Arama, filtre ve Ara düğmeleri tüm sayfalarda aynı 44 px satıra hizalandı; arama ve içerik aynı esnek çerçeveyi kullanır. Mobil ekle düğmeleri başlıkla aynı satırdadır.
 - Genel bakıştaki gereksiz sıfırlama satırı kaldırıldı. Hesap/kart listesi ile hareket tablosunun sıralama ve CSV araçları yeniden bağımsızdır; tablo araçları sağa hizalanır.
+- Ekran yüksekliği hızla küçüldüğünde işlem penceresinin eski ekran yüksekliğine göre taşması engellendi.
 - Carousel kenar maskesi/silikliği, ok yerleşimi ve bölüm boşlukları düzeltildi. Embla korunur.
 - Grafik sütunu ve gösterge rengi eşitlendi. Son hareketler planlanan ve ileri tarihli kayıtları göstermez; planlar ödeme takviminde ve gelecek dönem sekmelerinde kalır.
 - Hatırlanan filtreler açık gezinme hedeflerini geçersiz kılmaz; hesap/bildirim/ödeme türü geçişleri düzeltildi.

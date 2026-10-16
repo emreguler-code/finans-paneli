@@ -80,7 +80,7 @@
   .ledger-actions{min-height:42px}
   .finance-table td[data-label="Açıklama"]{overflow-wrap:anywhere}
   .ledger-view .settled-note{max-width:140px}
-  .drawer-layer{padding:10px}.drawer.finance-sheet{max-width:100%;max-height:calc(var(--visible-height,100dvh) - 20px)}
+  .drawer-layer{padding:10px}.drawer.finance-sheet{max-width:100%;max-height:calc(min(var(--visible-height,100dvh),100dvh) - 20px)}
   .date-centered .date-months{grid-template-columns:minmax(0,1fr)}
   .date-centered .date-second{display:none}
   .date-navigation{gap:4px;min-width:0}.date-navigation select{min-width:0;max-width:100%}
