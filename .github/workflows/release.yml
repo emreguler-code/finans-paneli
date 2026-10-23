@@ -36,9 +36,17 @@ jobs:
         run: |
           npm run test:api
           npm run test:migrations
-      - name: Install Chromium for browser checks
+      - name: Prepare browser for checks
         id: chromium
-        run: npx playwright install --with-deps chromium
+        timeout-minutes: 5
+        run: |
+          browser_path="$(command -v google-chrome || command -v chromium || true)"
+          if [ -n "$browser_path" ]; then
+            "$browser_path" --version
+            echo "QA_BROWSER_BIN=$browser_path" >> "$GITHUB_ENV"
+          else
+            npx playwright install --with-deps chromium
+          fi
       - name: Test desktop and mobile workflows
         id: browser
         run: npm run test:browser
