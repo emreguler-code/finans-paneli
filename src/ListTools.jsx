@@ -37,7 +37,7 @@ export function ListTools({query,setQuery,placeholder='Hareketlerde ara',filters
  const filterButton=useRef(null);
  const input=useRef(null),fields=fieldsIn(children),applied=fields.filter(active);
  useLayoutEffect(()=>{setHost(document.getElementById('page-search-host'))},[]);
- useEffect(()=>setText(query),[query]);
+ useLayoutEffect(()=>setText(query),[query]);
  useEffect(()=>{const q=text.trim();if(filters||composing||q===query||(q.length>0&&q.length<3))return;const timer=setTimeout(()=>querySetter.current(q),300);return()=>clearTimeout(timer)},[text,query,filters,composing]);
  function close(){setFilters(false);setDraft({});setError('');input.current?.focus()}
  function apply(event){event?.preventDefault();

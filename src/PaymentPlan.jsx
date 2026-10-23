@@ -1,5 +1,5 @@
 import {useScopedState} from './SearchState';
-import {useState,useEffect} from 'react';
+import {useState,useEffect,useLayoutEffect} from 'react';
 import {X, CalendarDays, ChevronLeft, ChevronRight, Landmark, CreditCard, Users} from 'lucide-react';
 import {DatePicker} from './DatePicker';
 import {Sheet} from './ui';
@@ -10,10 +10,10 @@ const label=d=>new Date(d+'T12:00:00Z').toLocaleDateString('tr-TR',{day:'numeric
 export function PaymentPlan({data,open,exportCSV,initialDue='all',initialParty,initialDate}){
  const [view,setView]=useScopedState('Ödeme Planı'+':view','Aylık'),[anchor,setAnchor]=useScopedState('Ödeme Planı'+':anchor',initialDue==='late'?(planItems(data).filter(x=>x.date<data.today).sort((a,b)=>a.date.localeCompare(b.date))[0]?.date||data.today):data.today),[query,setQuery]=useScopedState('Ödeme Planı'+':query',''),[filters,setFilters]=useState(false),[type,setType]=useScopedState('Ödeme Planı'+':type',initialDue==='borç'?'Cari ödeme':initialDue==='alacak'?'Tahsilat':'Tümü'),[scope,setScope]=useScopedState('Ödeme Planı'+':scope','Tümü'),[sort,setSort]=useScopedState('Ödeme Planı'+':sort','date-asc');
  const [party,setParty]=useScopedState('Ödeme Planı:party',initialParty||'all');
- useEffect(()=>{if(initialParty){setParty(initialParty);setQuery('');setScope('Tümü');setType('Tümü');setSelectedDate(null)}},[initialParty]);
+ useLayoutEffect(()=>{if(initialParty){setParty(initialParty);setQuery('');setScope('Tümü');setType('Tümü');setSelectedDate(null)}},[initialParty]);
  const [selectedDate,setSelectedDate]=useScopedState('Ödeme Planı:selectedDate',null),[extra,setExtra]=useState(null);
- useEffect(()=>{if(initialDue==='all')return;setQuery('');setScope('Tümü');setSelectedDate(null);setType(initialDue==='borç'?'Cari ödeme':initialDue==='alacak'?'Tahsilat':'Tümü');setAnchor(initialDue==='late'?(planItems(data).filter(x=>x.date<data.today).sort((a,b)=>a.date.localeCompare(b.date))[0]?.date||data.today):data.today)},[initialDue]);
- useEffect(()=>{if(initialDate){setAnchor(initialDate);setSelectedDate(initialDate);setView('Aylık')}},[initialDate]);
+ useLayoutEffect(()=>{if(initialDue==='all')return;setQuery('');setScope('Tümü');setSelectedDate(null);setType(initialDue==='borç'?'Cari ödeme':initialDue==='alacak'?'Tahsilat':'Tümü');setAnchor(initialDue==='late'?(planItems(data).filter(x=>x.date<data.today).sort((a,b)=>a.date.localeCompare(b.date))[0]?.date||data.today):data.today)},[initialDue]);
+ useLayoutEffect(()=>{if(initialDate){setAnchor(initialDate);setSelectedDate(initialDate);setView('Aylık')}},[initialDate]);
  let first=anchor,last=anchor,days=[];
  if(view==='Haftalık'){first=weekStart(anchor);last=dateAdd(first,6)}
  if(view==='Aylık'){first=anchor.slice(0,7)+'-01';const d=new Date(first+'T12:00:00Z');d.setUTCMonth(d.getUTCMonth()+1);last=dateAdd(d.toISOString().slice(0,10),-1)}

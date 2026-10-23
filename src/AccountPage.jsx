@@ -1,5 +1,5 @@
 import {useScopedState} from './SearchState';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useLayoutEffect } from 'react';
 import {Plus, ArrowLeftRight, FileText, Pencil, Bell} from 'lucide-react';
 import {AccountCarousel} from './AccountCarousel';
 import {Ledger} from './Ledger';
@@ -24,7 +24,7 @@ export function AccountPage({page,data,open,search='',initialAccount='all'}){
  const inventory=source.filter(x=>(archived||x.active)&&`${x.name} ${x.last_four||''} ${x.bank||''}`.toLocaleLowerCase('tr').includes((queryScope==='accounts'?searchQuery:'').toLocaleLowerCase('tr'))).sort((a,b)=>inventorySort==='balance-desc'?(b.balance_cents??Math.round(b.debt*100))-(a.balance_cents??Math.round(a.debt*100)):a.name.localeCompare(b.name,'tr'));
  const a=inventory.find(x=>x.id===selected)||inventory[0];const statements=a?.statements||[];const statement=statements.find(x=>String(x.id)===statementId)||statements.at(-1);
  useEffect(()=>{if(a&&a.id!==selected)setSelected(a.id)},[a?.id,selected]);
- useEffect(()=>{if(initialAccount==='all')return;const target=source.find(item=>String(item.id)===String(initialAccount));if(target){setSelected(target.id);setSearchQuery('');setTag('all');setMinAmount('');setMaxAmount('');setFrom('');setTo('');setKind('Tümü');setPerson('Tümü');setCancelled(false);setQueryScope('accounts');if(!target.active)setArchived(true)}},[initialAccount]);
+ useLayoutEffect(()=>{if(initialAccount==='all')return;const target=source.find(item=>String(item.id)===String(initialAccount));if(target){setSelected(target.id);setSearchQuery('');setTag('all');setMinAmount('');setMaxAmount('');setFrom('');setTo('');setKind('Tümü');setPerson('Tümü');setCancelled(false);setQueryScope('accounts');if(!target.active)setArchived(true)}},[initialAccount]);
  function select(id){setSelected(id);setStatementId('');setFocusEvent(null);}
  let rows=a?isCard?cardPeriodRows(data.events,a,tab,statement,data.today):data.events.filter(e=>(e.account_id===a.id||e.target_id===a.id)&&(tab==='Gelecek dönem hareketleri'?e.scheduled:!e.scheduled)):[];
  if(isCard&&tab==='Ekstre'&&statement&&statement.difference_cents){rows=[...rows,{id:'difference-'+statement.id,synthetic:true,kind:'Ekstre farkı',operation:'statement_difference',description:'Detayı girilmemiş ekstre harcamaları',event_date:statement.cut_date,event_time:'',amount_cents:Math.abs(statement.difference_cents),card_effect:statement.difference_cents,tag:'Genel',creator:'',card_id:a.id,card_name:a.name}];}
