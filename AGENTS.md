@@ -1,6 +1,6 @@
 # Finans Paneli — Codex çalışma kuralları
 
-Bu depo Finans 1.7.2 kaynaklarıdır. Ürün dili Türkçe, tasarım dili Sade Netlik'tir.
+Sürüm Finans 1.8.0, şema 9’dur. Onaylı kapsam docs/SONRAKI-SURUM-NOTLARI.md içindedir. Bildirimler, filtreler ve tarih aralıkları tıklanan alana bağlı, bulanıklık ve sayfa kayması olmadan açılır. Karta ait tüm bilgi/ayar/düzenleme ikonları kendi kartının üzerinde olmalıdır. Kampanya puanları TL bakiyesine eklenmez; araç ödemeleri mevcut hareketlere bağlanır ve ikinci finansal işlem üretmez. Ürün dili Türkçe, tasarım dili Sade Netlik'tir.
 Önce README.md, docs/TASARIM-ILKELERI.md ve docs/CODEX-BASLANGIC.md dosyalarını okuyun.
 
 ## Değişiklik kapsamı

@@ -24,8 +24,8 @@ def event(**b):
  code,r=post('event_save',**payload);assert code==200,r;return r['id']
 call('session')
 code,r=call('login',dict(username=os.environ['API_TEST_USERNAME'],password=os.environ['API_TEST_PASSWORD']));assert code==200,r
-code,r=call('update_apply',{});ok('Schema 7 update succeeds',code==200)
-ok('Schema 7 active',state()['schemaVersion']==7)
+code,r=call('update_apply',{});ok('Schema 9 update succeeds',code==200)
+ok('Schema 9 active',state()['schemaVersion']==9)
 code,r=post('demo_seed',profile='compact');assert code==200,r
 ok('Demo seed succeeds',r.get('demoReady'))
 ok('Administrator login survives demo reset',call('login',dict(username=os.environ['API_TEST_USERNAME'],password=os.environ['API_TEST_PASSWORD']))[0]==200)
@@ -152,5 +152,26 @@ ok('Party search type filter preserved',code==200 and all(p['type']=='Tedarikçi
 code,r=post('party_save',name='QA_% literal',type='Müşteri',opening='0');assert code==200,r
 code,r=call('parties',q='QA_%')
 ok('Party search treats SQL wildcards literally',code==200 and [p['name'] for p in r['parties']]==['QA_% literal'])
+# Optional supplier POS metadata is independent of the financial ledger.
+payload=dict(name='POS Deneme Tedarikçi',type='Tedarikçi',opening='0',pos_programs=['garanti:bonus','yapikredi:world'])
+code,r=post('party_save',**payload);assert code==200,r;pos_id=r['id']
+ok('Supplier supports multiple POS programs',entity('parties',pos_id)['pos_programs']==['garanti:bonus','yapikredi:world'])
+def save_pos(**changes):
+ p=entity('parties',pos_id);return post('party_save',**{**p,'reason':'POS seçenekleri denemesi',**changes})
+counts=(len(state()['events']),sum(a['balance_cents'] for a in state()['accounts']))
+code,r=save_pos(pos_programs=['akbank:axess','garanti:bonus','yapikredi:world']);ok('All three POS programs persist',code==200 and len(entity('parties',pos_id)['pos_programs'])==3)
+p=entity('parties',pos_id);p.pop('pos_programs');code,r=post('party_save',**{**p,'reason':'Eski istemci denemesi'});ok('Omitted POS field preserves previous choices',code==200 and len(entity('parties',pos_id)['pos_programs'])==3)
+code,r=call('parties',q='POS Deneme');ok('Party search returns structured POS choices',code==200 and len(r['parties'][0]['pos_programs'])==3)
+for invalid in [None,'garanti:bonus',{'bank':'garanti'},['unknown:bonus'],['garanti:axess'],[False]]:
+ ok('Invalid POS choices rejected '+str(invalid),save_pos(pos_programs=invalid)[0]==422)
+ok('Rejected update preserves POS data',len(entity('parties',pos_id)['pos_programs'])==3)
+code,r=save_pos(pos_programs=['akbank:axess','akbank:axess']);ok('Duplicate POS choices normalized',code==200 and entity('parties',pos_id)['pos_programs']==['akbank:axess'])
+code,r=save_pos(pos_programs=[]);ok('All POS selections can be cleared',code==200 and entity('parties',pos_id)['pos_programs']==[])
+code,r=save_pos(pos_programs=['garanti:bonus']);assert code==200,r
+code,r=save_pos(type='Müşteri',pos_programs=[]);ok('Changing supplier type clears POS metadata',code==200 and entity('parties',pos_id)['pos_programs']==[])
+ok('Non-supplier cannot receive POS metadata',save_pos(pos_programs=['garanti:bonus'])[0]==422)
+ok('POS edits never change balances or create transactions',counts==(len(state()['events']),sum(a['balance_cents'] for a in state()['accounts'])))
+code,r=call('audit',entity='party',id=pos_id);ok('POS changes are recorded in audit history',code==200 and any('pos_programs' in (l['after_json'] or '') for l in r['logs']))
+exec(compile((Path(__file__).with_name('tracking-integration.py')).read_text(),'tracking-integration.py','exec'))
 Path(os.environ['QA_STATE_PATH']).write_text(json.dumps(state(),ensure_ascii=False))
 print(json.dumps({'passed':len(checks),'failed':0}))

@@ -1,18 +1,21 @@
 import { version } from '../package.json';
 
+import {FloatingPanel} from './FloatingPanel';
+import {groupAlerts} from './alert-groups.mjs';
+import {fmt} from './ui';
 import {ListTools} from './ListTools';
 import { Sheet } from './ui';
 import { collectAlerts, AlertNotice } from './Alerts';
 import { globalEventAmount } from './list-utils.mjs';
 import { DatePicker } from './DatePicker';
 import { presetRange } from './date-utils.mjs';
-import { useState, useEffect } from "react";
-import { Users, LayoutDashboard, ArrowLeftRight, Landmark, CreditCard, ChartNoAxesCombined, Search, Bell, Plus, ChevronRight, ChevronDown, PanelLeftClose, PanelLeftOpen, ArrowDownLeft, ArrowUpRight, ArrowRight, CircleAlert, Check, X, Wallet, CalendarDays, MoreHorizontal, Settings } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Users, LayoutDashboard, ArrowLeftRight, Landmark, CreditCard, ChartNoAxesCombined, Search, Bell, Plus, ChevronRight, ChevronDown, PanelLeftClose, PanelLeftOpen, ArrowDownLeft, ArrowUpRight, ArrowRight, CircleAlert, Check, X, Wallet, CalendarDays, MoreHorizontal, Settings, Car, Gift } from "lucide-react";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 import { money, day } from "./data";
 import { FinanceHub, FinanceDialog } from "./Finance";
 import { can } from "./ui";
-const navigation = [["Genel bakış", LayoutDashboard], ["Cari hesaplar", Users], ["Tahsilat & Ödeme", ArrowLeftRight], ["Ödeme Planı", CalendarDays], ["Hesaplar", Landmark], ["Kredi kartları", CreditCard], ["Raporlar", ChartNoAxesCombined], ["Kullanıcılar", Users]];
+const navigation = [["Genel bakış", LayoutDashboard], ["Cari hesaplar", Users], ["Tahsilat & Ödeme", ArrowLeftRight], ["Ödeme Planı", CalendarDays], ["Hesaplar", Landmark], ["Kredi kartları", CreditCard], ["Kampanyalar", Gift], ["Araçlarım", Car], ["Raporlar", ChartNoAxesCombined], ["Kullanıcılar", Users]];
 const descriptions = {
   "Genel bakış": "Bugünün durumu, hareketlerin ve sıradaki adımların.",
   Hareketler: "Banka ve kasa kayıtlarını tek yerden incele.",
@@ -81,7 +84,10 @@ export function App({
     [drawer, setDrawer] = useState(null),
     [bell, setBell] = useState(false),
     [toast, setToast] = useState(null);
-  const notifications = collectAlerts(fullData);
+  const bellButton=useRef(null);
+  const [notificationTarget,setNotificationTarget]=useState(null),[routeKey,setRouteKey]=useState(0);
+  const notifications = groupAlerts(collectAlerts(fullData),TODAY);
+  function openNotification(alert){go(alert.page);setNotificationTarget(alert);setRouteKey(key=>key+1);if(alert.account!==undefined)setScope(alert.account);if(alert.section==='Gecikmiş')setClaimFilter('late');if(alert.entity){const rows=alert.entity==='campaign'?fullData.campaigns:fullData.vehicle_records;const item=rows.find(item=>item.id===alert.recordId);if(item)openFinance({entity:alert.entity,item})}}
   const accountName = id => accounts.find(a => a.id === id)?.name;
   const go = p => {
     setPage(p);
@@ -92,6 +98,7 @@ export function App({
     setKind("all");
     setScope("all");
     setClaimFilter("all");
+    setNotificationTarget(null);
   };
   const notify = (title, detail) => setToast({
     title,
@@ -424,7 +431,7 @@ export function App({
         </div>
         <div className="workspace-label">KİŞİSEL ÇALIŞMA ALANI</div>
         <nav aria-label="Ana navigasyon">
-          {navigation.filter(([name]) => name !== 'Kullanıcılar' || can(fullData.user, 'admin')).map(([name, Icon]) => <button key={name} className={page === name ? "active" : ""} aria-current={page === name ? "page" : undefined} aria-label={name} onClick={() => go(name)}>
+          {navigation.filter(([name]) => name !== 'Kullanıcılar' || can(fullData.user, 'admin')).map(([name, Icon]) => <button key={name} className={(page === name ? "active " : "")+(name==='Kampanyalar'?'navigation-submenu':'')} aria-current={page === name ? "page" : undefined} aria-label={name} onClick={() => go(name)}>
               <Icon size={20} />
               <span>{name}</span>
               {name === "Ödeme Planı" && late.length > 0 && !compact && <em>{late.length}</em>}
@@ -452,14 +459,11 @@ export function App({
           <div id="page-search-host" />
           <div className="top-actions">
             <div className="notification-holder">
-              <button className="icon-button notification-button" aria-label="Bildirimleri aç" onClick={() => setBell(!bell)}>
+              <button ref={bellButton} className="icon-button notification-button" aria-expanded={!!bell} aria-haspopup="dialog" aria-label="Bildirimleri aç" onClick={() => setBell(!bell)}>
                 <Bell size={18} />
                 {notifications.length > 0 && <i />}
               </button>
-              {bell && <Sheet title="Bildirimler" onClose={() => setBell(false)}><div className="sheet-scroll notification-list">{notifications.length ? notifications.map(alert => <AlertNotice key={alert.id} alert={alert} onOpen={() => {
-                  go(alert.page);
-                  if (alert.account !== undefined) setScope(alert.account);
-                }} />) : <p className="muted">Dikkat gerektiren bildirim yok.</p>}</div></Sheet>}
+              {bell && <FloatingPanel anchor={bellButton.current} title="Bildirimler" onClose={()=>setBell(false)} width={400}><div className="notification-compact">{['Gecikmiş','Bugün','Yaklaşan','Diğer'].map(section=>{const rows=notifications.filter(alert=>alert.section===section);return rows.length>0&&<section key={section}><h3>{section}</h3>{rows.map(alert=><button key={alert.id} className={'notification-row '+alert.level} onClick={()=>openNotification(alert)}><CircleAlert size={18}/><span><strong>{alert.title}</strong><small>{alert.count>1?`${alert.groupName} · ${alert.count} kayıt · ${fmt(alert.amount_cents)} TL`:alert.detail}</small></span><ChevronRight size={16}/></button>)}</section>})}{!notifications.length&&<p className="empty">Dikkat gerektiren bildirim yok.</p>}</div></FloatingPanel>}
             </div>
             <span className="header-divider" />
             <span className="date-label" aria-label="Çalışma alanı tarihi">
@@ -470,7 +474,7 @@ export function App({
           </div>
         </div></header>
         <main className="main-content">
-          {page === "Genel bakış" && <ListTools query={search} setQuery={setSearch} placeholder="Genel bakış hareketlerinde ara" filters={overviewFilters} setFilters={setOverviewFilters} resultCount={visible.length} reset={()=>{setSearch('');setScope('all');setKind('all')}}><label>Hesap<select value={scope} onChange={e=>setScope(e.target.value)}><option value="all">Tüm hesaplar</option>{accounts.map(a=><option key={a.id} value={a.id}>{a.name}</option>)}</select></label><label>İşlem<select value={kind} onChange={e=>setKind(e.target.value)}><option value="all">Tümü</option>{[...new Set(tx.map(t=>t.kind))].map(k=><option key={k}>{k}</option>)}</select></label></ListTools>}
+          {page === "Genel bakış" && <ListTools query={search} setQuery={setSearch} placeholder="Genel bakış hareketlerinde ara" filters={overviewFilters} setFilters={setOverviewFilters} resultCount={visible.length} reset={()=>{setSearch('');setScope('all');setKind('all');setOverviewRange(presetRange('Bu Ay',TODAY))}}><label>Hesap<select value={scope} onChange={e=>setScope(e.target.value)}><option value="all">Tüm hesaplar</option>{accounts.map(a=><option key={a.id} value={a.id}>{a.name}</option>)}</select></label><label>Tarih aralığı<DatePicker range from={overviewRange.from} to={overviewRange.to} today={TODAY} clearable={false} onChange={range=>setOverviewRange(range.from&&range.to?range:presetRange('Bu Ay',TODAY))}/></label><label>İşlem<select value={kind} onChange={e=>setKind(e.target.value)}><option value="all">Tümü</option>{[...new Set(tx.map(t=>t.kind))].map(k=><option key={k}>{k}</option>)}</select></label></ListTools>}
           {page === "Genel bakış" && <div className="page-title">
             <div>
               <h1>{page === "Genel bakış" ? "Finansal görünüm" : page}</h1>
@@ -481,7 +485,7 @@ export function App({
               <span className="sr-only">İşlem ekle</span>
             </button>
           </div>}
-          {page !== "Genel bakış" ? <FinanceHub key={page} page={page} data={fullData} onState={applyState} notify={notify} open={openFinance} search="" initialAccount={scope} initialDue={claimFilter} onLabel={setPartyLabel} /> : <>
+          {page !== "Genel bakış" ? <FinanceHub key={page+'-'+routeKey} page={page} initialParty={notificationTarget?.partyId} initialDate={notificationTarget?.date} data={fullData} onState={applyState} notify={notify} open={openFinance} search="" initialAccount={scope} initialDue={claimFilter} onLabel={setPartyLabel} /> : <>
               <div className="snapshot-label">
                 <span>GÜNCEL DURUM</span>
                 <span>

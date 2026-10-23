@@ -35,6 +35,7 @@ function field(array $body,string $key,int $max=160,bool $required=false): strin
 }
 require __DIR__.'/v2/core.php';
 require __DIR__.'/v2/finance.php';
+require __DIR__.'/v2/tracking.php';
 try {
     $db=new PDO('mysql:host='.$config['db_host'].';port='.($config['db_port']??3306).';dbname='.$config['db_name'].';charset=utf8mb4',$config['db_user'],$config['db_password'],[PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,PDO::ATTR_DEFAULT_FETCH_MODE=>PDO::FETCH_ASSOC,PDO::ATTR_EMULATE_PREPARES=>false]);
     $db->exec("SET time_zone = '+03:00'");
@@ -69,7 +70,7 @@ try {
     if($action==='logout'&&$method==='POST'){$_SESSION=[];session_destroy();reply(['ok'=>true]);}
     $actor=v2Actor($db);if(!$actor)fail('Hesabınız etkin değil. Yeniden giriş yapın.',401);
     require __DIR__.'/v2/upgrade.php';
-    if((int)$db->query('SELECT schema_version FROM app_meta WHERE id=1')->fetchColumn()<7)reply(['error'=>'Yeni sürüm için yönetici güncellemesi gerekiyor.','upgradeRequired'=>true],503);
+    if((int)$db->query('SELECT schema_version FROM app_meta WHERE id=1')->fetchColumn()<9)reply(['error'=>'Yeni sürüm için yönetici güncellemesi gerekiyor.','upgradeRequired'=>true],503);
     require __DIR__.'/v2/main.php';
 } catch(DomainException $e){if(isset($db)&&$db->inTransaction())$db->rollBack();fail($e->getMessage());}
 catch(Throwable $e){if(isset($db)&&$db->inTransaction())$db->rollBack();error_log('Finans API error: '.$e->getMessage());fail('İşlem tamamlanamadı. Veritabanı bağlantısını ve sunucu hata günlüğünü kontrol edin.',503);}

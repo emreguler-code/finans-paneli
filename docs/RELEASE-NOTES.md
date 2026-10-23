@@ -1,3 +1,17 @@
+# Finans Paneli 1.8.0
+
+- Bildirim ziline bağlı kompakt pencere; gecikmiş/bugün/yaklaşan grupları, aynı cari için kalan tutarların özeti ve hedefe geçiş.
+- Ortak filtreler ve tüm tarih aralığı takvimleri tıklanan alana bağlı açılır; arka plan bulanmaz, sayfa aşağı itilmez. Filtreler Uygula/Enter ile uygulanır; Esc/dışarı tıklama taslağı iptal eder. Sayfaya uygun etiket, cari ve tutar filtreleri eklendi; 3 karakter/300 ms arama korunur.
+- Aktif cari hareketi ve işlem ikonları tek yüzeydir. Hesap/kart düzenleme ikonları kendi kartındadır. Cari kartı düzenleme gerekçesi isteğe bağlıdır; finansal hareket gerekçesi zorunlu kalır.
+- Tedarikçilerde isteğe bağlı çoklu POS banka/programı: Garanti Bonus, Akbank Axess, Yapı Kredi World.
+- Kredi kartları altında Kampanyalar: tarih, katılım, kart/POS/tedarikçi/etiket koşulları, asgari tutar, işlem sayısı, kazanç sınırları, puan/nakit iade/ek taksit/erteleme. Alışveriş ilişkilendirme, taksitleri tek alışveriş sayma, beklenen/alınan kazanç ayrımı ve tedarikçiye göre uygun kart karşılaştırması. Puanlar nakit bakiyesine eklenmez; banka kampanyalarının koşulları elle kaydedilir.
+- Araçlarım: plaka/model/km, sigorta/kasko geçmişi, MTV, muayene, tarih veya kilometreye bağlı bakım; hatırlatmalar, tahmini/kesin tutar ve prim taksitleri. Mevcut gerçek ödemeler bağlanır; aynı ödeme iki araç kaydına sayılamaz. Kesin ve ödenmemiş tutarlar ödeme takvimine girer.
+- İsteğe bağlı kapsamlı demo artık araç ve kampanya örneklerini de içerir. Yönetici/config korunur. Normal güncelleme verileri sıfırlamaz.
+
+Güncelleme: hosting dosyalarını yükleyip mevcut api/config.php dosyanızı koruyun; yöneticiyle update.php üzerinden şema 9'a geçin. Önce dosya/veritabanı yedeği alın. Demo yenilemesi ayrı, silici ve isteğe bağlı bir işlemdir.
+
+---
+
 # Finans Paneli 1.7.2
 
 Sayfa geçişinde ortak aramanın kısa süreliğine içerikte belirmesi engellendi. Ortak aramada 3 karakter / 300 ms otomatik arama, büyüteç düğmesi ve hareket paneliyle aynı kenarlık rengi. Fat. Alış / Fatsız. Alış etiketleri ve daha dar işlem alanı.

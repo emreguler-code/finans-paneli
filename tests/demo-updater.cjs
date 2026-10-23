@@ -13,6 +13,7 @@ const checks=[];const ok=(name,value)=>{if(!value)throw Error(name);checks.push(
   await seed.click();await page.waitForFunction(()=>!document.querySelector('#seed').disabled&&document.querySelector('#result').textContent.includes('Demo verileri yenilendi'));
   const response=await page.request.get(process.env.QA_BASE_URL+'/api/index.php?action=state');ok('Packaged demo reset succeeds '+pass,response.ok());const s=await response.json();
   ok('Packaged reset creates the full 588-row demo '+pass,s.events.length===588&&s.accounts.length===4&&s.parties.length===10&&s.cards.length===3);
+  ok('Packaged demo includes vehicle and campaign fixtures '+pass,s.vehicles.length===2&&s.vehicle_records.length===7&&s.campaigns.length===2);
   ok('Previous test transactions are removed '+pass,!s.events.some(e=>e.description==='Demo iptal edilmiş gider'));
   ok('Administrator remains intact '+pass,s.user.role==='admin'&&s.user.username===process.env.QA_USERNAME);
   const ids=s.events.map(e=>e.id);if(previousIds)ok('Second reset replaces demo instead of duplicating it',!ids.some(id=>previousIds.includes(id)));previousIds=ids;

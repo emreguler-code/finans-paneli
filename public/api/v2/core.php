@@ -30,7 +30,7 @@ function audit(PDO $db,string $entity,string $id,string $operation,$before,$afte
  global $actor;$db->prepare('INSERT INTO audit_log(entity,entity_id,operation,actor_id,actor_name,before_json,after_json,reason) VALUES(?,?,?,?,?,?,?,?)')->execute([$entity,$id,$operation,$actor['id']??null,$actor['short_name']??'Sistem',json_encode($before,JSON_UNESCAPED_UNICODE),json_encode($after,JSON_UNESCAPED_UNICODE),$reason]);
 }
 function row(PDO $db,string $table,$id): array {
- if(!in_array($table,['fin_events','parties','accounts','cards','users'],true))throw new DomainException('Geçersiz kayıt.');
+ if(!in_array($table,['fin_events','parties','accounts','cards','users','vehicles','vehicle_records','campaigns','campaign_entries'],true))throw new DomainException('Geçersiz kayıt.');
  $q=$db->prepare("SELECT * FROM $table WHERE id=?");$q->execute([$id]);$r=$q->fetch();if(!$r)throw new DomainException('Kayıt bulunamadı.');return $r;
 }
 function publicRow(array $r): array {unset($r['password_hash']);return $r;}
@@ -49,8 +49,8 @@ function v2state(PDO $db): array {
  // Statement closing date is a real dated snapshot; later purchases do not enter that statement.
  $cut=(int)$c['opening_debt_cents'];foreach($eventsByCard[$c['id']]??[] as $e)if(!$e['cancelled']){if(in_array($e['kind'],['Kart harcaması','Ödeme'])&&$e['event_date']<=$c['statement_date'])$cut+=$e['amount_cents'];elseif(in_array($e['kind'],['Kart ödemesi','Kart iadesi','Tahsilat']))$cut-=$e['amount_cents'];}
  $c['statement']=max(0,min($cardbalance[$c['id']],$cut-((!$c['opening_statement_date']||$c['statement_date']<=$c['opening_statement_date'])?(int)$c['opening_unbilled_cents']:0)))/100;}
- unset($c);foreach($parties as &$p){$p['id']=(int)$p['id'];$p['version']=(int)$p['version'];$p['active']=(bool)$p['active'];$p['balance_cents']=$party[$p['id']];}unset($p);
+ unset($c);foreach($parties as &$p){$p['id']=(int)$p['id'];$p['version']=(int)$p['version'];$p['active']=(bool)$p['active'];$p['pos_programs']=json_decode($p['pos_programs']??'[]',true)?:[];$p['balance_cents']=$party[$p['id']];}unset($p);
  $users=$db->query('SELECT id,username,short_name,role,active,version FROM users ORDER BY id')->fetchAll();$tx=[];foreach($events as $e){if($e['cancelled']||!$e['account_id'])continue;$base=['id'=>$e['id'],'date'=>$e['event_date'],'time'=>substr($e['event_time'],0,5),'name'=>$e['party_name']?:($e['card_name']?:$e['description']),'desc'=>$e['description'],'kind'=>$e['kind']==='Virman'?'Transfer':($e['kind']==='Kart ödemesi'?'Kart ödemesi':$e['kind']),'category'=>$e['category'],'document'=>$e['document_no'],'creator'=>$e['creator']];$tx[]=$base+['account'=>$e['account_id'],'amount'=>($e['kind']==='Virman'?-$e['amount_cents']:$e['cash_effect'])/100];if($e['kind']==='Virman')$tx[]=$base+['account'=>$e['target_id'],'amount'=>$e['amount_cents']/100];}
- $result=enhanceCardState($db,['today'=>today($db),'demo'=>(bool)$db->query('SELECT demo_date FROM app_meta WHERE id=1')->fetchColumn(),'user'=>$actor,'accounts'=>$acc,'cards'=>$cards,'parties'=>$parties,'events'=>$events,'claims'=>$allocation['open'],'allocations'=>$allocation['matches'],'advances'=>$allocation['advances'],'users'=>$users,'tx'=>$tx,'schemaVersion'=>7]);$db->commit();return $result;
+ $result=enhanceCardState($db,['today'=>today($db),'demo'=>(bool)$db->query('SELECT demo_date FROM app_meta WHERE id=1')->fetchColumn(),'user'=>$actor,'accounts'=>$acc,'cards'=>$cards,'parties'=>$parties,'events'=>$events,'claims'=>$allocation['open'],'allocations'=>$allocation['matches'],'advances'=>$allocation['advances'],'users'=>$users,'tx'=>$tx,'schemaVersion'=>9]);$result=trackingState($db,$result);$db->commit();return $result;
  }catch(Throwable $e){if($db->inTransaction())$db->rollBack();throw $e;}
 }

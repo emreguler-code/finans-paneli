@@ -27,10 +27,15 @@ function saveEvent(PDO $db,array $b): array {
  audit($db,'event',(string)$id,$old?'edit':'create',$old,row($db,'fin_events',$id),$reason);return ['id'=>$id];
 }
 function saveEntity(PDO $db,string $entity,array $b): array {
- global $actor;$table=match($entity){'party'=>'parties','account'=>'accounts','card'=>'cards','user'=>'users'};$id=$b['id']??null;if($table==='users')permit('admin');else permit($id?'edit':'create');$old=$id?row($db,$table,$id):null;if($old)versionCheck($old,$b);$v=[];$reason=$old?field($b,'reason',1000,!in_array($entity,['account','card'],true)):'';
+ global $actor;$table=match($entity){'party'=>'parties','account'=>'accounts','card'=>'cards','user'=>'users'};$id=$b['id']??null;if($table==='users')permit('admin');else permit($id?'edit':'create');$old=$id?row($db,$table,$id):null;if($old)versionCheck($old,$b);$v=[];$reason=$old?field($b,'reason',1000,!in_array($entity,['account','card','party'],true)):'';
  if($entity==='party'){
  foreach(['name'=>160,'title'=>200,'type'=>20,'phone'=>50,'email'=>160,'tax_no'=>40,'tax_office'=>160,'address'=>1000,'notes'=>1000] as $k=>$len)$v[$k]=field($b,$k,$len,in_array($k,['name','type']));
  if(!in_array($v['type'],['Tedarikçi','Müşteri','Personel']))throw new DomainException('Cari türü geçersiz.');if($v['email']&&!filter_var($v['email'],FILTER_VALIDATE_EMAIL))throw new DomainException('E-posta adresini kontrol edin.');
+ $pos=array_key_exists('pos_programs',$b)?$b['pos_programs']:($v['type']==='Tedarikçi'?json_decode($old['pos_programs']??'[]',true):[]);
+ if(!is_array($pos)||!array_is_list($pos)||count($pos)>3)throw new DomainException('POS cihazı seçimlerini kontrol edin.');
+ foreach($pos as $program)if(!is_string($program)||!in_array($program,['garanti:bonus','akbank:axess','yapikredi:world'],true))throw new DomainException('Geçersiz POS banka / program seçimi.');
+ if($v['type']!=='Tedarikçi'&&$pos)throw new DomainException('POS cihazı bilgileri yalnız tedarikçiler içindir.');
+ $pos=array_values(array_unique($pos));sort($pos);$v['pos_programs']=json_encode($pos,JSON_THROW_ON_ERROR);
  }elseif($entity==='account'){
  foreach(['name'=>160,'type'=>40,'bank'=>160,'iban'=>40,'holder'=>160] as $k=>$len)$v[$k]=field($b,$k,$len,in_array($k,['name','type']));if(!in_array($v['type'],['Banka hesabı','Kasa','Birikim hesabı','Vadeli hesap','Kredili Mevduat Hesabı']))throw new DomainException('Hesap türü geçersiz.');
  if($v['iban']){$v['iban']=strtoupper(str_replace(' ','',$v['iban']));if(!preg_match('/^[A-Z]{2}\d{2}[A-Z0-9]{11,30}$/D',$v['iban']))throw new DomainException('IBAN biçimini kontrol edin.');}
@@ -85,14 +90,14 @@ if($method==='GET'){
   $parties=$db->query('SELECT * FROM parties ORDER BY name,id')->fetchAll();$net=array_sum($balances);$total=count($parties);$rows=[];
   $ids=null;if($search&&preg_match_all('/./us',$search)>=3){$q=$db->prepare("SELECT id FROM parties WHERE name LIKE ? ESCAPE '=' OR title LIKE ? ESCAPE '='");$pattern='%'.strtr($search,['='=>'==','%'=>'=%','_'=>'=_']).'%';$q->execute([$pattern,$pattern]);$ids=array_fill_keys($q->fetchAll(PDO::FETCH_COLUMN),true);}
   foreach($parties as $party){if($ids!==null&&!isset($ids[$party['id']]))continue;if($type&&$type!=='Tümü'&&$party['type']!==$type)continue;
-   $party['id']=(int)$party['id'];$party['version']=(int)$party['version'];$party['active']=(bool)$party['active'];$party['balance_cents']=$balances[$party['id']]??0;$rows[]=$party;
+   $party['id']=(int)$party['id'];$party['version']=(int)$party['version'];$party['active']=(bool)$party['active'];$party['pos_programs']=json_decode($party['pos_programs']??'[]',true)?:[];$party['balance_cents']=$balances[$party['id']]??0;$rows[]=$party;
   }
   $db->commit();reply(['parties'=>$rows,'total'=>$total,'net_cents'=>$net]);
  }
 
  fail('İşlem bulunamadı.',404);
 }
-if(!in_array($action,['event_save','event_status','party_save','account_save','card_save','user_save','statement_save','demo_seed']))fail('Bu eski işlem yolu kaldırıldı. Sayfayı yenileyin.',410);
+if(!in_array($action,['event_save','event_status','party_save','account_save','card_save','user_save','statement_save','demo_seed','vehicle_save','vehicle_record_save','campaign_save','campaign_entry_save']))fail('Bu eski işlem yolu kaldırıldı. Sayfayı yenileyin.',410);
 $key=requestKey($body);$hash=hash('sha256',json_encode([$actor['id'],$action,$body]));
 // Permission checks run before retry lookup: revocation applies immediately.
 if(in_array($action,['event_status','user_save','demo_seed']))permit('admin');else permit(!empty($body['id'])?'edit':'create');
@@ -105,6 +110,7 @@ try{
  elseif($action==='statement_save')$result=saveStatement($db,$body);
  elseif($action==='demo_seed')$result=seedDemo($db,($body['profile']??'comprehensive')!=='compact');
  elseif($action==='event_status'){$id=(int)($body['id']??0);$old=row($db,'fin_events',$id);versionCheck($old,$body);$cancelled=(int)(bool)($body['cancelled']??true);$reason=field($body,'reason',1000,true);$db->prepare('UPDATE fin_events SET cancelled=?,version=version+1 WHERE id=?')->execute([$cancelled,$id]);audit($db,'event',(string)$id,$cancelled?'cancel':'restore',$old,row($db,'fin_events',$id),$reason);$result=['id'=>$id];}
+ elseif(in_array($action,['vehicle_save','vehicle_record_save','campaign_save','campaign_entry_save'],true))$result=saveTracking($db,str_replace('_save','',$action),$body);
  else $result=saveEntity($db,str_replace('_save','',$action),$body);
  // A card may carry credit after refunds; reflect it as negative debt rather than discarding real money.
  $db->prepare('INSERT INTO write_requests(request_key,payload_hash,result_json) VALUES(?,?,?)')->execute([$key,$hash,json_encode($result)]);$db->commit();

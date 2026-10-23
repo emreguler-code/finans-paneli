@@ -4,7 +4,7 @@ Finans Paneli'nin kendi tasarım dili korunur; başka projelerin görsel tercihl
 
 - Yerel Inter, Lucide ikonları, tabular rakamlar. Sayfa başlığı masaüstünde 27 px, mobilde 24 px; bölüm başlığı 16 px/600, alt başlık 14 px/500, ana metin 14 px, yardımcı metin 12 px. Yardımcı metin satır yüksekliği 1,5; mobil form alanı 16 px. Ölçüler `src/styles/tokens.css` üzerinden paylaşılır.
 - Porselen #F5F7F8, beyaz, metin #202C39, ikincil #596879, vurgu #087F8C, yeşil #147D59, kırmızı #B54343, uyarı #955F12, çizgi #DDE3E8.
-- İşlem pencereleri merkezde, arka plan bulanık. Sağdan açılan işlem paneli yok. Satır içi detaylar/filtreler ve log baloncukları bu kurala özel istisnadır.
+- İşlem pencereleri merkezde, arka plan bulanık. Sağdan açılan işlem paneli yok. Satır içi detaylar ve log baloncukları bu kurala özel istisnadır. Bildirimler, ortak filtreler ve tüm tarih aralığı seçimleri tıklanan alana bağlı kompakt pencere olarak açılır; arka plan bulanmaz ve içerik aşağı itilmez. Esc/dışarı tıklama taslağı iptal eder.
 - Benzer listelerde arama, filtre, sıfırla, sırala ve CSV ikonları ortak düzendedir; altlarında yazı yoktur, erişilebilir adları bulunur.
 - Cari sütunları: Tarih / Açıklama / Etiket / İşlem–Oluşturan / Tutar / Bakiye. Onaysız yer değişikliği yapılmaz. Açıklamada yalnızca kullanıcının metni görünür; cari adı otomatik eklenmez.
 - Cari başlığındaki aşağı ok mevcut beyaz kutuyu genişletir. Bilgiler yeni pencerede açılmaz.
@@ -39,3 +39,6 @@ Finans Paneli'nin kendi tasarım dili korunur; başka projelerin görsel tercihl
 - İşlem etiketlerinde Fat. Alış / Fatsız. Alış kullanılır, tam ad title içinde korunur. Etiket alanı 100 px, ekleyen hizası ortaktır.
 - Hesap uyarı sütunu kalıcı yer ayırır ve kendi içinde kayar. Uyarı hedefi hesabı ve varsa ilgili hareketin sekmesini/sayfasını seçer. Faiz/vade uyarısı salt okunur hesap bilgisini açar.
 - Masaüstü/tablet tablosu açıklamayı daraltmak yerine panel içinde yatay kayar; telefonda mevcut kart satırı düzeni korunur.
+
+- Kart benzeri her alanda kendi bilgi, ayar ve düzenleme ikonları kendi kartının üzerinde toplu bulunur. Bu kural hesaplar, kredi kartları ve araç kartları için ortaktır.
+- Cari kartının temel bilgileri düzenlenirken gerekçe isteğe bağlıdır; finansal hareket düzenleme gerekçesi zorunludur.

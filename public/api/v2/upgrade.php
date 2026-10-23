@@ -75,7 +75,7 @@ function upgradeV15(PDO $db): array {
   return ['ok'=>true,'message'=>'Finans 1.5 güncellemesi tamamlandı.','backupReady'=>true];
  } finally {if($db->inTransaction())$db->rollBack();$db->query("SELECT RELEASE_LOCK('finans_update')");}
 }
-function upgrade(PDO $db): array {
+function upgradeV16(PDO $db): array {
  permit('admin');$v=(int)$db->query('SELECT schema_version FROM app_meta WHERE id=1')->fetchColumn();
  if($v>=7)return ['ok'=>true,'message'=>'Finans 1.6 güncel.'];
  if($v<6)upgradeV15($db);
@@ -90,6 +90,32 @@ function upgrade(PDO $db): array {
   return ['ok'=>true,'message'=>'Finans 1.6 güncellemesi tamamlandı.','backupReady'=>true];
  } finally {if($db->inTransaction())$db->rollBack();$db->query("SELECT RELEASE_LOCK('finans_update')");}
 }
-if($action==='update_status'){permit('admin');reply(['version'=>(int)$db->query('SELECT schema_version FROM app_meta WHERE id=1')->fetchColumn(),'target'=>7,'backupReady'=>isset($_SESSION['backup_path'])&&is_file($_SESSION['backup_path'])]);}
+function upgradePos(PDO $db): array {
+ permit('admin');$v=(int)$db->query('SELECT schema_version FROM app_meta WHERE id=1')->fetchColumn();
+ if($v>=8)return ['ok'=>true,'message'=>'Veritabanı güncel.'];
+ if($v<7)upgradeV16($db);
+ if(!(int)$db->query("SELECT GET_LOCK('finans_update',0)")->fetchColumn())throw new DomainException('Başka bir güncelleme devam ediyor.');
+ try {
+  if($v>=7){$_SESSION['backup_path']=backupDatabase($db);$_SESSION['backup_created']=time();}
+  addColumn($db,'parties','pos_programs','TEXT NULL');
+  $db->beginTransaction();$db->query('SELECT id FROM app_meta WHERE id=1 FOR UPDATE')->fetch();
+  audit($db,'system','8','upgrade',['version'=>$v],['version'=>8],'Tedarikçi cari kartları için isteğe bağlı POS programları');
+  $db->exec('UPDATE app_meta SET schema_version=8 WHERE id=1');$db->commit();
+  return ['ok'=>true,'message'=>'Tedarikçi POS bilgileri güncellemesi tamamlandı.','backupReady'=>true];
+ } finally {if($db->inTransaction())$db->rollBack();$db->query("SELECT RELEASE_LOCK('finans_update')");}
+}
+function upgrade(PDO $db): array {
+ permit('admin');$v=(int)$db->query('SELECT schema_version FROM app_meta WHERE id=1')->fetchColumn();
+ if($v>=9)return ['ok'=>true,'message'=>'Veritabanı güncel.'];
+ if($v<8)upgradePos($db);
+ if(!(int)$db->query("SELECT GET_LOCK('finans_update',0)")->fetchColumn())throw new DomainException('Başka bir güncelleme devam ediyor.');
+ try {
+  if($v>=8){$_SESSION['backup_path']=backupDatabase($db);$_SESSION['backup_created']=time();}
+  trackingSchema($db);$db->beginTransaction();$db->query('SELECT id FROM app_meta WHERE id=1 FOR UPDATE')->fetch();
+  audit($db,'system','9','upgrade',['version'=>$v],['version'=>9],'Kampanyalar ve Araçlarım; finansal kayıtlar korunur');
+  $db->exec('UPDATE app_meta SET schema_version=9 WHERE id=1');$db->commit();return ['ok'=>true,'message'=>'Kampanyalar ve Araçlarım güncellemesi tamamlandı.','backupReady'=>true];
+ } finally {if($db->inTransaction())$db->rollBack();$db->query("SELECT RELEASE_LOCK('finans_update')");}
+}
+if($action==='update_status'){permit('admin');reply(['version'=>(int)$db->query('SELECT schema_version FROM app_meta WHERE id=1')->fetchColumn(),'target'=>9,'backupReady'=>isset($_SESSION['backup_path'])&&is_file($_SESSION['backup_path'])]);}
 if($action==='update_backup'){permit('admin');$p=$_SESSION['backup_path']??'';if(!$p||!is_file($p))fail('Bu oturumda yedek bulunamadı.',404);header('Content-Type: application/octet-stream');header('Content-Disposition: attachment; filename="finans-yedek-'.date('Ymd').'.jsonl"');header('Cache-Control: no-store');readfile($p);exit;}
 if($action==='update_apply'&&$method==='POST'){permit('admin');reply(upgrade($db));}

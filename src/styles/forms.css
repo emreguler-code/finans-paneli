@@ -9,3 +9,5 @@
 @media(max-height:520px){body .auth-shell{padding:12px!important}body .auth-shell .auth-panel{padding:18px!important}.auth-panel .brand{margin-bottom:14px!important}.auth-panel .muted{display:none}.auth-panel form{margin-top:16px!important}}
 @media(max-width:760px){.summary{grid-template-columns:repeat(2,minmax(0,1fr))}.summary .metric{min-width:0}.summary .metric-label{flex-wrap:wrap}.summary .metric-note{white-space:normal}}
 @media(max-width:360px){.summary{grid-template-columns:minmax(0,1fr)!important}}
+
+.pos-options{border:0;padding:0;margin:0;min-width:0;display:grid;gap:12px}.pos-options legend{display:flex;align-items:center;gap:8px;font-size:var(--text-body);font-weight:500;padding:0;margin-bottom:12px}.pos-options .check-label{min-height:44px;margin:0}.pos-options .cari-hint{margin:0}

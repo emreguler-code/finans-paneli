@@ -1,5 +1,6 @@
 
 import {CircleAlert, ChevronRight} from 'lucide-react';
+import {vehicleReminders,vehicleSchedule,addDays} from './tracking-utils.mjs';
 import {fmt} from './ui';
 import {isKmh, kmhUsage, hasMaturity} from './account-utils.mjs';
 export function kmhAlert(a) {
@@ -10,13 +11,16 @@ export function kmhAlert(a) {
 export function collectAlerts(data) {
   const alerts=[],today=data.today;
   const soon=d=>d&&d<=new Date(new Date(today+'T12:00:00Z').getTime()+7*86400000).toISOString().slice(0,10);
-  for(const c of data.claims||[])if(soon(c.due))alerts.push({id:'claim-'+c.id,page:'Ödeme Planı',title:`${c.type==='borç'?'Ödeme':'Tahsilat'} ${c.due<today?'gecikmiş':c.due===today?'bugün':'yaklaşıyor'}`,detail:`${c.name} · ${c.due} · ${fmt(c.amount_cents)} TL`,level:c.due<today?'danger':'warning'});
-  for(const a of data.accounts||[])if(a.active){const warning=kmhAlert(a);if(warning)alerts.push(warning);if(hasMaturity(a)&&soon(a.maturity_date))alerts.push({id:'maturity-'+a.id,page:'Hesaplar',account:a.id,title:'Hesap vade sonu',detail:`${a.name} · ${a.maturity_date}`,level:a.maturity_date<today?'danger':'warning'});}
-  for(const e of data.events||[])if(e.scheduled&&!e.cancelled&&e.account_id&&soon(e.due_date||e.event_date))alerts.push({id:'scheduled-'+e.id,page:'Hesaplar',account:e.account_id,eventId:e.id,title:'Planlanan '+(e.operation==='income'?'tahsilat':'ödeme')+((e.due_date||e.event_date)<today?' gecikmiş':' yaklaşıyor'),detail:`${e.account_name} · ${e.description} · ${e.due_date||e.event_date} · ${fmt(e.amount_cents)} TL`,level:(e.due_date||e.event_date)<today?'danger':'warning'});
+  for(const c of data.claims||[])if(soon(c.due))alerts.push({id:'claim-'+c.id,date:c.due,partyId:c.partyId||c.party_id,groupKey:'claim-'+c.type+'-'+(c.partyId||c.party_id||c.name),groupName:c.name,amount_cents:c.amount_cents,page:'Ödeme Planı',title:`${c.type==='borç'?'Ödeme':'Tahsilat'} ${c.due<today?'gecikmiş':c.due===today?'bugün':'yaklaşıyor'}`,detail:`${c.name} · ${c.due} · ${fmt(c.amount_cents)} TL`,level:c.due<today?'danger':'warning'});
+  for(const a of data.accounts||[])if(a.active){const warning=kmhAlert(a);if(warning)alerts.push(warning);if(hasMaturity(a)&&soon(a.maturity_date))alerts.push({id:'maturity-'+a.id,date:a.maturity_date,page:'Hesaplar',account:a.id,title:'Hesap vade sonu',detail:`${a.name} · ${a.maturity_date}`,level:a.maturity_date<today?'danger':'warning'});}
+  for(const e of data.events||[])if(e.scheduled&&!e.cancelled&&e.account_id&&soon(e.due_date||e.event_date))alerts.push({id:'scheduled-'+e.id,date:e.due_date||e.event_date,page:'Hesaplar',account:e.account_id,eventId:e.id,title:'Planlanan '+(e.operation==='income'?'tahsilat':'ödeme')+((e.due_date||e.event_date)<today?' gecikmiş':' yaklaşıyor'),detail:`${e.account_name} · ${e.description} · ${e.due_date||e.event_date} · ${fmt(e.amount_cents)} TL`,level:(e.due_date||e.event_date)<today?'danger':'warning'});
   for(const c of data.cards||[])if(c.active){
-    if(c.statement>0&&soon(c.due))alerts.push({id:'card-due-'+c.id,page:'Kredi kartları',account:c.id,title:'Kart ödemesi '+(c.due<today?'gecikmiş':'yaklaşıyor'),detail:`${c.name} · ${c.due} · ${fmt(Math.round(c.statement*100))} TL`,level:c.due<today?'danger':'warning'});
+    if(c.statement>0&&soon(c.due))alerts.push({id:'card-due-'+c.id,date:c.due,page:'Kredi kartları',account:c.id,title:'Kart ödemesi '+(c.due<today?'gecikmiş':'yaklaşıyor'),detail:`${c.name} · ${c.due} · ${fmt(Math.round(c.statement*100))} TL`,level:c.due<today?'danger':'warning'});
     if(Number(c.statement_needs_review)||(c.statements||[]).some(s=>s.difference_cents<0))alerts.push({id:'card-review-'+c.id,page:'Kredi kartları',account:c.id,title:'Ekstre bilgilerini kontrol edin',detail:c.name+' · Ekstre tarihi veya tutar eşleşmesi inceleme bekliyor.',level:'warning'});
   }
+  for(const {vehicle,record,date,dueKm} of vehicleReminders(data))alerts.push({id:'vehicle-'+record.id,page:'Araçlarım',entity:'vehicle_record',recordId:record.id,date:dueKm?today:date,title:dueKm?'Bakım kilometresi geldi':record.title+' '+(date<today?'gecikmiş':'yaklaşıyor'),detail:vehicle.plate+' · '+record.title+(date?' · '+date:''),level:dueKm||date<today?'danger':'warning'});
+  for(const record of data.vehicle_records||[]){const vehicle=data.vehicles?.find(v=>v.id===record.vehicle_id&&v.active);if(!vehicle)continue;for(const row of vehicleSchedule(record,data))if(soon(row.date))alerts.push({id:'vehicle-payment-'+record.id+'-'+row.index,page:'Araçlarım',entity:'vehicle_record',recordId:record.id,date:row.date,title:'Araç ödemesi '+(row.date<today?'gecikmiş':'yaklaşıyor'),detail:vehicle.plate+' · '+record.title+' · '+fmt(row.remaining)+' TL',level:row.date<today?'danger':'warning'});}
+  for(const c of data.campaigns||[])if(c.active&&c.end_date>=today){if(c.participation==='required'&&(c.join_by||c.end_date)<=addDays(today,7))alerts.push({id:'campaign-join-'+c.id,page:'Kampanyalar',entity:'campaign',recordId:c.id,date:c.join_by||c.end_date,title:'Kampanya katılımı bekliyor',detail:c.name+' · '+(c.join_by||c.end_date),level:'warning'});if(c.end_date<=addDays(today,7))alerts.push({id:'campaign-end-'+c.id,page:'Kampanyalar',entity:'campaign',recordId:c.id,date:c.end_date,title:'Kampanya bitiyor',detail:c.name+' · '+c.end_date,level:'warning'});}
   return alerts;
 }
 export function AlertNotice({alert,onOpen}) {
