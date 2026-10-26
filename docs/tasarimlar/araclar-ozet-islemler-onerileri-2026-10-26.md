@@ -1,5 +1,7 @@
 # Araçlarım — Özet / İşlemler tasarım önerileri
 
+**Güncel durum — 1.10.0:** Kullanıcı 2 numaralı Poliçeler özeti ile 3 numaralı İşlemler görünümünü onayladı; birlikte uygulandı. Aşağıdaki ilk değerlendirmeler karar geçmişidir.
+
 26 Ekim 2026. Kullanıcının yeni istediği araç detay yapısı ve Product Design yaklaşımıyla hazırlanan görsel değerlendirme. Uygulama kodu/sürüm/paket değiştirilmedi; görsel stil seçimi henüz yapılmadı. İlk iki görsel Özet sekmesine iki yaklaşım, üçüncüsü aynı akışın İşlemler sekmesindeki açılır satır durumudur. Üçüncü görsel tek başına ilk ikisinin yerine geçmez; bunlarla birlikte değerlendirilebilir.
 
 ## Kullanıcının istediği akış

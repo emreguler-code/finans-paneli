@@ -71,6 +71,20 @@ for c in s['cards']:
 installments=[e for e in events if e['description'].startswith('Demo kuruşlu altı taksit')]
 ok('Six installments preserve exact cents',len(installments)==6 and sum(e['amount_cents'] for e in installments)==123457)
 ok('Scheduled movements do not change cash',all(e['cash_effect']==0 for e in events if e['scheduled']))
+# Independently verify new vehicle fixtures and payment references.
+records=s['vehicle_records'];links=[(r,eid) for r in records for eid in r['payment_events']]
+ok('Expanded demo includes four vehicles and 44 typed records',len(s['vehicles'])==4 and len(records)==44 and {r['type'] for r in records}=={'insurance','casco','tax','maintenance','inspection'})
+ok('Vehicle payment links never duplicate one financial event',len(links)==len({eid for r,eid in links}))
+paid=[]
+for r in records:
+ total=0
+ for eid in r['payment_events']:
+  e=next(e for e in events if e['id']==eid)
+  ok('Vehicle payment references a real expense '+str(eid),not e['cancelled'] and not e['scheduled'] and e['operation']=='expense')
+  total+=e['amount_cents']
+ paid.append((r,total))
+ok('Demo covers paid, partially paid and unpaid vehicle records',any(n==r['amount_cents'] and n>0 for r,n in paid) and any(0<n<r['amount_cents'] for r,n in paid) and any(n==0 and r['amount_cents']>0 for r,n in paid))
+ok('Estimated maintenance and inspection remain unlinked',all(not r['payment_events'] for r in records if r['estimated']))
 out=Path(os.environ['QA_OUTPUT_DIR']);out.mkdir(parents=True,exist_ok=True)
 (out/'demo-state.json').write_text(json.dumps(s,ensure_ascii=False,indent=2))
 (out/'reconciliation.json').write_text(json.dumps({'passed':len(checks),'events':len(events),'months':dict(sorted(months.items())),'weeks':dict(sorted(weeks.items())),'checks':checks},ensure_ascii=False,indent=2))

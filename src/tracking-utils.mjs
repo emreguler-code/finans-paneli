@@ -11,3 +11,12 @@ export function campaignProgress(campaign,data){const purchases=cardPurchases(da
  if(campaign.participation!=='required'&&matched.length>=campaign.required_count&&!['installments','deferment'].includes(campaign.reward_type))for(const {event} of matched){let value=campaign.reward_mode==='percent'?event.amount_cents/100*campaign.reward_value/100:campaign.reward_value;if(campaign.per_tx_cap)value=Math.min(value,campaign.per_tx_cap);expected+=value;}
  if(campaign.total_cap)expected=Math.min(expected,campaign.total_cap);const received=Math.round(entries.filter(e=>e.confirmed).reduce((sum,e)=>sum+e.received,0)*100)/100;return {pending:Math.max(0,Math.round((expected-received)*100)/100),count:matched.length,expected:Math.round(expected*100)/100,received:Math.round(entries.filter(e=>e.confirmed).reduce((sum,e)=>sum+e.received,0)*100)/100,matched};}
 export function campaignStatus(campaign,today){if(!campaign.active||campaign.end_date<today)return 'completed';if(campaign.participation==='required')return 'participation';if(campaign.start_date>today)return 'upcoming';return campaign.end_date<=addDays(today,7)?'ending':'active';}
+
+export function currentVehicleRecord(records,type,today){const candidates=records.filter(r=>r.active&&r.type===type);return candidates.filter(r=>r.date<=today).sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id)[0]||candidates.sort((a,b)=>a.date.localeCompare(b.date)||a.id-b.id)[0]||null;}
+export function vehicleRecordStatus(record,vehicle,data){
+ if(!record.active)return {text:'Takip kapalı',level:'info'};
+ if(record.date>data.today)return {text:'Başlayacak',level:'info'};
+ if(['insurance','casco','inspection'].includes(record.type))return record.end_date&&record.end_date<data.today?{text:'Süresi doldu',level:'danger'}:{text:record.end_date?'Geçerli':'Bitiş belirtilmedi',level:record.end_date?'success':'info'};
+ if(record.type==='maintenance')return record.next_km>0&&vehicle.km>=record.next_km||record.next_date&&record.next_date<=data.today?{text:'Bakım zamanı',level:'warning'}:{text:'Takipte',level:'info'};
+ const due=vehicleSchedule(record,data);return due.some(r=>r.date<data.today)?{text:'Gecikmiş',level:'danger'}:due.length?{text:'Ödeme bekliyor',level:'warning'}:{text:record.estimated?'Tahmini':vehiclePaid(record,data)>=record.amount_cents?'Ödendi':'Kayıtlı',level:'info'};
+}

@@ -88,6 +88,34 @@ function seedTrackingDemo(PDO $db,array $cards,array $parties): void {
  ['vehicle_id'=>$second,'type'=>'tax','title'=>'2026 MTV ikinci taksit','date'=>'2026-07-01','due_date'=>'2026-10-16','amount'=>'3500'],
  ['vehicle_id'=>$second,'type'=>'inspection','title'=>'Periyodik muayene','date'=>'2025-11-01','end_date'=>'2026-11-01','amount'=>'2000','estimated'=>true]
  ] as $record)saveTracking($db,'vehicle_record',['reminder_days'=>30,'company'=>'Örnek kurum',...$record]);
+ // Comprehensive synthetic vehicle history. Actual payments are created once, then linked.
+ $third=saveTracking($db,'vehicle',['plate'=>'35 DEMO 110','name'=>'Örnek aile aracı','year'=>2024,'km'=>45200,'owner'=>'Örnek Kullanıcı'])['id'];
+ $fourth=saveTracking($db,'vehicle',['plate'=>'16 DEMO 110','name'=>'Örnek saha aracı','year'=>2020,'km'=>186500,'owner'=>'Örnek Kullanıcı'])['id'];
+ $demoRecord=function(array $record,?string $payment=null,?int $cardId=null)use($db){
+  $links=[];
+  if($payment!==null){$request=sprintf('%08x-%04x-%04x-%04x-%012x',random_int(1,0xfffffff),random_int(0,65535),random_int(0,65535),random_int(0,65535),random_int(0,0xffffffffff));
+   $event=saveOperation($db,['requestId'=>$request,'operation'=>'expense','account'=>$cardId?'':'bank','cardId'=>$cardId?:'','amount'=>$payment,'settled'=>'0','date'=>$record['date'],'periodDate'=>$record['date'],'time'=>'09:30','description'=>'Demo araç · '.$record['title'],'tag'=>'Araç']);$links[]=$event['id'];
+  }
+  saveTracking($db,'vehicle_record',['reminder_days'=>30,'company'=>'Örnek servis / sigorta','payment_events'=>$links,...$record]);
+ };
+ foreach([$first,$second,$third,$fourth] as $index=>$vehicleId){
+  foreach(range(4,9) as $month){$amount=(string)(1200+$index*250+$month*100);$km=(int)(20000+$index*35000+$month*2500);
+   $demoRecord(['vehicle_id'=>$vehicleId,'type'=>'maintenance','title'=>'Demo '.$month.'. ay servis kaydı','date'=>sprintf('2026-%02d-08',$month),'km'=>$km,'next_km'=>$km+10000,'amount'=>$amount,'active'=>false,'notes'=>'Tamamlanan geçmiş bakım; güncel hatırlatmanın yerine geçmez.'],$amount,$month%2?$cards[$index%count($cards)]:null);
+  }
+  $demoRecord(['vehicle_id'=>$vehicleId,'type'=>'tax','title'=>'2026 MTV birinci taksit','date'=>'2026-04-12','due_date'=>'2026-04-12','amount'=>(string)(2800+$index*400),'active'=>false],(string)(2800+$index*400));
+ }
+ $demoRecord(['vehicle_id'=>$third,'type'=>'insurance','title'=>'Aile aracı trafik poliçesi','policy_no'=>'DEMO-TR-110-001','date'=>'2026-09-19','end_date'=>'2026-10-19','amount'=>'8400','notes'=>'Kısa dönem sentetik poliçe; yenileme uyarısı örneği.'],'8400');
+ $demoRecord(['vehicle_id'=>$third,'type'=>'casco','title'=>'Aile aracı kasko poliçesi','policy_no'=>'DEMO-KS-110-001','date'=>'2026-09-25','end_date'=>'2026-10-25','amount'=>'18000','installments'=>[['date'=>'2026-09-25','amount'=>'9000'],['date'=>'2026-10-25','amount'=>'9000']]],'9000',$cards[0]);
+ $demoRecord(['vehicle_id'=>$third,'type'=>'tax','title'=>'Aile aracı MTV ikinci taksit','date'=>'2026-07-31','due_date'=>'2026-07-31','amount'=>'3500']);
+ $demoRecord(['vehicle_id'=>$third,'type'=>'maintenance','title'=>'45.000 km yağ ve filtre bakımı','date'=>'2026-10-10','km'=>45000,'next_km'=>55000,'next_date'=>'2027-04-10','amount'=>'4200'],'4200');
+ $demoRecord(['vehicle_id'=>$third,'type'=>'inspection','title'=>'Aile aracı muayenesi','date'=>'2026-04-15','end_date'=>'2028-04-15','amount'=>'2600'],'2600');
+ $demoRecord(['vehicle_id'=>$fourth,'type'=>'insurance','title'=>'Saha aracı trafik poliçesi','policy_no'=>'DEMO-TR-110-002','date'=>'2026-05-15','end_date'=>'2027-05-15','amount'=>'11200'],'11200');
+ $demoRecord(['vehicle_id'=>$fourth,'type'=>'casco','title'=>'Saha aracı kasko poliçesi','policy_no'=>'DEMO-KS-110-002','date'=>'2026-06-01','end_date'=>'2027-06-01','amount'=>'22000','installments'=>[['date'=>'2026-06-01','amount'=>'11000'],['date'=>'2026-12-01','amount'=>'11000']]],'11000',$cards[1]);
+ $demoRecord(['vehicle_id'=>$fourth,'type'=>'maintenance','title'=>'185.000 km bakım kontrolü','date'=>'2026-09-01','km'=>175000,'next_km'=>185000,'next_date'=>'2026-10-10','amount'=>'6200','estimated'=>true]);
+ $demoRecord(['vehicle_id'=>$fourth,'type'=>'inspection','title'=>'Saha aracı muayene yenileme','date'=>'2025-10-18','end_date'=>'2026-10-18','amount'=>'2900','estimated'=>true]);
+ // A linked payment on an existing record exercises editing without a second expense.
+ $q=$db->prepare("SELECT id,data_json FROM vehicle_records WHERE vehicle_id=? AND JSON_UNQUOTE(JSON_EXTRACT(data_json,'$.title'))='60.000 km periyodik bakım'");$q->execute([$first]);$maintenance=$q->fetch();
+ if($maintenance){$request=sprintf('%08x-%04x-%04x-%04x-%012x',random_int(1,0xfffffff),random_int(0,65535),random_int(0,65535),random_int(0,65535),random_int(0,0xffffffffff));$event=saveOperation($db,['requestId'=>$request,'operation'=>'expense','account'=>'bank','amount'=>'3000','date'=>'2026-10-08','time'=>'09:30','description'=>'Demo araç · 60.000 km bakım ödemesi','tag'=>'Araç']);$db->prepare('INSERT INTO vehicle_payments(record_id,event_id) VALUES(?,?)')->execute([$maintenance['id'],$event['id']]);}
  $base=['start_date'=>'2026-10-01','end_date'=>'2026-10-31','participation'=>'joined','reward_type'=>'points','reward_mode'=>'percent','reward_value'=>'5','per_tx_cap'=>'200','total_cap'=>'500','min_spend'=>'100','required_count'=>1,'card_ids'=>[$cards[0]],'party_ids'=>[],'tags'=>[],'pos_programs'=>[]];
  $campaign=saveTracking($db,'campaign',['name'=>'Örnek Bonus puan kampanyası',...$base])['id'];
  $q=$db->prepare("SELECT id FROM fin_events WHERE card_id=? AND operation='expense' AND event_date BETWEEN '2026-10-01' AND '2026-10-13' AND installment_group='' ORDER BY id LIMIT 1");$q->execute([$cards[0]]);$event=$q->fetchColumn();if($event)saveTracking($db,'campaign_entry',['campaign_id'=>$campaign,'event_id'=>$event,'received'=>'50','confirmed'=>true]);

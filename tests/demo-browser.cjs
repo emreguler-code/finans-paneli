@@ -14,18 +14,18 @@ const fmt=n=>new Intl.NumberFormat('tr-TR',{minimumFractionDigits:2,maximumFract
  const search=p.locator('#search');let reloads=0;p.on('framenavigated',f=>{if(f===p.mainFrame())reloads++});
  await nav('Hesaplar');
  ok('Search submit is an accessible magnifier',await p.locator('.search-submit svg').count()===1&&(await p.locator('.search-submit').innerText()).trim()==='');
- ok('Search border matches table separator',await p.evaluate(()=>getComputedStyle(document.querySelector('.page-search-row .cari-search')).borderTopColor===getComputedStyle(document.querySelector('.account-face')).borderTopColor));
+ ok('Search border matches table separator',await p.evaluate(()=>getComputedStyle(document.querySelector('.page-search-row .cari-search')).borderTopColor===getComputedStyle(document.querySelector('.account-list-panel')).borderTopColor));
  const initialCount=await p.locator('.account-grid-item').count();await search.fill('KM');await p.waitForTimeout(450);ok('Two characters do not apply automatic search',await p.locator('.account-grid-item').count()===initialCount);
  await search.fill('KMH');await p.waitForFunction(()=>document.querySelectorAll('.account-grid-item').length===1&&document.querySelector('.account-face h2')?.textContent==='KMH Deneme Hesabı');ok('Three characters apply automatically',true);
  await search.fill('');await p.waitForFunction(()=>document.querySelectorAll('.account-grid-item').length===4);ok('Clearing search restores all accounts',true);
- ok('All-account warnings stay visible for another selection',await p.locator('.account-alerts').getByText(/Günlük tahmini faiz/).isVisible());
+ ok('All-account warning preview stays visible',await p.locator('.account-alerts').isVisible()&&await p.locator('.account-alerts .alert-notice').count()===5);
  const alerts=p.locator('.account-alerts .alert-notice');ok('Warnings include scheduled movements from multiple accounts',await alerts.count()>3);
  await shot('accounts-warnings-desktop');
  await alerts.filter({hasText:'Demo planlanan cash 14'}).click();await p.waitForFunction(()=>document.querySelector('h1')?.textContent==='Nakit kasa');
  ok('Warning selects target account',await p.locator('h1').innerText()==='Nakit kasa');
  ok('Warning opens scheduled tab',await p.getByRole('button',{name:'Gelecek dönem hareketleri',exact:true}).getAttribute('aria-pressed')==='true');
  ok('Warning activates the exact movement',await p.locator('tr.expanded').filter({hasText:'Demo planlanan cash 14'}).count()===1);
- await alerts.filter({hasText:'Günlük tahmini faiz'}).click();await p.getByRole('dialog').waitFor();ok('Account warning opens read-only account details',await p.getByRole('dialog').getByRole('button',{name:'Kaydet',exact:true}).count()===0);await close();
+ await p.locator('.summary-band').getByRole('button',{name:'Hesap bilgileri',exact:true}).click();await p.getByRole('dialog').waitFor();ok('Account warning destination retains read-only account details',await p.getByRole('dialog').getByRole('button',{name:'Kaydet',exact:true}).count()===0);await close();
  // Account inventory and movement tools are independently usable.
  await p.locator('.page-back').click();
  await p.locator('.inventory-tools').getByRole('button',{name:'Sırala',exact:true}).click();await p.getByRole('button',{name:'Bakiye: yüksekten düşüğe',exact:true}).click();ok('Account inventory sorting closes dialog',await p.getByRole('dialog').count()===0);
@@ -52,6 +52,6 @@ const fmt=n=>new Intl.NumberFormat('tr-TR',{minimumFractionDigits:2,maximumFract
  const recentRows=p.locator('.table-wrap tbody tr');ok('Overview shows five latest real transactions',await recentRows.count()===5);
  for(let i=0;i<5;i++)ok('Overview recent transaction '+i+' matches dated ledger',(await recentRows.nth(i).innerText()).includes(recent[i].description));
  await recentRows.first().click();ok('Overview recent row opens transaction details',await p.getByRole('dialog').isVisible());await close();await shot('overview-rich-desktop');
- for(const width of [1440,1100,768,390,320]){await p.setViewportSize({width,height:900});if(width===1440){await nav('Hesaplar');await p.locator('.account-open').first().click();}if(width>760)ok('Ledger description stays readable '+width,await p.locator('.finance-table td[data-label="Açıklama"]').first().evaluate(el=>el.getBoundingClientRect().width>=180));ok('Accounts no horizontal overflow '+width,await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));if(width<=1100){await p.getByRole('button',{name:'Hesap uyarılarını aç',exact:true}).click();ok('Mobile warning list opens '+width,await p.getByRole('dialog',{name:'Hesap uyarıları',exact:true}).isVisible());await close();}await shot('accounts-'+width)}
+ for(const width of [1440,1100,768,390,320]){await p.setViewportSize({width,height:900});if(width===1440){await nav('Hesaplar');await p.locator('.account-open').first().click();}if(width>760)ok('Ledger description stays readable '+width,await p.locator('.finance-table td[data-label="Açıklama"]').first().evaluate(el=>el.getBoundingClientRect().width>=180));ok('Accounts no horizontal overflow '+width,await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));if(width<=1100){ok('Scoped warnings remain accessible '+width,await p.locator('.account-alerts').count()===1&&await p.locator('.account-alerts .alert-notice').count()<=5);}await shot('accounts-'+width)}
  ok('Automatic searches do not reload document',reloads===0);ok('No React runtime errors',errors.length===0);await browser.close();fs.writeFileSync(path.join(out,'browser-checks.json'),JSON.stringify({passed:checks.length,checks,errors},null,2));
 })().catch(async e=>{console.error(e);fs.writeFileSync(path.join(out,'failure.txt'),String(e));if(page){await page.screenshot({path:path.join(out,'failure.png'),fullPage:true}).catch(()=>{});fs.writeFileSync(path.join(out,'failure-body.txt'),await page.locator('body').innerText().catch(()=>''))}process.exit(1)});

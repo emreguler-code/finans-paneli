@@ -1,33 +1,19 @@
-# Finans 1.9.1 tasarım doğrulaması
+# Finans 1.10.0 tasarım doğrulaması
 
-Kaynak görseller:
-- `docs/tasarimlar/cari-detay-ortak-ozet-taslagi-2026-10-26.png`
-- `docs/tasarimlar/kredi-karti-detay-ortak-ozet-taslagi-2026-10-26.png`
+26 Ekim 2026. Onaylı kaynaklar: `docs/tasarimlar/hesaplar-stil-3-yatay-kartlar-2026-10-26.png`, `araclar-2-policeler-ozeti-2026-10-26.png` ve `araclar-3-islem-gunlugu-2026-10-26.png` (son ikisi aynı klasörde).
 
-Uygulama kanıtı: `.qa/design-implementation-20261026/` altındaki `cari-desktop.png`, `card-desktop.png` ve `evidence.json`. Karşılaştırma panoları: `cari-comparison.png`, `card-comparison.png`; kaynak ve çalışan ekran aynı panoda yan yana incelendi. Bunlar Git dışında yerel inceleme kanıtlarıdır.
+Çalışan uygulama Chromium'da 1600×1100 CSS px, deviceScaleFactor=1 ile yakalandı. `.qa/design-110/` içinde hesap/kart/cari, araç özeti ve açık işlem satırı görüntüleri ile üç `comparison-*` yan yana panosu bulunur. Bunlar Git dışında yerel test kanıtıdır. Ek kontroller 1100×900, 390×900 ve 320×900; regresyon taraması 768/1440/2540 px genişlikleri de kapsar.
 
-Pencere: masaüstü 1487×1058 CSS px, deviceScaleFactor=1. Her iki taslak 1487×1058 piksel; uygulama aynı boyutta yakalandı. Ek 1100×900, 390×900 ve 320×900 CSS px kontrolleri yapıldı. Raster taslaktaki optik yazı büyüklükleri yerine kullanıcının onaylı mevcut Inter 27/24/16/14/12 px rolleri korundu.
+Referans ve çalışan uygulama karşılaştırıldı: yatay kayıtlar tek dış panelde; sıralama/CSV içerikte; liste bilgi/düzenle ikonları kaldırılmış, detay işlevleri korunmuş. Araçta Poliçeler ortak bölme, MTV/bakım/muayene ayrı özetler; yalnız Özet/İşlemler; karışık türler tarih sırasıyla ve eylemler satır içinde. Sağ sütun 1,9:1 ortak orandadır.
 
-Durum: Ada Tasarım / iki gerçek sentetik hareket; Garanti Bonus Kart / dönem içi işlemler. Aynı tutarlar, kart ve bakiye senaryosu kullanıldı. Çalışma alanı demo tarihi 13 Ekim olduğu için 20 Ekim son ödeme geçmiş olarak işaretlenmedi; görsel taslaktaki 26 Ekim gününden farklı olması beklenen veri farkıdır. Kartın 16.000 TL toplamı ve 4.000 TL ödemesi 12.000 TL kalan ile karıştırılmaz. Kullanılabilir 63.500 TL gerçek modelden gelir. Mevcut marka çizimleri korunur; taslaktaki temsili bar renkleri/oranları yerine gerçek limit bölümleri kullanılır.
+İlk yakalamada eski `align-items:start` kuralı yatay kayıtları daraltıyordu (P2): kayıtlar tam genişliğe ve ortak kolon hizalarına alındı; regresyon testi gerçek panel genişliğini karşılaştırıyor. Eski global dl stilleri araç özetini uzatıyordu (P2): alanlar bileşen kapsamında sadeleştirildi. Son yakalamalar bu düzeltmelerden sonradır.
 
-## Bulgular ve yineleme
+- Tipografi: mevcut yerel Inter ve 27/24/16/14/12 px roller, tabular para değerleri; taslaktaki raster yazılar aynen kopyalanmadı.
+- Yüzey/boşluk: ortak çerçeve, ayırıcı, token dolguları; dar ekranda alanlar alt alta. Uzun açıklamalar kesilmez.
+- Renk: kritik kırmızı, dikkat amber, bilgi teal; ikon ve metin desteği. Finansal işaretler değişmedi.
+- Varlıklar: mevcut banka/program işaretleri ve Lucide; yeni görsel varlık gerekmedi.
+- İçerik: referanstaki temsili araç/tutarlar yerine gerçek sentetik 35DEMO110 verisi ve sabit demo tarihi 13 Ekim 2026 kullanılır. Geçerlilik ile ödeme ayrı; tahminler gerçek gider sayılmaz.
 
-İlk yakalama: `cari-desktop.png` içinde hareket paneli başlığı eksikti; `card-desktop.png` içinde sekmeler tablodan ayrı yüzeydeydi (P2). Cari hareketleri başlığı eklendi; sekmeler, sıralama/CSV ve mevcut aktarım eylemi ilgili hareket panelinde toplandı. Yeniden yakalanan ekranlar ve iki karşılaştırma panosu bu düzeltmelerden sonradır. Böylece başlık → tek özet → hareket paneli sırası iki sayfada ortak oldu.
-
-Tam görünümde başlık hizaları, geri/yeni işlem yerleşimi, bilgi/düzenleme ikonlarının özette kalması ve tek dış çerçeve kontrol edildi. Odaklı incelemede özet alanları, ekstre/ödenen/kalan ayrımı, sekmeler ve tablo sütunları açılıp okunarak karşılaştırıldı. Mobilde takvim gezinme kontrolleri birbirinden ayrıldı, sekmeler kendi içinde kayar ve uyarı düğmesi tutarların üzerine sabitlenmez. Uzun uyarı listeleri kendi içinde kayar.
-
-- **Yazı ve tipografi:** Yerel Inter, tabular para değerleri; mevcut başlık/bölüm/yardımcı metin rolleri korunuyor. Tutarlar bölünmüyor. Uzun kimlik alanları sarılıyor.
-- **Boşluk ve düzen:** Ortak başlık/özet bileşeni; standart 24/16 px panel dolgusu, 20 px sütun boşluğu ve 1,9:1 ana/sağ sütun. 1100 px ve altında tek sütun. Onaylı tablo hücreleri korunuyor.
-- **Renkler:** Mevcut Sade Netlik paleti ve çizgi rengi, bakiye/işlem yönleri korunuyor. Rapor net nakit vurgu rolü genel bakışla aynı.
-- **Varlıklar:** Mevcut yerel fontlar, Lucide ve mevcut banka/program işaretleri kullanılıyor. Yeni raster varlığı gerekmiyor. Taslak yeni logo üretme talebi değildir.
-- **Metin ve içerik:** Cari ve kartın alanları kendi anlamını koruyor; kartta bağlı hesap, tahmini sonraki tarihler ve son ekstre bilgisi var. Özet yeni finansal hareket üretmiyor. Banka logosundan hesap ataması yapılmıyor.
-
-## Etkileşim doğrulaması
-
-Grid açılışı, klavye ile kayıt seçimi, geri dönüş, arama/filtre, üç karakter araması, bilgi/düzenleme, hareket ekleme, ekstre sekmeleri ve CSV; masaüstü/mobil gezinme, açılır kampanya alt menüsü, iç içe formda tek gün ve filtre içinde tarih aralığı takvimi incelendi. Takvimler ek backdrop üretmez; Esc üst formu açık bırakır. Gerçek Chromium üzerinde otomatik kontroller ve ekran görüntüleri kullanıldı. Tarayıcı çalışma zamanı hata kaydı boş; fiziksel telefon/ekran okuyucu testi yapılmadı.
-
-P0/P1/P2 açık bulgu yok. P3: çok uzun finansal içeriklerin mobilde doğal dikey kaydırma gerektirmesi beklenir; gelecekte isteğe bağlı özet yoğunluğu ayrıca değerlendirilebilir. Mevcut kapsamda veri gizlenmedi.
-
-1.9.1 bakım doğrulaması: aynı görsel durumlar yeniden yakalandı. Detayda liste kapsamlı arama eşleşen kaydı seçiyor; boş sonuçta geri dönüş ve tüm hesap uyarıları erişilebilir. Yeni iki tarayıcı regresyon kontrolüyle toplam 416 kontrol geçti. Yerleşim ve finansal hesaplar değişmedi.
+Bildirim kaynak/önem/temizleme/boş durum, önizleme 5 sınırı, net cari etkiye göre son hareketler, detay düzenleme ve araç açılır satırları otomatik Chromium kontrolleriyle doğrulandı. Mobilde taşma yok; işlem listesi doğal dikey kayar. Ekran okuyucu ve fiziksel cihaz testi yapılmadı. Açık P0/P1/P2 bulgu yok.
 
 final result: passed

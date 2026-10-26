@@ -112,6 +112,14 @@ Durum: Kullanıcı, `TASARIM-INCELEMESI-2026-10-26.md` içindeki A1–A4 ve B1�
 Önceki sürümlerde tamamlanan Embla, ortak arama, sağ üst tarih, hesap uyarı sütunu, takvim görünümü ve kapsamlı finans demosu korunur. Kanban iptal kararı sürer.
 
 
+# 1.10.0 — son toplu onay uygulandı
+
+26 Ekim 2026. Kullanıcı araçlarda 2 numaralı Poliçeler özeti ve 3 numaralı İşlemler görünümünü onayladı; bütün onaylı notları kodlama, demoyu yenileme, paketleme ve GitHub yayını talimatı verdi. Aşağıdaki geçmiş not alma ifadeleri kararların alındığı aşamayı gösterir; artık bekleme şartı değildir. İçerik ikonlarını başlığa taşıma kararı iptal edilmiştir ve uygulanmamıştır.
+
+Uygulananlar: hesap/kart paralel yatay listeler, listeden bilgi/düzenleme ikonlarının kaldırılması ve detayda korunması; 5 uyarı ve son 5 işlem önizlemeleri; merkezi filtrelenebilir Bildirimler; cari bakiyeyi artıran/azaltan son 5 net hareket; araçlarda ortak poliçe bölmesi ile MTV/bakım/muayene özeti ve açılır satırlı birleşik İşlemler. Şema 10 korunur. Demo 4 araç, 44 araç kaydı ve 623 başlangıç finansal hareketi içerir. Yönetici bilgileri korunur; demo yenileme isteğe bağlıdır.
+
+## Karar geçmişi
+
 # 1.9.1 sonrası — not ve görsel değerlendirme aşaması
 
 ## Hesaplar: başlık araçları ve ana içerik kutusu

@@ -126,3 +126,8 @@ Finans Paneli'nin kendi tasarım dili korunur; başka projelerin görsel tercihl
 - Seçili işlem, kendi türüne uygun ayrıntıları satır içinde açar. Mevcut ortak genişleyen satır, ikon, boşluk ve içerik araçları yerleşimi kullanılır. Genel başlıkta ekle; sıralama/indirme ilgili içerikte kalır.
 - Geçerlilik durumu ile ödeme durumu, tahmini tutar ile gerçek ödeme ve kayıt tarihi ile yaklaşan tarih/km ayrı anlamlardır. Özet veya liste ikinci finansal hareket üretmez.
 - Görsel yerleşim alternatifleri kullanıcı değerlendirmesindedir; ilk Özet ile birleşik işlem günlüğü asistan önerisidir. Not aşaması sürer, kodlama/yayın başlatılmaz.
+
+
+## 1.10.0 uygulama durumu
+
+26 Ekim 2026 toplu kodlama/yayın onayıyla yukarıdaki bekleyen hesap/kart yatay liste, merkezi bildirim ve cari sağ sütun kuralları uygulanmıştır. Araçlarda kullanıcı 2 numaralı Poliçeler özeti ile 3 numaralı birleşik İşlemler görünümünü seçmiştir. Önceki not aşaması/uygulama bekliyor ifadeleri tarihsel durumdur; bekleme şartı değildir. Zil dahil küçük önizlemeler 5 kayıtla sınırlıdır. İçerik ikonlarını başlığa taşıma kararı iptal edilmiş olarak kalır.

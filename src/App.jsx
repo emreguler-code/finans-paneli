@@ -1,3 +1,5 @@
+import {NotificationsPage} from './NotificationsPage';
+import {readableAlertDetail} from './notification-utils.mjs';
 import { version } from '../package.json';
 
 import {FloatingPanel} from './FloatingPanel';
@@ -88,6 +90,8 @@ export function App({
   const [cardsMenu,setCardsMenu]=useState(false);
   const navigateMenu=name=>{if(name==='Kredi kartları')setCardsMenu(page===name?!cardsMenu:true);if(name===page)setRouteKey(key=>key+1);go(name)};
   const [notificationTarget,setNotificationTarget]=useState(null),[routeKey,setRouteKey]=useState(0);
+  const [notificationScope,setNotificationScope]=useState({source:'all'});
+  function showNotifications(scope={source:'all'}){go('Bildirimler');setNotificationScope(scope);setRouteKey(key=>key+1)}
   const notifications = groupAlerts(collectAlerts(fullData),TODAY);
   function openNotification(alert){if(['Kredi kartları','Kampanyalar'].includes(alert.page))setCardsMenu(true);go(alert.page);setNotificationTarget(alert);setRouteKey(key=>key+1);if(alert.account!==undefined)setScope(alert.account);if(alert.section==='Gecikmiş')setClaimFilter('late');if(alert.entity){const rows=alert.entity==='campaign'?fullData.campaigns:fullData.vehicle_records;const item=rows.find(item=>item.id===alert.recordId);if(item)openFinance({entity:alert.entity,item})}}
   const accountName = id => accounts.find(a => a.id === id)?.name;
@@ -465,7 +469,7 @@ export function App({
                 <Bell size={18} />
                 {notifications.length > 0 && <i />}
               </button>
-              {bell && <FloatingPanel anchor={bellButton.current} title="Bildirimler" onClose={()=>setBell(false)} width={400}><div className="notification-compact">{['Gecikmiş','Bugün','Yaklaşan','Diğer'].map(section=>{const rows=notifications.filter(alert=>alert.section===section);return rows.length>0&&<section key={section}><h3>{section}</h3>{rows.map(alert=><button key={alert.id} className={'notification-row '+alert.level} onClick={()=>openNotification(alert)}><CircleAlert size={18}/><span><strong>{alert.title}</strong><small>{alert.count>1?`${alert.groupName} · ${alert.count} kayıt · ${fmt(alert.amount_cents)} TL`:alert.detail}</small></span><ChevronRight size={16}/></button>)}</section>})}{!notifications.length&&<p className="empty">Dikkat gerektiren bildirim yok.</p>}</div></FloatingPanel>}
+              {bell && <FloatingPanel anchor={bellButton.current} title="Bildirimler" onClose={()=>setBell(false)} width={400}><div className="notification-compact">{['Gecikmiş','Bugün','Yaklaşan','Diğer'].map(section=>{const rows=notifications.slice(0,5).filter(alert=>alert.section===section);return rows.length>0&&<section key={section}><h3>{section}</h3>{rows.map(alert=><button key={alert.id} className={'notification-row '+alert.level} onClick={()=>openNotification(alert)}><CircleAlert size={18}/><span><strong>{alert.title}</strong><small>{alert.count>1?`${alert.groupName} · ${alert.count} kayıt · ${fmt(alert.amount_cents)} TL`:readableAlertDetail(alert.detail)}</small></span><ChevronRight size={16}/></button>)}</section>})}{!notifications.length&&<p className="empty">Dikkat gerektiren bildirim yok.</p>}<button className="text-button preview-all" onClick={()=>showNotifications()}>Tümünü göster ({collectAlerts(fullData).length}) <ChevronRight size={16}/></button></div></FloatingPanel>}
             </div>
             <span className="header-divider" />
             <span className="date-label" aria-label="Çalışma alanı tarihi">
@@ -487,7 +491,7 @@ export function App({
               <span className="sr-only">İşlem ekle</span>
             </button>
           </div>}
-          {page !== "Genel bakış" ? <FinanceHub key={page+'-'+routeKey} page={page} initialParty={notificationTarget?.partyId} initialDate={notificationTarget?.date} data={fullData} onState={applyState} notify={notify} open={openFinance} search="" initialAccount={scope} initialDue={claimFilter} onLabel={setPartyLabel} /> : <>
+          {page === "Bildirimler" ? <NotificationsPage key={routeKey} data={fullData} initialScope={notificationScope} onOpenNotification={openNotification}/> : page !== "Genel bakış" ? <FinanceHub key={page+'-'+routeKey} page={page} onNotifications={showNotifications} onOpenNotification={openNotification} initialEventId={notificationTarget?.eventId} initialRecord={notificationTarget?.recordId} initialParty={notificationTarget?.partyId} initialDate={notificationTarget?.date} data={fullData} onState={applyState} notify={notify} open={openFinance} search="" initialAccount={scope} initialDue={claimFilter} onLabel={setPartyLabel} /> : <>
               <div className="snapshot-label">
                 <span>GÜNCEL DURUM</span>
                 <span>

@@ -1,6 +1,6 @@
 # Finans Paneli güncellemesi
 
-Yüklenecek sürüm ZIP dosya adında belirtilir. 1.9.1 sürümü şema 10'u kullanır. Mevcut kayıtlar ve yönetici hesapları korunur. Şema 9 kurulumuna yalnız isteğe bağlı kredi kartı hesap bağlantısı alanı eklenir; daha eski sürümler önce gerekli ara geçişleri tamamlar. Dosyaları yükledikten sonra yöneticiyle update.php üzerinden veritabanını güncelleyin.
+Yüklenecek sürüm ZIP dosya adında belirtilir. 1.10.0 sürümü şema 10'u kullanır. Mevcut kayıtlar ve yönetici hesapları korunur. Şema 9 kurulumuna yalnız isteğe bağlı kredi kartı hesap bağlantısı alanı eklenir; daha eski sürümler önce gerekli ara geçişleri tamamlar. Dosyaları yükledikten sonra yöneticiyle update.php üzerinden veritabanını güncelleyin.
 
 1. Veritabanı ve mevcut dosyaları yedekleyin.
 2. ZIP içindeki `hosting/` içeriğini mevcut web dizinine yükleyin. Mevcut `api/config.php` dosyasını koruyun. `api/v2/migrations/` klasörünü de yükleyin.

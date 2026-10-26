@@ -1,26 +1,24 @@
+import {NotificationPreview,RecentActivity} from './ActivityPanels';
 import {useScopedState} from './SearchState';
 import { useState, useEffect, useLayoutEffect } from 'react';
-import {Plus, ArrowLeftRight, FileText, Pencil, Bell} from 'lucide-react';
+import {Plus, ArrowLeftRight, FileText, Pencil} from 'lucide-react';
 import {AccountGrid,AccountSummary} from './AccountSummary';
 import {bankName,PROGRAMS} from './BankCards';
 import {PageHeading} from './PageLayout';
 import {Ledger} from './Ledger';
 import {ListTools,ListActions} from './ListTools';
-import {can, fmt, Sheet} from './ui';
+import {can, fmt} from './ui';
 import {DatePicker} from './DatePicker';
 import {exportRows} from './csv.mjs';
-import {AlertNotice, collectAlerts} from './Alerts';
 import {cardPeriodRows, cardEventEffect, operationLabel} from './operations.mjs';
-export function AccountPage({page,data,open,search='',initialAccount='all'}){
+export function AccountPage({page,data,open,search='',initialAccount='all',initialEventId,onNotifications}){
  const isCard=page==='Kredi kartları';const source=isCard?data.cards:data.accounts;
  const [selected,setSelected]=useScopedState(page+':selected',source.find(x=>String(x.id)===String(initialAccount))?.id||source.find(x=>x.active)?.id),[tab,setTab]=useScopedState(page+':tab',isCard?'Dönem içi işlemler':'Hesap hareketleri'),[archived,setArchived]=useScopedState(page+':archived',false),[filters,setFilters]=useState(false),[sort,setSort]=useScopedState(page+':sort','date-desc'),[cancelled,setCancelled]=useScopedState(page+':cancelled',false),[from,setFrom]=useScopedState(page+':from',''),[to,setTo]=useScopedState(page+':to',''),[statementId,setStatementId]=useScopedState(page+':statementId','');
  const [inventorySort,setInventorySort]=useScopedState(page+':inventorySort','name-asc'),[kind,setKind]=useScopedState(page+':kind','Tümü'),[person,setPerson]=useScopedState(page+':person','Tümü');
  const [detail,setDetail]=useState(initialAccount!=='all');
  const [listScroll,setListScroll]=useScopedState(page+':listScroll',0);
- const [alertOpen,setAlertOpen]=useState(false),[focusEvent,setFocusEvent]=useState(null);
- const accountAlerts=collectAlerts(data).filter(alert=>alert.page==='Hesaplar');
- function openAlert(alert){setDetail(true);setSearchQuery('');setTag('all');setMinAmount('');setMaxAmount('');setQueryScope('movements');setArchived(data.accounts.find(account=>account.id===alert.account)?.active===false);setFrom('');setTo('');setKind('Tümü');setPerson('Tümü');setCancelled(false);setSelected(alert.account);setAlertOpen(false);const event=data.events.find(e=>e.id===alert.eventId);setTab(event?.scheduled?'Gelecek dönem hareketleri':'Hesap hareketleri');setFocusEvent(event?{id:event.id,stamp:Date.now()}:null);if(!event){const account=data.accounts.find(a=>a.id===alert.account);if(account)open({entity:'account',mode:'view',item:account})}}
- const alertList=<>{accountAlerts.length?accountAlerts.map(alert=><AlertNotice key={alert.id} alert={alert} onOpen={()=>openAlert(alert)}/>):<p className="empty">Güncel uyarı bulunmuyor.</p>}</>;
+ const [focusEvent,setFocusEvent]=useState(null);
+ function openAlert(alert){setDetail(true);setSearchQuery('');setTag('all');setMinAmount('');setMaxAmount('');setQueryScope('movements');setArchived(data.accounts.find(account=>account.id===alert.account)?.active===false);setFrom('');setTo('');setKind('Tümü');setPerson('Tümü');setCancelled(false);setSelected(alert.account);const event=data.events.find(e=>e.id===alert.eventId);setTab(event?.scheduled?'Gelecek dönem hareketleri':'Hesap hareketleri');setFocusEvent(event?{id:event.id,stamp:Date.now()}:null);if(!event){const account=data.accounts.find(a=>a.id===alert.account);if(account)open({entity:'account',mode:'view',item:account})}}
  const [tag,setTag]=useScopedState(page+':tag','all'),[minAmount,setMinAmount]=useScopedState(page+':minAmount',''),[maxAmount,setMaxAmount]=useScopedState(page+':maxAmount','');
  const [searchQuery,setSearchQuery]=useScopedState(page+':searchQuery','');
  const [listQuery,setListQuery]=useScopedState(page+':listQuery','');
@@ -31,6 +29,7 @@ export function AccountPage({page,data,open,search='',initialAccount='all'}){
  const a=detail&&queryScope==='movements'?source.find(x=>x.id===selected):inventory.find(x=>x.id===selected)||inventory[0];const statements=a?.statements||[];const statement=statements.find(x=>String(x.id)===statementId)||statements.at(-1);
  useEffect(()=>{if(a&&a.id!==selected)setSelected(a.id)},[a?.id,selected]);
  useLayoutEffect(()=>{if(initialAccount==='all')return;const target=source.find(item=>String(item.id)===String(initialAccount));if(target){setDetail(true);setSelected(target.id);setSearchQuery('');setTag('all');setMinAmount('');setMaxAmount('');setFrom('');setTo('');setKind('Tümü');setPerson('Tümü');setCancelled(false);setQueryScope('movements');if(!target.active)setArchived(true)}},[initialAccount]);
+ useLayoutEffect(()=>{if(initialEventId){const event=data.events.find(e=>e.id===initialEventId);if(event){setFocusEvent({id:event.id,stamp:Date.now()});setTab(event.scheduled?'Gelecek dönem hareketleri':'Hesap hareketleri')}}},[initialEventId]);
  function select(id){setListQuery(searchQuery);setListScroll(window.scrollY);setSelected(id);setDetail(true);setStatementId('');setFocusEvent(null);setQueryScope('movements');setSearchQuery('');window.scrollTo({top:0,behavior:'instant'});}
  function back(){setDetail(false);setQueryScope('accounts');setSearchQuery(listQuery);requestAnimationFrame(()=>window.scrollTo({top:listScroll,behavior:'instant'}));}
  let rows=a?isCard?cardPeriodRows(data.events,a,tab,statement,data.today):data.events.filter(e=>(e.account_id===a.id||e.target_id===a.id)&&(tab==='Gelecek dönem hareketleri'?e.scheduled:!e.scheduled)):[];
@@ -46,14 +45,13 @@ export function AccountPage({page,data,open,search='',initialAccount='all'}){
  const create=()=>open({entity:'event',initial:{operation:'expense',account:isCard?'':a.id,cardId:isCard?a.id:'',scheduled:!isCard&&tab==='Gelecek dönem hareketleri'}});
  return <div className={"finance-page cari-page account-page "+(!isCard?"bank-account-page":"") }><PageHeading title={detail&&a?a.name:page} subtitle={detail&&a?(isCard?`${bankName(a.bank_code)||a.bank||'Kredi kartı'}${PROGRAMS[a.program_code]?' · '+PROGRAMS[a.program_code]:''} · **** ${a.last_four||'—'}`:a.type):(isCard?'Kartlar, ekstreler ve dönem hareketleri.':'Kasa ve banka hesapları, tek bir yerde.')} back={detail?back:null} backLabel={isCard?'Kredi kartlarına dön':'Hesaplara dön'} actions={can(data.user,'create')&&(!detail||a?.active)&&<button className="primary-button icon-only" aria-label={detail?'İşlem ekle':isCard?'Kart ekle':'Hesap ekle'} title={detail?'İşlem ekle':isCard?'Kart ekle':'Hesap ekle'} onClick={()=>detail?create():open({entity:isCard?'card':'account'})}><Plus size={18}/></button>}/>
  {detail&&a&&<AccountSummary item={a} {...{isCard,data,open}}/>}
- {!isCard&&<button className="secondary-button mobile-alert-trigger" aria-label="Hesap uyarılarını aç" onClick={()=>setAlertOpen(true)}><Bell size={18}/>Uyarılar ({accountAlerts.length})</button>}
- <div className={isCard?'':'account-workspace'}><div className="account-main">
- {!detail&&<><div className="panel-heading"><h2>{isCard?'Kart listesi':'Hesap listesi'}</h2>{inventoryActions}</div><AccountGrid items={inventory} {...{isCard,data,open}} onSelect={select}/></>}
+ <div className="account-workspace"><div className="account-main">
+ {!detail&&<section className="panel account-list-panel">{inventoryActions}<AccountGrid items={inventory} {...{isCard,data,open}} onSelect={select}/></section>}
 
  {tools}
  {detail&&!a&&<p className="empty">Bu kapsamda hesap veya kart bulunamadı.</p>}
  {detail&&a&&<>{isCard&&a.debt<0&&<p className="future-note">Kartta {fmt(Math.round(-a.debt*100))} TL alacak var.</p>}
  {isCard&&tab==='Ekstre'&&<section className="panel statement-panel"><div className="statement-controls"><label>Ekstre<select value={statement?.id||''} onChange={e=>setStatementId(e.target.value)}><option value="">{statements.length?'Ekstre seçin':'Henüz manuel ekstre girilmedi'}</option>{statements.map(s=><option value={s.id} key={s.id}>{s.cut_date}</option>)}</select></label>{can(data.user,'edit')&&<><button className="list-icon" aria-label="Yeni ekstre gir" title="Ekstre ekle" onClick={()=>open({entity:'statement',item:a})}><FileText size={18}/></button>{statement&&<button className="list-icon" aria-label="Ekstreyi düzelt" title="Ekstreyi düzelt" onClick={()=>open({entity:'statement',item:a,statement})}><Pencil size={18}/></button>}</>}</div><div className="statement-totals">{[['Ekstre toplamı',statement?.total_cents??a.statement_total_cents],['Ödenen',statement?.paid_cents??a.paid_cents],['Kalan borç',statement?.remaining_cents??Math.round(a.statement*100)]].map(([l,n])=><div key={l}><span>{l}</span><strong>{fmt(n||0)} TL</strong></div>)}</div>{a.statement_credit_cents>0&&statement===statements.at(-1)&&<p className="future-note">Ekstreye uygulanan iade / mahsup: {fmt(a.statement_credit_cents)} TL</p>}{statement?.difference_cents<0&&<p className="warning-text">Tanımlı kalemler ekstre toplamını aşıyor. Dönem, tutar veya iadeleri kontrol edin.</p>}</section>}
  <Ledger key={a.id+'-'+tab+'-'+statement?.id} events={rows} data={data} open={open} toolbar={<div className="account-ledger-heading"><div className="cari-tabs">{(isCard?['Ekstre','Dönem içi işlemler','Gelecek Dönem']:['Hesap hareketleri','Gelecek dönem hareketleri']).map(t=><button key={t} className={t===tab?'active':''} aria-pressed={t===tab} onClick={()=>{setTab(t);setFocusEvent(null)}}>{t}</button>)}</div><div className="cari-actions">{movementActions}{can(data.user,'create')&&a.active&&<><button className="list-icon" aria-label="Hesaplar arası aktarım" title="Aktarım" onClick={()=>open({entity:'event',initial:{operation:isCard?'cash_advance':'transfer',cardId:isCard?a.id:'',account:isCard?undefined:a.id}})}><ArrowLeftRight size={17}/></button></>}</div></div>} amount={amount} accountLabel={e=>e.target_name?`${e.account_name} → ${e.target_name}`:e.account_name||e.card_name||a.name} card={isCard} focusEvent={focusEvent}/></>}
- </div>{!isCard&&<><aside className="account-alerts panel" aria-label="Hesap uyarıları"><h2>Uyarılar <small>{accountAlerts.length}</small></h2>{alertList}</aside>{alertOpen&&<Sheet title="Hesap uyarıları" onClose={()=>setAlertOpen(false)}><div className="sheet-scroll">{alertList}</div></Sheet>}</>}</div></div>;
+ </div><aside className="context-aside"><NotificationPreview data={data} source={isCard?'cards':'accounts'} onAll={onNotifications} onOpen={alert=>{if(isCard){select(alert.account)}else openAlert(alert)}}/><RecentActivity data={data} source={isCard?'cards':'accounts'} open={open}/></aside></div></div>;
 }
