@@ -71,3 +71,10 @@ Finans Paneli'nin kendi tasarım dili korunur; başka projelerin görsel tercihl
 - Cari, banka/kasa/KMH ve kredi kartı detaylarında sayfa başlığı, geri dönüş ve yeni işlem ekleme eylemi üst başlık alanında yer alır. Başlığın altında tek ve ayrı bir bilgi/özet kutusu bulunur. Cari detayının mevcut birleşik başlık kutusu da bu kurala geçirilir.
 - Yeni işlem ve geri dönüş bilgi kutusunun dışında; kayda ait bilgi/ayar/düzenleme ikonları ilgili bilgi bandının kendi üzerinde kalır.
 - Bilgi bandının dış yüzeyi, ayırıcıları, tipografi ve boşluk sistemi ortaktır; alanlar kaydın türüne göre yerleştirilir. Aynı görünüm uğruna finansal anlamlar, hesap modeli veya tablo sütun sırası değiştirilmez. Cari ve kredi kartı taslakları kullanıcı tarafından onaylanan referanstır.
+
+
+## 26 Ekim 2026 — 1.9.1 sonrası başlık araçları ve kart alanı (uygulama bekliyor)
+
+- Kullanıcının yeni kararı: gereksiz ikinci liste başlığı kaldırılır. Sayfaya ait sıralama/indirme ve gerekli araçlar ana başlık satırında gruplanır; ince ayraçtan sonra yeni kayıt/işlem ekleme düğmesi en sağda kalır. Site genelinde aynı yerleşim kullanılacaktır.
+- Hesap kartları tek bir ana içerik kutusunun içinde bölümlenir. Kayda ait bilgi/düzenleme ikonları yine kendi kartındadır. İç kartların görsel stili üç alternatif üzerinden değerlendirilmektedir; seçim henüz yapılmadı.
+- Not ve görsel aşamasıdır; kodlama/yayın onayı değildir. Ayrıntılar sonraki sürüm notlarındadır.

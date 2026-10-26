@@ -110,3 +110,16 @@ Durum: Kullanıcı, `TASARIM-INCELEMESI-2026-10-26.md` içindeki A1–A4 ve B1�
 1.7.2 şema 7 → POS alanı şema 8 → kampanya/araç tabloları şema 9. Güncelleme yöneticiyi ve mevcut finansal kayıtları korur, yedekleme akışını kullanır. Demo yenilemesi yalnız yöneticinin açık seçimiyle kayıtları siler; yeni örnek araç/kampanyalar paketteki üretici kodundadır. Şifreler, canlı veritabanı ve config Git'e/pakete alınmaz.
 
 Önceki sürümlerde tamamlanan Embla, ortak arama, sağ üst tarih, hesap uyarı sütunu, takvim görünümü ve kapsamlı finans demosu korunur. Kanban iptal kararı sürer.
+
+
+# 1.9.1 sonrası — not ve görsel değerlendirme aşaması
+
+## Hesaplar: başlık araçları ve ana içerik kutusu
+
+26 Ekim 2026. Kullanıcı yeni not aşamasını başlattı; uygulama onayı verilmedi.
+
+- “Hesap listesi” ikinci başlığı kaldırılacak.
+- Sıralama ve indirme ikonları, yeni kayıt/işlem ekleme düğmesinin bulunduğu sayfa başlığı satırına alınacak. Diğer gerekli sayfa araçları aynı grupta yer alacak; ince ayraçtan sonra ekle düğmesi en sağda kalacak. Bu düzen site geneline ortak kural olarak uyarlanacak.
+- Hesap kartlarının bulunduğu alan tek bir ana içerik kutusu olacak; kartlar bu kutu içinde yeniden bölümlenecek. Kart stili değişebilir.
+- Üç görsel alternatif ve öneri `tasarimlar/hesaplar-stil-denemeleri-2026-10-26.md` içinde. Kullanıcı stil seçimini henüz yapmadı; ikinci alternatif asistan önerisidir.
+- Bu aşamada yalnız tasarım görselleri/notlar GitHub'a yüklenir; uygulama kodu, sürüm ve hosting paketi değiştirilmez.
