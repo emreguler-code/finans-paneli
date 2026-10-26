@@ -150,3 +150,31 @@ Durum: Kullanıcı, `TASARIM-INCELEMESI-2026-10-26.md` içindeki A1–A4 ve B1�
 - **Bilgilendirme:** Mevcut teal rolü `#087F8C` ve nötr yüzey; örneğin günlük tahmini faiz bilgisi. Tek başına faiz tahmini kritik alarm gibi gösterilmez.
 - Önem düzeyi renk yanında ikon ve açık durum metniyle anlaşılır. Açık zeminler üzerinde okunabilir metin kontrastı korunur. Uyarı şiddeti ile işlem tutarının mevcut yeşil/kırmızı finansal yönü farklı anlamlardır; renk düzenlemesi hesap işaretlerini değiştirmez.
 - Öncelik, ilgili kaydın gerçek durumuna dayanır; aynı türdeki her kayıt otomatik olarak kritik sayılmaz. Yeni bildirim veya finansal eşik/hesaplama kuralı uydurulmaz.
+
+
+## Merkezi bildirim sayfası ve bağlama göre sağ sütunlar
+
+26 Ekim 2026. Kullanıcının yeni tasarım talepleri kaydedildi; not aşaması sürüyor. Bu karar, önceki “hesaplarda tümünü göster ile baloncuk açılması” fikrinin yerini alır: tümüne erişim merkezi sayfaya yönlendirir.
+
+### Kullanıcının istediği kapsam
+
+- Hesaplar sağ sütunundaki uyarı modülü en fazla **5 bildirim** gösterir. “Tümünü göster” merkezi bildirim sayfasını **Hesaplar kapsamı uygulanmış** olarak açar; ek baloncuk açmaz.
+- Uyarı modülünün altında **Son işlemler** modülü bulunur; hesaplarla ilişkili son **5 işlem** gösterilir.
+- Kredi kartları bölümündeki ilgili önizlemeler kredi kartı kapsamını kullanır; son işlemler modülü kartlarla ilişkili son **5 işlem** gösterir.
+- Cari hesaplar bölümüne de ortak **1,9:1** düzenle sağ sütun eklenir. Burada **son 5 giriş** ve **son 5 çıkış** hareketi ayrı iki blokta gösterilir. Cari giriş/çıkışının nakit tahsilat/ödeme mi yoksa cari bakiyeyi artıran/azaltan hareket mi olduğu henüz netleştirilmedi; finansal işaretlerden tahmin edilerek uygulanmaz.
+- Üstteki bildirim zili kompakt pencerede **5–6 bildirim** gösterir; kalanları “Tümünü göster” bağlantısıyla aynı global sayfaya taşır.
+- **Global bildirim sayfası** bütün bildirimleri sıralı gösterir; önem düzeyine göre filtrelenebilir. Menüden gelen bölüm filtresi görünür ve temizlenebilir olur. Hesap filtresi temizlendiğinde kredi kartı/cari ve diğer mevcut modüllerin bildirimleri de görünür.
+- Her menü merkezi mekanizmanın kendisiyle ilgili kayıtlarını filtreleyerek gösterir; ayrı ve çelişen bildirim üretme kuralları oluşmaz. Bir bildirim farklı bağlamlarda gösterilebilir; aynı olay global listede yinelenmez.
+- Bildirim hedefleri ilgili hesap/kart/cari ve varsa hareketin detayına gider. Hesap uyarılarının aktif hesap seçimi ve liste aramasından bağımsız olarak bütün hesapları kapsaması korunur.
+- Kırmızı kritik, amber dikkat, teal/nötr bilgilendirme kuralları bütün yüzeylerde aynıdır; ikon ve açık durum etiketi renk anlamını destekler. Mevcut araç/kampanya gibi bildirim kaynakları merkezi yapıdan dışlanmaz.
+
+### Asistanın görüş ve önerileri — ayrıca değerlendirilmek üzere
+
+- Zil dahil bütün küçük önizlemelerde **5 kayıt** kullanmak daha tutarlı olur; kullanıcı zilde 5–6 aralığını belirtmiştir, kesin sayı ayrıca değerlendirilebilir.
+- Global listede önem yanında bölüm (Hesaplar/Kredi kartları/Cariler/diğer mevcut kaynaklar), ilgili kayıt ve tarih aralığı filtreleri yararlı olur. Aktif kapsam çip olarak görünür; tek kapsamı kaldırma ve tüm filtreleri temizleme ayrı anlaşılır eylemler olur.
+- Varsayılan sıralama kritik → dikkat → bilgi; aynı önem grubunda vade/aciliyet ve güncellik anlamlı şekilde kullanılır. “En yeni” alternatif sıralaması düşünülebilir.
+- Son işlem blokları gerçekleşmiş finansal hareket kayıtlarından beslenmeli; tarih/saat ve kayıt kimliğiyle tutarlı sıralanmalı. Planlanmış veya iptal edilmiş işlemler son gerçekleşen işlem gibi sunulmamalı. Kart iadesi/ödemesi gibi mevcut işlem türleri kapsamına uygun yer almalı; yeni finansal kayıt oluşturulmamalı.
+- İşlem geçmişi ile uyarı önizlemesi aynı veri anlamı değildir: mevcut işlem kayıtları son işlemler modülünü, dikkat gerektiren koşullar bildirim listesini besler. Her işlemin otomatik olarak ayrı bir uyarı üretmesi gerekmiyor; kullanıcı tüm işlemleri bildirim geçmişine de almak isterse bu ayrıca netleştirilmeli.
+- Çözülmüş/ödenmiş koşullar aktif uyarı gibi gösterilmemeli. Beş kayıt sınırı gerçek toplamı gizlememeli; modül başlığında toplam sayı ve “Tümünü göster” erişimi korunmalı.
+
+Kod, sürüm, veritabanı veya yayın değişikliği yapılmadı. Cari giriş/çıkış tanımı netleşmeden yeni hesaplama veya yön kuralı kurulmaz.

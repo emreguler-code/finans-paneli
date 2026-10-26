@@ -90,3 +90,13 @@ Finans Paneli'nin kendi tasarım dili korunur; başka projelerin görsel tercihl
 - Şiddet renk dışında ikon ve açık durum etiketiyle de anlaşılır. Renk, gerçek durumun anlamına göre atanır; günlük faiz tahmini tek başına kritik alarm değildir. Uyarı önceliği para yönünden ayrıdır; işlem işaretleri/bakiye hesabı değiştirilmez.
 - Uyarılarda tarih kartlarla aynı Türkçe biçimde gösterilir; hesap/açıklama/tarih/tutar hizası ortaktır. Para değeri ve TL birimi birlikte kalır.
 - Bu kararlar sonraki tasarıma aittir; kullanıcı notlarına devam ediyor. Kodlama ve yayın henüz başlatılmaz.
+
+
+## 26 Ekim 2026 — Merkezi bildirim ve bağlamsal önizleme (uygulama bekliyor)
+
+- Bildirimler ortak mekanizmaya ve tek global sayfaya dayanır; modüller aynı kayıtları kendi bölüm kapsamıyla önizler. Kaynak, önem rengi, durum metni ve hedef davranışı ortaktır.
+- Hesap uyarıları en fazla 5 kayıt gösterir; altına hesaplarla ilişkili son 5 işlem modülü eklenir. Kart bölümündeki son 5 işlem kartlarla ilişkilidir. Cari bölümüne sağ sütun eklenir; son 5 giriş ve son 5 çıkış ayrı bloklarda sunulur. Ana/sağ sütun oranı ve duyarlı kırılımlar ortak kalır.
+- Zil kompakt 5–6 bildirim gösterir. “Tümünü göster” bütün yüzeylerden aynı global bildirim sayfasına gider; hesap ekranından giderken Hesaplar filtresi uygulanır. Sayfa filtresi görünür ve kaldırılabilir; kaldırıldığında diğer bölümlerin bildirimleri de görünür. Bu amaçla yeni baloncuk açılmaz.
+- Global bildirim sayfasında önem filtresi bulunur. Kritik/dikkat/bilgi renkleri aynı anlamı korur; yalnız renk kullanılmaz. Toplam sayı ve tam listeye ulaşma görünür kalır. Sağ sütun önizlemesi uzun bir tam listeye dönüştürülmez.
+- Cari giriş/çıkışının finansal anlamı henüz netleştirilmedi; nakit etkisi ile cari bakiye etkisi birbirine karıştırılarak sınıflandırma yapılmaz. Ek filtre/sıralama önerileri ve son işlemler kapsamı sonraki sürüm notlarında ayrı değerlendirme olarak kayıtlıdır.
+- Kullanıcı notlarına devam ediyor; kodlama, paketleme ve yayın başlatılmaz.
