@@ -1,0 +1,28 @@
+import {Info,Pencil} from 'lucide-react';
+import {SummaryBar} from './PageLayout';
+import {AccountFace} from './AccountFace';
+import {BankMark,ProgramMark,bankName,PROGRAMS} from './BankCards';
+import {fmt,tone,can} from './ui';
+import {dateLabel} from './DatePicker';
+import {isKmh,kmhUsage,hasMaturity} from './account-utils.mjs';
+import {limitSegments} from './operations.mjs';
+import {nextCardDates} from './date-utils.mjs';
+export function AccountActions({item,isCard,data,open}){return <><button className="icon-button" aria-label={isCard?'Kart bilgileri':'Hesap bilgileri'} title={isCard?'Kart bilgileri':'Hesap bilgileri'} onClick={()=>open({entity:isCard?'card':'account',mode:'view',item})}><Info size={18}/></button>{can(data.user,'edit')&&<button className="icon-button" aria-label={isCard?'Kartı düzenle':'Hesabı düzenle'} title={isCard?'Kartı düzenle':'Hesabı düzenle'} onClick={()=>open({entity:isCard?'card':'account',item})}><Pencil size={18}/></button>}</>}
+export function AccountGrid({items,isCard,data,open,onSelect}){return <div className="account-grid">{items.map(item=><article className="account-grid-item" key={item.id}><button className="account-open" aria-label={item.name+' hareketleri'} onClick={()=>onSelect(item.id)}><span className="sr-only">{item.name} hareketleri</span></button><AccountFace item={item} isCard={isCard} actions={<AccountActions {...{item,isCard,data,open}}/>}/></article>)}{!items.length&&<p className="empty">{isCard?'Kart':'Hesap'} bulunamadı.</p>}</div>}
+const money=n=><>{fmt(n||0)} <small>TL</small></>;
+export function AccountSummary({item:a,isCard,data,open}){
+ const actions=<AccountActions item={a} {...{isCard,data,open}}/>;
+ const identity=<><BankMark code={a.bank_code}/><span>{bankName(a.bank_code)||a.bank||a.type}</span>{isCard&&<ProgramMark code={a.program_code}/>}</>;
+ if(isCard){const limit=limitSegments(a),dates=nextCardDates(a,data.today),linked=data.accounts.find(x=>x.id===a.linked_account_id);return <SummaryBar label="Kredi kartı özeti" className="card-summary" {...{actions,identity}} items={[
+ {label:'Kullanılabilir limit',value:money(a.available_cents??limit.available),primary:true,tone:tone(a.available_cents??limit.available),help:'Toplam limit '+fmt(a.limit_cents)+' TL'},
+ {label:'Ekstreden kalan',value:money(Math.round(a.statement*100)),help:a.statement>0&&a.due<data.today?'Son ödeme geçti':dateLabel(a.due)||'Son ödeme belirtilmedi'},
+ {label:'Dönem içi',value:money(a.unbilled_cents),help:'Gelecek taksitler '+fmt(a.future_cents||0)+' TL'},
+ {label:'Bağlı hesap',value:linked?.name||'Bağlı hesap seçilmedi',help:'Kart sahibi: '+(a.holder||'Belirtilmedi')}
+ ]}><div className="limit-bar" aria-label="Kart limit kullanımı">{limit.widths.map((width,i)=><span key={i} className={['statement','period','available'][i]} style={{width:width+'%'}}/>)}</div><div className="summary-dates">{[['Son hesap kesimi',dateLabel(a.statement_date)],['Son ödeme',dateLabel(a.due)],['Sonraki hesap kesimi (tahmini)',dateLabel(dates.cut)],['Sonraki son ödeme (tahmini)',dateLabel(dates.due)],['Son ekstre toplamı',fmt(a.statement_total_cents||0)+' TL']].map(([label,value])=><div key={label}><span>{label}</span><strong>{value||'Belirtilmedi'}</strong>{label==='Son ekstre toplamı'&&<small>Ödenen {fmt(a.paid_cents||0)} TL</small>}</div>)}</div>{Number(a.statement_needs_review)>0&&<p className="warning-text">Kesim ve son ödeme tarihlerini kart ayarlarında doğrulayın.</p>}</SummaryBar>}
+ const kmh=isKmh(a)?kmhUsage(a):null;
+ return <SummaryBar label="Hesap özeti" {...{actions,identity}} items={[
+ {label:'Hesap bakiyesi',value:money(a.balance_cents),tone:tone(a.balance_cents),primary:true},
+ {label:'Hesap türü',value:isKmh(a)?'KMH':a.type,help:hasMaturity(a)?'Vade sonu: '+dateLabel(a.maturity_date):null},
+ ...(kmh?[{label:'KMH limiti',value:money(kmh.limit),help:'Kullanılan '+fmt(kmh.used)+' TL'},{label:'Kullanılabilir KMH',value:money(kmh.available),help:kmh.dailyInterest!==null?'Günlük tahmini faiz '+fmt(kmh.dailyInterest)+' TL':'Günlük faiz oranı belirtilmedi'}]:[{label:'Hesap sahibi',value:a.holder||'Belirtilmedi'},{label:'IBAN',value:a.iban||'Belirtilmedi'}])
+ ]}/>;
+}

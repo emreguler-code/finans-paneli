@@ -1,3 +1,18 @@
+# Finans Paneli 1.9.0
+
+- Hesaplar ve kredi kartlarında carousel kaldırıldı. Duyarlı grid kart listesi ve karttan açılan ayrı hareket detayları; klavyeyle seçim, listeye dönüş, liste aramasının korunması.
+- Cari, hesap ve kart detaylarında ortak başlık: geri ve yeni işlem düğmeleri üstte; bilgi/düzenleme ikonları altındaki tek özet bandında. Kredi kartında kullanılabilir limit, ekstre kalanı, dönem içi/gelecek taksitler, son ekstre toplamı/ödenen ve mevcut/sonraki dönem tarihleri ayrı gösterilir.
+- Kart ayarlarında isteğe bağlı bağlı hesap seçimi. Bu yalnız bilgi bağlantısıdır; otomatik ödeme oluşturmaz. Sonraki tarihler ayarlara dayalı tahmindir, bankanın kesin ekstresi değildir.
+- Raporlar ve Ödeme Planı tek bölümlenmiş özet yüzeyini kullanır. Ana/sağ sütun oranı 1,9:1; hesap uyarıları ve araç işleri aynı yerleşim dilini izler. Hesap uyarıları seçim/aramadan bağımsız kalır, ilgili hesabı ve hareketi açar.
+- Kampanyalar alt menüsü başlangıçta gizlidir; Kredi kartları açıldığında görünür. Masaüstü ve mobil gezinme aynı kuralı izler.
+- Tek gün dahil tüm takvimler tıklanan alanın yanında açılır. Ek bulanıklık, karartma ve sayfa kayması yoktur; Esc yalnız takvimi kapatır, üst form açık kalır.
+- Ortak panel boşlukları, kaydırılabilir tek satır sekmeler, ikon adları, mobil dokunma alanları ve takvim gezinme kontrolleri düzeltildi. Kullanıcılar sayfasındaki ilgisiz finans dipnotu kaldırıldı. Embla ve kullanılmayan carousel stilleri çıkarıldı.
+- Kapsamlı, isteğe bağlı demo verileri pakette korunur; örnek kartın bağlı hesabı açıkça atanır. Finansal model, tablo sütun sırası ve mevcut bakiye hesapları korunur.
+
+**Güncelleme:** ZIP içindeki `hosting/` içeriğini yükleyin ve mevcut `api/config.php` dosyanızı koruyun. Yöneticiyle `update.php` üzerinden şema **10** güncellemesini çalıştırın. Yönetici ve mevcut kayıtlar korunur. Önce dosya/veritabanı yedeği alın. Demo yenilemesi mevcut kayıtları silen, ayrı ve isteğe bağlı bir işlemdir.
+
+---
+
 # Finans Paneli 1.8.0
 
 - Bildirim ziline bağlı kompakt pencere; gecikmiş/bugün/yaklaşan grupları, aynı cari için kalan tutarların özeti ve hedefe geçiş.

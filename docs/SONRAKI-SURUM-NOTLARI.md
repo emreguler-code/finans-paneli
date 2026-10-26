@@ -1,4 +1,95 @@
-# Onaylı değişiklikler — 1.8.0
+# 1.9.0 — uygulanan onaylı tasarım notları
+
+## 26 Ekim 2026 — Kredi kartları: grid liste ve ayrı detay sayfası
+
+Durum: Kullanıcının 26 Ekim 2026 toplu kodlama/yayın onayıyla 1.9.0 kapsamında uygulandı. Bu karar kredi kartları için önceki carousel kararının yerini alır. Sonraki kullanıcı talebiyle Hesaplar bölümü de aşağıdaki kapsamla aynı gezinme yaklaşımına dahil edildi.
+
+### Gezinme ve liste
+
+- Kredi kartları menüsü, yalnız kredi kartlarının mevcut kart görsellerini temel alan bir grid liste açar. Carousel, sürükleme, önceki/sonraki okları ve konum sayacı kredi kartlarından kaldırılır.
+- Kartın üzerine tıklayınca o karta ait ayrı detay sayfası açılır. Ekstre / Dönem içi işlemler / Gelecek dönem sekmeleri bu sayfadadır. Listeye dönüş bulunur; dönüşte arama/filtre ve kaydırma konumunun korunması hedeflenir.
+- Liste kartlarında mevcut banka/program kimliği, tutarlar ve limit kullanımının görsel dili korunur. Kartın bilgi/ayar/düzenleme ikonları kendi üzerinde kalır; bu ikonlara basmak kartın detayına gitme eylemini ayrıca tetiklemez. Kart açma klavyeyle de erişilebilir olmalıdır.
+- Grid sütun sayısı içerik alanının genişliğine göre uyarlanır; dar ekranda tek sütun kullanılır. Kart ve tutarlar okunamayacak kadar küçültülmez. Ortak üst arama ve sayfaya özgü filtreler korunur.
+
+### Detay başlığı: yatay kart özeti
+
+- Detay sayfasının üstünde mevcut kartın görsel dilini taşıyan, sayfanın içerik genişliğine uyarlanan yatay bir özet bandı bulunur. Bu bantta 1,618 en/boy oranı zorlanmaz; yükseklik içerikle belirlenir.
+- Mevcut bilgiler: banka/program, kart adı, maskeli numara, kart sahibi, toplam limit, kullanılabilir limit, ekstre borcu, dönem içi/gelecek taksit limit kullanımı ve mevcut kesim/son ödeme bilgileri. Finansal anlamları birbirine karıştırılmaz.
+- Eklenecek bilgiler: bir sonraki hesap kesim tarihi, bir sonraki son ödeme tarihi, önceki ekstre borcu ve açıkça atanmışsa kartın bağlı olduğu banka/kasa hesabı. Atanmamış hesap banka adından tahmin edilmez; "Bağlı hesap seçilmedi" olarak belirtilir.
+- Mevcut ekstre ile bir sonraki dönemin tarihleri ayrı etiketlenir. Önceki ekstre toplamı ile o ekstreden kalan borç ayrı kavramlardır; birlikte gösterilirse açıkça adlandırılır ve borç toplamına ikinci kez eklenmez. Gelecek tarihler geçerli dönem/ayar bilgisine dayanır; bilgi yoksa uydurma tarih gösterilmez.
+
+### Sade Netlik ile uyumlu yerleşim önerisi
+
+- Masaüstünde üç görsel bölge: yaklaşık %25 kart kimliği, %45 limit/tutar özeti, %30 dönem tarihleri ve bağlı hesap. Bunlar sabit piksel veya kesin oran şartı değildir; uzun adlar ve tutarlara göre esner.
+- Limit toplamı ve kullanım barı orta bölgede; ekstre borcu, dönem kullanımı ve kullanılabilir tutar aynı hizadaki alt metriklerde yer alır. Önceki ekstre bilgisi ilgili borç grubunda, mevcut/sonraki tarihler tarih grubunda gösterilir.
+- Karta ait bilgi/ayar/düzenleme ikonları özet bandının kendi sağ üst bölümünde toplu bulunur. Finansal verilerle çakışmaz. Sekmeler bandın altında, hareket araçları ilgili tablonun kapsamında kalır.
+- Tablet düzeninde bilgiler iki gruba, telefonda kimlik → limit/borç → tarihler/bağlı hesap sırasıyla alt alta yerleşir. Yatay bant biçimi uğruna yatay sayfa taşması veya küçük yazı kullanılmaz.
+- Yerel Inter, Lucide, tabular para rakamları, mevcut renk paleti, başlık rolleri ve 4–32 px boşluk ölçeği korunur. Ana tutarlar öncelikli, tarih/hesap etiketleri ikincil olur; gereksiz yeni çerçeveler eklenmez. Mobil eylem alanları en az 44 × 44 px kalır.
+
+## 26 Ekim 2026 — Hesaplar: aynı grid ve detay yaklaşımı
+
+Durum: 1.9.0 kapsamında mevcut banka/kasa/KMH alanları korunarak uygulandı. İleri hesap özeti özelleştirmeleri ayrıca değerlendirilebilir.
+
+- Hesaplar bölümündeki carousel de kaldırılacak; banka/kasa/KMH ve diğer hesaplar mevcut kart görünümünü temel alan, ekran genişliğine uyarlanan bir grid listede gösterilecek. Sürükleme, önceki/sonraki okları ve carousel sayacı kaldırılacak.
+- Kredi kartlarıyla aynı liste → seçili hesabın ayrı detay sayfası yaklaşımı izlenecek. Detayda sayfa genişliğinde yatay hesap özeti ve hesaba ait hareket alanı bulunacak; başlıkta altın oran zorlanmayacak. Alanların kesin dağılımı daha sonra konuşulacak.
+- Hesap hareketleri ve gelecek dönem hareketleri ayrımı; banka/kasa bakiyesi, KMH limiti/kullanılan/kullanılabilir tutar ve tahmini faiz gibi hesap türüne özgü anlamlar korunacak. Vadesiz hesaplarda vade sonu gösterilmeyecek. Kredi kartına özgü ekstre/kesim alanları banka veya kasa hesabına taşınmayacak.
+- Tüm aktif hesap ve kasaları kapsayan kalıcı uyarı alanı kararı korunacak; seçili hesap veya arama diğer hesapların uyarılarını gizlemeyecek. Uyarıya tıklanınca ilgili hesap, hareket sekmesi ve varsa ilgili satır açılacak. Grid ve detayda masaüstü sağ sütun, dar ekranda ayrı yer ayıran Uyarılar düğmesi kullanılır.
+- Bilgi/ayar/düzenleme ikonları kendi hesap kartı veya özet bandı üzerinde birlikte bulunacak. Ortak arama, sayfaya uygun filtreler, hareket araçlarının kendi kapsamı ve mobil okunabilirlik kuralları korunacak.
+
+## 26 Ekim 2026 — Alt menüler başlangıçta kapalı
+
+Durum: Kullanıcı tarafından onaylandı; tasarım ilkelerine eklendi. 1.9.0 kapsamında uygulandı.
+
+- Genel kural: Bir ana menünün altında alt menüler varsa başlangıçta görünmezler. İlgili ana menüye tıklandığında alt menüler açılır ve görünür olur. Bu kural mevcut ve gelecekteki tüm alt menüler için geçerlidir.
+- Kredi kartları altındaki Kampanyalar sürekli görünür olmayacak; yalnız Kredi kartları ana menüsüne tıklanıp alt menüsü açıldığında gösterilecek. Buradaki tetikleyici, grid içindeki tekil kredi kartına değil ana menü öğesine tıklamaktır.
+- Açık/kapalı durum anlaşılır bir yön ikonu ve erişilebilir durum bilgisiyle belirtilir; klavye ve mobil gezinmede de aynı açılma kuralı uygulanır.
+
+## 26 Ekim 2026 — Finansal görünüm referansıyla ortak sayfa düzeni
+
+Durum: Kullanıcı tarafından onaylanan global tasarım yönü; 1.9.0 kapsamında ortak bileşen ve stillerle uygulandı. Referans, kullanıcının paylaştığı Finansal görünüm ekranındaki başlık, Güncel durum kutusu ve ana/sağ sütun düzenidir.
+
+- **Sayfa başlığı:** Her sayfa hangi bölümde olduğumuzu net gösteren sade bir başlık satırı kullanır. Başlık, kısa açıklama ve varsa sağdaki ana eylem aynı hiyerarşi/hizalama/boşluk sistemini izler. Sayfaya göre farklı başlık düzenleri veya gereksiz tekrar başlıkları oluşturulmaz.
+- **Tek özet kutusu:** İlişkili özet metrikleri, Güncel durum örneğindeki gibi tek dış çerçeve ve tek yüzey içinde, ince iç ayırıcılarla bölümlenir. Etiket → ana değer/birim → kısa açıklama hiyerarşisi korunur. Her metriği bağımsız kenarlıklı karta ayıran farklı bir görsel dil kullanılmaz.
+- **Raporlar:** Mevcut ayrı özet kartları, hesapları ve anlamları korunarak bu tek, kendi içinde bölümlenmiş özet kutusuna dönüştürülecek. Diğer menülerde de özet gereksinimi varsa aynı bileşen/düzen kullanılacak; ihtiyaç olmayan sayfaya zorunlu özet eklenmeyecek.
+- **Özetin anlamı:** Görsel dil ortak olsa da metrikler ve bölüm adı bağlama uygun olacak; örneğin raporda seçili dönem/filtre özeti açıkça belirtilecek. Güncel bakiye ile filtrelenmiş dönem toplamı birbirine karıştırılmayacak. Mobilde metrikler aynı dış kutu içinde alt satırlara geçecek; ayrı kartlara dönüşmeyecek.
+- **Ana içerik / sağ sütun:** Sağ sütun kullanılmasına karar verilen sayfalarda Finansal görünümün geniş ekran oranı ortak referans olacak. Mevcut kaynakta bu oran 1,9:1; sütun aralığı hariç yaklaşık %65,5 ana içerik / %34,5 sağ sütundur. Geniş ekranda mevcut 20 px ara boşluk referans alınacak. Her sayfaya farklı oran veya bağımsız sabit sağ sütun genişliği verilmeyecek.
+- **Duyarlı yerleşim:** Aynı genişlikteki sayfalar aynı sütun davranışını izleyecek. Daralırken okunabilirliği koruyan ortak kırılımlar kullanılacak; gerekince tek sütuna geçilecek. Tutarlar sıkıştırılmayacak, yatay sayfa taşması oluşturulmayacak. Sağ sütunun mobil erişimi, özellikle hesap uyarılarının her zaman erişilebilir olması kararıyla birlikte korunacak.
+- **Ortak görünüm:** Başlık/özet/ana içerik sırası, içerik kenarları, bölüm aralıkları, panel iç boşlukları, çizgi ve köşe biçimleri, tipografi, ikon ve eylem ölçüleri tüm sayfalarda aynı tasarım sisteminden beslenecek. Ortak düzen tek bir yeniden kullanılabilir uygulama üzerinden kurulacak; sayfa başına kopyalanıp zamanla farklılaşan stiller üretilmeyecek.
+- Bu karar, önceki kredi kartı ve hesap grid/detail notlarıyla birlikte uygulanacak: yatay detay özetleri de aynı görsel dili taşıyacak. Her sayfaya sağ sütun ekleme zorunluluğu yoktur; sağ sütun gereken yerlerde oran ortak olacaktır. Hesaplar bölümünde mevcut hesap türlerine özgü alanlar korunmuştur.
+
+## 26 Ekim 2026 — Tasarım incelemesindeki önerilerin toplu onayı
+
+Durum: Kullanıcı, `TASARIM-INCELEMESI-2026-10-26.md` içindeki A1–A4 ve B1–B10 önerilerinin tamamını onayladı. 1.9.0 kapsamında uygulandı; doğrulama sonuçları TEST-RAPORU-1.9.0.md içindedir.
+
+- Mobil Ödeme Planı tarih/gezinme kontrollerinin örtüşmesi ve Hesaplar uyarı düğmesinin hareket tutarını kapatması giderilecek. Uyarılara sürekli erişim korunacak.
+- Raporlar ve Ödeme Planı başta olmak üzere ortak başlık → tek bölümlü özet → içerik sırası uygulanacak. Sağ sütun kullanılan yerlerde ortak 1,9:1 oran izlenecek.
+- Onaylı hesap/kredi kartı grid ve ayrı detay sayfası geçişleri ile kapalı başlayan alt menü kuralı aynı düzen içinde ele alınacak. Hesap alanlarının daha ayrıntılı görüşülmesi kararı korunuyor.
+- Cari/araç detay başlıkları, geri dönüşler, panel dolguları, sekmeler ve ilgili liste araçları ortaklaştırılacak. Araç hatırlatmaları masaüstünde ortak orandaki sağ sütuna alınacak; mobilde uzun liste kartları aşağı itmeyecek.
+- İkonların bağlama uygun adları, menü hiyerarşisi ve mobilde en az 44 px etkileşim alanları düzeltilecek. Mevcut Lucide ailesi ve marka çizimleri korunacak.
+- Başlık rolleri, grafik ekseni/tarih/birim biçimleri ve aynı finansal metriğin renk rolü tutarlı olacak. Bu onay hesap modelini, para işaretlerini veya tablo sütunlarının sırasını değiştirme yetkisi değildir.
+- Kullanıcılar gibi finans dışı ekranlarda bağlamsız TL/banka dipnotları temizlenecek; az kayıt bulunan sayfalara gereksiz özet veya sütun eklenmeyecek.
+
+## 26 Ekim 2026 — Bütün takvim seçimleri bulanıklıksız açılacak
+
+- Kullanıcının hatırlatmasıyla kural bütün tarih seçimlerine genişletildi: hem tarih aralığı hem tek gün seçen takvimler, tetikleyen tarih alanına/düğmesine bağlı açılacak; takvim açılması arka plana blur, karartma veya sayfayı iten yeni bir katman eklemeyecek.
+- Kapsam: Ödeme Planı dönem/takvim tarihi, işlem tarihleri, ekstre kesim/son ödeme tarihleri, hesap vade tarihleri, araç/poliçe/bakım ve kampanya tarihleri dahil ortak tarih seçicinin bütün kullanımları.
+- Kaynakta kalan ayrım doğrulandı: `src/DatePicker.jsx` tarih aralıklarında `FloatingPanel`, tek gün seçimlerinde `Sheet` kullanıyor. Tek günün `Sheet` üzerinden açılması mevcut bulanıklığın kaynağı; ortak bağlı takvim davranışına geçirilecek.
+- Takvim ekran sınırlarına uyarlanacak, içeriği kaydırmayacak. Dışarı tıklama/Esc yalnız ilgili takvimi kapatacak; tarih aralığında uygulanmamış seçim iptal edilecek. İç içe açılan takvimde üst form yanlışlıkla kapanmayacak; odak tetikleyiciye dönecek.
+- Bir işlem formu zaten kendi penceresinde açıksa takvim ikinci bir modal/blur oluşturmayacak. Bu karar genel ekle/düzenle pencerelerinin mevcut arka plan stilini topluca kaldırmaz.
+- Kabul kontrolü: tek gün ve tarih aralığı seçimlerinin tamamı masaüstü/mobilde; form içinde ve sayfa üzerinde; blur/ek karartma/sayfa kayması olmadan açılmalı. Zorunlu tarih doğrulaması, seçme/uygulama, Esc, dışarı tıklama ve odak dönüşü korunmalı.
+
+## 26 Ekim 2026 — Cari, hesap ve kredi kartı detaylarında ortak başlık / bilgi bandı
+
+- Kullanıcının netleştirdiği ortak kural: sayfa başlığı, geri dönüş ve yeni işlem ekleme eylemi üst başlık alanında kalır. Başlığın hemen altında, içerik genişliğinde ayrı ve tek bir bilgi/özet kutusu bulunur. Cari detayındaki mevcut ad/bakiye/geri/ekle bileşimi de bu kurala uyarlanacak; cari sayfası istisna olmayacak.
+- Alt bilgi kutusu sayfanın yeni işlem ekleme veya listeye geri dönme eylemlerini içine almaz. Kayıt bilgisi/ayar/düzenleme ikonları ise ilgili kaydın bu bilgi bandının üzerinde toplu kalır. Böylece önceki "karta ait ikonlar kendi üzerinde" kuralıyla başlıkta yeni işlem kuralı birlikte sağlanır.
+- Aynı dış yüzey, bölüm ayırıcıları, başlık/değer/açıklama rolleri, boşluklar ve duyarlı davranış cari, banka/kasa/KMH ve kredi kartında paylaşılır. Alanlar menünün anlamına göre değişir; cari için ekstre/kesim, vadesiz hesap için vade gibi ilgisiz bilgiler eklenmez.
+- Görsel değerlendirme için cari detay örneği üretildi. Yerel görsel: `.qa/design-ideation-20261026/cari-detail-summary.png`; kullanıcı ilk değerlendirmede olumlu buldu, kredi kartı örneğiyle karşılaştırmak istedi. Önerilen örnek alanlar: cari bakiye ve Alacak/Borç durumu, cari türü, ticari unvan ve son hareket. Bilgi kutusunun ayrıntılı alan sırası ve oranları görsel taslak değerlendirmesine tabidir; yeni veri veya finansal hesaplama ekleme kararı değildir.
+- Başlıktaki seçili cari adı kutunun dışında olacak; içte ticari unvan ancak farklı anlam taşıyan kayıt alanı olarak gösterilir. Hareket tablosunun sütun sırası, para işaretleri ve bakiye hesabı korunur.
+- Durum: ortak başlık/bilgi bandı kuralı kullanıcı talebidir. Cari taslağı ilk değerlendirmede olumlu bulundu; kredi kartı taslağı karşılaştırma için üretildi, kullanıcı tarafından “harika görünüyor” yanıtıyla onaylandı. İki görsel ve karşılaştırma `docs/tasarimlar/cari-ve-kredi-karti-karsilastirma-2026-10-26.md` içindedir. Onaylı taslaklar 1.9.0 uygulamasının ortak görsel referansıdır.
+
+---
+
+# Tamamlanan onaylı değişiklikler — 1.8.0
 
 23 Ekim 2026. Kullanıcının toplu uygulama ve GitHub yayını onayıyla bu maddeler 1.8.0 kapsamında kodlandı. Yayın sonucu GitHub Release ve CI kaydından doğrulanır; canlı hosting kurulumu bu çalışmanın kapsamında değildir.
 

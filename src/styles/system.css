@@ -5,16 +5,10 @@
 .list-icon,.icon-only{width:var(--control-size);height:var(--control-size)}
 form input,form select,form textarea,.date-trigger{border-color:var(--control-border)}
 form input,form select,.date-trigger{min-height:var(--control-size)}
-.report-metrics{grid-template-columns:repeat(4,minmax(0,1fr))}
-.report-metrics>.panel{container-type:inline-size}
-.report-metrics .cari-total{font-size:clamp(20px,10cqi,var(--text-value-mobile));white-space:nowrap;letter-spacing:-.5px}
-.report-metrics .cari-total small{white-space:nowrap}
-@media(max-width:1100px){.report-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:760px){.report-metrics{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:760px){
  .page-title h1,.auth-panel h1{font-size:var(--text-page-mobile)}
- .primary-button,.secondary-button,.icon-button,.list-icon,.icon-only,.carousel-arrow{min-width:var(--control-size);min-height:var(--control-size)}
- .icon-button,.list-icon,.icon-only,.carousel-arrow{width:var(--control-size);height:var(--control-size)}
+ .primary-button,.secondary-button,.icon-button,.list-icon,.icon-only{min-width:var(--control-size);min-height:var(--control-size)}
+ .icon-button,.list-icon,.icon-only{width:var(--control-size);height:var(--control-size)}
  .ledger-actions .icon-button{width:var(--control-size);height:var(--control-size);min-height:var(--control-size)}
  .ledger-actions{padding:var(--space-1) var(--space-2);gap:var(--space-1)}
  .account-title-actions{gap:var(--space-2)}
@@ -30,10 +24,6 @@ form input,form select,.date-trigger{min-height:var(--control-size)}
 @media(max-width:760px){
  .bank-face footer{padding-right:104px}
  .account-card-actions .icon-button{width:var(--control-size);height:var(--control-size)}
- .account-page .carousel-arrow{width:var(--control-size);height:var(--control-size);top:100%}
- .account-page .carousel-caption{min-height:52px;padding:var(--space-1) 52px;flex-wrap:wrap;gap:var(--space-2)}
- .account-page .carousel-caption>span{min-width:0;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
- .account-page .carousel-viewport{height:var(--active-card-height,244px)}
  .account-page .page-title{gap:var(--space-3)}
 }
 /* Tiny-screen exception: keep the full balance and touch targets on separate rows. */
@@ -59,8 +49,6 @@ form input,form select,.date-trigger{min-height:var(--control-size)}
 .search-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
 .search-chips>button{display:flex;align-items:center;gap:6px;padding:4px 8px;background:#e7f2f3;color:var(--brand);border-radius:8px;font-size:12px;max-width:100%;overflow-wrap:anywhere}
 .page-title>.primary-button.icon-only{width:44px;height:44px;min-width:44px;padding:0;flex-shrink:0}
-.carousel-slide{min-width:0;flex:0 0 408px}
-.carousel-slide .account-face{width:100%}
 /* Calendar cells keep a readable minimum instead of shrinking to the viewport. */
 .plan-grid{height:auto!important;--calendar-row-min:144px}
 .plan-day{min-height:var(--calendar-row-min);height:auto;justify-content:flex-start;text-align:left;padding:10px;overflow:hidden}
@@ -94,7 +82,6 @@ form input,form select,.date-trigger{min-height:var(--control-size)}
  .search-filter-panel .shared-filters{grid-template-columns:minmax(0,1fr)}
  .search-filter-actions{position:sticky;bottom:64px;background:white;padding:8px 0}
  .search-chips>button{min-height:32px}
- .carousel-slide{flex-basis:min(350px,calc(100vw - 40px))}
  .plan-grid{--calendar-row-min:84px}
  .plan-day{padding:6px 3px}
  .plan-count{font-size:12px;line-height:1.2}
@@ -142,10 +129,6 @@ form input,form select,.date-trigger{min-height:var(--control-size)}
 .content-tools .list-icon{width:44px;height:44px;min-height:44px}
 .account-title-actions .content-tools{width:auto;padding:0;flex:none}
 .account-page{gap:16px}
-.account-page .carousel-arrow{top:100%;width:44px;height:44px}
-.account-page .carousel-arrow.previous{left:8px}
-.account-page .carousel-arrow.next{right:8px}
-.account-page .carousel-caption{min-height:52px;padding:4px 60px;margin:0}
 @media(max-width:1100px){.topbar-inner{gap:12px}.topbar .date-label{font-size:12px}.page-search-row kbd{display:none}}
 @media(max-width:760px){
  .topbar{min-height:68px;padding:0}
@@ -157,9 +140,6 @@ form input,form select,.date-trigger{min-height:var(--control-size)}
  .content-tools .cari-toolbar-actions{width:auto;gap:8px}
  .account-title-actions{gap:8px}
  .account-title-actions .content-tools .cari-toolbar-actions{gap:4px}
- .account-page .carousel-arrow.previous{left:0}
- .account-page .carousel-arrow.next{right:0}
- .account-page .carousel-caption{padding:4px 52px}
 }
 @media(max-width:760px){
  .main-content>.page-title,.finance-page .page-title:not(.party-detail-header){flex-direction:row;flex-wrap:nowrap;align-items:flex-start}
@@ -171,15 +151,13 @@ form input,form select,.date-trigger{min-height:var(--control-size)}
 .page-search-row .cari-search{border-color:var(--line)}
 .page-search-row .search-submit{width:var(--control-size);min-width:var(--control-size);padding:0;flex-shrink:0}
 .ledger-view .cari-entry-kind .cari-badge{width:100px;min-width:100px;max-width:100px}
-.account-workspace{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:var(--space-5);align-items:start}
 .account-main{min-width:0}
 .account-alerts{position:sticky;top:100px;padding:16px;max-height:calc(100dvh - 200px);overflow-y:auto}
 .account-alerts h2{font-size:var(--text-section);margin:0 0 16px;display:flex;justify-content:space-between}
 .account-alerts .alert-notice{width:100%;margin:0 0 12px;text-align:left;align-items:flex-start}
 .account-alerts .alert-notice span{min-width:0;overflow-wrap:anywhere}
 .account-alerts .alert-notice>svg{flex-shrink:0}
-.mobile-alert-trigger{display:none}
-@media(max-width:1100px){.account-workspace{grid-template-columns:minmax(0,1fr)}.account-alerts{display:none}.mobile-alert-trigger{display:flex;position:fixed;bottom:80px;right:16px;z-index:25;box-shadow:0 4px 12px #202c3920}}
+@media(max-width:1100px){.account-alerts{display:none}}
 
 .ledger-view .cari-entry-kind{grid-template-columns:100px 4px minmax(50px,1fr)}
 @media(min-width:761px){.ledger-view .finance-table{min-width:900px}.ledger-view .party-ledger{min-width:1000px}.ledger-view th:nth-child(3),.ledger-view .party-ledger th:nth-child(4){width:200px}.ledger-view .party-ledger th:nth-child(3){width:100px}}

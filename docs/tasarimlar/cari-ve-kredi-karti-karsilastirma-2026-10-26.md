@@ -1,6 +1,6 @@
 # Cari ve kredi kartı — ortak detay tasarımı
 
-26 Ekim 2026. Bunlar görsel değerlendirme taslaklarıdır; çalışan uygulamaya uygulanmadı. Cari taslağı kullanıcı tarafından ilk değerlendirmede olumlu bulundu; kredi kartı taslağı karşılaştırma için hazırlanmıştır. Görsellerdeki bilgiler örnek senaryodur.
+26 Ekim 2026. Bu taslakların ikisi de kullanıcı tarafından onaylandı; 1.9.0 ortak detay tasarımının referanslarıdır. Görsellerdeki bilgiler örnek senaryodur.
 
 | Cari hesap detayı | Kredi kartı detayı |
 |---|---|

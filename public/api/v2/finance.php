@@ -152,7 +152,7 @@ function enhanceCardState(PDO $db,array $s): array {
   if($own)$list[count($list)-1]['remaining_cents']=(int)round($c['statement']*100);
   $c['statement_credit_cents']=$own?max(0,$latestRemaining-(int)round($c['statement']*100)):0;
   $c['statement_total_cents']=$own?$latestTotal:max(0,(int)round($c['statement']*100)-$postRepay);$c['paid_cents']=$own?$latestPaid:max(0,-$postRepay);$c['unbilled_cents']=$current;$c['future_cents']=$future;$c['available_cents']=(int)$c['limit_cents']-(int)round($c['debt']*100);$c['statements']=$list;$c['statement_difference_cents']=$latestDifference;
- }unset($c);$s['schemaVersion']=9;return $s;
+ }unset($c);$s['schemaVersion']=10;return $s;
 }
 
 function seedDemo(PDO $db,bool $comprehensive=true): array {
@@ -168,6 +168,7 @@ function seedDemo(PDO $db,bool $comprehensive=true): array {
  $db->exec("INSERT INTO accounts(id,name,type,opening_cents,sort_order,bank_code,holder,credit_limit_cents,daily_interest_rate) VALUES('kmh','KMH Deneme Hesabı','Kredili Mevduat Hesabı',-500000,4,'garanti','Örnek Kullanıcı',4000000,0.10)");
  $parties=[];foreach([['Yıldız Tedarik','Tedarikçi'],['Ada Tasarım','Müşteri'],['Ayşe Demir','Personel'],['Atlas Danışmanlık','Müşteri']] as [$name,$type]){$db->prepare('INSERT INTO parties(name,title,type) VALUES(?,?,?)')->execute([$name,$name,$type]);$parties[]=(int)$db->lastInsertId();}
  $cards=[];foreach([['Garanti Bonus Kart','garanti','bonus','0823',8000000],['World Kart','yapikredi','world','1947',5000000],['Axess Kart','akbank','axess','6308',10000000]] as $c){$db->prepare("INSERT INTO cards(debt_cents,statement_cents,name,limit_cents,due,statement_date,opening_statement_date,cut_day,last_four,bank_code,program_code,network_code,holder) VALUES(0,0,?,?,'2026-10-20','2026-10-10','2026-10-10',10,?,?,?,'mastercard','Örnek Kullanıcı')")->execute([$c[0],$c[4],$c[3],$c[1],$c[2]]);$cards[]=(int)$db->lastInsertId();}
+ $db->prepare('UPDATE cards SET linked_account_id=? WHERE id=?')->execute(['bank',$cards[0]]);
  $base=['amount'=>'1000','settled'=>'0','date'=>'2026-10-13','time'=>'10:00','description'=>'','account'=>'','cardId'=>'','target'=>'','due'=>'','tag'=>'Genel'];
  $add=function(array $b)use($db,$base){return saveOperation($db,array_merge($base,$b,['requestId'=>sprintf('%08x-%04x-%04x-%04x-%012x',random_int(1,0xfffffff),random_int(0,65535),random_int(0,65535),random_int(0,65535),random_int(0,0xffffffffff))]));};
  $add(['operation'=>'purchase_invoice','partyId'=>$parties[0],'amount'=>'10000','settled'=>'3000','account'=>'bank','description'=>'Kısmi ödenmiş mal alışı','due'=>'2026-10-18','tag'=>'Gıda']);

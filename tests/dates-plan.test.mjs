@@ -10,3 +10,11 @@ test('Global movement direction keeps card-funded payments distinct from cari ef
 
 import {sortPlanItems} from '../src/list-utils.mjs';
 test('Plan sorting applies before day details and keeps source records intact',()=>{const rows=[{id:1,date:'2026-10-13',amount:10000},{id:2,date:'2026-10-13',amount:35000},{id:3,date:'2026-10-12',amount:20000}];const original=JSON.stringify(rows);assert.deepEqual(sortPlanItems(rows,'amount-desc').filter(x=>x.date==='2026-10-13').map(x=>x.id),[2,1]);assert.deepEqual(sortPlanItems(rows,'date-asc').map(x=>x.id),[3,1,2]);assert.deepEqual(sortPlanItems(rows,'date-desc').map(x=>x.id),[1,2,3]);assert.equal(JSON.stringify(rows),original)});
+
+// Statement estimates clamp cut days across short/leap months without changing records.
+test('Next card dates are estimates and require verified settings', async()=>{
+ const {nextCardDates}=await import('../src/date-utils.mjs');
+ assert.deepEqual(nextCardDates({cut_day:31,statement_date:'2028-01-31',due:'2028-02-10'},'2028-02-15'),{cut:'2028-02-29',due:'2028-03-10'});
+ assert.deepEqual(nextCardDates({cut_day:10,statement_date:'2026-10-10',due:'2026-10-20'},'2026-10-26'),{cut:'2026-11-10',due:'2026-11-20'});
+ assert.deepEqual(nextCardDates({cut_day:10,statement_date:'2026-10-10',due:'2026-10-20',statement_needs_review:1},'2026-10-26'),{cut:'',due:''});
+});

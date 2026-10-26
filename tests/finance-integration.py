@@ -24,8 +24,8 @@ def event(**b):
  code,r=post('event_save',**payload);assert code==200,r;return r['id']
 call('session')
 code,r=call('login',dict(username=os.environ['API_TEST_USERNAME'],password=os.environ['API_TEST_PASSWORD']));assert code==200,r
-code,r=call('update_apply',{});ok('Schema 9 update succeeds',code==200)
-ok('Schema 9 active',state()['schemaVersion']==9)
+code,r=call('update_apply',{});ok('Schema 10 update succeeds',code==200)
+ok('Schema 10 active',state()['schemaVersion']==10)
 code,r=post('demo_seed',profile='compact');assert code==200,r
 ok('Demo seed succeeds',r.get('demoReady'))
 ok('Administrator login survives demo reset',call('login',dict(username=os.environ['API_TEST_USERNAME'],password=os.environ['API_TEST_PASSWORD']))[0]==200)
@@ -172,6 +172,16 @@ code,r=save_pos(type='Müşteri',pos_programs=[]);ok('Changing supplier type cle
 ok('Non-supplier cannot receive POS metadata',save_pos(pos_programs=['garanti:bonus'])[0]==422)
 ok('POS edits never change balances or create transactions',counts==(len(state()['events']),sum(a['balance_cents'] for a in state()['accounts'])))
 code,r=call('audit',entity='party',id=pos_id);ok('POS changes are recorded in audit history',code==200 and any('pos_programs' in (l['after_json'] or '') for l in r['logs']))
+# Optional link is metadata; setting/clearing it must never move money.
+linked_before=state();test_card=linked_before['cards'][0]
+def save_card_link(value):
+ c=entity('cards',test_card['id'])
+ return post('card_save',id=c['id'],version=c['version'],name=c['name'],holder=c['holder'],limit=str(c['limit_cents']/100),due=c['due'],statementDate=c['statement_date'],cutDay=c['cut_day'],lastFour=c['last_four'],linked_account_id=value)
+ok('Card can explicitly link to a cash account',save_card_link('cash')[0]==200 and entity('cards',test_card['id'])['linked_account_id']=='cash')
+ok('Unknown linked account is rejected',save_card_link('missing-account')[0]==422)
+ok('Card link can be cleared',save_card_link('')[0]==200 and entity('cards',test_card['id'])['linked_account_id'] is None)
+linked_after=state()
+ok('Card linkage never changes financial facts',linked_before['events']==linked_after['events'] and [a['balance_cents'] for a in linked_before['accounts']]==[a['balance_cents'] for a in linked_after['accounts']] and [c['debt'] for c in linked_before['cards']]==[c['debt'] for c in linked_after['cards']])
 exec(compile((Path(__file__).with_name('tracking-integration.py')).read_text(),'tracking-integration.py','exec'))
 Path(os.environ['QA_STATE_PATH']).write_text(json.dumps(state(),ensure_ascii=False))
 print(json.dumps({'passed':len(checks),'failed':0}))

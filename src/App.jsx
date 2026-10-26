@@ -10,12 +10,12 @@ import { globalEventAmount } from './list-utils.mjs';
 import { DatePicker } from './DatePicker';
 import { presetRange } from './date-utils.mjs';
 import { useState, useEffect, useRef } from "react";
-import { Users, LayoutDashboard, ArrowLeftRight, Landmark, CreditCard, ChartNoAxesCombined, Search, Bell, Plus, ChevronRight, ChevronDown, PanelLeftClose, PanelLeftOpen, ArrowDownLeft, ArrowUpRight, ArrowRight, CircleAlert, Check, X, Wallet, CalendarDays, MoreHorizontal, Settings, Car, Gift } from "lucide-react";
+import { Users, LayoutDashboard, ArrowLeftRight, Landmark, CreditCard, ChartNoAxesCombined, Search, Bell, Plus, ChevronRight, ChevronDown, PanelLeftClose, PanelLeftOpen, ArrowDownLeft, ArrowUpRight, ArrowRight, CircleAlert, Check, X, Wallet, CalendarDays, MoreHorizontal, Settings, Car, Gift, UserRoundCog } from "lucide-react";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 import { money, day } from "./data";
 import { FinanceHub, FinanceDialog } from "./Finance";
 import { can } from "./ui";
-const navigation = [["Genel bakış", LayoutDashboard], ["Cari hesaplar", Users], ["Tahsilat & Ödeme", ArrowLeftRight], ["Ödeme Planı", CalendarDays], ["Hesaplar", Landmark], ["Kredi kartları", CreditCard], ["Kampanyalar", Gift], ["Araçlarım", Car], ["Raporlar", ChartNoAxesCombined], ["Kullanıcılar", Users]];
+const navigation = [["Genel bakış", LayoutDashboard], ["Cari hesaplar", Users], ["Tahsilat & Ödeme", ArrowLeftRight], ["Ödeme Planı", CalendarDays], ["Hesaplar", Landmark], ["Kredi kartları", CreditCard], ["Kampanyalar", Gift], ["Araçlarım", Car], ["Raporlar", ChartNoAxesCombined], ["Kullanıcılar", UserRoundCog]];
 const descriptions = {
   "Genel bakış": "Bugünün durumu, hareketlerin ve sıradaki adımların.",
   Hareketler: "Banka ve kasa kayıtlarını tek yerden incele.",
@@ -85,9 +85,11 @@ export function App({
     [bell, setBell] = useState(false),
     [toast, setToast] = useState(null);
   const bellButton=useRef(null);
+  const [cardsMenu,setCardsMenu]=useState(false);
+  const navigateMenu=name=>{if(name==='Kredi kartları')setCardsMenu(page===name?!cardsMenu:true);if(name===page)setRouteKey(key=>key+1);go(name)};
   const [notificationTarget,setNotificationTarget]=useState(null),[routeKey,setRouteKey]=useState(0);
   const notifications = groupAlerts(collectAlerts(fullData),TODAY);
-  function openNotification(alert){go(alert.page);setNotificationTarget(alert);setRouteKey(key=>key+1);if(alert.account!==undefined)setScope(alert.account);if(alert.section==='Gecikmiş')setClaimFilter('late');if(alert.entity){const rows=alert.entity==='campaign'?fullData.campaigns:fullData.vehicle_records;const item=rows.find(item=>item.id===alert.recordId);if(item)openFinance({entity:alert.entity,item})}}
+  function openNotification(alert){if(['Kredi kartları','Kampanyalar'].includes(alert.page))setCardsMenu(true);go(alert.page);setNotificationTarget(alert);setRouteKey(key=>key+1);if(alert.account!==undefined)setScope(alert.account);if(alert.section==='Gecikmiş')setClaimFilter('late');if(alert.entity){const rows=alert.entity==='campaign'?fullData.campaigns:fullData.vehicle_records;const item=rows.find(item=>item.id===alert.recordId);if(item)openFinance({entity:alert.entity,item})}}
   const accountName = id => accounts.find(a => a.id === id)?.name;
   const go = p => {
     setPage(p);
@@ -431,9 +433,9 @@ export function App({
         </div>
         <div className="workspace-label">KİŞİSEL ÇALIŞMA ALANI</div>
         <nav aria-label="Ana navigasyon">
-          {navigation.filter(([name]) => name !== 'Kullanıcılar' || can(fullData.user, 'admin')).map(([name, Icon]) => <button key={name} className={(page === name ? "active " : "")+(name==='Kampanyalar'?'navigation-submenu':'')} aria-current={page === name ? "page" : undefined} aria-label={name} onClick={() => go(name)}>
+          {navigation.filter(([name]) => (name !== 'Kullanıcılar' || can(fullData.user, 'admin'))&&(name!=='Kampanyalar'||cardsMenu)).map(([name, Icon]) => <button key={name} className={(page === name ? "active " : "")+(name==='Kampanyalar'?'navigation-submenu':'')} aria-current={page === name ? "page" : undefined} aria-label={name} aria-expanded={name==='Kredi kartları'?cardsMenu:undefined} onClick={() => navigateMenu(name)}>
               <Icon size={20} />
-              <span>{name}</span>
+              <span>{name}</span>{name==='Kredi kartları'&&<ChevronDown size={16} className={cardsMenu?'submenu-chevron rotate-open':'submenu-chevron'}/>}
               {name === "Ödeme Planı" && late.length > 0 && !compact && <em>{late.length}</em>}
             </button>)}
         </nav>
@@ -556,10 +558,10 @@ export function App({
         </button>
       </nav>
       {mobileMore && <div className="mobile-more">
-          {navigation.filter(([name]) => !["Genel bakış", "Hareketler", "Raporlar", "Tahsilat & Ödeme"].includes(name) && (name !== "Kullanıcılar" || can(fullData.user, "admin"))).map(([name, Icon]) => <button key={name} onClick={() => go(name)}>
+          {navigation.filter(([name]) => !["Genel bakış", "Hareketler", "Raporlar", "Tahsilat & Ödeme"].includes(name) && (name !== "Kullanıcılar" || can(fullData.user, "admin")) && (name!=="Kampanyalar"||cardsMenu)).map(([name, Icon]) => <button key={name} className={name==='Kampanyalar'?'navigation-submenu':''} aria-expanded={name==='Kredi kartları'?cardsMenu:undefined} onClick={() => navigateMenu(name)}>
               <Icon size={20} />
               {name}
-              <ChevronRight size={16} />
+              {name==='Kredi kartları'?<ChevronDown size={16} className={cardsMenu?'rotate-open':''}/>:<ChevronRight size={16}/>}
             </button>)}
         </div>}
       {drawer && <div className="drawer-layer">

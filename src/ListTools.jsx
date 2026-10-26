@@ -16,7 +16,7 @@ function fieldsIn(node,fields=[],path='f',label=''){
    const options=child.type==='select'?Children.toArray(p.children).flatMap(x=>isValidElement(x)&&x.type==='option'?[{value:x.props.value??x.props.children,label:x.props.children}]:[]):[];
    fields.push({key,child,label:text||p.label||'Filtre',value,range,check,options,
     change:value=>p.onChange(range?value:{target:{value,checked:value}}),
-    empty:range?{from:'',to:''}:check?(p['data-filter-default']??false):options.some(x=>x.value==='Tümü')?'Tümü':options.some(x=>x.value==='all')?'all':options[0]?.value??''});
+    empty:range?{from:'',to:''}:p['data-filter-default']!==undefined?p['data-filter-default']:check?(p['data-filter-default']??false):options.some(x=>x.value==='Tümü')?'Tümü':options.some(x=>x.value==='all')?'all':options[0]?.value??''});
   }else fieldsIn(p.children,fields,key,text);
  });return fields;
 }

@@ -23,7 +23,7 @@ def ok(name,test):
  checks+=1;print('PASS',name,flush=True)
 sql('USE finans_test;'+fixture['schema']+fixture['sample'])
 call('session');assert call('setup',creds)[0]==200
-ok('Version 1 migrates directly to schema 9',call('update_apply',{})[0]==200 and call('state')[1]['schemaVersion']==9)
+ok('Version 1 migrates directly to schema 10',call('update_apply',{})[0]==200 and call('state')[1]['schemaVersion']==10)
 s=call('state')[1]
 ok('Legacy administrator and total cash preserved',s['user']['username']==creds['username'] and sum(a['balance_cents'] for a in s['accounts'])==12480000)
 ok('Legacy card debt preserved',round(sum(c['debt'] for c in s['cards'])*100)==2430000)
@@ -59,13 +59,20 @@ ok('Repeat after recovery is harmless',call('update_apply',{})[0]==200 and call(
 before=call('state')[1]
 sql('USE finans_test; ALTER TABLE parties DROP COLUMN pos_programs; UPDATE app_meta SET schema_version=7 WHERE id=1;')
 code,blocked=call('state');ok('Schema 7 requires the POS migration',code==503 and blocked.get('upgradeRequired'))
-ok('Schema 7 migrates to schema 9',call('update_apply',{})[0]==200 and call('state')[1]['schemaVersion']==9)
+ok('Schema 7 migrates to schema 10',call('update_apply',{})[0]==200 and call('state')[1]['schemaVersion']==10)
 after=call('state')[1]
 ok('POS migration keeps existing financial facts',after['events']==before['events'] and [a['balance_cents'] for a in after['accounts']]==[a['balance_cents'] for a in before['accounts']])
 ok('POS migration defaults every existing party to no selection',all(p['pos_programs']==[] for p in after['parties']))
 ok('Administrator password survives POS migration',call('login',dict(username=creds['username'],password=creds['password']))[0]==200)
 ok('POS migration can be repeated without changing state',call('update_apply',{})[0]==200 and call('state')[1]['events']==after['events'])
 sql("USE finans_test; UPDATE parties SET pos_programs='[\"garanti:bonus\"]'; UPDATE app_meta SET schema_version=8 WHERE id=1;")
-ok('Schema 8 migrates to 9 preserving POS data',call('update_apply',{})[0]==200 and all(p['pos_programs']==['garanti:bonus'] for p in call('state')[1]['parties']))
+ok('Schema 8 migrates to 10 preserving POS data',call('update_apply',{})[0]==200 and all(p['pos_programs']==['garanti:bonus'] for p in call('state')[1]['parties']))
 ok('Tracking migration preserves financial facts',call('state')[1]['events']==after['events'])
+before=call('state')[1]
+sql('USE finans_test; ALTER TABLE cards DROP COLUMN linked_account_id; UPDATE app_meta SET schema_version=9 WHERE id=1;')
+ok('Schema 9 requires linkage migration',call('state')[0]==503)
+ok('Schema 9 migrates to 10',call('update_apply',{})[0]==200 and call('state')[1]['schemaVersion']==10)
+after=call('state')[1]
+ok('Link migration preserves administrator and financial facts',call('login',dict(username=creds['username'],password=creds['password']))[0]==200 and before['events']==after['events'] and all(c['linked_account_id'] is None for c in after['cards']))
+ok('Link migration is idempotent',call('update_apply',{})[0]==200 and call('state')[1]['events']==after['events'])
 sql('DROP DATABASE finans_backup_test;');print(json.dumps({'passed':checks,'failed':0}),flush=True)

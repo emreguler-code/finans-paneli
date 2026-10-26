@@ -27,8 +27,6 @@
 .account-face{position:relative}
 .bank-face footer{padding-right:72px}
 .face-mark{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
-.compact-bank-carousel .carousel-caption{min-height:22px;font-size:var(--text-small)}
-.compact-bank-carousel .carousel-track{top:0}
 .kmh-card-body{margin:auto 0}
 .kmh-totals{display:flex;justify-content:space-between;gap:15px;font-size:var(--text-small);margin-top:8px}
 .kmh-totals span{display:block;color:var(--muted)}
@@ -58,7 +56,6 @@
   .account-ledger-heading .cari-actions{gap:5px}
   .account-ledger-heading .list-icon{width:var(--control-size);height:var(--control-size)}
   .account-ledger-heading .primary-button{min-height:var(--control-size);width:40px;padding:0;justify-content:center}
-  .carousel-area{max-width:100%;overflow:hidden}
   .party-detail-header .party-heading{min-width:0}.party-detail-header h1{overflow-wrap:anywhere}
   .party-inline-info dl{grid-template-columns:1fr 1fr;gap:12px}
   .alert-notice{padding:10px;gap:8px}
@@ -96,7 +93,6 @@
  .account-page .ledger-view .common-toolbar>.cari-search{width:auto;flex:1;min-width:0}
  .account-page .ledger-view .common-toolbar .cari-toolbar-actions{width:auto;gap:4px}
  .account-page .ledger-view .common-toolbar .list-icon{width:32px;height:40px}
- .bank-account-page .carousel-viewport{mask-image:linear-gradient(to right,transparent,#000 7%,#000 93%,transparent);-webkit-mask-image:linear-gradient(to right,transparent,#000 7%,#000 93%,transparent)}
  .bank-account-page .account-face h2{font-size:var(--text-section)}
  .credit-face .limit-legend{grid-template-columns:1fr 1fr 1.15fr}
  .credit-face .limit-legend span{white-space:normal;line-height:1.5}
@@ -115,5 +111,3 @@
  .party-inline-info{grid-column:1/-1}
  .ledger-view .ledger-action-row>td{box-shadow:inset 3px 0 var(--brand)}
 }
-
-@media(max-width:760px){.account-page .carousel-area{overflow:visible}.account-page .carousel-arrow{width:var(--control-size);height:var(--control-size)}.account-page .carousel-arrow.previous{left:-8px}.account-page .carousel-arrow.next{right:-8px}}

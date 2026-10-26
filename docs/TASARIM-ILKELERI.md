@@ -4,13 +4,13 @@ Finans Paneli'nin kendi tasarım dili korunur; başka projelerin görsel tercihl
 
 - Yerel Inter, Lucide ikonları, tabular rakamlar. Sayfa başlığı masaüstünde 27 px, mobilde 24 px; bölüm başlığı 16 px/600, alt başlık 14 px/500, ana metin 14 px, yardımcı metin 12 px. Yardımcı metin satır yüksekliği 1,5; mobil form alanı 16 px. Ölçüler `src/styles/tokens.css` üzerinden paylaşılır.
 - Porselen #F5F7F8, beyaz, metin #202C39, ikincil #596879, vurgu #087F8C, yeşil #147D59, kırmızı #B54343, uyarı #955F12, çizgi #DDE3E8.
-- İşlem pencereleri merkezde, arka plan bulanık. Sağdan açılan işlem paneli yok. Satır içi detaylar ve log baloncukları bu kurala özel istisnadır. Bildirimler, ortak filtreler ve tüm tarih aralığı seçimleri tıklanan alana bağlı kompakt pencere olarak açılır; arka plan bulanmaz ve içerik aşağı itilmez. Esc/dışarı tıklama taslağı iptal eder.
+- İşlem pencereleri merkezde, arka plan bulanık. Sağdan açılan işlem paneli yok. Satır içi detaylar ve log baloncukları bu kurala özel istisnadır. Bildirimler, ortak filtreler ve tek gün dahil tüm tarih seçimleri tıklanan alana bağlı kompakt pencere olarak açılır; arka plan bulanmaz ve içerik aşağı itilmez. Esc/dışarı tıklama taslağı iptal eder.
 - Benzer listelerde arama, filtre, sıfırla, sırala ve CSV ikonları ortak düzendedir; altlarında yazı yoktur, erişilebilir adları bulunur.
 - Cari sütunları: Tarih / Açıklama / Etiket / İşlem–Oluşturan / Tutar / Bakiye. Onaysız yer değişikliği yapılmaz. Açıklamada yalnızca kullanıcının metni görünür; cari adı otomatik eklenmez.
 - Cari başlığındaki aşağı ok mevcut beyaz kutuyu genişletir. Bilgiler yeni pencerede açılmaz.
 - Aktif hareket ve alt eylemler tek satır yüzeyi gibi görünür: arada çizgi yok, sol koyu işaret genişleyen alanın tamamını kaplar. Kompakt düzenle/log/sil ikonları; tutar sağa hizalı.
 - İşlem etiketinin yeşil/kırmızı yönü ilgili hesabın işaretine uyar; rakamların mevcut renk davranışı ayrıca değiştirilmez. Tutar ile net etki/bakiye birbirine karıştırılmaz.
-- Banka ve kredi kartı carousel'leri döngülü, kenarları silik, dokunma/fare sürükleme ve oklarla gezilir. Seçilen kartın hareketleri altta açılır. Kartlar masaüstünde yaklaşık 1,618 oranındadır; mobilde içerik yüksekliği önceliklidir. Kart içeriği kesilmez, geçiş okları metin ve tutarların üzerine gelmez.
+- Hesap/kredi kartları duyarlı grid listede gösterilir; seçilen kartın ayrı detayında yatay özet ve hareketler bulunur. Carousel kullanılmaz. Kart içeriği kesilmez, detayda sabit en/boy oranı zorlanmaz.
 - Banka sayfasında arama üstte ekle ikonunun solundadır; arşiv seçeneği yanındaki filtreyle aşağı açılır. Bilgi/düzenle ikonları kart üzerindedir.
 - Vadesiz hesapta vade sonu gösterilmez. KMH limit barı kredi kartıyla aynı görsel sisteme uyar. Hesap uyarıları masaüstünde ayrılmış sağ sütunda, 1100 px ve altında sabit Uyarılar düğmesinin açtığı merkez pencerede gösterilir. Hesap seçimi ve arama bu uyarıları gizlemez.
 - Ödeme planı: aylık görünümde nokta ve tıklayınca detay baloncuğu; haftalıkta günlük ödeme/tahsilat özeti; günlükte tüm satırlar. Takvimde gün hücreleri okunabilir minimum yükseklikte kalır; gerektiğinde sayfa kaydırılır.
@@ -28,8 +28,8 @@ Finans Paneli'nin kendi tasarım dili korunur; başka projelerin görsel tercihl
 
 ## 1.7.0 etkileşim kararları
 
-- Tek üst arama, sayfaya özgü filtreler ve taslak/uygulanmış seçim ayrımı kullanılır. Filtre paneli içeriği aşağı iter; aktif seçimler görünür kalır.
-- Hesap ve kredi kartı carousel ortak Embla mekanizmasıyla çalışır. Otomatik kaydırma yoktur; liste seçimi geçiş durduğunda güncellenir.
+- Tek üst arama, sayfaya özgü filtreler ve taslak/uygulanmış seçim ayrımı kullanılır. Filtre paneli içeriğin üzerinde açılır; aktif seçimler görünür kalır.
+- Önceki carousel/Embla kararı 1.9.0 grid/detay kararıyla kaldırıldı; bağımlılık silindi.
 - Ödeme Planı takvim olarak kalır. Masaüstünde gün hücreleri tutar ve kayıt özeti, mobilde kayıt sayısı ile Ö/T/V göstergeleri içerir. Seçilen günün ayrıntıları sağda veya dar ekranda altta gösterilir. Renk tek başına anlam taşımaz.
 
 ## 1.7.2 etkileşim kararları
@@ -42,3 +42,32 @@ Finans Paneli'nin kendi tasarım dili korunur; başka projelerin görsel tercihl
 
 - Kart benzeri her alanda kendi bilgi, ayar ve düzenleme ikonları kendi kartının üzerinde toplu bulunur. Bu kural hesaplar, kredi kartları ve araç kartları için ortaktır.
 - Cari kartının temel bilgileri düzenlenirken gerekçe isteğe bağlıdır; finansal hareket düzenleme gerekçesi zorunludur.
+
+## 26 Ekim 2026 — Onaylı alt menü kuralı (1.9.0 kapsamında uygulandı)
+
+- Alt menüler başlangıçta kapalı ve görünmezdir. İlgili ana menüye tıklandığında açılır ve görünür olurlar. Bu kural mevcut ve gelecekteki tüm alt menülerde, masaüstü ve mobil gezinmede geçerlidir.
+- Kampanyalar, yalnız Kredi kartları ana menüsünün alt menüsü açıldığında gösterilir; sürekli görünür bir menü öğesi olarak yer almaz. Tekil kredi kartı seçimiyle karıştırılmaz.
+- Alt menüsü olan öğede açılma yönü ve açık/kapalı durum anlaşılır olmalı; klavyeyle erişim ve erişilebilir durum bilgisi sağlanmalıdır.
+
+## 26 Ekim 2026 — Onaylı ortak sayfa düzeni (1.9.0 kapsamında uygulandı)
+
+- Finansal görünüm ekranı genel yerleşim referansıdır: sade sayfa başlığı ve kısa açıklama, ihtiyaç varsa tek özet kutusu, ardından ana içerik ve gerekiyorsa sağ sütun. Ana eylem başlık satırında aynı hizalama ve ölçü sistemini izler.
+- İlişkili özet metrikleri, Güncel durum barındaki gibi tek dış çerçeveli beyaz yüzey içinde ince ayırıcılarla bölümlenir. Etiket, değer/birim ve yardımcı açıklama hiyerarşisi ortaktır. Raporlardaki ayrı özet kartları bu düzene geçirildi; diğer menülerde ihtiyaç olduğunda aynı özet dili kullanılır.
+- Raporların 4/2/1 gibi duyarlı metrik yerleşimleri, bu karar uygulandığında tek dış kutunun iç bölümleri olarak ele alınır; ekran daralınca bağımsız dış kartlara dönüşmez. Özet başlığı, dönem ve filtre kapsamı sayfanın anlamına uygun belirtilir; görünüm ortaklığı finansal anlamları değiştirmez.
+- Sağ sütun gereken sayfalarda geniş ekran ana/sağ sütun oranı Finansal görünümle aynı 1,9:1 olur: ara boşluk hariç yaklaşık %65,5 / %34,5. Mevcut masaüstü 20 px ara boşluk referanstır. Sayfaya özgü farklı oranlar veya bağımsız sabit sağ sütun genişlikleri oluşturulmaz.
+- Dar ekranlarda ortak kırılımlarla okunabilirlik korunur ve gerektiğinde tek sütuna geçilir; aynı genişlikte sayfalar tutarlı davranır. Tutarlar bölünmez, içerik yatay taşmaz. Sağ sütun yalnız ihtiyaç olan sayfalarda bulunur; hesap uyarılarının mobil erişimi korunur.
+- Sayfalar aynı başlık/özet/içerik hizalarını, tipografi rollerini, boşluk ölçeğini, panel/ayırıcı/köşe biçimlerini ve ikon/düğme ölçülerini kullanır. Bu ortak düzen ve özet bileşeni yeniden kullanılır; sayfa başına farklılaşan kopyalar oluşturulmaz. Kredi kartı ve hesap detaylarındaki yatay özetler de bu dili izler.
+
+## 26 Ekim 2026 — İnceleme önerileri ve bütün takvimler (onaylı, 1.9.0 kapsamında uygulandı)
+
+- Tasarım incelemesindeki A1–A4 ve B1–B10 önerilerinin tamamı kullanıcı tarafından onaylandı. Ortak panel, özet, sekme, ikon/eylem ve mobil erişim kuralları bütün menülerde uygulandı; hesaplama modeli ve tablo sütun sırası korunacak.
+- Araç hatırlatmaları masaüstünde ortak 1,9:1 düzende sağda yer alacak. Mobilde uyarı erişimi korunurken içerik/tutarlar eylemlerle örtülmeyecek. Takvim gezinmesinde komşu kontrollerin örtüşmesi giderilecek.
+- **Takvim kuralı tek gün ve tarih aralığı seçimlerinin tamamını kapsar.** Tetiklenen alana bağlı pencere kullanılır; takvimin açılması ek bulanıklık, karartma veya sayfa kayması oluşturmaz. Önceki "tek gün seçimleri merkez pencerede kalır" istisnası bu kararla kaldırılmıştır.
+- Ödeme Planı, işlem/ekstre/vade, araç/poliçe/bakım ve kampanya takvimleri aynı davranışı izler. Açık bir form içindeki takvim ikinci modal/blur katmanı oluşturmaz; genel işlem pencerelerinin kendi stili bu karardan ayrı kalır.
+- Esc ve dışarı tıklama yalnız ilgili takvimi kapatır; aralık taslağı uygulanmadıysa atılır. Üst form açık kalır, odak tetikleyiciye döner. Ekran sınırları, zorunlu tarih doğrulaması ve klavye/mobil erişimi korunur.
+
+## 26 Ekim 2026 — Ortak kayıt detay başlığı ve bilgi bandı (1.9.0 kapsamında uygulandı)
+
+- Cari, banka/kasa/KMH ve kredi kartı detaylarında sayfa başlığı, geri dönüş ve yeni işlem ekleme eylemi üst başlık alanında yer alır. Başlığın altında tek ve ayrı bir bilgi/özet kutusu bulunur. Cari detayının mevcut birleşik başlık kutusu da bu kurala geçirilir.
+- Yeni işlem ve geri dönüş bilgi kutusunun dışında; kayda ait bilgi/ayar/düzenleme ikonları ilgili bilgi bandının kendi üzerinde kalır.
+- Bilgi bandının dış yüzeyi, ayırıcıları, tipografi ve boşluk sistemi ortaktır; alanlar kaydın türüne göre yerleştirilir. Aynı görünüm uğruna finansal anlamlar, hesap modeli veya tablo sütun sırası değiştirilmez. Cari ve kredi kartı taslakları kullanıcı tarafından onaylanan referanstır.

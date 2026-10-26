@@ -1002,19 +1002,6 @@ footer {
   grid-template-columns: 1fr 1fr;
   gap: 20px;
 }
-.compact-card {
-  padding: 24px;
-}
-.compact-card-head {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 25px;
-}
-.compact-card-head p {
-  font-size: var(--text-body);
-  color: var(--muted);
-}
 .card-stat-row {
   display: flex;
   justify-content: space-between;
@@ -1596,9 +1583,6 @@ dd {
   }
   .claim-row > svg:last-child {
     display: none;
-  }
-  .compact-card {
-    padding: 20px;
   }
   .card-stat-row {
     gap: 15px;

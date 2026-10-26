@@ -51,8 +51,13 @@ function saveEntity(PDO $db,string $entity,array $b): array {
  }
  if(!$old)$v['opening_cents']=cents($b,'opening',true);
  }elseif($entity==='card'){
+ if(array_key_exists('linked_account_id',$b)){
+  $linked=field($b,'linked_account_id',40);if($linked!==''){$account=row($db,'accounts',$linked);if(!$account['active']&&($old['linked_account_id']??null)!==$linked)throw new DomainException('Arşivlenmiş hesap yeni bağlantı için seçilemez.');}
+ }
+
  $v=['holder'=>field($b,'holder',160),'name'=>field($b,'name',160,true),'limit_cents'=>cents($b,'limit'),'due'=>validDate(field($b,'due',10,true),true),'statement_date'=>validDate(field($b,'statementDate',10,true)),'cut_day'=>(int)($b['cutDay']??0),'last_four'=>field($b,'lastFour',4)];if($v['limit_cents']<=0||$v['cut_day']<1||$v['cut_day']>31||($v['last_four']&&!preg_match('/^\d{4}$/D',$v['last_four'])))throw new DomainException('Limit, kesim günü veya son dört haneyi kontrol edin.');if($v['due']<$v['statement_date'])throw new DomainException('Son ödeme tarihi hesap kesiminden önce olamaz.');
  if($old&&!empty($old['opening_statement_date'])&&$v['statement_date']<$old['opening_statement_date'])throw new DomainException('Ekstre tarihi başlangıç döneminden önce olamaz.');
+ if(array_key_exists('linked_account_id',$b))$v['linked_account_id']=$linked?:null;
  $v['statement_needs_review']=0;if(!$old||empty($old['opening_statement_date']))$v['opening_statement_date']=$v['statement_date'];
  if(!$old){$debt=cents($b,'opening');$statement=cents($b,'statement');if($debt<0||$statement<0||$statement>$debt)throw new DomainException('Ekstre borcu açılış borcunu aşamaz.');$v+=['opening_debt_cents'=>$debt,'opening_unbilled_cents'=>$debt-$statement,'debt_cents'=>0,'statement_cents'=>0];}
  }else{
