@@ -128,3 +128,25 @@ Durum: Kullanıcı, `TASARIM-INCELEMESI-2026-10-26.md` içindeki A1–A4 ve B1�
 - Taslak yerleşim referansıdır. Nihai uygulama mevcut yerel Inter, 27/24 px sayfa başlığı, 16 px bölüm, 14 px ana metin, 12 px yardımcı metin, mevcut para değeri rolleri, 4–32 px boşluk ölçeği, 24/16 px panel dolgusu, 44 px ana eylemler ve 1,9:1 ana/sağ sütun kurallarını koruyacaktır. Görseldeki farklı font, oran, logo veya temsili veriler yeni kural sayılmaz.
 - Üst sıralama/indirme grubu ve ayraçtan sonraki ekle düğmesi, üçüncü taslaktaki ana sütun sınırına değil tam sayfa başlığının en sağına hizalanacaktır. Mobilde yatay kart alanları mevcut duyarlı kurallarla alt alta geçer; içerik kesilmez.
 - Kullanıcı diğer eksikleri aktarmaya devam ediyor; bu seçim tek başına kodlama, paketleme veya yayın talimatı değildir.
+
+
+## Hesap kartları ve okunaklı uyarılar — sekiz önerinin tamamı onaylandı
+
+26 Ekim 2026. Kullanıcı sekiz inceleme önerisini de onayladı; özellikle uyarıların önem düzeyine göre farklı renklerle ve daha okunaklı sunulmasını istedi. Bu maddeler sonraki tasarımın kapsamıdır; not aşaması devam ediyor.
+
+1. **Ortak kart ölçüsü:** Onaylı yatay kart düzeninde aynı düzeydeki hesap kartları tutarlı yükseklik ve hizalar kullanır. Uzun içerik kesilmez; dar ekran için duyarlı düzen korunur.
+2. **Ortak bilgi hizası:** Banka/hesap kimliği, hesap sahibi, IBAN, bakiye veya KMH verileri, tür/vade ve bilgi/düzenleme eylemleri ortak bölümlere oturur. IBAN bulunmaması diğer alanların hizasını bozmaz.
+3. **Dengeli iç boşluklar:** Kimlik ve bakiye arasındaki gereksiz büyük boşluklar kaldırılır; hesap türüne göre rastgele yoğunluk farkı oluşmaz. Mevcut boşluk ve tipografi tokenları kullanılır.
+4. **Okunabilir içerik genişliği:** Eski dar üç sütun yerine seçilmiş 3 numaralı tam genişlikli yatay hesap kartları uygulanır. Kartın iç bölümleri okunabilirliğe göre esner; sağ uyarı alanı nedeniyle tutarlar/adlar sıkıştırılmaz.
+5. **Kompakt ve gruplu uyarılar:** Uyarılar hesapların önüne geçmeyen sakin bir sağ sütunda sunulur. Öncelik grupları kullanılır; aynı hesap/tarih tekrarları gerektiğinde ortak özet altında toplanır. Kayıt sayısı, detaylara erişim ve her uyarının doğru hesap/hareket hedefi korunur. Seçili hesap veya arama diğer hesapların uyarılarını gizlemez.
+6. **Önem düzeyine göre renk:** Kritik/acil durum, dikkat gerektiren durum ve bilgilendirme ayrı semantik roller kullanır. Tüm uyarılar aynı sarı görünümde sunulmaz. Ayrıntılı renk kuralı tasarım ilkelerine eklendi.
+7. **Tutarlı tarih/tutar düzeni:** Kullanıcıya görünen uyarı tarihleri kartlarla aynı Türkçe biçimde yazılır (ör. 15 Eki 2026). Hesap adı, açıklama, tarih ve tutar ortak hizalara yerleşir; tutar ile TL birimi ayrılmaz.
+8. **Tek başlık ve ortak araç satırı:** İkinci “Hesap listesi” başlığı kaldırılır; sıralama/indirme ve gerekli sayfa araçları başlık satırında, ayraçtan sonraki ekle düğmesi en sağda kalır. Site genelindeki ortak karar korunur.
+
+### Uyarı renklerinin anlamı
+
+- **Kritik / acil:** Mevcut kırmızı rolü `#B54343`; örneğin vadesi geçmiş ve hâlâ açık ödeme veya gerçekleşmiş limit aşımı. Daha belirgin ikon/başlık, hafif kırmızı zemin/kenarlık kullanılır.
+- **Dikkat gerektiren:** Mevcut amber rolü `#955F12`; örneğin yaklaşan ödeme veya vade sonu. Hafif amber zemin/kenarlık kullanılır.
+- **Bilgilendirme:** Mevcut teal rolü `#087F8C` ve nötr yüzey; örneğin günlük tahmini faiz bilgisi. Tek başına faiz tahmini kritik alarm gibi gösterilmez.
+- Önem düzeyi renk yanında ikon ve açık durum metniyle anlaşılır. Açık zeminler üzerinde okunabilir metin kontrastı korunur. Uyarı şiddeti ile işlem tutarının mevcut yeşil/kırmızı finansal yönü farklı anlamlardır; renk düzenlemesi hesap işaretlerini değiştirmez.
+- Öncelik, ilgili kaydın gerçek durumuna dayanır; aynı türdeki her kayıt otomatik olarak kritik sayılmaz. Yeni bildirim veya finansal eşik/hesaplama kuralı uydurulmaz.

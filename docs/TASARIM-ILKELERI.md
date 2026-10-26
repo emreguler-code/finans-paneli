@@ -80,3 +80,13 @@ Finans Paneli'nin kendi tasarım dili korunur; başka projelerin görsel tercihl
 - Not ve görsel aşamasıdır; kodlama/yayın onayı değildir. Ayrıntılar sonraki sürüm notlarındadır.
 
 - Onaylı 3 numaralı görsel yalnız yerleşim referansıdır; nihai fontlar, tipografi/değer rolleri, boşluklar, kontrol ölçüleri, renkler ve ana/sağ sütun oranı bu belgedeki ortak kurallara uyar. Üst araçlar tam sayfa başlığının en sağındadır; ekle düğmesi ayraçtan sonra en sağda kalır. Mobilde kart içeriği okunabilir biçimde alt alta düzenlenir.
+
+
+## 26 Ekim 2026 — Onaylı kart hizaları ve uyarı hiyerarşisi (uygulama bekliyor)
+
+- Kullanıcı hesap ekranına ilişkin sekiz önerinin tamamını onayladı. Yatay hesap kartlarında ortak ölçü/hiza, dengeli boşluk, okunabilir iç bölümler ve kayda ait ikonların tutarlı konumu korunur. IBAN gibi isteğe bağlı alanlar diğer bilgilerin hizasını bozmaz.
+- Uyarı sütunu kompakt ve grupludur; hesapların görsel önceliğini bastırmaz. Öncelik grupları, gerektiğinde aynı hesap/tarih altında tekrarların özeti, kayıt sayısı ve hedefe ulaşma işlevi birlikte korunur. Hesap seçimi ve arama diğer hesapların uyarılarını gizlemez.
+- **Kritik/acil:** kırmızı `#B54343`; **dikkat gerektiren:** amber `#955F12`; **bilgilendirme:** teal `#087F8C` ve nötr yüzey. Mevcut palet üzerinden açık zemin/kenarlık ve okunabilir ikon/metin kullanılır; tüm kayıtlar tek sarı stile sokulmaz. Kritik durumlar daha belirgin olur.
+- Şiddet renk dışında ikon ve açık durum etiketiyle de anlaşılır. Renk, gerçek durumun anlamına göre atanır; günlük faiz tahmini tek başına kritik alarm değildir. Uyarı önceliği para yönünden ayrıdır; işlem işaretleri/bakiye hesabı değiştirilmez.
+- Uyarılarda tarih kartlarla aynı Türkçe biçimde gösterilir; hesap/açıklama/tarih/tutar hizası ortaktır. Para değeri ve TL birimi birlikte kalır.
+- Bu kararlar sonraki tasarıma aittir; kullanıcı notlarına devam ediyor. Kodlama ve yayın henüz başlatılmaz.
