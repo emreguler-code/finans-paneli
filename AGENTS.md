@@ -1,6 +1,6 @@
 # Finans Paneli — Codex çalışma kuralları
 
-Sürüm Finans 1.9.0, şema 10’dur. Onaylı kapsam docs/SONRAKI-SURUM-NOTLARI.md içindedir. Bildirimler, filtreler ve tüm takvimler tıklanan alana bağlı, bulanıklık ve sayfa kayması olmadan açılır. Karta ait tüm bilgi/ayar/düzenleme ikonları kendi kartının üzerinde olmalıdır. Kampanya puanları TL bakiyesine eklenmez; araç ödemeleri mevcut hareketlere bağlanır ve ikinci finansal işlem üretmez. Ürün dili Türkçe, tasarım dili Sade Netlik'tir.
+Sürüm Finans 1.9.1, şema 10’dur. Onaylı kapsam docs/SONRAKI-SURUM-NOTLARI.md içindedir. Bildirimler, filtreler ve tüm takvimler tıklanan alana bağlı, bulanıklık ve sayfa kayması olmadan açılır. Karta ait tüm bilgi/ayar/düzenleme ikonları kendi kartının üzerinde olmalıdır. Kampanya puanları TL bakiyesine eklenmez; araç ödemeleri mevcut hareketlere bağlanır ve ikinci finansal işlem üretmez. Ürün dili Türkçe, tasarım dili Sade Netlik'tir.
 Önce README.md, docs/TASARIM-ILKELERI.md ve docs/CODEX-BASLANGIC.md dosyalarını okuyun.
 
 26 Ekim 2026 için onaylı ve 1.9.0 kapsamında uygulanan tasarım kapsamı sonraki sürüm notlarında ve tasarım incelemesindedir. Takvim kuralı artık hem tek gün hem tarih aralığını kapsar: tıklanan alana bağlı açılmalı, ek blur/karartma veya sayfa kayması oluşturmamalıdır; önceki tek gün modal istisnası kaldırılmıştır. Not alma aşaması ile kodlama/yayın aşamasını karıştırmayın.

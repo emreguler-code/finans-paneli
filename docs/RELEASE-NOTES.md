@@ -1,3 +1,13 @@
+# Finans Paneli 1.9.1
+
+1.9.0 tasarım güncellemesinin bakım sürümüdür. Hesap/kart detayında arama kapsamı listeye alındığında eşleşen kayıt artık özeti ve hareketleriyle seçilir. Eşleşme yoksa açık boş durum ve listeye dönüş korunur. Hareket araması gerçek bakiyeyi değiştirmez; tüm hesapların uyarıları görünür kalır.
+
+Kurulum: ZIP içindeki `hosting/` dosyalarını yükleyin; mevcut `api/config.php` dosyanızı koruyun. Şema 10 kullanılır; 1.9.0'dan ek migrasyon yoktur. 1.8.0 ve öncesinden geçiyorsanız yöneticiyle `update.php` üzerinden güncelleyin. Demo yenilemesi isteğe bağlıdır.
+
+Aşağıdaki 1.9.0 tasarım kapsamının tamamı bu pakete dahildir.
+
+---
+
 # Finans Paneli 1.9.0
 
 - Hesaplar ve kredi kartlarında carousel kaldırıldı. Duyarlı grid kart listesi ve karttan açılan ayrı hareket detayları; klavyeyle seçim, listeye dönüş, liste aramasının korunması.

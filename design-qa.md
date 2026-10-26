@@ -1,4 +1,4 @@
-# Finans 1.9.0 tasarım doğrulaması
+# Finans 1.9.1 tasarım doğrulaması
 
 Kaynak görseller:
 - `docs/tasarimlar/cari-detay-ortak-ozet-taslagi-2026-10-26.png`
@@ -27,5 +27,7 @@ Tam görünümde başlık hizaları, geri/yeni işlem yerleşimi, bilgi/düzenle
 Grid açılışı, klavye ile kayıt seçimi, geri dönüş, arama/filtre, üç karakter araması, bilgi/düzenleme, hareket ekleme, ekstre sekmeleri ve CSV; masaüstü/mobil gezinme, açılır kampanya alt menüsü, iç içe formda tek gün ve filtre içinde tarih aralığı takvimi incelendi. Takvimler ek backdrop üretmez; Esc üst formu açık bırakır. Gerçek Chromium üzerinde otomatik kontroller ve ekran görüntüleri kullanıldı. Tarayıcı çalışma zamanı hata kaydı boş; fiziksel telefon/ekran okuyucu testi yapılmadı.
 
 P0/P1/P2 açık bulgu yok. P3: çok uzun finansal içeriklerin mobilde doğal dikey kaydırma gerektirmesi beklenir; gelecekte isteğe bağlı özet yoğunluğu ayrıca değerlendirilebilir. Mevcut kapsamda veri gizlenmedi.
+
+1.9.1 bakım doğrulaması: aynı görsel durumlar yeniden yakalandı. Detayda liste kapsamlı arama eşleşen kaydı seçiyor; boş sonuçta geri dönüş ve tüm hesap uyarıları erişilebilir. Yeni iki tarayıcı regresyon kontrolüyle toplam 416 kontrol geçti. Yerleşim ve finansal hesaplar değişmedi.
 
 final result: passed

@@ -1,4 +1,6 @@
-# 1.9.0 — uygulanan onaylı tasarım notları
+# 1.9.0 / 1.9.1 — uygulanan onaylı tasarım notları
+
+1.9.1 bakım eki: detay ekranındaki liste kapsamlı arama eşleşen kaydı seçer; boş sonuçta geri dönüş ve tüm hesap uyarıları korunur. Şema 10 değişmez.
 
 ## 26 Ekim 2026 — Kredi kartları: grid liste ve ayrı detay sayfası
 
