@@ -9,7 +9,7 @@
 - “Hesap listesi” ikinci başlığı kaldırılır.
 - **Son karar:** Kullanıcı sıralama/indirme araçlarını yeni işlem düğmesinin yanına taşıma kararını iptal etti. Araçlar ilgili içerik alanında kalır; görsellerdeki üst araç grupları uygulanacak tasarım şartı değildir.
 - Hesap kartlarının alanı tek bir ana içerik kutusuyla tanımlanır; hesaplar bu kutunun içinde bölümlenir.
-- Kayda özgü bilgi/düzenleme ikonları ilgili kartın kendi üzerinde kalır.
+- **Son karar:** Hesap/kredi kartı liste özetlerinde bilgi/düzenleme ikonları kaldırılır; işlevler detay açıldıktan sonra erişilebilir kalır. Görseldeki liste ikonları uygulanmayacaktır.
 - Inter, Sade Netlik renkleri, 44 px eylemler, ortak boşluk ölçeği, eşit kart yükseklikleri ve hizalı bilgi alanları esas alınır. Sağ uyarı alanında 1,9:1 ana/sağ sütun referansı korunur.
 - Stil seçildi; kullanıcı notlarını tamamlayıp kodlama/yayın talimatı verdiğinde uygulanacaktır.
 
@@ -36,3 +36,8 @@ Tek ana panel içinde tam genişlikte yatay hesap kartları. Kimlik, tutar, tür
 ## Finansal anlamlar
 
 KMH limiti nakit bakiyesi değildir. Kullanılan/kullanılabilir limit ve varsa günlük faiz ayrı anlamlarını korur. Vade yalnız ilgili hesap türünde gösterilir. IBAN örnekleri maskelidir. Uyarı örneklerinin metin ve tutarları görsel yerleşim içindir; gerçek uygulama mevcut doğrulanmış verileri kullanacaktır.
+
+
+## Sonraki netleştirme: kredi kartları ve liste eylemleri
+
+Kullanıcı, seçilen yatay hesap düzeninin kredi kartlarına da paralel uygulanmasını istedi. Kredi kartının ekstre/limit/dönem bilgileri korunacak. Hem hesap hem kredi kartı liste özetindeki info/düzenle ikonları kaldırılacak; detay ekranında bu işlevler erişilebilir olacak. Görsel referansın ikonları ve üst araç grubu değil, yatay kart/liste yerleşimi seçilmiştir. Not aşaması devam ediyor.

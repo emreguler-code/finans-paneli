@@ -11,7 +11,7 @@ Finans Paneli'nin kendi tasarım dili korunur; başka projelerin görsel tercihl
 - Aktif hareket ve alt eylemler tek satır yüzeyi gibi görünür: arada çizgi yok, sol koyu işaret genişleyen alanın tamamını kaplar. Kompakt düzenle/log/sil ikonları; tutar sağa hizalı.
 - İşlem etiketinin yeşil/kırmızı yönü ilgili hesabın işaretine uyar; rakamların mevcut renk davranışı ayrıca değiştirilmez. Tutar ile net etki/bakiye birbirine karıştırılmaz.
 - Hesap/kredi kartları duyarlı grid listede gösterilir; seçilen kartın ayrı detayında yatay özet ve hareketler bulunur. Carousel kullanılmaz. Kart içeriği kesilmez, detayda sabit en/boy oranı zorlanmaz.
-- Banka sayfasında arama üstte ekle ikonunun solundadır; arşiv seçeneği yanındaki filtreyle aşağı açılır. Bilgi/düzenle ikonları kart üzerindedir.
+- Banka sayfasında arama üstte ekle ikonunun solundadır; arşiv seçeneği yanındaki filtreyle aşağı açılır. Hesap/kart liste özetlerinde bilgi/düzenle ikonları bulunmaz; bu işlevler detay açıldıktan sonra ilgili özet/ayar alanındadır (sonraki sürüm kararı).
 - Vadesiz hesapta vade sonu gösterilmez. KMH limit barı kredi kartıyla aynı görsel sisteme uyar. Hesap uyarıları masaüstünde ayrılmış sağ sütunda, 1100 px ve altında sabit Uyarılar düğmesinin açtığı merkez pencerede gösterilir. Hesap seçimi ve arama bu uyarıları gizlemez.
 - Ödeme planı: aylık görünümde nokta ve tıklayınca detay baloncuğu; haftalıkta günlük ödeme/tahsilat özeti; günlükte tüm satırlar. Takvimde gün hücreleri okunabilir minimum yükseklikte kalır; gerektiğinde sayfa kaydırılır.
 - Tek etiket, girilmezse Genel. Formlarda ortak tarih seçici, Türkçe binlik ayırıcı nokta, ondalık virgül kullanılır. İşlem açıklaması eklerken opsiyonel, işlem düzenlerken zorunludur; hesap/kart ayar düzenlemesi için gerekmez.
@@ -40,7 +40,7 @@ Finans Paneli'nin kendi tasarım dili korunur; başka projelerin görsel tercihl
 - Hesap uyarı sütunu kalıcı yer ayırır ve kendi içinde kayar. Uyarı hedefi hesabı ve varsa ilgili hareketin sekmesini/sayfasını seçer. Faiz/vade uyarısı salt okunur hesap bilgisini açar.
 - Masaüstü/tablet tablosu açıklamayı daraltmak yerine panel içinde yatay kayar; telefonda mevcut kart satırı düzeni korunur.
 
-- Kart benzeri her alanda kendi bilgi, ayar ve düzenleme ikonları kendi kartının üzerinde toplu bulunur. Bu kural hesaplar, kredi kartları ve araç kartları için ortaktır.
+- Kayda ait bilgi/ayar/düzenleme eylemleri ilgili kayıt kapsamında tutulur. Yeni kararla hesap ve kredi kartı liste özetlerinde bu ikonlar kaldırılacak; detay açıldıktan sonra ilgili özet/ayar alanında erişilecek. Araç ve diğer varlık kartlarının mevcut kendi-kartında eylem kuralı ayrıca değiştirilmez.
 - Cari kartının temel bilgileri düzenlenirken gerekçe isteğe bağlıdır; finansal hareket düzenleme gerekçesi zorunludur.
 
 ## 26 Ekim 2026 — Onaylı alt menü kuralı (1.9.0 kapsamında uygulandı)
@@ -76,7 +76,7 @@ Finans Paneli'nin kendi tasarım dili korunur; başka projelerin görsel tercihl
 ## 26 Ekim 2026 — 1.9.1 sonrası başlık araçları ve kart alanı (uygulama bekliyor)
 
 - Gereksiz ikinci liste başlığı kaldırılır. Kullanıcı, içerik araçlarını ana başlığa taşıma kararından vazgeçti: sıralama/indirme ve benzer ikonlar ilgili içerik/listenin kapsamında kalır; yeni işlem düğmesinin yanına taşınmaz.
-- Hesap kartları tek bir ana içerik kutusunun içinde bölümlenir. Kayda ait bilgi/düzenleme ikonları yine kendi kartındadır. Kullanıcı 3 numaralı yatay kart düzenini onayladı: tek ana kutu içinde tam genişlikli hesap kartları ve hizalı kimlik/tutar/tür/eylem bölümleri kullanılacaktır.
+- Hesap/kredi kartı listeleri tek bir ana içerik kutusunun içinde bölümlenir. Son kararla liste kartlarında bilgi/düzenleme ikonları bulunmaz; işlevler detay ekranındadır. Kullanıcı 3 numaralı yatay kart düzenini onayladı: tek ana kutu içinde tam genişlikli hesap kartları ve hizalı kimlik/tutar/tür/eylem bölümleri kullanılacaktır.
 - Not ve görsel aşamasıdır; kodlama/yayın onayı değildir. Ayrıntılar sonraki sürüm notlarındadır.
 
 - Onaylı 3 numaralı görsel yalnız yerleşim referansıdır; nihai fontlar, tipografi/değer rolleri, boşluklar, kontrol ölçüleri, renkler ve ana/sağ sütun oranı bu belgedeki ortak kurallara uyar. Görseldeki üst araç yerleşimi artık geçerli değildir; içerik araçları ilgili içerik alanında, yeni işlem düğmesi başlıkta kalır. Mobilde kart içeriği okunabilir biçimde alt alta düzenlenir.
@@ -109,3 +109,12 @@ Finans Paneli'nin kendi tasarım dili korunur; başka projelerin görsel tercihl
 - Hesaplar ekranındaki rahatsızlık mevcut kart düzeniyle ilişkilidir; onaylı 3 numaralı yatay liste/kart düzenine geçilerek giderilecektir. Tek ana içerik kutusu, kart hizaları, gereksiz ikinci başlığın kaldırılması ve diğer onaylı kararlar korunur.
 - Taslak görsellerdeki üst araç grubu uygulanacak kural değildir; görseller yatay kart yerleşimi için referans olmaya devam eder.
 - Bu karar henüz uygulama koduna taşınmadığından kod geri alımı gerekmiyor; yalnız belgeler düzeltildi. Not aşaması sürüyor, kodlama/yayın başlatılmaz.
+
+
+## 26 Ekim 2026 — Paralel hesap/kredi kartı tasarımı ve kompakt listeler (uygulama bekliyor)
+
+- Hesaplar ve Kredi kartları sonraki düzenlemelerde paralel ilerler: tek ana içerik kutusu, onaylı 3 numaralı yatay kart/liste stili, ortak başlık ve araç kapsamı, okunabilir hizalar, 1,9:1 sağ sütun, kısa uyarılar ve bağlama göre son işlemler iki menüde de uygulanır.
+- Liste kartlarındaki bilgi ve düzenleme ikonları iki menüden de kaldırılır. Tıklama/klavye ile detay açılır; bilgi/ayar/düzenleme işlevleri ilgili detay özetinde/ayar alanında kalır. Listeyi sadeleştirmek işlev veya bilgi silmek anlamına gelmez.
+- Kredi kartının banka/program/numara/sahip kimliği, limit ve kullanım bölümleri, ekstre/dönem/taksit tutarları ve kesim/son ödeme bilgileri korunur. Hesap/KMH alanları kendi finansal anlamlarını taşır. Ortak stil, türün gerektirdiği verileri birbirine dönüştürmez veya borcu çoğaltmaz.
+- Gerektiğinde ek bilgi satırlarıyla okunabilirlik korunur; kompaktlık için küçük yazı, kesilmiş tutar veya kayıp bilgi kullanılmaz. Gereksiz ikinci liste başlıkları iki menüden de kaldırılır.
+- Bu son karar, görsellerde veya önceki notlarda hesap/kart liste ikonlarının bulunmasını isteyen kısımların yerini alır. Kullanıcı not aşamasındadır; henüz kodlama/yayın yapılmaz.

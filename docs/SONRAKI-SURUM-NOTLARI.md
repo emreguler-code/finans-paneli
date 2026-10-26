@@ -199,3 +199,20 @@ Kullanıcı, “giriş/çıkış” ile **cari bakiyeyi artıran ve azaltan hare
 - Tek ana içerik kutusu, ortak kart hizaları/ölçüleri ve gereksiz ikinci liste başlığının kaldırılması dahil diğer kararlar korunur. Yeni işlem düğmesi başlıkta, kayda ait bilgi/düzenleme ikonları kendi kartı/özetinde kalır.
 - Üç görseldeki üst araç yerleşimi bu iptal kararını geçersiz kılamaz; görseller yalnız kart yerleşiminin referansıdır.
 - Önceki taşıma kararı yalnız belgelerdeydi; uygulama kodu değiştirilmediğinden kod geri alımı yapılmaz. Not aşaması sürüyor, kodlama veya yayın yoktur.
+
+
+## Hesaplar ve kredi kartları paralel tasarlanacak; liste ikonları kaldırılacak
+
+26 Ekim 2026. Kullanıcı, Hesaplar için konuşulan sonraki tasarım kararlarının Kredi kartları bölümüne de paralel uygulanmasını istedi. Not alma aşaması devam ediyor.
+
+- İki menü ortak liste → detay akışını, tek ana içerik kutusunu ve onaylı **3 numaralı tam genişlikte yatay kart/liste stilini** kullanacak. Hesaplar'a yapılan düzenleme kredi kartında da karşılığıyla ele alınacak; iki farklı görsel dil oluşmayacak.
+- Gereksiz “Hesap listesi” ve “Kart listesi” ikinci başlıkları kaldırılacak. Ortak tipografi, boşluk, hizalar, içerik araçlarının içerikte kalması, 1,9:1 ana/sağ sütun ve duyarlı kırılımlar birlikte uygulanacak.
+- Hesaplarda kararlaştırılan kısa uyarı/son işlem düzeni kredi kartlarında da kart kapsamıyla bulunacak: en fazla 5 uyarı, son 5 kart işlemi, merkezi bildirim sayfasına kart filtresiyle “Tümünü göster” erişimi ve ortak önem renkleri. Finansal etkiler ve ilgili işlem hedefleri korunacak.
+- **Her iki menünün liste kartlarından bilgi (info) ve düzenleme ikonları kaldırılacak.** Liste satırı/kartı daha kompakt ve sade olacak; kayda tıklanarak detay içeriği açılacak. Bilgi/ayar/düzenleme işlevleri detay açıldıktan sonra erişilebilir olacak; özellikler silinmeyecek ve yetkiler korunacak.
+- Bu karar, hesap/kart liste özetlerinde ikonları kendi kartında gösterme kuralının yerini alır. Detay sayfasındaki ilgili özet/ayar alanı düzenleme işlevlerini taşır; diğer varlık kartlarının kuralları ayrıca değiştirilmez.
+- Kompaktlık bilgi kaybettirmeyecek. Listeye ait mevcut özet bilgiler yatay yerleşimde okunabilir şekilde korunacak; ayrıntılar detay ekranından erişilebilir kalacak. Kartın/hesabın tamamı klavyeyle de açılabilecek; ayrıca ikon arama gerekmeyecek.
+- Kredi kartı kimliği (banka/program, kart adı, maskeli numara, kart sahibi), toplam/kullanılabilir limit, ekstre kalanı, dönem içi ve gelecek taksit kullanımı, limit barı ve mevcut kesim/son ödeme bilgileri kendi anlamlarıyla gösterilecek. Detayda mevcut/sonraki tahmini tarihler, son ekstre toplamı/ödenen/kalan, bağlı hesap ve Ekstre / Dönem içi / Gelecek dönem ayrımları erişilebilir kalacak. Bu alanlar birbirine eklenerek borç çoğaltılmayacak.
+- Banka/kasa/KMH tarafında bakiye, KMH limiti/kullanımı/kullanılabilir tutarı ve türe uygun vade/faiz bilgileri korunacak. Banka/kasaya kredi kartı ekstre alanları, kredi kartına banka bakiyesi anlamı taşınmayacak.
+- Ortak iskelet içinde kart türüne göre ek bilgi satırları kullanılabilir; bütün alanları zorla aynı yüksekliğe sığdırmak için metin küçültülmez veya kesilmez. Aynı menüde hizalar ve tutarlı boşluklar korunur.
+
+Uygulama kodu, sürüm veya paket değiştirilmedi. Bu kararlar sonraki toplu uygulama kapsamına eklendi.
