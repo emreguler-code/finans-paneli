@@ -75,11 +75,11 @@ Finans Paneli'nin kendi tasarım dili korunur; başka projelerin görsel tercihl
 
 ## 26 Ekim 2026 — 1.9.1 sonrası başlık araçları ve kart alanı (uygulama bekliyor)
 
-- Kullanıcının yeni kararı: gereksiz ikinci liste başlığı kaldırılır. Sayfaya ait sıralama/indirme ve gerekli araçlar ana başlık satırında gruplanır; ince ayraçtan sonra yeni kayıt/işlem ekleme düğmesi en sağda kalır. Site genelinde aynı yerleşim kullanılacaktır.
+- Gereksiz ikinci liste başlığı kaldırılır. Kullanıcı, içerik araçlarını ana başlığa taşıma kararından vazgeçti: sıralama/indirme ve benzer ikonlar ilgili içerik/listenin kapsamında kalır; yeni işlem düğmesinin yanına taşınmaz.
 - Hesap kartları tek bir ana içerik kutusunun içinde bölümlenir. Kayda ait bilgi/düzenleme ikonları yine kendi kartındadır. Kullanıcı 3 numaralı yatay kart düzenini onayladı: tek ana kutu içinde tam genişlikli hesap kartları ve hizalı kimlik/tutar/tür/eylem bölümleri kullanılacaktır.
 - Not ve görsel aşamasıdır; kodlama/yayın onayı değildir. Ayrıntılar sonraki sürüm notlarındadır.
 
-- Onaylı 3 numaralı görsel yalnız yerleşim referansıdır; nihai fontlar, tipografi/değer rolleri, boşluklar, kontrol ölçüleri, renkler ve ana/sağ sütun oranı bu belgedeki ortak kurallara uyar. Üst araçlar tam sayfa başlığının en sağındadır; ekle düğmesi ayraçtan sonra en sağda kalır. Mobilde kart içeriği okunabilir biçimde alt alta düzenlenir.
+- Onaylı 3 numaralı görsel yalnız yerleşim referansıdır; nihai fontlar, tipografi/değer rolleri, boşluklar, kontrol ölçüleri, renkler ve ana/sağ sütun oranı bu belgedeki ortak kurallara uyar. Görseldeki üst araç yerleşimi artık geçerli değildir; içerik araçları ilgili içerik alanında, yeni işlem düğmesi başlıkta kalır. Mobilde kart içeriği okunabilir biçimde alt alta düzenlenir.
 
 
 ## 26 Ekim 2026 — Onaylı kart hizaları ve uyarı hiyerarşisi (uygulama bekliyor)
@@ -102,10 +102,10 @@ Finans Paneli'nin kendi tasarım dili korunur; başka projelerin görsel tercihl
 - Kullanıcı notlarına devam ediyor; kodlama, paketleme ve yayın başlatılmaz.
 
 
-## 26 Ekim 2026 — Site genelinde ortak içerik araçları satırı (onaylı, uygulama bekliyor)
+## 26 Ekim 2026 — İçerik araçlarını başlığa taşıma kararı iptal edildi
 
-- Yeni kayıt/işlem ekleme düğmesinin bulunduğu başlık satırı, içerikle ilgili araç ikonlarının da ortak yeridir. Sıralama, indirme/dışa aktarma ve benzer içerik eylemleri için ayrı araç satırı oluşturulmaz; mevcut ayrı satırlar bu kurala uyarlanır. Bu karar yalnız Hesaplar için değil site genelinde geçerlidir ve önceki ayrı içerik araç satırı yerleşimlerinin yerini alır.
-- İçerik araçları ekle düğmesinin yanında yer alır; araya ince dikey ayraç konur. Önceden onaylanan sıra korunur: içerik araçları → ayraç → en sağda yeni kayıt/işlem ekle.
-- Gerekli alt ikon grupları ilgili ekran ele alınırken belirlenecektir; şimdi sabit bir alt gruplama veya yeni ikon listesi dayatılmaz.
-- Ortak ikon/düğme ölçüleri ve erişilebilir adlar korunur. Bu kural, kayda özgü bilgi/düzenleme ikonlarının kendi kartı/özetinde bulunması kararını kaldırmaz.
-- Kullanıcı not aşamasındadır; yalnız tasarım belgeleri güncellenir, kodlama ve yayın başlatılmaz.
+- Kullanıcı, sıralama/indirme ve benzer içerik ikonlarını yeni işlem düğmesinin yanına ayraçla toplama kararından vazgeçti. Ayrı içerik araç satırlarını kaldırma zorunluluğu da iptal edildi.
+- İçerikle ilgili ikonlar ilgili içerik/listenin kapsamında kalır. Yeni kayıt/işlem ekleme düğmesi mevcut başlık yerleşimini korur. Kayda ait bilgi/düzenleme ikonları kendi kartı/özetindedir.
+- Hesaplar ekranındaki rahatsızlık mevcut kart düzeniyle ilişkilidir; onaylı 3 numaralı yatay liste/kart düzenine geçilerek giderilecektir. Tek ana içerik kutusu, kart hizaları, gereksiz ikinci başlığın kaldırılması ve diğer onaylı kararlar korunur.
+- Taslak görsellerdeki üst araç grubu uygulanacak kural değildir; görseller yatay kart yerleşimi için referans olmaya devam eder.
+- Bu karar henüz uygulama koduna taşınmadığından kod geri alımı gerekmiyor; yalnız belgeler düzeltildi. Not aşaması sürüyor, kodlama/yayın başlatılmaz.

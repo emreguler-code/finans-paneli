@@ -119,14 +119,14 @@ Durum: Kullanıcı, `TASARIM-INCELEMESI-2026-10-26.md` içindeki A1–A4 ve B1�
 26 Ekim 2026. Kullanıcı not aşamasında 3 numaralı yatay kart tasarımını onayladı; kodlama ve yayın aşamasına henüz geçilmedi.
 
 - “Hesap listesi” ikinci başlığı kaldırılacak.
-- Sıralama ve indirme ikonları, yeni kayıt/işlem ekleme düğmesinin bulunduğu sayfa başlığı satırına alınacak. Diğer gerekli sayfa araçları aynı grupta yer alacak; ince ayraçtan sonra ekle düğmesi en sağda kalacak. Bu düzen site geneline ortak kural olarak uyarlanacak.
+- İçerik ikonlarını yeni işlem düğmesinin yanına taşıma kararı kullanıcı tarafından geri alındı. Sıralama/indirme ve benzer araçlar ilgili içerik alanında kalacak.
 - Hesap kartlarının bulunduğu alan tek bir ana içerik kutusu olacak; kartlar bu kutu içinde yeniden bölümlenecek. Kart stili değişebilir.
 - Üç görsel alternatif `tasarimlar/hesaplar-stil-denemeleri-2026-10-26.md` içinde. Kullanıcı **3 — Yatay kartlar** seçeneğini onayladı. Seçilen referans `tasarimlar/hesaplar-stil-3-yatay-kartlar-2026-10-26.png` dosyasıdır.
 - Bu aşamada yalnız tasarım görselleri/notlar GitHub'a yüklenir; uygulama kodu, sürüm ve hosting paketi değiştirilmez.
 
 - Seçilen yerleşim: tek ana içerik kutusu içinde tam genişlikte yatay hesap kartları; kimlik, bakiye/KMH özeti, tür/vade ve kayda ait bilgi/düzenleme eylemleri hizalı bölümlerde gösterilir.
 - Taslak yerleşim referansıdır. Nihai uygulama mevcut yerel Inter, 27/24 px sayfa başlığı, 16 px bölüm, 14 px ana metin, 12 px yardımcı metin, mevcut para değeri rolleri, 4–32 px boşluk ölçeği, 24/16 px panel dolgusu, 44 px ana eylemler ve 1,9:1 ana/sağ sütun kurallarını koruyacaktır. Görseldeki farklı font, oran, logo veya temsili veriler yeni kural sayılmaz.
-- Üst sıralama/indirme grubu ve ayraçtan sonraki ekle düğmesi, üçüncü taslaktaki ana sütun sınırına değil tam sayfa başlığının en sağına hizalanacaktır. Mobilde yatay kart alanları mevcut duyarlı kurallarla alt alta geçer; içerik kesilmez.
+- Üçüncü taslaktaki üst araç grubu artık yerleşim şartı değildir; içerik araçları içerik kapsamında kalır. Mobilde yatay kart alanları mevcut duyarlı kurallarla alt alta geçer; içerik kesilmez.
 - Kullanıcı diğer eksikleri aktarmaya devam ediyor; bu seçim tek başına kodlama, paketleme veya yayın talimatı değildir.
 
 
@@ -141,7 +141,7 @@ Durum: Kullanıcı, `TASARIM-INCELEMESI-2026-10-26.md` içindeki A1–A4 ve B1�
 5. **Kompakt ve gruplu uyarılar:** Uyarılar hesapların önüne geçmeyen sakin bir sağ sütunda sunulur. Öncelik grupları kullanılır; aynı hesap/tarih tekrarları gerektiğinde ortak özet altında toplanır. Kayıt sayısı, detaylara erişim ve her uyarının doğru hesap/hareket hedefi korunur. Seçili hesap veya arama diğer hesapların uyarılarını gizlemez.
 6. **Önem düzeyine göre renk:** Kritik/acil durum, dikkat gerektiren durum ve bilgilendirme ayrı semantik roller kullanır. Tüm uyarılar aynı sarı görünümde sunulmaz. Ayrıntılı renk kuralı tasarım ilkelerine eklendi.
 7. **Tutarlı tarih/tutar düzeni:** Kullanıcıya görünen uyarı tarihleri kartlarla aynı Türkçe biçimde yazılır (ör. 15 Eki 2026). Hesap adı, açıklama, tarih ve tutar ortak hizalara yerleşir; tutar ile TL birimi ayrılmaz.
-8. **Tek başlık ve ortak araç satırı:** İkinci “Hesap listesi” başlığı kaldırılır; sıralama/indirme ve gerekli sayfa araçları başlık satırında, ayraçtan sonraki ekle düğmesi en sağda kalır. Site genelindeki ortak karar korunur.
+8. **Tek başlık ve bağlamsal araçlar:** İkinci “Hesap listesi” başlığının kaldırılması korunur. İçerik ikonlarını başlığa toplama kısmı sonraki kullanıcı kararıyla iptal edildi; araçlar ilgili içerik alanında kalır.
 
 ### Uyarı renklerinin anlamı
 
@@ -190,13 +190,12 @@ Kullanıcı, “giriş/çıkış” ile **cari bakiyeyi artıran ve azaltan hare
 - Her blok kendi kapsamındaki en son 5 hareketi gösterir. Kullanıcı not aşamasındadır; kodlama/yayın başlatılmaz.
 
 
-## Site geneli: içerik ikonları yeni işlem düğmesiyle aynı satırda
+## İçerik ikonlarını yeni işlem düğmesinin yanına taşıma kararı geri alındı
 
-26 Ekim 2026. Kullanıcı, başlık araçları kararının tüm site için ortak tasarım kriteri olduğunu ayrıca netleştirdi.
+26 Ekim 2026. Kullanıcı önceki site geneli araç satırı kararını iptal etti; içerik kısmındaki ikonların daha anlamlı olduğunu belirtti.
 
-- Sıralama, indirme ve benzer içerik araçları için yeni/ayrı satır yapılmayacak; tamamı yeni kayıt/işlem ekle düğmesinin bulunduğu satırda, düğmenin yanında toplanacak.
-- Araçlarla ekle düğmesi arasında ayraç bulunacak; önceki kararla uyumlu olarak ekle düğmesi en sağda kalacak.
-- Mevcut sayfalardaki ayrı içerik araç satırları da sonraki uygulamada bu kurala geçirilecek; karar Hesaplar ekranıyla sınırlı değil.
-- Alt gruplama gerektiren ikonlar ilgili sayfa ele alındığında gruplanacak; kesin gruplar henüz kararlaştırılmadı.
-- Kayda ait bilgi/düzenleme ikonlarının kendi kartında bulunması, ortak ölçüler ve finansal anlamların korunması kararları geçerli.
-- Not alma aşaması sürüyor; uygulama kodu, sürüm ve paket değiştirilmedi.
+- Sıralama/indirme ve benzer içerik ikonları ilgili içerik/listenin alanında kalır. Bunları başlıktaki yeni işlem düğmesinin yanına ayraçla toplama veya içerik araç satırlarını kaldırma zorunluluğu yoktur.
+- Hesaplar ekranındaki rahatsızlık mevcut kart tasarımıyla ilgilidir; onaylı 3 numaralı yatay liste/kart düzenine geçişle giderilmesi hedeflenir. Bu stilin onayı devam eder.
+- Tek ana içerik kutusu, ortak kart hizaları/ölçüleri ve gereksiz ikinci liste başlığının kaldırılması dahil diğer kararlar korunur. Yeni işlem düğmesi başlıkta, kayda ait bilgi/düzenleme ikonları kendi kartı/özetinde kalır.
+- Üç görseldeki üst araç yerleşimi bu iptal kararını geçersiz kılamaz; görseller yalnız kart yerleşiminin referansıdır.
+- Önceki taşıma kararı yalnız belgelerdeydi; uygulama kodu değiştirilmediğinden kod geri alımı yapılmaz. Not aşaması sürüyor, kodlama veya yayın yoktur.

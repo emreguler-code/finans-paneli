@@ -7,7 +7,7 @@
 ## Ortak kararlar
 
 - “Hesap listesi” ikinci başlığı kaldırılır.
-- Sayfaya ait sıralama, indirme ve gerekli araç ikonları başlık satırında toplanır. İnce dikey ayraçtan sonra yeni kayıt/işlem ekleme (+) düğmesi en sağda kalır. Bu düzen diğer sayfalarda da ortak tasarım kuralı olarak uygulanmak üzere kaydedildi.
+- **Son karar:** Kullanıcı sıralama/indirme araçlarını yeni işlem düğmesinin yanına taşıma kararını iptal etti. Araçlar ilgili içerik alanında kalır; görsellerdeki üst araç grupları uygulanacak tasarım şartı değildir.
 - Hesap kartlarının alanı tek bir ana içerik kutusuyla tanımlanır; hesaplar bu kutunun içinde bölümlenir.
 - Kayda özgü bilgi/düzenleme ikonları ilgili kartın kendi üzerinde kalır.
 - Inter, Sade Netlik renkleri, 44 px eylemler, ortak boşluk ölçeği, eşit kart yükseklikleri ve hizalı bilgi alanları esas alınır. Sağ uyarı alanında 1,9:1 ana/sağ sütun referansı korunur.
@@ -31,7 +31,7 @@ Tek beyaz ana panelin içinde hafif porselen zeminli hesap kartları. Hesapları
 
 Tek ana panel içinde tam genişlikte yatay hesap kartları. Kimlik, tutar, tür/vade ve yerel eylemler yan yana; çok hesap olduğunda daha hızlı taranır, büyük tutar ve uzun adlar daha fazla yatay alan bulur. Dar ekranda alanlar kart içinde alt alta geçmelidir.
 
-Üçüncü görselin üst araç grubu ana sütunun sağına çizilmiştir; kullanıcı kararına uygun uygulamada sayfa başlığının tam genişliğinin en sağına hizalanmalıdır. Üretilen görsellerin oranları yaklaşık görsel fikirlerdir; kesin uygulama ölçüsü ortak 1,9:1 ve mevcut tokenlardır.
+Üçüncü görselin üst araç grubu, son kullanıcı kararı gereği başlığa taşınmayacak; sıralama/indirme ikonları ilgili içerik alanında kalacaktır. Yatay kart/liste düzeninin onayı devam eder. Üretilen görsellerin oranları yaklaşık görsel fikirlerdir; kesin uygulama ölçüsü ortak 1,9:1 ve mevcut tokenlardır.
 
 ## Finansal anlamlar
 
