@@ -2,6 +2,8 @@
 
 26 Ekim 2026. Kullanıcının istediği üç görsel taslaktır; çalışan uygulama kodu değiştirilmedi. Görsel sırası, sohbette görüntülenen sonuç sırasıyla aynıdır. Taslaklarda tutarlar, banka işaretleri ve uyarı içerikleri temsilidir; muhasebe/hesaplama değişikliği veya yeni banka logosu kararı değildir.
 
+**Kullanıcı seçimi: 3 — Yatay kartlar onaylandı.** Görsel yerleşim referansıdır; nihai uygulamada mevcut global yazı tipi, ölçü ve oran kararları korunacaktır. Not aşaması sürüyor; kodlama/yayın talimatı verilmedi.
+
 ## Ortak kararlar
 
 - “Hesap listesi” ikinci başlığı kaldırılır.
@@ -9,7 +11,7 @@
 - Hesap kartlarının alanı tek bir ana içerik kutusuyla tanımlanır; hesaplar bu kutunun içinde bölümlenir.
 - Kayda özgü bilgi/düzenleme ikonları ilgili kartın kendi üzerinde kalır.
 - Inter, Sade Netlik renkleri, 44 px eylemler, ortak boşluk ölçeği, eşit kart yükseklikleri ve hizalı bilgi alanları esas alınır. Sağ uyarı alanında 1,9:1 ana/sağ sütun referansı korunur.
-- Kullanıcı stil seçmeden arayüz uygulanmaz ve yeni sürüm yayımlanmaz.
+- Stil seçildi; kullanıcı notlarını tamamlayıp kodlama/yayın talimatı verdiğinde uygulanacaktır.
 
 ## Görseller
 
@@ -21,11 +23,11 @@
 
 Tek beyaz ana panel; iki sütundaki hesaplar ince ayırıcılarla ayrılır. En az çerçeve kullanan ve en sakin seçenek. Hesapların ayrı tıklanabilir kayıtlar olduğu, uygulamada odak/üzerine gelme durumlarıyla netleştirilmeli. Son kasa bölümü tam satırdır; tek başına kalan kaydın genişlemesi bu seçeneğin bilinçli varyasyonudur.
 
-### 2 — Yumuşak kartlar — önerilen
+### 2 — Yumuşak kartlar — önceki asistan önerisi
 
-Tek beyaz ana panelin içinde hafif porselen zeminli hesap kartları. Hesapların ayrı kimliği okunur; kendi ikon grupları üst sağda kalır. Eşit yükseklik ve aynı kimlik → bakiye → tür/vade sırası kolay standartlaştırılır. Mevcut kart dilinin devamı olduğu için ortak hesap/kredi kartı düzenine uyarlamaya en uygun seçenek. Bu öneri henüz kullanıcı seçimi değildir.
+Tek beyaz ana panelin içinde hafif porselen zeminli hesap kartları. Hesapların ayrı kimliği okunur; kendi ikon grupları üst sağda kalır. Eşit yükseklik ve aynı kimlik → bakiye → tür/vade sırası kolay standartlaştırılır. Mevcut kart dilinin devamı olduğu için ortak hesap/kredi kartı düzenine uyarlamaya en uygun seçenek. Kullanıcı bu alternatif yerine 3 numaralı tasarımı seçti.
 
-### 3 — Yatay kartlar
+### 3 — Yatay kartlar — kullanıcı tarafından onaylandı
 
 Tek ana panel içinde tam genişlikte yatay hesap kartları. Kimlik, tutar, tür/vade ve yerel eylemler yan yana; çok hesap olduğunda daha hızlı taranır, büyük tutar ve uzun adlar daha fazla yatay alan bulur. Dar ekranda alanlar kart içinde alt alta geçmelidir.
 

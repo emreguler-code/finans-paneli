@@ -116,10 +116,15 @@ Durum: Kullanıcı, `TASARIM-INCELEMESI-2026-10-26.md` içindeki A1–A4 ve B1�
 
 ## Hesaplar: başlık araçları ve ana içerik kutusu
 
-26 Ekim 2026. Kullanıcı yeni not aşamasını başlattı; uygulama onayı verilmedi.
+26 Ekim 2026. Kullanıcı not aşamasında 3 numaralı yatay kart tasarımını onayladı; kodlama ve yayın aşamasına henüz geçilmedi.
 
 - “Hesap listesi” ikinci başlığı kaldırılacak.
 - Sıralama ve indirme ikonları, yeni kayıt/işlem ekleme düğmesinin bulunduğu sayfa başlığı satırına alınacak. Diğer gerekli sayfa araçları aynı grupta yer alacak; ince ayraçtan sonra ekle düğmesi en sağda kalacak. Bu düzen site geneline ortak kural olarak uyarlanacak.
 - Hesap kartlarının bulunduğu alan tek bir ana içerik kutusu olacak; kartlar bu kutu içinde yeniden bölümlenecek. Kart stili değişebilir.
-- Üç görsel alternatif ve öneri `tasarimlar/hesaplar-stil-denemeleri-2026-10-26.md` içinde. Kullanıcı stil seçimini henüz yapmadı; ikinci alternatif asistan önerisidir.
+- Üç görsel alternatif `tasarimlar/hesaplar-stil-denemeleri-2026-10-26.md` içinde. Kullanıcı **3 — Yatay kartlar** seçeneğini onayladı. Seçilen referans `tasarimlar/hesaplar-stil-3-yatay-kartlar-2026-10-26.png` dosyasıdır.
 - Bu aşamada yalnız tasarım görselleri/notlar GitHub'a yüklenir; uygulama kodu, sürüm ve hosting paketi değiştirilmez.
+
+- Seçilen yerleşim: tek ana içerik kutusu içinde tam genişlikte yatay hesap kartları; kimlik, bakiye/KMH özeti, tür/vade ve kayda ait bilgi/düzenleme eylemleri hizalı bölümlerde gösterilir.
+- Taslak yerleşim referansıdır. Nihai uygulama mevcut yerel Inter, 27/24 px sayfa başlığı, 16 px bölüm, 14 px ana metin, 12 px yardımcı metin, mevcut para değeri rolleri, 4–32 px boşluk ölçeği, 24/16 px panel dolgusu, 44 px ana eylemler ve 1,9:1 ana/sağ sütun kurallarını koruyacaktır. Görseldeki farklı font, oran, logo veya temsili veriler yeni kural sayılmaz.
+- Üst sıralama/indirme grubu ve ayraçtan sonraki ekle düğmesi, üçüncü taslaktaki ana sütun sınırına değil tam sayfa başlığının en sağına hizalanacaktır. Mobilde yatay kart alanları mevcut duyarlı kurallarla alt alta geçer; içerik kesilmez.
+- Kullanıcı diğer eksikleri aktarmaya devam ediyor; bu seçim tek başına kodlama, paketleme veya yayın talimatı değildir.

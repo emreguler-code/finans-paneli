@@ -76,5 +76,7 @@ Finans Paneli'nin kendi tasarım dili korunur; başka projelerin görsel tercihl
 ## 26 Ekim 2026 — 1.9.1 sonrası başlık araçları ve kart alanı (uygulama bekliyor)
 
 - Kullanıcının yeni kararı: gereksiz ikinci liste başlığı kaldırılır. Sayfaya ait sıralama/indirme ve gerekli araçlar ana başlık satırında gruplanır; ince ayraçtan sonra yeni kayıt/işlem ekleme düğmesi en sağda kalır. Site genelinde aynı yerleşim kullanılacaktır.
-- Hesap kartları tek bir ana içerik kutusunun içinde bölümlenir. Kayda ait bilgi/düzenleme ikonları yine kendi kartındadır. İç kartların görsel stili üç alternatif üzerinden değerlendirilmektedir; seçim henüz yapılmadı.
+- Hesap kartları tek bir ana içerik kutusunun içinde bölümlenir. Kayda ait bilgi/düzenleme ikonları yine kendi kartındadır. Kullanıcı 3 numaralı yatay kart düzenini onayladı: tek ana kutu içinde tam genişlikli hesap kartları ve hizalı kimlik/tutar/tür/eylem bölümleri kullanılacaktır.
 - Not ve görsel aşamasıdır; kodlama/yayın onayı değildir. Ayrıntılar sonraki sürüm notlarındadır.
+
+- Onaylı 3 numaralı görsel yalnız yerleşim referansıdır; nihai fontlar, tipografi/değer rolleri, boşluklar, kontrol ölçüleri, renkler ve ana/sağ sütun oranı bu belgedeki ortak kurallara uyar. Üst araçlar tam sayfa başlığının en sağındadır; ekle düğmesi ayraçtan sonra en sağda kalır. Mobilde kart içeriği okunabilir biçimde alt alta düzenlenir.
