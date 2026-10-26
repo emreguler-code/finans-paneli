@@ -188,3 +188,15 @@ Kullanıcı, “giriş/çıkış” ile **cari bakiyeyi artıran ve azaltan hare
 - Sınıflandırma mevcut net cari bakiye etkisini (`party_effect`) kullanır: pozitif etki artıran, negatif etki azaltan bloktadır. Etkisi sıfır olan kayıt iki bloktan birine zorla atanmaz.
 - Nakit etkisi, brüt işlem tutarı, işlem adı veya yalnız görsel etiket rengiyle yön tahmin edilmez. Kısmi ödeme gibi durumlarda mevcut cari hesap modeli korunur; işlem tutarı ile net bakiye etkisi karıştırılmaz.
 - Her blok kendi kapsamındaki en son 5 hareketi gösterir. Kullanıcı not aşamasındadır; kodlama/yayın başlatılmaz.
+
+
+## Site geneli: içerik ikonları yeni işlem düğmesiyle aynı satırda
+
+26 Ekim 2026. Kullanıcı, başlık araçları kararının tüm site için ortak tasarım kriteri olduğunu ayrıca netleştirdi.
+
+- Sıralama, indirme ve benzer içerik araçları için yeni/ayrı satır yapılmayacak; tamamı yeni kayıt/işlem ekle düğmesinin bulunduğu satırda, düğmenin yanında toplanacak.
+- Araçlarla ekle düğmesi arasında ayraç bulunacak; önceki kararla uyumlu olarak ekle düğmesi en sağda kalacak.
+- Mevcut sayfalardaki ayrı içerik araç satırları da sonraki uygulamada bu kurala geçirilecek; karar Hesaplar ekranıyla sınırlı değil.
+- Alt gruplama gerektiren ikonlar ilgili sayfa ele alındığında gruplanacak; kesin gruplar henüz kararlaştırılmadı.
+- Kayda ait bilgi/düzenleme ikonlarının kendi kartında bulunması, ortak ölçüler ve finansal anlamların korunması kararları geçerli.
+- Not alma aşaması sürüyor; uygulama kodu, sürüm ve paket değiştirilmedi.

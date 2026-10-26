@@ -100,3 +100,12 @@ Finans Paneli'nin kendi tasarım dili korunur; başka projelerin görsel tercihl
 - Global bildirim sayfasında önem filtresi bulunur. Kritik/dikkat/bilgi renkleri aynı anlamı korur; yalnız renk kullanılmaz. Toplam sayı ve tam listeye ulaşma görünür kalır. Sağ sütun önizlemesi uzun bir tam listeye dönüştürülmez.
 - Kullanıcı cari giriş/çıkışını net cari bakiyeyi artıran/azaltan hareketler olarak netleştirdi. Bloklar mevcut `party_effect` yönünü kullanır; nakit etkisi veya brüt tutardan sınıflandırma yapılmaz. Sıfır etki iki bloktan birine zorla atanmaz. Ek filtre/sıralama önerileri ve son işlemler kapsamı sonraki sürüm notlarında ayrı değerlendirme olarak kayıtlıdır.
 - Kullanıcı notlarına devam ediyor; kodlama, paketleme ve yayın başlatılmaz.
+
+
+## 26 Ekim 2026 — Site genelinde ortak içerik araçları satırı (onaylı, uygulama bekliyor)
+
+- Yeni kayıt/işlem ekleme düğmesinin bulunduğu başlık satırı, içerikle ilgili araç ikonlarının da ortak yeridir. Sıralama, indirme/dışa aktarma ve benzer içerik eylemleri için ayrı araç satırı oluşturulmaz; mevcut ayrı satırlar bu kurala uyarlanır. Bu karar yalnız Hesaplar için değil site genelinde geçerlidir ve önceki ayrı içerik araç satırı yerleşimlerinin yerini alır.
+- İçerik araçları ekle düğmesinin yanında yer alır; araya ince dikey ayraç konur. Önceden onaylanan sıra korunur: içerik araçları → ayraç → en sağda yeni kayıt/işlem ekle.
+- Gerekli alt ikon grupları ilgili ekran ele alınırken belirlenecektir; şimdi sabit bir alt gruplama veya yeni ikon listesi dayatılmaz.
+- Ortak ikon/düğme ölçüleri ve erişilebilir adlar korunur. Bu kural, kayda özgü bilgi/düzenleme ikonlarının kendi kartı/özetinde bulunması kararını kaldırmaz.
+- Kullanıcı not aşamasındadır; yalnız tasarım belgeleri güncellenir, kodlama ve yayın başlatılmaz.
