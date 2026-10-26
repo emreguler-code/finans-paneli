@@ -118,3 +118,11 @@ Finans Paneli'nin kendi tasarım dili korunur; başka projelerin görsel tercihl
 - Kredi kartının banka/program/numara/sahip kimliği, limit ve kullanım bölümleri, ekstre/dönem/taksit tutarları ve kesim/son ödeme bilgileri korunur. Hesap/KMH alanları kendi finansal anlamlarını taşır. Ortak stil, türün gerektirdiği verileri birbirine dönüştürmez veya borcu çoğaltmaz.
 - Gerektiğinde ek bilgi satırlarıyla okunabilirlik korunur; kompaktlık için küçük yazı, kesilmiş tutar veya kayıp bilgi kullanılmaz. Gereksiz ikinci liste başlıkları iki menüden de kaldırılır.
 - Bu son karar, görsellerde veya önceki notlarda hesap/kart liste ikonlarının bulunmasını isteyen kısımların yerini alır. Kullanıcı not aşamasındadır; henüz kodlama/yayın yapılmaz.
+
+
+## 26 Ekim 2026 — Araç detayında iki sekme (uygulama bekliyor)
+
+- Araç kartından varsayılan Özet açılır; kategori bazlı grid bölmeler güncel poliçe/MTV/bakım ve diğer mevcut araç bilgilerini gösterir. İşlemler ikinci sekmedir; tüm kayıt türleri tek tarih sıralı listede karışık yer alır. Trafik sigortası/kasko/MTV/bakım/muayene ayrı navigasyon sekmeleri olarak kullanılmaz.
+- Seçili işlem, kendi türüne uygun ayrıntıları satır içinde açar. Mevcut ortak genişleyen satır, ikon, boşluk ve içerik araçları yerleşimi kullanılır. Genel başlıkta ekle; sıralama/indirme ilgili içerikte kalır.
+- Geçerlilik durumu ile ödeme durumu, tahmini tutar ile gerçek ödeme ve kayıt tarihi ile yaklaşan tarih/km ayrı anlamlardır. Özet veya liste ikinci finansal hareket üretmez.
+- Görsel yerleşim alternatifleri kullanıcı değerlendirmesindedir; ilk Özet ile birleşik işlem günlüğü asistan önerisidir. Not aşaması sürer, kodlama/yayın başlatılmaz.

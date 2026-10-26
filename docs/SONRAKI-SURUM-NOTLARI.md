@@ -216,3 +216,18 @@ Kullanıcı, “giriş/çıkış” ile **cari bakiyeyi artıran ve azaltan hare
 - Ortak iskelet içinde kart türüne göre ek bilgi satırları kullanılabilir; bütün alanları zorla aynı yüksekliğe sığdırmak için metin küçültülmez veya kesilmez. Aynı menüde hizalar ve tutarlı boşluklar korunur.
 
 Uygulama kodu, sürüm veya paket değiştirilmedi. Bu kararlar sonraki toplu uygulama kapsamına eklendi.
+
+
+## Araçlarım: Özet ve İşlemler sekmeleri
+
+26 Ekim 2026. Kullanıcı araç kartından açılan sayfanın iki sekmeli olmasını istedi; önceki asistanın yalnız birleşik liste önerisi yerine bu akış esas alınır.
+
+- Araç kartına tıklanınca varsayılan **Özet** sekmesi açılacak. Poliçe/MTV/bakım ve mevcut diğer türler grid bölmelerde kendi özet bilgileriyle gösterilecek.
+- İkinci sekme **İşlemler** olacak. Farklı türde bütün girilen kayıtlar tek tarih sıralı listede yer alacak; trafik sigortası ve bakım satırları alt alta bulunabilecek.
+- Satıra tıklanınca kaydın türüne uygun detay alanları satır içinde açılacak. Geçerlilik, kilometre, dönem/vade, tutar/ödeme ve ilgili eylemler bağlamına göre gösterilecek. Kategori başına ek navigasyon sekmeleri kaldırılacak.
+- Mevcut Inter/ölçü/boşluk/tek özet yüzeyi/1,9:1 sütun dili korunacak. Araç kaydı, tahmini bedel ve gerçek finansal ödeme ayrı anlamlarını koruyacak; mevcut ödeme bağlantıları ikinci finansal hareket üretmeyecek.
+- Kullanıcı otomobil toplulukları ve Product Design yaklaşımıyla alternatifleri değerlendirmek istedi. Üç görsel (iki Özet düzeni ve bir İşlemler açılır-satır görünümü), kaynaklar ve asistan önerileri `tasarimlar/araclar-ozet-islemler-onerileri-2026-10-26.md` içinde. Henüz görsel seçim yapılmadı.
+- Asistanın önerisi: tek çerçeveli ilk Özet + üçüncü görseldeki işlem günlüğü. Poliçelerin birlikte özetlenmesi ve özet bağlantısının İşlemler'e tür filtresiyle geçmesi ayrıca değerlendirilecek; kullanıcı onayı sayılmaz.
+- Kamuya açık PistonHeads/Drivvo/Fuelly kaynakları okundu; sosyal forum, yakıt veya otomatik bakım/arıza tahmini özellikleri kapsamımıza kendiliğinden eklenmedi.
+
+Not aşaması devam ediyor. Uygulama kodu, sürüm, veritabanı veya paket değiştirilmedi.
