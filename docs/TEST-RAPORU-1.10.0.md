@@ -10,3 +10,7 @@
 - Hosting ZIP'i boş kurulum, eski şema geçişleri, demo yenileme ve yönetici parolasının korunmasıyla test edildi. GitHub yayın süreci aynı kontrolleri yeniden çalıştırır.
 
 Görsel karşılaştırma ve sınırlamalar: [design-qa.md](../design-qa.md). Fiziksel cihaz ve ekran okuyucu testi yapılmadı.
+
+## 27 Ekim — yalnız hosting paketi
+
+Aynı uygulama dosyaları `-hosting.zip` içinde web köküne doğrudan açılacak biçimde paketlendi. Orijinal GitHub Release ZIP’indeki `hosting/` dosyalarıyla birebir içerik karşılaştırması geçti. API migrasyonları ve Inter lisansı korunur; config.php, belgeler, bağımsız SQL şeması ve çalışma verileri bu arşivde yoktur. Paket entegrasyonu bu arşivi izole web köküne açarak kurulum, migrasyon/API, kapsamlı demo ve iki kez demo yenileme/yönetici parolası koruma kontrollerinden geçti. Uygulama sürümü veya finansal hesaplama değişmedi.

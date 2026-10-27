@@ -39,6 +39,8 @@ Codex değişiklik yapmadan AGENTS.md dosyasını okumalıdır. Geçmiş sürüm
 
 `npm run release:package` derlenmiş arayüz, PHP API, boş şema ve Türkçe kurulum belgesini `dist/releases/finans-paneli-<sürüm>.zip` dosyasında toplar; yanında SHA-256 dosyası üretir. Gerçek `api/config.php` ve çalışma zamanı verileri pakete alınmaz. ZIP içindeki `hosting/` içeriği web dizinine yüklenir; diğer dosyalar web dizini dışında tutulur. Ayrıntılar [hosting kurulum belgesinde](docs/HOSTING-KURULUM.md).
 
+Her sürümde iki ZIP üretilir: `finans-paneli-<sürüm>-hosting.zip` yalnız doğrudan web dizinine yüklenecek uygulama dosyalarıdır; `finans-paneli-<sürüm>.zip` kurulum belgeleri ve başlangıç SQL'i içeren tam pakettir. Mevcut kurulum güncellemelerinde hosting ZIP'i yeterlidir; `api/config.php` korunur. Her ZIP'in ayrı SHA-256 dosyası vardır.
+
 GitHub Actions `Hosting release` iş akışı `v<package.json sürümü>` etiketi GitHub'a gönderildiğinde testleri çalıştırır, paketi hazırlar ve GitHub Release'e ekler. Örneğin 1.10.0 için `v1.10.0`. İş akışı ve paketleme dosyaları önce ilgili commit'te bulunmalıdır. Actions'ın depoda etkin ve iş akışının Release yazma yetkisine sahip olması gerekir. Manuel `workflow_dispatch` çalıştırması yalnızca indirilebilir Actions artifact'ı üretir; Release yayımlamaz.
 
 ## İzole API ve tarayıcı testleri

@@ -33,14 +33,21 @@ for name in filter(None, tracked):
         if name.startswith("database/migrations/"):
             files["hosting/api/v2/migrations/" + source.name] = source
 files["licenses/Inter-OFL.txt"] = ROOT / "src/assets/fonts/OFL.txt"
-with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as z:
-    for name, source in sorted(files.items()):
-        if source.is_symlink():
-            raise SystemExit(f"Refusing symlink: {source}")
-        info = zipfile.ZipInfo(name, date_time=(2026, 1, 1, 0, 0, 0))
-        info.compress_type = zipfile.ZIP_DEFLATED
-        info.external_attr = 0o100644 << 16
-        z.writestr(info, source.read_bytes())
-checksum = hashlib.sha256(archive.read_bytes()).hexdigest()
-(output / f"{archive.name}.sha256").write_text(f"{checksum}  {archive.name}\n")
-print(f"Created {archive.relative_to(ROOT)} ({len(files)} files)")
+def write_archive(path, entries):
+    with zipfile.ZipFile(path, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as z:
+        for name, source in sorted(entries.items()):
+            if source.is_symlink():
+                raise SystemExit(f"Refusing symlink: {source}")
+            info = zipfile.ZipInfo(name, date_time=(2026, 1, 1, 0, 0, 0))
+            info.compress_type = zipfile.ZIP_DEFLATED
+            info.external_attr = 0o100644 << 16
+            z.writestr(info, source.read_bytes())
+    checksum = hashlib.sha256(path.read_bytes()).hexdigest()
+    (output / f"{path.name}.sha256").write_text(f"{checksum}  {path.name}\n")
+    print(f"Created {path.relative_to(ROOT)} ({len(entries)} files)")
+
+write_archive(archive, files)
+# Ready to extract directly into the web root. Keep runtime migrations and font license.
+hosting_files = {name.removeprefix("hosting/"): source for name, source in files.items() if name.startswith("hosting/")}
+hosting_files["licenses/Inter-OFL.txt"] = files["licenses/Inter-OFL.txt"]
+write_archive(output / f"finans-paneli-{version}-hosting.zip", hosting_files)

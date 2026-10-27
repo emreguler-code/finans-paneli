@@ -33,9 +33,14 @@ def main():
   web=runtime/'web'
   if args.suite=='package':
    version=json.loads((ROOT/'package.json').read_text())['version']
-   with zipfile.ZipFile(ROOT/'dist/releases'/f'finans-paneli-{version}.zip') as archive:
-    archive.extractall(runtime/'archive')
-   shutil.copytree(runtime/'archive/hosting',web)
+   with zipfile.ZipFile(ROOT/'dist/releases'/f'finans-paneli-{version}.zip') as full, zipfile.ZipFile(ROOT/'dist/releases'/f'finans-paneli-{version}-hosting.zip') as hosting:
+    expected={name.removeprefix('hosting/'):full.read(name) for name in full.namelist() if name.startswith('hosting/')}
+    expected['licenses/Inter-OFL.txt']=full.read('licenses/Inter-OFL.txt')
+    assert set(hosting.namelist())==set(expected), 'Hosting archive has missing or extra files'
+    assert all(hosting.read(name)==content for name,content in expected.items()), 'Hosting archive differs from full package'
+    assert 'api/config.php' not in expected and 'api/v2/migrations/002-cari.sql' in expected
+    hosting.extractall(web)
+   print('PASS hosting-only archive matches complete package; no credentials or extra documents')
   else:
    shutil.copytree(ROOT/'public',web,ignore=shutil.ignore_patterns('config.php'))
    migrations=web/'api/v2/migrations';migrations.mkdir();shutil.copyfile(ROOT/'database/migrations/002-cari.sql',migrations/'002-cari.sql')

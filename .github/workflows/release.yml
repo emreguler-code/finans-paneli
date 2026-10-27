@@ -64,7 +64,7 @@ jobs:
         run: |
           cd dist/releases
           sha256sum -c *.sha256
-          python3 -m zipfile -t *.zip
+          for archive in *.zip; do python3 -m zipfile -t "$archive"; done
       - uses: actions/upload-artifact@v6
         with:
           name: hosting-package
@@ -84,7 +84,8 @@ jobs:
           release = json.loads(Path('/tmp/finans-published-release.json').read_text())
           expected = 'finans-paneli-' + os.environ['GITHUB_REF_NAME'].removeprefix('v') + '.zip'
           names = {asset['name'] for asset in release['assets']}
-          assert not release['isDraft'] and {expected, expected + '.sha256'} <= names, 'Release assets are missing'
+          hosting = expected.removesuffix('.zip') + '-hosting.zip'
+          assert not release['isDraft'] and {expected, expected + '.sha256', hosting, hosting + '.sha256'} <= names, 'Release assets are missing'
           PYCODE
       - name: Record release result for Git-only clients
         if: always() && startsWith(github.ref, 'refs/tags/')
