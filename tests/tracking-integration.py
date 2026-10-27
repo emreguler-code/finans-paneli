@@ -3,8 +3,9 @@
 baseline=state()
 code,r=post('vehicle_save',plate='34 QA 180',name='Deneme araç',year=2024,km=45000);assert code==200,r
 vehicle=r['id'];ok('Vehicle persisted and plate normalized',entity('vehicles',vehicle)['plate']=='34QA180')
+ok('Vehicle kind and body style are validated',post('vehicle_save',plate='99QA999',name='Invalid',vehicle_kind='plane')[0]==422)
 ok('Duplicate vehicle plate rejected',post('vehicle_save',plate='34QA180',name='Diğer')[0]==422)
-code,r=post('vehicle_save',**{**entity('vehicles',vehicle),'km':46000});ok('Vehicle edits require version',code==200 and entity('vehicles',vehicle)['km']==46000)
+code,r=post('vehicle_save',**{**entity('vehicles',vehicle),'km':46000,'vehicle_kind':'motorcycle'});ok('Vehicle edits require version',code==200 and entity('vehicles',vehicle)['km']==46000 and entity('vehicles',vehicle)['vehicle_kind']=='motorcycle')
 ok('Stale vehicle edit rejected',post('vehicle_save',**{**entity('vehicles',vehicle),'version':1})[0]==422)
 payment=event(amount='100',description='Araç için gerçekleşmiş gider')
 record=dict(vehicle_id=vehicle,type='insurance',title='Deneme trafik poliçesi',date='2026-10-01',end_date='2027-10-01',due_date='2026-10-25',amount='300',reminder_days=30,installments=[dict(date='2026-10-25',amount='150'),dict(date='2026-11-25',amount='150')],payment_events=[payment])

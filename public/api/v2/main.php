@@ -26,6 +26,22 @@ function saveEvent(PDO $db,array $b): array {
  else{$db->prepare('INSERT INTO fin_events(request_key,'.implode(',',array_keys($v)).',created_by) VALUES('.implode(',',array_fill(0,count($v)+2,'?')).')')->execute([requestKey($b),...array_values($v),$actor['id']]);$id=(int)$db->lastInsertId();}
  audit($db,'event',(string)$id,$old?'edit':'create',$old,row($db,'fin_events',$id),$reason);return ['id'=>$id];
 }
+function partyProfile(PDO $db,array $b,?array $old): string {
+ if(!array_key_exists('profile',$b))return $old['profile_json']??'{}';
+ $p=$b['profile'];if(!is_array($p)||count($p)>10)throw new DomainException('Cari bilgi alanlarını kontrol edin.');
+ $result=[];$days=$p['visit_days']??[];
+ if(!is_array($days)||!array_is_list($days)||count($days)>7)throw new DomainException('Ziyaret günlerini kontrol edin.');
+ foreach($days as $day)if(!is_int($day)||$day<1||$day>7)throw new DomainException('Ziyaret gününü kontrol edin.');
+ $result['visit_days']=array_values(array_unique($days));sort($result['visit_days']);
+ foreach(['staff_month','leave_week'] as $key){$value=$p[$key]??'';if(!is_string($value))throw new DomainException('Dönemi kontrol edin.');$result[$key]=$value;}
+ if($result['staff_month']!==''&&(!preg_match('/^\d{4}-(0[1-9]|1[0-2])$/D',$result['staff_month'])||(int)substr($result['staff_month'],0,4)<1900))throw new DomainException('Personel ayını kontrol edin.');
+ if($result['leave_week']!==''){validDate($result['leave_week'],true);if(date('N',strtotime($result['leave_week']))!=='1')throw new DomainException('İzin haftası pazartesi başlamalı.');}
+ foreach(['leave_used','leave_total'] as $key){$value=$p[$key]??null;if($value!==null&&(!is_numeric($value)||(float)$value<0||(float)$value>7))throw new DomainException('Haftalık izin gününü kontrol edin.');$result[$key]=$value===null?null:(float)$value;}
+ if($result['leave_used']!==null&&$result['leave_total']!==null&&$result['leave_used']>$result['leave_total'])throw new DomainException('Kullanılan izin hakkı aşamaz.');
+ $result['meal_due_cents']=trackingInteger($p,'meal_due_cents',1000000000);$used=[];
+ foreach(['salary_payments','meal_payments'] as $key){$result[$key]=trackingIds($db,$p,$key,'fin_events');foreach($result[$key] as $id){$e=row($db,'fin_events',$id);$previous=json_decode($old['profile_json']??'{}',true)?:[];$existing=in_array($id,$previous[$key]??[],true)&&($previous['staff_month']??'')===$result['staff_month'];if(!$existing&&(!$old||$e['party_id']!=$old['id']||$e['cancelled']||$e['scheduled']||!in_array($e['operation'],['payment','employee_expense'],true)||substr($e['event_date'],0,7)!==$result['staff_month']||$e['event_date']>today($db)||in_array($id,$used,true)))throw new DomainException('Personelin bu aya ait farklı gerçekleşmiş ödemelerini seçin.');if(in_array($id,$used,true))throw new DomainException('Aynı ödeme iki farklı kaleme bağlanamaz.');$used[]=$id;}}
+ return json_encode($result,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);
+}
 function saveEntity(PDO $db,string $entity,array $b): array {
  global $actor;$table=match($entity){'party'=>'parties','account'=>'accounts','card'=>'cards','user'=>'users'};$id=$b['id']??null;if($table==='users')permit('admin');else permit($id?'edit':'create');$old=$id?row($db,$table,$id):null;if($old)versionCheck($old,$b);$v=[];$reason=$old?field($b,'reason',1000,!in_array($entity,['account','card','party'],true)):'';
  if($entity==='party'){
@@ -35,6 +51,7 @@ function saveEntity(PDO $db,string $entity,array $b): array {
  if(!is_array($pos)||!array_is_list($pos)||count($pos)>3)throw new DomainException('POS cihazı seçimlerini kontrol edin.');
  foreach($pos as $program)if(!is_string($program)||!in_array($program,['garanti:bonus','akbank:axess','yapikredi:world'],true))throw new DomainException('Geçersiz POS banka / program seçimi.');
  if($v['type']!=='Tedarikçi'&&$pos)throw new DomainException('POS cihazı bilgileri yalnız tedarikçiler içindir.');
+ $v['profile_json']=partyProfile($db,$b,$old);
  $pos=array_values(array_unique($pos));sort($pos);$v['pos_programs']=json_encode($pos,JSON_THROW_ON_ERROR);
  }elseif($entity==='account'){
  foreach(['name'=>160,'type'=>40,'bank'=>160,'iban'=>40,'holder'=>160] as $k=>$len)$v[$k]=field($b,$k,$len,in_array($k,['name','type']));if(!in_array($v['type'],['Banka hesabı','Kasa','Birikim hesabı','Vadeli hesap','Kredili Mevduat Hesabı']))throw new DomainException('Hesap türü geçersiz.');
@@ -95,7 +112,7 @@ if($method==='GET'){
   $parties=$db->query('SELECT * FROM parties ORDER BY name,id')->fetchAll();$net=array_sum($balances);$total=count($parties);$rows=[];
   $ids=null;if($search&&preg_match_all('/./us',$search)>=3){$q=$db->prepare("SELECT id FROM parties WHERE name LIKE ? ESCAPE '=' OR title LIKE ? ESCAPE '='");$pattern='%'.strtr($search,['='=>'==','%'=>'=%','_'=>'=_']).'%';$q->execute([$pattern,$pattern]);$ids=array_fill_keys($q->fetchAll(PDO::FETCH_COLUMN),true);}
   foreach($parties as $party){if($ids!==null&&!isset($ids[$party['id']]))continue;if($type&&$type!=='Tümü'&&$party['type']!==$type)continue;
-   $party['id']=(int)$party['id'];$party['version']=(int)$party['version'];$party['active']=(bool)$party['active'];$party['pos_programs']=json_decode($party['pos_programs']??'[]',true)?:[];$party['balance_cents']=$balances[$party['id']]??0;$rows[]=$party;
+   $party['id']=(int)$party['id'];$party['version']=(int)$party['version'];$party['active']=(bool)$party['active'];$party['pos_programs']=json_decode($party['pos_programs']??'[]',true)?:[];$party['profile']=json_decode($party['profile_json']??'{}',true)?:new stdClass();unset($party['profile_json']);$party['balance_cents']=$balances[$party['id']]??0;$rows[]=$party;
   }
   $db->commit();reply(['parties'=>$rows,'total'=>$total,'net_cents'=>$net]);
  }

@@ -12,7 +12,7 @@ export function AccountGrid({items,isCard,data,open,onSelect}){return <div class
 const money=n=><>{fmt(n||0)} <small>TL</small></>;
 export function AccountSummary({item:a,isCard,data,open}){
  const actions=<AccountActions item={a} {...{isCard,data,open}}/>;
- const identity=<><BankMark code={a.bank_code}/><span>{bankName(a.bank_code)||a.bank||a.type}</span>{isCard&&<ProgramMark code={a.program_code}/>}</>;
+ const identity=isCard?null:<>{a.bank_code!=='akbank'&&<BankMark code={a.bank_code}/>}<span>{bankName(a.bank_code)||a.bank||a.type}</span>{isCard&&<ProgramMark code={a.program_code}/>}</>;
  if(isCard){const limit=limitSegments(a),dates=nextCardDates(a,data.today),linked=data.accounts.find(x=>x.id===a.linked_account_id);return <SummaryBar label="Kredi kartı özeti" className="card-summary" {...{actions,identity}} items={[
  {label:'Kullanılabilir limit',value:money(a.available_cents??limit.available),primary:true,tone:tone(a.available_cents??limit.available),help:'Toplam limit '+fmt(a.limit_cents)+' TL'},
  {label:'Ekstreden kalan',value:money(Math.round(a.statement*100)),help:a.statement>0&&a.due<data.today?'Son ödeme geçti':dateLabel(a.due)||'Son ödeme belirtilmedi'},

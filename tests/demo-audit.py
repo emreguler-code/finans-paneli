@@ -73,7 +73,7 @@ ok('Six installments preserve exact cents',len(installments)==6 and sum(e['amoun
 ok('Scheduled movements do not change cash',all(e['cash_effect']==0 for e in events if e['scheduled']))
 # Independently verify new vehicle fixtures and payment references.
 records=s['vehicle_records'];links=[(r,eid) for r in records for eid in r['payment_events']]
-ok('Expanded demo includes four vehicles and 44 typed records',len(s['vehicles'])==4 and len(records)==44 and {r['type'] for r in records}=={'insurance','casco','tax','maintenance','inspection'})
+ok('Expanded demo includes four vehicles and 48 typed records',len(s['vehicles'])==4 and len(records)==48 and {r['type'] for r in records}=={'insurance','casco','tax','maintenance','inspection'})
 ok('Vehicle payment links never duplicate one financial event',len(links)==len({eid for r,eid in links}))
 paid=[]
 for r in records:

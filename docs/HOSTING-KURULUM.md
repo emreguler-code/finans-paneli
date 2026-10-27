@@ -15,7 +15,7 @@ Hosting ZIP'ini açarken `api/config.php` dosyanızı koruyun; bu dosya pakette 
 2. Boş bir veritabanı ve yalnızca bu veritabanına erişen bir kullanıcı oluşturun. `database/schema.sql` dosyasını phpMyAdmin veya hosting panelinizden içe aktarın.
 3. Sunucuda `api/config.example.php` dosyasını `api/config.php` olarak kopyalayın. Veritabanı bilgilerini girin. En az 32 karakterlik kriptografik rastgele bir `setup_token` üretin; `require_https=true` kalsın. Gerçek config dosyasını GitHub'a yüklemeyin.
 4. HTTPS üzerinden uygulamayı açın. İlk yönetici kurulumunda kullanıcı adı, en az 12 karakterlik parola ve kurulum anahtarını girin.
-5. Yönetici olarak giriş yapın, aynı dizindeki `update.php` sayfasını açıp güncellemeyi uygulayın. Hedef şema sürümü 10'dur.
+5. Yönetici olarak giriş yapın, aynı dizindeki `update.php` sayfasını açıp güncellemeyi uygulayın. Hedef şema sürümü 11'dur.
 6. Uygulamaya dönün. Giriş, boş hesap listeleri ve hesap oluşturma işlemini kontrol edin. Bu paket gerçek kullanıcı/işlem verisi veya demo kayıtları içermez.
 
 ## Mevcut kurulumun güncellenmesi
@@ -24,4 +24,4 @@ Hosting ZIP'ini açarken `api/config.php` dosyanızı koruyun; bu dosya pakette 
 
 ## Paketi doğrulama
 
-ZIP ve `.sha256` dosyasını birlikte indirin; bulunduğunuz dizinde `sha256sum -c finans-paneli-1.10.0.zip.sha256` çalıştırın. Yeni sürümlerde dosya adındaki sürümü değiştirin.
+ZIP ve `.sha256` dosyasını birlikte indirin; bulunduğunuz dizinde `sha256sum -c finans-paneli-1.11.0.zip.sha256` çalıştırın. Yeni sürümlerde dosya adındaki sürümü değiştirin.

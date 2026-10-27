@@ -239,3 +239,8 @@ Uygulama kodu, sürüm veya paket değiştirilmedi. Bu kararlar sonraki toplu uy
 - Kamuya açık PistonHeads/Drivvo/Fuelly kaynakları okundu; sosyal forum, yakıt veya otomatik bakım/arıza tahmini özellikleri kapsamımıza kendiliğinden eklenmedi.
 
 Not aşaması devam ediyor. Uygulama kodu, sürüm, veritabanı veya paket değiştirilmedi.
+
+
+# 1.11.0 — 27 Ekim onayları uygulandı
+
+Kullanıcının son toplu uygulama/yayın talimatıyla [1.11.0 kapsamındaki](SURUM-1.11.0.md) bütün maddeler uygulandı. Bu kararlar önceki çift cari hareket modülü, detayda Son 5 işlem tekrarı ve iki sütun araç özeti kararlarının yerini alır. Mobil görsel onayının son düzeltmesi: etiket/ekleyen/bakiye satırı yalnız seçili işlemde açılır. Uygulama şeması 11; yeni hosting ZIP’i doğrudan web köküne açılır.

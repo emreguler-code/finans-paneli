@@ -131,3 +131,10 @@ Finans Paneli'nin kendi tasarım dili korunur; başka projelerin görsel tercihl
 ## 1.10.0 uygulama durumu
 
 26 Ekim 2026 toplu kodlama/yayın onayıyla yukarıdaki bekleyen hesap/kart yatay liste, merkezi bildirim ve cari sağ sütun kuralları uygulanmıştır. Araçlarda kullanıcı 2 numaralı Poliçeler özeti ile 3 numaralı birleşik İşlemler görünümünü seçmiştir. Önceki not aşaması/uygulama bekliyor ifadeleri tarihsel durumdur; bekleme şartı değildir. Zil dahil küçük önizlemeler 5 kayıtla sınırlıdır. İçerik ikonlarını başlığa taşıma kararı iptal edilmiş olarak kalır.
+
+
+## 1.11.0 — kompakt mobil ve yatay araçlar
+
+Mobil hareketlerde tür/tarih/tutar/açıklama görünür; etiket/ekleyen/işlem sonrası bakiye ile eylemler yalnız seçili satırda açılır, kesintisiz aynı yüzeydir. Masaüstü sütun sırası değişmez. Cari özetinde alacak/borç/net tek yüzey; liste sağında tek Son 5 işlem, detay sağında türüne bağlı Durum ve bilgiler bulunur. Ziyaret günleri plan bilgisidir. Mobil detay özeti kompakt bakiye gösterir; ek bilgiler kendi bilgi düğmesinden açılır.
+
+Araç ana listesi ve detay kategorileri tek sütun yatay satırlardır; Özet/İşlemler korunur. Bilgi/düzenleme detayda kalır. Bakım göstergesi yalnız tanımlı zaman/km aralığını, poliçe göstergesi süreyi anlatır; ödeme ayrı alandır. Eksik veriye oran atanmaz. Kayıt adlarının saklanan değeri değiştirilmeden tekrar eden standart banka/program adları gösterimde sadeleştirilir. Son işlem önizlemesi aynı taksitli alışverişi bir kez gösterir; özgün dönemler ayrıntıda erişilebilir kalır.

@@ -36,10 +36,13 @@ function saveTracking(PDO $db,string $entity,array $b): array {
  if($entity==='vehicle'){
   $plate=strtoupper(str_replace(' ','',field($b,'plate',20,true)));if(!preg_match('/^[A-Z0-9-]{3,20}$/D',$plate))throw new DomainException('Plakayı kontrol edin.');$v['plate']=$plate;$q=$db->prepare('SELECT id FROM vehicles WHERE plate=? AND id<>?');$q->execute([$plate,$id??0]);if($q->fetchColumn())throw new DomainException('Bu plaka zaten kayıtlı.');
   foreach(['name'=>160,'owner'=>160,'vin'=>40,'notes'=>2000] as $key=>$len)$data[$key]=field($b,$key,$len,$key==='name');
+  $data['vehicle_kind']=trackingEnum(['vehicle_kind'=>$b['vehicle_kind']??'car'],'vehicle_kind',['car','motorcycle','van']);
+  $data['body_style']=trackingEnum(['body_style'=>$b['body_style']??'other'],'body_style',['other','sedan','suv','hatchback','wagon']);
   $data['year']=trackingInteger($b,'year',2200);if($data['year']&&$data['year']<1900)throw new DomainException('Model yılını kontrol edin.');$data['km']=trackingInteger($b,'km');
   $previous=$old?json_decode($old['data_json'],true):[];$data['km_updated']=!$old||$data['km']!==($previous['km']??null)?today($db):($previous['km_updated']??today($db));
  }elseif($entity==='vehicle_record'){
   $vehicle=row($db,'vehicles',trackingInteger($b,'vehicle_id'));if(!$vehicle['active'])throw new DomainException('Arşivlenmiş araca kayıt eklenemez.');$v['vehicle_id']=$vehicle['id'];
+  $data['maintenance_kind']=trackingEnum(['maintenance_kind'=>$b['maintenance_kind']??'periodic'],'maintenance_kind',['periodic','oil','oil_filter','air_filter','summer_tyre','winter_tyre','other']);
   $data['type']=trackingEnum($b,'type',['insurance','casco','tax','maintenance','inspection']);foreach(['title'=>160,'company'=>160,'policy_no'=>160,'notes'=>2000] as $key=>$len)$data[$key]=field($b,$key,$len,$key==='title');
   foreach(['date','end_date','due_date','next_date'] as $key)$data[$key]=trackingDate($b,$key,$key==='date');
   if($data['end_date']&&$data['end_date']<$data['date'])throw new DomainException('Bitiş tarihi başlangıçtan önce olamaz.');if($data['next_date']&&$data['next_date']<$data['date'])throw new DomainException('Sonraki bakım tarihi işlemden önce olamaz.');
@@ -77,8 +80,8 @@ function saveTracking(PDO $db,string $entity,array $b): array {
  $after=row($db,$table,$id);if($entity==='vehicle_record')$after['payment_events']=$links;audit($db,$entity,(string)$id,$old?'edit':'create',$old,$after,field($b,'reason',1000));return ['id'=>$id];
 }
 function seedTrackingDemo(PDO $db,array $cards,array $parties): void {
- $first=saveTracking($db,'vehicle',['plate'=>'34 DEMO 180','name'=>'Örnek şirket aracı','year'=>2023,'km'=>60500,'owner'=>'Örnek Kullanıcı'])['id'];
- $second=saveTracking($db,'vehicle',['plate'=>'06 DEMO 180','name'=>'Örnek servis aracı','year'=>2021,'km'=>128000,'owner'=>'Örnek Kullanıcı'])['id'];
+ $first=saveTracking($db,'vehicle',['plate'=>'34 DEMO 180','name'=>'Örnek şirket aracı','vehicle_kind'=>'car','body_style'=>'sedan','year'=>2023,'km'=>60500,'owner'=>'Örnek Kullanıcı'])['id'];
+ $second=saveTracking($db,'vehicle',['plate'=>'06 DEMO 180','name'=>'Örnek servis aracı','vehicle_kind'=>'van','year'=>2021,'km'=>128000,'owner'=>'Örnek Kullanıcı'])['id'];
  foreach([
  ['vehicle_id'=>$first,'type'=>'insurance','title'=>'Önceki trafik poliçesi','date'=>'2025-10-20','end_date'=>'2026-10-20','amount'=>'9000','estimated'=>true],
  ['vehicle_id'=>$first,'type'=>'insurance','title'=>'Yenilenen trafik poliçesi','date'=>'2026-10-20','end_date'=>'2027-10-20','amount'=>'12000','installments'=>[['date'=>'2026-10-20','amount'=>'6000'],['date'=>'2026-11-20','amount'=>'6000']]],
@@ -88,9 +91,15 @@ function seedTrackingDemo(PDO $db,array $cards,array $parties): void {
  ['vehicle_id'=>$second,'type'=>'tax','title'=>'2026 MTV ikinci taksit','date'=>'2026-07-01','due_date'=>'2026-10-16','amount'=>'3500'],
  ['vehicle_id'=>$second,'type'=>'inspection','title'=>'Periyodik muayene','date'=>'2025-11-01','end_date'=>'2026-11-01','amount'=>'2000','estimated'=>true]
  ] as $record)saveTracking($db,'vehicle_record',['reminder_days'=>30,'company'=>'Örnek kurum',...$record]);
+ foreach([
+ ['maintenance_kind'=>'oil_filter','title'=>'Yağ filtresi değişimi','date'=>'2026-04-13','km'=>52000,'next_km'=>62000,'next_date'=>'2027-04-13'],
+ ['maintenance_kind'=>'air_filter','title'=>'Hava filtresi değişimi','date'=>'2026-04-13','km'=>52000,'next_km'=>67000,'next_date'=>'2027-04-13'],
+ ['maintenance_kind'=>'summer_tyre','title'=>'Yazlık lastik takımı','date'=>'2026-04-01','km'=>50000,'next_date'=>'2026-11-01'],
+ ['maintenance_kind'=>'winter_tyre','title'=>'Kışlık lastik takımı','date'=>'2025-11-01','km'=>42000,'next_date'=>'2026-11-01']
+ ] as $record)saveTracking($db,'vehicle_record',['vehicle_id'=>$first,'type'=>'maintenance','amount'=>'0','estimated'=>true,'reminder_days'=>30,...$record]);
  // Comprehensive synthetic vehicle history. Actual payments are created once, then linked.
- $third=saveTracking($db,'vehicle',['plate'=>'35 DEMO 110','name'=>'Örnek aile aracı','year'=>2024,'km'=>45200,'owner'=>'Örnek Kullanıcı'])['id'];
- $fourth=saveTracking($db,'vehicle',['plate'=>'16 DEMO 110','name'=>'Örnek saha aracı','year'=>2020,'km'=>186500,'owner'=>'Örnek Kullanıcı'])['id'];
+ $third=saveTracking($db,'vehicle',['plate'=>'35 DEMO 110','name'=>'Örnek aile aracı','vehicle_kind'=>'car','body_style'=>'suv','year'=>2024,'km'=>45200,'owner'=>'Örnek Kullanıcı'])['id'];
+ $fourth=saveTracking($db,'vehicle',['plate'=>'16 DEMO 110','name'=>'Örnek saha aracı','vehicle_kind'=>'motorcycle','year'=>2020,'km'=>186500,'owner'=>'Örnek Kullanıcı'])['id'];
  $demoRecord=function(array $record,?string $payment=null,?int $cardId=null)use($db){
   $links=[];
   if($payment!==null){$request=sprintf('%08x-%04x-%04x-%04x-%012x',random_int(1,0xfffffff),random_int(0,65535),random_int(0,65535),random_int(0,65535),random_int(0,0xffffffffff));

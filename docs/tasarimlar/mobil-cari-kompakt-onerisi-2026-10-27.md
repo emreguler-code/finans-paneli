@@ -13,3 +13,5 @@
 - Hızlı işlem giriş çubuğu eklenmedi. Mobil alt navigasyon korunur; seçili sekme gerçek rotaya göre belirlenir, temsili aktif Özet yeni kural sayılmaz.
 
 Kaynak: kullanıcının paylaştığı mobil cari ekranları; mevcut `docs/TASARIM-ILKELERI.md`. Product Design ideate ile tek taslak, aynı çözümün iki ekranı yan yana üretildi.
+
+Güncel durum: kullanıcı taslağı onayladı; etiket/ekleyen/bakiye satırının yalnız seçili işlemde açılması düzeltmesiyle 1.11.0 uygulandı. Taslakta açık meta satırları nihai kapalı satır tasarımını tanımlamaz.

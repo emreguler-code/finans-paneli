@@ -152,7 +152,7 @@ function enhanceCardState(PDO $db,array $s): array {
   if($own)$list[count($list)-1]['remaining_cents']=(int)round($c['statement']*100);
   $c['statement_credit_cents']=$own?max(0,$latestRemaining-(int)round($c['statement']*100)):0;
   $c['statement_total_cents']=$own?$latestTotal:max(0,(int)round($c['statement']*100)-$postRepay);$c['paid_cents']=$own?$latestPaid:max(0,-$postRepay);$c['unbilled_cents']=$current;$c['future_cents']=$future;$c['available_cents']=(int)$c['limit_cents']-(int)round($c['debt']*100);$c['statements']=$list;$c['statement_difference_cents']=$latestDifference;
- }unset($c);$s['schemaVersion']=10;return $s;
+ }unset($c);$s['schemaVersion']=11;return $s;
 }
 
 function seedDemo(PDO $db,bool $comprehensive=true): array {
@@ -221,5 +221,7 @@ function seedDemo(PDO $db,bool $comprehensive=true): array {
   $add(['operation'=>'expense','cardId'=>$cards[2],'amount'=>'1234.57','installments'=>6,'description'=>'Demo kuruşlu altı taksit']);
  }
  if($comprehensive)seedTrackingDemo($db,$cards,$parties);
+ foreach($parties as $index=>$pid){$p=row($db,'parties',$pid);if($p['type']==='Tedarikçi')$profile=['visit_days'=>$index%2?[3]:[1,3,5]];elseif($p['type']==='Personel'){$q=$db->prepare("SELECT id FROM fin_events WHERE party_id=? AND operation='payment' AND description='Maaş avansı' AND cancelled=0");$q->execute([$pid]);$profile=['staff_month'=>'2026-10','meal_due_cents'=>300000,'salary_payments'=>array_map('intval',$q->fetchAll(PDO::FETCH_COLUMN)),'meal_payments'=>[],'leave_week'=>'2026-10-12','leave_used'=>1,'leave_total'=>2];}else continue;$db->prepare('UPDATE parties SET profile_json=? WHERE id=?')->execute([json_encode($profile,JSON_UNESCAPED_UNICODE),$pid]);}
+
  audit($db,'system','demo','create',null,['demo'=>true,'profile'=>$comprehensive?'comprehensive':'compact'],'Yönetici girişi korunarak sentetik deneme verileri oluşturuldu');return ['demoReady'=>true];
 }

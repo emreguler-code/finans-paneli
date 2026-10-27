@@ -24,8 +24,8 @@ def event(**b):
  code,r=post('event_save',**payload);assert code==200,r;return r['id']
 call('session')
 code,r=call('login',dict(username=os.environ['API_TEST_USERNAME'],password=os.environ['API_TEST_PASSWORD']));assert code==200,r
-code,r=call('update_apply',{});ok('Schema 10 update succeeds',code==200)
-ok('Schema 10 active',state()['schemaVersion']==10)
+code,r=call('update_apply',{});ok('Schema 11 update succeeds',code==200)
+ok('Schema 11 active',state()['schemaVersion']==11)
 code,r=post('demo_seed',profile='compact');assert code==200,r
 ok('Demo seed succeeds',r.get('demoReady'))
 ok('Administrator login survives demo reset',call('login',dict(username=os.environ['API_TEST_USERNAME'],password=os.environ['API_TEST_PASSWORD']))[0]==200)
@@ -183,5 +183,6 @@ ok('Card link can be cleared',save_card_link('')[0]==200 and entity('cards',test
 linked_after=state()
 ok('Card linkage never changes financial facts',linked_before['events']==linked_after['events'] and [a['balance_cents'] for a in linked_before['accounts']]==[a['balance_cents'] for a in linked_after['accounts']] and [c['debt'] for c in linked_before['cards']]==[c['debt'] for c in linked_after['cards']])
 exec(compile((Path(__file__).with_name('tracking-integration.py')).read_text(),'tracking-integration.py','exec'))
+exec(compile((Path(__file__).with_name('profile-integration.py')).read_text(),'profile-integration.py','exec'))
 Path(os.environ['QA_STATE_PATH']).write_text(json.dumps(state(),ensure_ascii=False))
 print(json.dumps({'passed':len(checks),'failed':0}))
