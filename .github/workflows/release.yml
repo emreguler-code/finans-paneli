@@ -3,6 +3,11 @@ on:
   push:
     tags: ['v*']
   workflow_dispatch:
+    inputs:
+      publish_hosting:
+        description: 'Add hosting-only ZIP to existing release after verifying identical application files'
+        type: boolean
+        default: false
 permissions:
   contents: read
 jobs:
@@ -69,6 +74,25 @@ jobs:
         with:
           name: hosting-package
           path: dist/releases/*
+      - name: Add hosting archive to existing release
+        if: github.event_name == 'workflow_dispatch' && inputs.publish_hosting
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          mkdir -p /tmp/finans-existing-release
+          gh release download "v$VERSION" --pattern "finans-paneli-$VERSION.zip" --dir /tmp/finans-existing-release
+          python3 - <<'PYCODE'
+          import json, zipfile
+          from pathlib import Path
+          version = json.loads(Path('package.json').read_text())['version']
+          with zipfile.ZipFile(f'/tmp/finans-existing-release/finans-paneli-{version}.zip') as full, zipfile.ZipFile(f'dist/releases/finans-paneli-{version}-hosting.zip') as hosting:
+              expected = {name.removeprefix('hosting/'): full.read(name) for name in full.namelist() if name.startswith('hosting/')}
+              expected['licenses/Inter-OFL.txt'] = full.read('licenses/Inter-OFL.txt')
+              assert set(hosting.namelist()) == set(expected), 'Hosting archive must match existing release'
+              assert all(hosting.read(name) == content for name, content in expected.items()), 'Application files changed; publish a new version instead'
+          PYCODE
+          gh release upload "v$VERSION" "dist/releases/finans-paneli-$VERSION-hosting.zip" "dist/releases/finans-paneli-$VERSION-hosting.zip.sha256"
       - name: Publish GitHub release
         id: publish
         if: startsWith(github.ref, 'refs/tags/')
