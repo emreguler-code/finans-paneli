@@ -244,3 +244,140 @@ Not aşaması devam ediyor. Uygulama kodu, sürüm, veritabanı veya paket deği
 # 1.11.0 — 27 Ekim onayları uygulandı
 
 Kullanıcının son toplu uygulama/yayın talimatıyla [1.11.0 kapsamındaki](SURUM-1.11.0.md) bütün maddeler uygulandı. Bu kararlar önceki çift cari hareket modülü, detayda Son 5 işlem tekrarı ve iki sütun araç özeti kararlarının yerini alır. Mobil görsel onayının son düzeltmesi: etiket/ekleyen/bakiye satırı yalnız seçili işlemde açılır. Uygulama şeması 11; yeni hosting ZIP’i doğrudan web köküne açılır.
+
+# 1.11.0 sonrası — yeni inceleme notları
+
+## Genel bakış: kaldırılamayan tarih filtresi görünümü
+
+27 Ekim 2026. Kullanıcının ekran görüntüsü üzerine kod incelendi; uygulama kodu değiştirilmedi.
+
+- Bulgu: `App.jsx` başlangıçta `overviewRange` değerini Bu Ay olarak atıyor. Aynı aralık hem nakit akışı grafiği/son hareketler dönemini hem üst arama filtre alanını besliyor. `ListTools.jsx` boş olmayan her tarih aralığını etkin filtre sayıyor; başlangıç dönemini kullanıcı filtresinden ayırmıyor.
+- Çipin X düğmesi boş aralık gönderiyor, ana sayfa bunu tekrar Bu Ay'a çeviriyor. Üstteki Temizle arama/hesap/işlemi sıfırlayıp aralığı yine Bu Ay'a döndürüyor. Bu yüzden zaten varsayılan aydayken çip ve 1 sayacı kaybolmuyor; temizleme çalışmıyor izlenimi oluşuyor.
+- Öneri: Bu Ay varsayılan görüntüleme dönemi kabul edilsin, etkin filtre sayacı/çipi oluşturmasın. Dönem nakit akışı başlığındaki tarih seçicide görünmeye devam etsin. Varsayılandan farklı aralık seçildiğinde kaldırılabilir tarih çipi/sayacı gösterilsin.
+- X veya genel Temizle varsayılan döneme dönsün ve tarih çipi/sayacı kalksın. Grafik ile son hareketler aynı dönemden beslenmeye devam etsin. Temizle arama, hesap ve işlem türü filtrelerini de sıfırlasın. Bu yalnız CSS ile çip gizleme şeklinde çözülmesin; filtre durumunun varsayılan değer algısı düzeltilsin.
+- Kabul kontrolü: ilk açılışta tarih filtresi sayacı yok; özel aralık çip oluşturur; X/Temizle ile Bu Ay'a dönüş ve çipin kalkması; grafik/son hareket tutarlılığı; diğer sayfaların isteğe bağlı tarih filtrelerinin bozulmaması.
+
+Bu bir bulgu ve düzeltme önerisidir; yeni toplu kodlama/yayın aşaması henüz başlatılmadı.
+
+## Genel bakış: nakit akışı panelindeki alt boşluk
+
+27 Ekim 2026. Kod incelemesinde `.dashboard-grid` eş satırdaki panelleri uzatırken `.chart` masaüstünde 177 px sabit yükseklikte kalıyor (mobilde 200 px). `ResponsiveContainer` bu sabit alanı dolduruyor; panelin artan yüksekliğini kullanmıyor. Grafik altındaki panel-foot da grafikle birlikte yukarıda kalıyor.
+
+- Öneri: nakit akışı panelinde grafik, başlık/toplamlar ile en altta duran panel alt bilgisi arasındaki kullanılabilir alana esnesin. Görsel/SVG'yi ölçekleyerek yazıları büyütmek yerine Recharts yeniden ölçülerek çizsin. Yazı boyutu, bar genişliği ve renkler sabit tasarım rollerini korusun.
+- Masaüstünde okunabilir alt/üst grafik yüksekliği sınırları olsun (uygulamada içerikle değerlendirilecek yaklaşık 240–360 px). Yan uyarı alanı çok uzarsa grafik sınırsız uzamasın; panel yüksekliği/hizalama ayrıca kontrollü ele alınsın. Mobilde yan sütun yüksekliğinden bağımsız kompakt grafik kullanılsın.
+- Veri, tarih kapsamı, sıfır tabanı ve tutarlı Y ekseni korunur; yüksekliğin değişmesi değerleri değiştirmez. Boş veri, tek yüksek işlem, farklı tarih aralıkları, tooltip ve mobil etiketler kontrol edilir.
+
+Bu bulgu/öneri kaydedildi; uygulama kodu değiştirilmedi.
+
+## Cari hesaplar ana listesi: bakiye özeti tam genişlikte
+
+27 Ekim 2026. Kullanıcı, mevcut ortak sayfa tasarım kuralına uyulmasını istedi: Toplam alacak / Toplam borç / Net cari bakiye özeti yalnız sol ana sütunda kalmayacak; ana içerik ve sağ sütunun toplam genişliğini kapsayacak.
+
+- Sayfa sırası: başlık ve ekle → tam genişlikte tek bölümlenmiş bakiye özeti → iki sütunlu içerik.
+- Cari listesi solda, Son 5 işlem sağda, özetin altında aynı üst hizadan başlayacak. Ortak 1,9:1 sütun oranı ve boşluk/çizgi/tipografi kuralları korunacak.
+- Uygulamada özet `party-main` içinde kalmamalı; iki sütunlu `party-workspace` önüne taşınmalı veya iki sütunu kapsayan ortak satıra alınmalı. Mobilde mevcut kompakt özet ve içerik sırası korunacak.
+- Kullanıcı tarafından istenen/onaylı yerleşim düzeltmesidir. Şimdilik yalnız notlara eklendi; uygulama kodu ve yayın değiştirilmedi.
+
+### Toplu onay — inceleme geri dönüşleri
+
+27 Ekim 2026. Kullanıcı, yukarıdaki üç incelemede verilen geri dönüş ve düzeltme önerilerinin tamamını onayladığını açıkça belirtti. Bu nedenle varsayılan Bu Ay döneminin etkin filtre sayılmaması ve X/Temizle davranışının düzeltilmesi; nakit akışı grafiğinin paneldeki boşluğa sınırlandırılmış ve duyarlı biçimde yayılması, alt bilginin panelin altında kalması; cari bakiye özetinin iki sütunu kapsaması birlikte **onaylı sonraki sürüm kapsamıdır**. Önceki maddelerdeki bulgu/öneri ifadeleri artık onay beklediği anlamına gelmez. Not alma aşaması devam eder; bu onay tek başına toplu kodlama/paketleme/yayın talimatı değildir.
+
+## Ana sayfa: kategorili genel arama ve sonuçlara gezinme
+
+27 Ekim 2026. Kullanıcı ana sayfa arama çubuğunun yalnız gösterilen veriyi daraltmasını değil, uygulama genelindeki kayıtlara ulaşan bir arama olmasını istedi. Örnek sorgu: emre.
+
+### Kullanıcının istediği kapsam
+
+- Arama alanına bağlı, filtre penceresine benzer bir öneri penceresi açılacak; kategorilere ayrılmış eşleşmeler gösterilecek. Arka plan bulanmayacak, sayfa aşağı itilmemeli; mevcut ortak açılır pencere dili korunmalı.
+- Cari Hesaplar: kısa ad ve ticari unvanda sorguyu içeren cari kayıtları.
+- İşlemler: açıklamasında sorguyu içeren hareketler; tarih, tür ve ayırt edici bağlam gösterilir.
+- Hesaplar / Kredi kartları: hesap/kart sahibinde sorguyu içeren kayıtlar. Kayıt adıyla arama da mevcut kabiliyet kaybolmadan korunmalı.
+- Araçlarım: ruhsat sahibinde sorguyu içeren araçlar; plaka/ad ile mevcut arama kabiliyeti korunmalı.
+- Bir öneriye tıklamak ilgili menüde ilgili kaydın detayını açacak; işlem önerisi ilgili kaydı görünür/seçili hale getirecek. Daha fazla sonuç için arama sayfasında detaylı inceleme desteklenecek.
+- Bu genel arama ana sayfadaki grafiğin tarih/hesap filtresiyle sınırlanmamalı. Kişi sahibinin eşleşmesi ile işlemi ekleyen kullanıcının eşleşmesi aynı anlam sayılmamalı. Diğer sayfalardaki bağlamsal arama korunmalı.
+
+### Önerilen davranış ayrıntıları
+
+- Önceki 3 karakter kuralı korunarak kısa bir beklemeden sonra sayfa yenilenmeden öneriler gelsin. Türkçe büyük/küçük harf eşleştirmesi kullanılsın; eski sorgunun geç gelen cevabı yeni sonucu değiştirmesin.
+- Her kategoride en fazla 3–5 önizleme, toplam sonuç sayısı ve kategoriye ait tümünü gör; ortak Tüm sonuçları gör erişimi bulunsun. Enter/büyüteç seçili öneri yoksa arama sonuçları sayfasını açsın; ok tuşlarıyla öneri seçilince Enter ilgili kaydı açsın. Esc/dışarı tıklama pencereyi kapatsın.
+- Filtre ve öneri pencereleri aynı anda üst üste açılmasın. Arama temizlenince öneriler kapansın; sıfır eşleşme, yüklenme ve hata durumları açık olsun.
+- Sonuç sayfasında sorgu, kategori ve uygun detay filtreleri korunur; ana sayfanın dönem filtresi kendiliğinden taşınmaz. Arşiv/iptal edilmiş kayıtların kapsamı görünür olmalı, aktif kayıtlarla karıştırılmamalı. Yetki sınırları korunmalı.
+- Kayıt açılınca eşleşmeyi gizleyecek eski menü filtreleri temizlenmeli/uyarlanmalı; geri dönüş sonuç sorgusu ve konumunu korumalı. Mobilde pencere ekrana sığmalı ve klavyeyle erişilebilir olmalı.
+
+Kullanıcının genel arama talebi kaydedildi. Davranış ayrıntıları öneridir; şimdilik uygulama kodu, sürüm ve yayın değiştirilmedi.
+
+### Genel arama — kullanıcı onayı
+
+27 Ekim 2026. Kullanıcı genel arama önerisini ve son yanıttaki davranışları onayladı: 3 karakter sonrası sayfa yenilenmeden kategorili öneriler; alana bağlı, blur ve sayfa kayması olmayan pencere; kategori başına kısa sonuç listesi ve Tümünü gör; öneriden kayıt/hareket detayına geçiş; seçili öneri yokken Enter/büyüteç ile filtrelenebilir Arama sonuçları sayfası. Ana sayfa tarih/hesap kapsamından bağımsız arama ve diğer menülerde bağlamsal aramanın korunması onaylıdır. Yer tutucu: Cari, işlem, hesap, kart veya araç ara. Sahip bilgisi ile ekleyen kullanıcı ayrı anlamlarda ele alınır. Bu bölüm artık öneri/onay bekleme durumunda değildir; not alma aşamasındaki onaylı sonraki sürüm kapsamıdır. Toplu kodlama/paketleme/yayın talimatı henüz verilmedi.
+
+## Aktif satır: cari/hesap hareketlerinde kesilen sol vurgu çizgisi
+
+27 Ekim 2026. Kullanıcının üç ekranı karşılaştırıldı: Araçlarım'da sol teal çizgi açık kaydın ana bilgi, ayrıntı ve eylem alanını kesintisiz kapsıyor. Cari ve hesap hareketlerinde ana bilgi satırında çizgi yok, yalnız alt eylem satırında kısa çizgi var. Bu, mevcut kesintisiz tek aktif yüzey kuralına aykırı bir regresyondur.
+
+- Koddan doğrulanan neden: Ledger ana satırının ilk hücresi mobil görünüm için eklenmiş `.mobile-ledger-cell`; masaüstünde `display:none`. Eski `.expanded td:first-child` seçicisi görünmeyen bu hücreyi işaretliyor. Alt eylem satırının kendi çizgisi görünür kaldığından vurgu yalnız orada çıkıyor. Araç listesi farklı bir kapsayıcıyı vurguladığı için aynı hatayı taşımıyor.
+- Düzeltme: görsel seçili alanın en üstünden en altına uzanan aynı hizada tek sol çizgi; ana satır/ayrıntı/eylemler aynı arka plan; aralarında ayraç yok. DOM'daki ilk hücre sırasına bağımlı olmayan görünür satır/hücre yaklaşımı kullanılmalı.
+- Ortak Ledger kullanan cari, banka/kasa, kredi kartı ve diğer hareket listeleri birlikte kontrol edilmeli. Masaüstünde ana satır çizgisinin ve alt eylem çizgisinin birleşimi, mobilde bilgi/eylem alanının kesintisizliği gerçek görünür hücre geometrisiyle doğrulanmalı; yalnız gizli hücrenin CSS değerini kontrol etmek yeterli değil.
+- Önceden onaylı tasarım ilkesinin uygulanma hatası olarak düzeltme kapsamına eklendi. Şimdilik uygulama kodu/yayın değiştirilmedi.
+
+## Menü gezinmesi, seçili kayıt belleği ve yenileme davranışı
+
+27 Ekim 2026. Kullanıcı, cari/araç detayına girip başka menüye geçtikten sonra sol menüden geri dönünce ana liste yerine eski detayın açıldığını; kredi kartı Kampanyalar alt menüsünün başka ana menüye geçince açık kaldığını; F5 ile Genel bakış'a dönüldüğünü bildirdi.
+
+### Koddan doğrulanan nedenler
+
+- Bu bulgular HTTP/tarayıcı cache'i değildir. `SearchStateProvider` içindeki oturumluk Map ile `useScopedState` cari/araç selected kimliklerini sayfa bileşeni yeniden açılsa da saklıyor; gezinme hedefi ile liste tercihleri aynı belleğe karışıyor. Hesap/kart akışı da aynı ilkeye göre taranmalı.
+- `navigateMenu` cardsMenu değerini yalnız Kredi kartları tıklamasında değiştiriyor; başka ana menüye geçişte kapatmıyor.
+- `page` başlangıcı sabit Genel bakış. Mevcut rotayı URL'den okuma ve geçmiş yönetimi bulunmadığı için tam yenilemede ana sayfa açılıyor. Finansal API zaten Cache-Control: no-store, private kullanıyor; cache temizleme sorunu çözmez.
+
+### Önerilen ortak davranış
+
+- Sol menüde ana bölüm tıklaması her zaman o bölümün ana listesine gider; önceki detay/seçili satır/sekme kendiliğinden açılmaz. Ana menüden taze girişte varsayılan liste kapsamı; kayıt içinden Listeye dön veya tarayıcı Geri kullanıldığında önceki liste araması/sıralaması/konumu geri gelebilir. Bu iki giriş niyeti ayrı ele alınmalı.
+- Detay seçimi rota parçası olmalı. Ana bölüm, kayıt kimliği ve gereken sekme URL ile temsil edilmeli; yenileme mevcut sayfada kalmalı, Geri/İleri gezinmesi anlamlı çalışmalı. Paylaşılan PHP hosting için rewrite gerektirmeyen hash rota uygun seçenek. Açılışta kayıt erişimi kontrol edilmeli; artık bulunmayan/izin verilmeyen kayıt anlaşılır durum ve listeye dönüş sunmalı.
+- Alt menüler yalnız ilgili ana bölüm ailesi aktifken açık kalır: Kredi kartları/Kampanyalar içinde görünür; Hesaplar, Cariler veya Araçlarım'a geçince kapanır. Bildirim/genel arama ile alt menüye doğrudan gidildiğinde doğru üst grup açılır. Masaüstü/mobil aynı davranışı paylaşmalı.
+- Rota/gezinme durumu, geçici arayüz tercihleri ve sunucu verisi ayrı sorumluluklardır. Bakiye/işlem verisi localStorage ile dondurulmaz; giriş/yenileme ve başarılı kayıt sonrası API'den doğrulanır. Oturum belleği çıkış/kullanıcı değişiminde temizlenir; kaydedilmemiş form kendiliğinden yeniden açılmaz.
+- Kabul senaryoları: cari detay → araç detay → sol menü Cari hesaplar ile ana liste; araçlar/kartlar/hesaplar için aynı; farklı ana menüde alt menünün kapanması; F5 ile mevcut detayın korunması; Geri/İleri ve doğrudan arama/bildirim hedefleri; yetkisiz/kaldırılmış kayıt; masaüstü/mobil.
+
+Bulgu ve yaklaşım notlara eklendi. Kullanıcı henüz bu yeni öneri için ayrı uygulama talimatı vermedi; kod/yayın değiştirilmedi.
+
+### Gezinme yaklaşımı — kullanıcı onayı
+
+27 Ekim 2026. Kullanıcı önerilen gezinme davranışlarını onayladı: ana menü her zaman bölüm ana listesine gider; detaydan Listeye dön önceki liste tercih/konumunu korur; başka ana bölüme geçince önceki alt menü kapanır; URL tabanlı sayfa/kayıt rotası sayesinde yenileme mevcut sayfayı korur ve Geri/İleri anlamlı çalışır. Rota, geçici arayüz belleği ve sunucudan doğrulanan finansal veriler ayrı tutulur; paylaşılan hosting için hash rota yaklaşımı uygundur. Önceki bölümdeki yaklaşım artık onay bekleyen öneri değildir. Not alma aşaması sürüyor; toplu uygulama/yayın henüz başlatılmadı.
+
+## Mobil kredi kartı detayı: özetin yüksekliği ve bilgi önceliği
+
+27 Ekim 2026. Kullanıcı banka uygulamasının mobil kart detayını ve mevcut Axess detayımızı yan yana referans olarak paylaştı. Henüz ayrı bir yeni tasarım onayı verilmedi; aşağıdakiler inceleme ve öneri notudur, uygulama kodu değiştirilmedi.
+
+- Mevcut özet her metriği ayrı tam genişlikli bloğa yerleştiriyor; bilgi/düzenleme düğmeleri üstte ayrı yükseklik tüketiyor. İlk ekranda özet dahi bitmiyor, hareket sekmeleri ve işlemler aşağıda kalıyor.
+- Öneri: mevcut yazı tipi/teal/boşluk sistemini koruyarak bir ana tutar ve açık etiketi; ardından etiketli limit göstergesi; ekstre kalan borcu ve dönem içi tutarını mobilde iki sütunda kompakt gösterme. Ana tutarın kullanılabilir limit mi dönem içi harcama mı olacağı kullanıcıyla netleştirilecek; referansa bakılarak finansal anlam değiştirilmeyecek.
+- Son ödeme tarihi ve gecikme durumu açık ve öncelikli kalmalı; gecikme nötr alt metin yerine erişilebilir renk/ikon/metin ile belirtilmeli. Mevcut ekstre ödeme eylemine kısa erişim düşünülebilir; otomatik ödeme/ikinci finansal kayıt üretilmez.
+- Bağlı hesap, kart sahibi, önceki/sonraki hesap kesim ve ödeme ayrıntıları aynı özet içinde Daha fazla ile açılabilir. Bilgiler silinmez; bilgi/düzenleme eylemleri detay özetinin içinde kompakt gruplanır.
+- Hedef hareket sekmelerine ve ilk işleme daha erken ulaşmak; 320–390px genişlikte uzun ad/tutar ve yazı büyütme ile taşma olmaması. Sabit yükseklik veya okunamayacak küçük yazıyla sıkıştırma yapılmaz.
+- Referanstaki kırmızı tema, internet limiti ve Chip-Para değerleri kendiliğinden aktarılmayacak. Uygulamada kaynağı bulunmayan puan/limit bilgisi varsayılmayacak; puanlar TL bakiyesi sayılmayacak.
+
+### Mobil kredi kartı özeti — kullanıcı onayı
+
+28 Ekim 2026. Kullanıcı son önerilen düzeni onayladı. Ana tutar **Kullanılabilir limit** olarak korunur; toplam limit ve kullanım göstergesi hemen altında yer alır. Ekstreden kalan ve dönem içi harcama mobilde iki sütunlu kompakt özette gösterilir; gelecek taksitler ilgili tutarın altında açıklama olarak kalır. Son ödeme tarihi, kalan ekstre borcu, gecikme uyarısı ve mevcut ödeme işlemine erişim belirgin bir ödeme satırında toplanır. Bağlı hesap, kart sahibi ve önceki/sonraki hesap kesim tarihleri aynı kutudaki Daha fazla alanında açılır. Bilgi/düzenleme ikonları kutunun içinde kalır fakat kendilerine ayrı boş satır ayrılmaz. Hareket sekmeleri ve işlem listesine daha erken erişim hedeflenir; mevcut renk, tipografi, oran ve finansal anlamlar korunur. Önceki bölümdeki ana tutar kararsızlığı ve onay bekleme durumu bu onayla kapanmıştır. Not alma aşaması devam eder; toplu kodlama/paketleme/yayın henüz başlatılmadı.
+
+## Kredi kartı ekleme formu — sadeleştirme önerisi
+
+28 Ekim 2026. Kullanıcı uzun Kredi kartı ekle penceresini karmaşık buldu ve alternatif istedi. Değerlendirme paylaşılan ekran görüntüsüne dayanır; görünmeyen alt alanlar ve form etkileşimleri bu incelemede test edilmedi. Aşağıdakiler öneridir, henüz onaylı uygulama kapsamı değildir.
+
+- Sorun: temel kimlik, isteğe bağlı metadata ve başlangıç borcu alanları aynı ağırlıkta kesintisiz sıralanıyor; ilk kayıt için gerekli bilgi ile sonradan doldurulabilecek bilgi ayrışmıyor. Kaydet/Vazgeç sabit alt eylemlerinin korunması uygundur.
+- Öneri: tek formda açık Temel bilgiler bölümü, kapalı Kart ayrıntıları ve Mevcut borçla başlat bölümleri. Çok adımlı sihirbaz yerine kısa ilk kayıt ve gerektiğinde genişletme tercih edilir.
+- Temel bilgiler: banka, bankaya göre daraltılmış program, kart adı, toplam limit ve takibi çalıştıran hesap kesim/son ödeme bilgileri. Program kendiliğinden yanlış seçilmez; banka değişiminde uyumsuz seçim açıkça ele alınır. Banka/programdan düzenlenebilir kart adı önerilebilir, kullanıcının özel adı ezilmez.
+- Kart ayrıntıları: ödeme ağı, kart sahibi, son dört hane, bağlı hesap. Bağlı hesap açıklaması ilgili alana yakın kısa bilgi olarak kalır; bağlantı otomatik ödeme değildir. Tam kart numarası/CVV istenmez.
+- Mevcut borçla başlat isteğe bağlı açılır; yeni/borçsuz kart için başlangıç değerleri sıfırdır. Başlangıç toplam borcu ve başlangıç ekstre borcu mevcut finansal anlamlarıyla korunur; ekstre borcunun toplam borcun içindeki pay olduğu açıkça anlatılır, iki bağımsız toplanacak tutar izlenimi verilmez. Mevcut hesap modeli doğrulanmadan hesaplama değiştirilmez.
+- Masaüstünde ilişkili kısa alanlar ikili, mobilde okunabilir tek sütun; büyük sayısal girişlerin ölçüsü ortak form diliyle tutarlı olur. Bölümler klavyeyle açılabilir, zorunlu etiketleri korunur; kapalı bölümde hata varsa bölüm açılıp ilgili alana odaklanılır. Eklemede sıfır varsayımı düzenlemede kayıtlı borcu sıfırlamaz.
+- Uygulama kodu, sürüm ve yayın değiştirilmedi; kullanıcıya sadeleştirme önerisi sunulacak.
+
+## Ortak veri giriş sistemi — detaylı inceleme talebi
+
+28 Ekim 2026. Kullanıcı kart, cari ve işlem ekleme pencerelerinin birbirinden bağımsız görünmesini ele alıp önce vaka çalışması ve öneri istedi. İnceleme [Veri giriş sistemi vaka çalışması](VERI-GIRISI-VAKA-CALISMASI-2026-10-28.md) belgesinde: izole demo üzerinde 12 masaüstü/mobil ekran durumu ve Esc ile taslak kaybı gözlemi; kaynak kod karşılaştırması; ortak form sözleşmesi; cari/kart/işlem için bölüm sırası; kısmi ödeme ve etki özeti; hata/taslak/mobil kuralları; tek form-sihirbaz-tam sayfa alternatifleri ve kabul ölçütleri. Kanıtlar `.qa/forms-case-2026-10-28/` altında yereldir.
+
+Önerilen yön bölümlü tek form ve gerektiğinde açılan ayrıntılardır. Yeni öneriler (değişmiş taslağı kapatmadan uyarı, ödeme etki özeti, tam/kısmi ödeme seçimi, ortak hata gösterimi vb.) henüz kullanıcı tarafından onaylanmadı. Önceden onaylı mobil kart özeti veya diğer sürüm kapsamları bu incelemeyle iptal edilmedi. Uygulama kodu/şema/sürüm değiştirilmedi, paket/yayın yapılmadı.
+
+## 1.12.0 — toplu uygulama ve yayın onayı
+
+28 Ekim 2026. Kullanıcı bölümlü tek form yaklaşımını ve bekleyen diğer onaylı değişiklikleri tasarım ilkeleriyle birlikte uygulayıp yeni sürümü GitHub'da yayımlamamızı istedi. 1.11.0 sonrası dönem/filtre temizleme, nakit akışı grafik yüksekliği, tam genişlik cari özeti, kategorili genel arama, aktif satır çizgisi, URL tabanlı gezinme/yenileme ve alt menü davranışları, kompakt mobil kart özeti ile ortak veri giriş formu sözleşmesi birlikte 1.12.0 kapsamındadır. Önceki bölümlerdeki not alma/onay bekleme ifadeleri bu kapsam için tarihsel kayıttır.
+
+Ortak formda bölümler, Türkçe hata gösterimi, değişmiş taslağı kapatmadan uyarı, tam/kısmi ödeme ve kısa etki açıklaması uygulanır. Yeni kartta henüz ekstre oluşmadı desteği ayrı veri modeli kararıdır; mevcut zorunlu tarih kuralları korunur. Sürekli taslak saklama, Kaydet ve yeni ekle veya banka bağlantısı bu sürüme eklenmez. Şema 11 ve mevcut finansal hesaplama modeli korunur; üretim verisi/demosu sıfırlanmaz.

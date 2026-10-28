@@ -138,3 +138,15 @@ Finans Paneli'nin kendi tasarım dili korunur; başka projelerin görsel tercihl
 Mobil hareketlerde tür/tarih/tutar/açıklama görünür; etiket/ekleyen/işlem sonrası bakiye ile eylemler yalnız seçili satırda açılır, kesintisiz aynı yüzeydir. Masaüstü sütun sırası değişmez. Cari özetinde alacak/borç/net tek yüzey; liste sağında tek Son 5 işlem, detay sağında türüne bağlı Durum ve bilgiler bulunur. Ziyaret günleri plan bilgisidir. Mobil detay özeti kompakt bakiye gösterir; ek bilgiler kendi bilgi düğmesinden açılır.
 
 Araç ana listesi ve detay kategorileri tek sütun yatay satırlardır; Özet/İşlemler korunur. Bilgi/düzenleme detayda kalır. Bakım göstergesi yalnız tanımlı zaman/km aralığını, poliçe göstergesi süreyi anlatır; ödeme ayrı alandır. Eksik veriye oran atanmaz. Kayıt adlarının saklanan değeri değiştirilmeden tekrar eden standart banka/program adları gösterimde sadeleştirilir. Son işlem önizlemesi aynı taksitli alışverişi bir kez gösterir; özgün dönemler ayrıntıda erişilebilir kalır.
+
+## 28 Ekim 2026 — 1.12.0 ortak veri girişi ve gezinme
+
+- Veri girişi tek formda bölümlenir: başlık/bağlam → temel bilgiler → işleme bağlı bilgiler → isteğe bağlı ayrıntılar → gerektiğinde finansal etki açıklaması → sabit Vazgeç/kaydet eylemleri. Gerçek zorunlu alanlar sırf kısalık için gizlenmez; banka/kart metadata bağlantıları finansal işlem yaratmaz.
+- Cari iletişim/adres tek bölüm, başlangıç bakiyesi ve türe özel bilgiler gerektiğinde açılır. Kartta kimlik/limit ve ekstre takvimi açık; başlangıç borcu ve kart ayrıntıları isteğe bağlı bölümdedir. Ekstre borcu toplam borcun içindedir.
+- Yeni işlemde tutar/tarih önceliklidir; açık hesap/tam/kısmi ödeme mevcut hesap modeliyle işlenir. İşlem etkisi metinle açıklanır; renk tek anlam taşıyıcısı olmaz.
+- Türkçe alan hatası + bağlantılı kısa hata özeti, kapalı hatalı bölümün açılması ve ilk hatalı alana odak uygulanır. Kaydet yalnız kayıt sürerken kilitlenir; hata durumunda girdiler korunur.
+- Önceki Esc/dışarı tıklama taslağı koşulsuz iptal eder kuralı, değiştirilmiş veri giriş formlarında kaldırılmıştır: boş form kapanır; değişmiş formda Düzenlemeye dön / Değişikliklerden vazgeç seçimi sunulur. Takvim Esc önce yalnız takvimi kapatır. Taslaklar kalıcı localStorage'a yazılmaz.
+- Ana menü temiz ana listeye gider; detaydan Listeye dön ve tarayıcı Geri/İleri önceki liste tercih/konumunu korur. Hash rota yenilemede sayfa/kaydı korur. Alt menü yalnız kendi bölüm ailesinde görünür. Çıkışta oturum belleği ve rota temizlenir.
+- Genel bakış araması 3 karakter/300 ms sonrası cari/işlem/hesap/kart/araç önerilerini alana bağlı pencerede gösterir; sonuçlar dönem filtresinden bağımsızdır. Diğer menüler bağlamsal aramayı korur.
+- Varsayılan Bu Ay görüntüleme dönemi etkin filtre sayılmaz; özel dönem temizlenince Bu Ay'a dönülür ve rozet/çip kalkar. Cari liste özeti ana/sağ sütunun tamamını kapsar.
+- Mobil kart özeti ana kullanılabilir limit + limit göstergesi, iki metrik, belirgin son ödeme satırı ve kapalı Daha fazla alanını kullanır. Bilgi/düzenleme aynı özet içinde ayrı boş satır açmadan durur; masaüstü ayrıntıları korunur.

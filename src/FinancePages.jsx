@@ -1,3 +1,4 @@
+import {useRecordState,useNavigation} from './Navigation';
 import {PartyContext} from './PartyContext';
 import {RecentActivity} from './ActivityPanels';
 import {useScopedState} from './SearchState';
@@ -32,10 +33,12 @@ export function FinancePages({
   initialAccount = 'all',
   initialParty,
   initialDate,
-  initialDue = 'all'
+  initialDue = 'all',
+  initialEventId
 }) {
-  const [selected, setSelected] = useScopedState(page+':selected',null),
-    [query, setQuery] = useScopedState(page+':query',''),
+  const nav=useNavigation();
+  const [selected,setSelected]=useRecordState(page);
+  const [query, setQuery] = useScopedState(page+':query',''),
     [type, setType] = useScopedState(page+':type','Tümü'),
     [parties, setParties] = useState(data.parties),
     [loading, setLoading] = useState(false),
@@ -50,7 +53,7 @@ export function FinancePages({
     [to, setTo] = useScopedState(page+':to',page === 'Raporlar' ? presetRange('Bu Ay', data.today).to : ''),
     [dueFilter, setDueFilter] = useScopedState(page+':dueFilter',initialDue),
     [balance, setBalance] = useScopedState(page+':balance','Tümü'),
-    [sort, setSort] = useScopedState(page+':sort',page === 'Cari hesaplar' ? 'name-asc' : 'date-desc');
+    [sort, setSort] = useScopedState(page+':sort',page === 'Cari hesaplar' ? selected?'date-asc':'name-asc' : 'date-desc');
   const [tag,setTag]=useScopedState(page+':tag','all'),[filterParty,setFilterParty]=useScopedState(page+':filterParty','all'),[minAmount,setMinAmount]=useScopedState(page+':minAmount',''),[maxAmount,setMaxAmount]=useScopedState(page+':maxAmount','');
   const [partyInfo, setPartyInfo] = useState(false);
   const [selectedDay, setSelectedDay] = useScopedState(page+':selectedDay',null),
@@ -105,13 +108,7 @@ export function FinancePages({
     setSelectedDay(null);
     setSort(cari && !party ? 'name-asc' : party ? 'date-asc' : 'date-desc');
   }
-  function select(id) {
-    setPartyInfo(false);
-    setSelected(id);
-    reset();
-    setSort(id && cari ? 'date-asc' : 'date-desc');
-    setFilters(false);
-  }
+  function select(id) {setSelected(id)}
   function createEvent(initial = {}) {
     open({
       entity: 'event',
@@ -156,23 +153,24 @@ export function FinancePages({
         setTo(r.to);
         setSelectedDay(null);
       }} /></label>{party && <><label>Vade<select value={duePresence} onChange={e => setDuePresence(e.target.value)}>{[['all', 'Tümü'], ['dated', 'Vadesi belirtilmiş'], ['undated', 'Vadesiz']].map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></label><label>Kapama durumu<select value={dueClosure} onChange={e => setDueClosure(e.target.value)}>{[['all', 'Tümü'], ['open', 'Açık'], ['partial', 'Kısmen kapanmış'], ['closed', 'Kapanmış']].map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></label><label>Vade durumu<select value={dueFilter} onChange={e => setDueFilter(e.target.value)}>{[['all', 'Tümü'], ['soon', 'Vadesi yaklaşan (7 gün)'], ['today', 'Vadesi bugün'], ['late', 'Gecikmiş']].map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></label></>}<label className="check-label"><input type="checkbox" checked={cancelled} data-filter-default={true} onChange={e => setCancelled(e.target.checked)} />İptal edilenleri göster</label></ListTools>;
-  const table = <Ledger title={party?'Cari hareketleri':undefined} events={events.filter(e => !e.scheduled)} data={data} open={open} toolbar={toolbar} amount={amount} accountLabel={accountLabel} party={Boolean(party)} global={!party} />;
+  const table = <Ledger title={party?'Cari hareketleri':undefined} events={events.filter(e => !e.scheduled||String(e.id)===String(initialEventId||nav.route.event))} focusEvent={(initialEventId||nav.route.event)?{id:Number(initialEventId||nav.route.event)}:null} data={data} open={open} toolbar={toolbar} amount={amount} accountLabel={accountLabel} party={Boolean(party)} global={!party} />;
   const latest = new Map();
   for (const e of data.events) if (e.party_id) latest.set(e.party_id, Math.max(latest.get(e.party_id) || 0, e.id));
   let partyRows = parties.filter(p => `${p.name} ${p.title||''}`.toLocaleLowerCase('tr').includes(query.toLocaleLowerCase('tr')) && (archived || p.active) && (balance === 'Tümü' || balance === 'Alacak' && p.balance_cents > 0 || balance === 'Borç' && p.balance_cents < 0 || balance === 'Sıfır' && p.balance_cents === 0));
   partyRows.sort((a, b) => sort === 'balance-desc' ? b.balance_cents - a.balance_cents : sort === 'balance-asc' ? a.balance_cents - b.balance_cents : sort === 'recent' ? (latest.get(b.id) || 0) - (latest.get(a.id) || 0) : (sort === 'name-desc' ? -1 : 1) * a.name.localeCompare(b.name, 'tr'));
-  const content=<>
- {cari&&!party&&<SummaryBar label="Cari durum" className="party-list-summary" items={[
+  const listSummary=<> {cari&&!party&&<SummaryBar label="Cari durum" className="party-list-summary" items={[
  {label:'Toplam alacak',value:fmt(parties.reduce((sum,p)=>sum+Math.max(0,p.balance_cents),0))+' TL',tone:'positive'},
  {label:'Toplam borç',value:fmt(parties.reduce((sum,p)=>sum+Math.max(0,-p.balance_cents),0))+' TL',tone:'danger-text'},
  {label:'Net cari bakiye',value:fmt(summary)+' TL',tone:tone(summary)}
  ]}/>}
+</>;
+  const content=<>
  {plan ? <PaymentPlan data={data} open={open} exportCSV={exportCSV} initialDue={initialDue} initialParty={initialParty} initialDate={initialDate} /> : cari && !party ? <section className="panel cari-list"><ListTools {...controls} resultCount={partyRows.length} placeholder="Cari adı veya unvan ara" count={[type !== 'Tümü', balance !== 'Tümü', archived].filter(Boolean).length} csv={() => exportCSV('cari-hesaplar', ['Cari', 'Unvan', 'Tür', 'Bakiye TL'], partyRows.map(p => [p.name, p.title, p.type, p.balance_cents / 100]))} sortOptions={[['name-asc', 'Ad: A–Z'], ['name-desc', 'Ad: Z–A'], ['balance-desc', 'Bakiye: yüksekten düşüğe'], ['balance-asc', 'Bakiye: düşükten yükseğe'], ['recent', 'Son hareket']]}><label>Tür<select value={type} onChange={e => setType(e.target.value)}><option>Tümü</option>{TYPES.map(t => <option key={t}>{t}</option>)}</select></label><label>Bakiye<select value={balance} onChange={e => setBalance(e.target.value)}>{['Tümü', 'Alacak', 'Borç', 'Sıfır'].map(v => <option key={v}>{v}</option>)}</select></label><label className="check-label"><input type="checkbox" checked={archived} onChange={e => setArchived(e.target.checked)} />Arşiv dahil</label></ListTools>{loading && <p className="cari-loading" role="status">Aranıyor…</p>}<div className="party-column-head"><span>Cari</span><span>Tür</span><span>Net bakiye</span><span /></div><div className="party-rows">{partyRows.map(p => <button className="party-row" key={p.id} onClick={() => select(p.id)}><span className="cari-avatar">{p.type === 'Personel' ? <UserRound size={20} /> : <Users size={20} />}</span><span className="party-name"><strong>{p.name}</strong><small className="mobile-party-type">{p.type}</small>{p.title&&p.title!==p.name&&<small>{p.title}</small>}</span><span className="cari-type party-type" data-type={p.type}>{p.type}{!p.active ? ' · Arşiv' : ''}</span><span className={'cari-number ' + tone(p.balance_cents)}>{fmt(Math.abs(p.balance_cents))} TL{p.balance_cents !== 0 && <small>{p.balance_cents > 0 ? 'Alacak' : 'Borç'}</small>}</span><ChevronRight size={16} /></button>)}</div>{!partyRows.length && <p className="empty">Cari bulunamadı.</p>}<div className="cari-table-footer"><span>{partyRows.length} cari</span></div></section> : isUsers ? <UsersPage data={data} open={open} /> : <><>{reports && <Reports events={reportEvents} data={data} selectedDay={selectedDay} onClearDay={() => setSelectedDay(null)} onDay={(date, group) => setSelectedDay({
           from: date,
           to: group === 'Haftalık' ? dateAdd(date, 6) : date,
           label: day(date) + (group === 'Haftalık' ? ' haftası' : '')
         })} />}{table}</></>}
  </>;
- return <div className="cari-page finance-page">{!plan&&header}{error&&<p className="cari-error" role="alert">{error}</p>}{cari?<div className="party-workspace"><div className="party-main">{content}</div><aside className="context-aside">{party?<PartyContext {...{party,data,open}}/>:<RecentActivity data={data} source="parties" title="Son 5 işlem" open={open}/>}</aside></div>:content}
+ return <div className="cari-page finance-page">{!plan&&header}{error&&<p className="cari-error" role="alert">{error}</p>}{listSummary}{cari&&selected&&!party&&<p className="empty" role="status">Bu cari bulunamadı veya erişilemiyor. <button className="text-button" onClick={()=>select(null)}>Cari hesaplara dön</button></p>}{cari?<div className="party-workspace"><div className="party-main">{content}</div><aside className="context-aside">{party?<PartyContext {...{party,data,open}}/>:<RecentActivity data={data} source="parties" title="Son 5 işlem" open={open}/>}</aside></div>:content}
  {!isUsers&&<footer><span>{data.demo ? 'Örnek veriler' : 'Kalıcı kayıtlar'} · Banka bağlantısı yok</span><span>Tutarlar Türk lirası (TL)</span></footer>}</div>;
 }

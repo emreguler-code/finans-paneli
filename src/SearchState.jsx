@@ -8,3 +8,5 @@ export function useScopedState(key,initial){
  const update=next=>setValue(previous=>{const value=typeof next==='function'?next(previous):next;store?.set(key,value);return value});
  return [value,update];
 }
+
+export const useSearchStore=()=>useContext(SearchState);

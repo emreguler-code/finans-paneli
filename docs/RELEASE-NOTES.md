@@ -1,18 +1,17 @@
-# Finans Paneli 1.11.0
+# Finans Paneli 1.12.0
 
-Mobil cari listesi ve hareketler onaylı kompakt tasarıma geçti. Kapalı işlemde tür/tarih/tutar/açıklama; seçildiğinde etiket, ekleyen, işlem sonrası bakiye ve eylemler görünür. Masaüstü sütun sırası ve finansal etkiler korunur.
+Cari, kredi kartı ve işlem ekleme pencereleri ortak **bölümlü tek form** düzenine geçti. Temel bilgiler ve işleme bağlı alanlar açık; ayrıntılar gerektiğinde açılır. Türkçe hata gösterimi, taslağı yanlışlıkla kapatmadan koruma, tam/kısmi ödeme ve işlem etkisi açıklaması eklendi.
 
-- Cari listesinde toplam alacak/borç/net tek özet yüzeyinde, tekrarlanan unvanlar kaldırılmış; sağda tek Son 5 işlem. Cari detayında son işlemler yerine türe bağlı Durum ve bilgiler.
-- Personel: aktif ayın maaş hak edişi, açıkça seçilen maaş/avans ve yemek ödemeleri, tanımlı yemek tutarı ve haftalık izin kullanımı/hakkı. Aylık ödemeler ve pazartesi başlayan izin haftası düzenleme formunda seçilir; avans kendiliğinden maaşa sayılmaz. Eski dönem ve iptal edilmiş ödemeler güncel özete katılmaz. Bilgi eksikse tanımlanmadı gösterilir; yıllık izin takibi değildir.
-- Tedarikçi: opsiyonel çoklu ziyaret günleri ve sonraki planlı ziyaret (bugün dahil), POS programları, ilişkili aktif kampanyalar. Ziyaret gerçekleşme kaydı veya gelmedi uyarısı yoktur. Kampanya geneli beklenen kazanç ile bu tedarikçiye bağlı doğrulanmış kazanç ayrıdır; puan TL bakiyesi değildir.
-- Müşteri: son 6 tamamlanmış ayın aylık brüt satış ortalaması (iadeler hariç), vadesi gelen satışlarda vadeye kadar tahsil edilmiş tutar oranı ve açık vadeli tahsilatlar. Eksik/vadesiz veri başarı yüzdesine zorlanmaz.
-- Hesap/kart listeleri: tekrar eden banka/program metinleri sadeleştirildi; özel kayıt adları korunur. Taksitli alışveriş Son işlemler'de tek toplamla görünür; dokununca özgün taksitler/dönemleri açılır. Gelecek taksit ayrı yeni alışveriş gibi gösterilmez. Kart borcunu artıran harcama kırmızı, ödeme/iade yeşil. Limit bilgileri ve ekstre uyarıları daha açık; tüm bildirim sayısı görünür.
-- Araç ana listesi ve Özet tek sütunda yatay satırlar. Otomobil/motosiklet/kamyonet ve otomobil gövde tipi kaydedilebilir. Yağ, yağ filtresi, hava filtresi, yazlık/kışlık lastik ayrı bakım kalemleridir. Tanımlı tarih/km aralıkları ve poliçe süresi göstergeleri; önce dolan bakım sınırı esas alınır. Bu göstergeler gerçek aşınma veya otomatik lastik tavsiyesi değildir; eksik aralıkta yüzde üretilmez. Geçerlilik ve ödeme ayrı kalır.
+- Ana sayfada kategorili genel arama: cari, işlem açıklaması, hesap/kart sahibi ve araç bilgileri. Üç karakter sonrası öneriler; ilgili kayda geçiş ve filtrelenebilir tüm sonuçlar sayfası. Diğer menülerde bağlamsal arama korunur.
+- Ana menü temiz ana listeyi açar. Detaydan geri önceki listeyi korur. URL tabanlı gezinme sayesinde yenilemede açık kayıt korunur; Geri/İleri ve alt menü davranışları düzeltildi. Paylaşılan hosting için özel rewrite gerekmez.
+- Varsayılan Bu Ay dönemi etkin filtre gibi görünmez; özel tarih aralığı temizlenebilir. Nakit akışı grafiği paneldeki yüksekliği kullanır.
+- Cari bakiye özeti iki sütunu kapsar. Aktif hareketin sol çizgisi ana satır ve eylemleri kesintisiz kapsar.
+- Mobil kart özeti kompakt hale geldi; limit, ekstre/dönem tutarları ve ödeme durumu önde, diğer bilgiler Daha fazla bölümünde.
 
-## Yükleme
+## İndirme ve yükleme
 
-`finans-paneli-1.11.0-hosting.zip` içeriğini doğrudan web dizinine yükleyin; mevcut `api/config.php` korunmalıdır. Ardından yöneticiyle `update.php` üzerinden **şema 11** güncellemesini uygulayın. Önce özel yedek alınır; mevcut yönetici ve finansal kayıtlar korunur. Bu sürümde yalnız cari isteğe bağlı bilgi alanı eklenir; araç ek alanları mevcut JSON kayıtlarında saklanır.
+**Mevcut hosting'i güncellemek için:** `finans-paneli-1.12.0-hosting.zip` içeriğini doğrudan web köküne yükleyin. Mevcut **`api/config.php` dosyasını koruyun**. Sonrasında `update.php` üzerinden durumu kontrol edin.
 
-Tam paket ayrıca kurulum belgeleri ve başlangıç SQL dosyalarını içerir. Hosting ZIP'i bunları taşımaz; gerekli çalışma migrasyonları ve font lisansı dahildir. Hostingde Node.js gerekmez.
+Şema **11** olarak kalır; zaten şema 11 kullanan kurulumda yeni veritabanı geçişi gerekmez. Önceki şemalardan geçiş dosyaları pakette korunur. Mevcut yönetici hesabı ve kayıtlar korunur. Hostingde Node.js gerekmez.
 
-Demo yenileme isteğe bağlıdır: mevcut kayıtları sıfırlar, yönetici hesabını/parolasını korur. Geniş demo 4 araç, 48 araç kaydı, örnek ziyaret günleri ve personel dönem bilgileri içerir. Canlı veriler otomatik sıfırlanmaz.
+Tam paket ayrıca kurulum belgeleri ve başlangıç şemasını içerir. Her ZIP'in ayrı SHA-256 dosyası vardır. Demo yenileme ayrı ve isteğe bağlıdır; canlı kayıtlar otomatik sıfırlanmaz. Bu sürüm GitHub'da yayımlanır; hosting'e otomatik kurulmaz.

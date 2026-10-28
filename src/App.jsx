@@ -1,3 +1,5 @@
+import {GlobalSearchTools,GlobalSearchPage} from './GlobalSearch';
+import {useNavigation} from './Navigation';
 import {NotificationsPage} from './NotificationsPage';
 import {readableAlertDetail} from './notification-utils.mjs';
 import { version } from '../package.json';
@@ -43,6 +45,7 @@ export function App({
   initialData,
   onLogout
 }) {
+  const nav=useNavigation();
   const [fullData, setFullData] = useState(initialData);
   const [financeContext, setFinanceContext] = useState(null);
   const [contextKey, setContextKey] = useState(0);
@@ -76,8 +79,9 @@ export function App({
     d.setDate(d.getDate() + n);
     return iso(d);
   };
-  const [page, setPage] = useState("Genel bakış"),
-    [compact, setCompact] = useState(false),
+  const page=nav.route.page;
+  const setPage=p=>nav.navigate({page:p});
+  const [compact, setCompact] = useState(false),
     [mobileMore, setMobileMore] = useState(false),
     [scope, setScope] = useState("all"),
     [search, setSearch] = useState(""),
@@ -88,15 +92,17 @@ export function App({
     [toast, setToast] = useState(null);
   const bellButton=useRef(null);
   const [cardsMenu,setCardsMenu]=useState(false);
-  const navigateMenu=name=>{if(name==='Kredi kartları')setCardsMenu(page===name?!cardsMenu:true);if(name===page)setRouteKey(key=>key+1);go(name)};
+  const navigateMenu=name=>{setCardsMenu(['Kredi kartları','Kampanyalar'].includes(name));go(name,true)};
+  useEffect(()=>setCardsMenu(['Kredi kartları','Kampanyalar'].includes(page)),[page]);
   const [notificationTarget,setNotificationTarget]=useState(null),[routeKey,setRouteKey]=useState(0);
   const [notificationScope,setNotificationScope]=useState({source:'all'});
-  function showNotifications(scope={source:'all'}){go('Bildirimler');setNotificationScope(scope);setRouteKey(key=>key+1)}
+  function showNotifications(scope={source:'all'}){go('Bildirimler');nav.navigate({page:'Bildirimler',source:scope.source||'all'},{replace:true});setNotificationScope(scope);setRouteKey(key=>key+1)}
+  useEffect(()=>{if(page==='Kullanıcılar'&&!can(fullData.user,'admin'))nav.navigate({page:'Genel bakış'},{replace:true})},[page,fullData.user.role]);
   const notifications = groupAlerts(collectAlerts(fullData),TODAY);
-  function openNotification(alert){if(['Kredi kartları','Kampanyalar'].includes(alert.page))setCardsMenu(true);go(alert.page);setNotificationTarget(alert);setRouteKey(key=>key+1);if(alert.account!==undefined)setScope(alert.account);if(alert.section==='Gecikmiş')setClaimFilter('late');if(alert.entity){const rows=alert.entity==='campaign'?fullData.campaigns:fullData.vehicle_records;const item=rows.find(item=>item.id===alert.recordId);if(item)openFinance({entity:alert.entity,item})}}
+  function openNotification(alert){setScope('all');setSearch('');setKind('all');setClaimFilter('all');setDrawer(null);setBell(false);setMobileMore(false);if(['Kredi kartları','Kampanyalar'].includes(alert.page))setCardsMenu(true);nav.navigate({page:alert.page,record:alert.account!==undefined?String(alert.account):alert.vehicleId?String(alert.vehicleId):'',event:alert.eventId?String(alert.eventId):'',entry:alert.vehicleId?String(alert.recordId):'',tab:alert.vehicleId?'İşlemler':alert.eventId?'Gelecek dönem hareketleri':''},{fresh:true});setNotificationTarget(alert);setRouteKey(key=>key+1);if(alert.account!==undefined)setScope(alert.account);if(alert.section==='Gecikmiş')setClaimFilter('late');if(alert.entity){const rows=alert.entity==='campaign'?fullData.campaigns:fullData.vehicle_records;const item=rows.find(item=>item.id===alert.recordId);if(item)openFinance({entity:alert.entity,item})}}
   const accountName = id => accounts.find(a => a.id === id)?.name;
-  const go = p => {
-    setPage(p);
+  const go = (p,fresh=false) => {
+    nav.navigate({page:p},{fresh});
     setDrawer(null);
     setMobileMore(false);
     setBell(false);
@@ -480,7 +486,7 @@ export function App({
           </div>
         </div></header>
         <main className="main-content">
-          {page === "Genel bakış" && <ListTools query={search} setQuery={setSearch} placeholder="Genel bakış hareketlerinde ara" filters={overviewFilters} setFilters={setOverviewFilters} resultCount={visible.length} reset={()=>{setSearch('');setScope('all');setKind('all');setOverviewRange(presetRange('Bu Ay',TODAY))}}><label>Hesap<select value={scope} onChange={e=>setScope(e.target.value)}><option value="all">Tüm hesaplar</option>{accounts.map(a=><option key={a.id} value={a.id}>{a.name}</option>)}</select></label><label>Tarih aralığı<DatePicker range from={overviewRange.from} to={overviewRange.to} today={TODAY} clearable={false} onChange={range=>setOverviewRange(range.from&&range.to?range:presetRange('Bu Ay',TODAY))}/></label><label>İşlem<select value={kind} onChange={e=>setKind(e.target.value)}><option value="all">Tümü</option>{[...new Set(tx.map(t=>t.kind))].map(k=><option key={k}>{k}</option>)}</select></label></ListTools>}
+          {page === "Genel bakış" && <GlobalSearchTools data={fullData} placeholder="Genel bakış hareketlerinde ara" filters={overviewFilters} setFilters={setOverviewFilters} resultCount={visible.length} reset={()=>{setSearch('');setScope('all');setKind('all');setOverviewRange(presetRange('Bu Ay',TODAY))}}><label>Hesap<select value={scope} onChange={e=>setScope(e.target.value)}><option value="all">Tüm hesaplar</option>{accounts.map(a=><option key={a.id} value={a.id}>{a.name}</option>)}</select></label><label>Tarih aralığı<DatePicker range defaultRange={presetRange('Bu Ay',TODAY)} from={overviewRange.from} to={overviewRange.to} today={TODAY} clearable={false} onChange={range=>setOverviewRange(range.from&&range.to?range:presetRange('Bu Ay',TODAY))}/></label><label>İşlem<select value={kind} onChange={e=>setKind(e.target.value)}><option value="all">Tümü</option>{[...new Set(tx.map(t=>t.kind))].map(k=><option key={k}>{k}</option>)}</select></label></GlobalSearchTools>}
           {page === "Genel bakış" && <div className="page-title">
             <div>
               <h1>{page === "Genel bakış" ? "Finansal görünüm" : page}</h1>
@@ -491,7 +497,7 @@ export function App({
               <span className="sr-only">İşlem ekle</span>
             </button>
           </div>}
-          {page === "Bildirimler" ? <NotificationsPage key={routeKey} data={fullData} initialScope={notificationScope} onOpenNotification={openNotification}/> : page !== "Genel bakış" ? <FinanceHub key={page+'-'+routeKey} page={page} onNotifications={showNotifications} onOpenNotification={openNotification} initialEventId={notificationTarget?.eventId} initialRecord={notificationTarget?.recordId} initialParty={notificationTarget?.partyId} initialDate={notificationTarget?.date} data={fullData} onState={applyState} notify={notify} open={openFinance} search="" initialAccount={scope} initialDue={claimFilter} onLabel={setPartyLabel} /> : <>
+          {page === "Arama" ? <GlobalSearchPage data={fullData}/> : page === "Bildirimler" ? <NotificationsPage key={routeKey+nav.revision} data={fullData} initialScope={{...notificationScope,source:nav.route.source}} onOpenNotification={openNotification}/> : page !== "Genel bakış" ? <FinanceHub key={page+'-'+routeKey+'-'+nav.revision} page={page} onNotifications={showNotifications} onOpenNotification={openNotification} initialEventId={notificationTarget?.eventId||Number(nav.route.event)||undefined} initialRecord={notificationTarget?.recordId} initialParty={notificationTarget?.partyId} initialDate={notificationTarget?.date} data={fullData} onState={applyState} notify={notify} open={openFinance} search="" initialAccount={scope} initialDue={claimFilter} onLabel={setPartyLabel} /> : <>
               <div className="snapshot-label">
                 <span>GÜNCEL DURUM</span>
                 <span>
@@ -552,7 +558,7 @@ export function App({
         </main>
       </div>
       <nav inert={!!drawer} className="mobile-nav" aria-label="Mobil navigasyon">
-        {[["Genel bakış", "Özet", LayoutDashboard], ["Raporlar", "Raporlar", ChartNoAxesCombined], ["Tahsilat & Ödeme", "Ödeme", ArrowLeftRight]].map(([p, l, Icon]) => <button key={p} className={page === p ? "active" : ""} onClick={() => go(p)}>
+        {[["Genel bakış", "Özet", LayoutDashboard], ["Raporlar", "Raporlar", ChartNoAxesCombined], ["Tahsilat & Ödeme", "Ödeme", ArrowLeftRight]].map(([p, l, Icon]) => <button key={p} className={page === p ? "active" : ""} onClick={() => navigateMenu(p)}>
             <Icon size={20} />
             {l}
           </button>)}
