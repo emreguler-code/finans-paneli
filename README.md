@@ -1,6 +1,6 @@
-# Finans Paneli 1.13.2
+# Finans Paneli 1.14.0
 
-1.13.2, otomatik yedeklemeyi tarayıcıdan ayırır: cron ile her gün Türkiye saatiyle 03.00'te bir kez; tüm yedek türleri için toplam 5 dosya sınırı. Şema 11 korunur. [Sürüm kapsamı](docs/SURUM-1.13.2.md) · [Yedekleme kılavuzu](docs/YEDEKLEME.md).
+1.14.0: kart/hesap/cari/araç için tam sayfa kayıt oluşturma, içerik sınırlarına hizalı kompakt işlem/düzenleme alanı, 25 bankalık ortak aranabilir liste ve hızlı yeni banka girişi. Mobilde bağlama uygun kompakt alt eylemler; şema 12. [Sürüm kapsamı](docs/SURUM-1.14.0.md) · [Yedekleme kılavuzu](docs/YEDEKLEME.md).
 
 Sade Netlik tasarımında cari hesaplar, banka/kasa, kredi kartları, ödeme planı ve raporlar. React/Vite arayüz; PHP/MySQL API. Banka bağlantısı yoktur.
 
@@ -15,7 +15,7 @@ npm ci
 npm test
 ```
 
-API için boş yerel veritabanına database/schema.sql yükleyin. public/api/config.example.php dosyasını public/api/config.php olarak kopyalayıp yalnızca yerel test bilgileri, rastgele kurulum anahtarı ve yerel HTTP için require_https=false ayarlayın. Yerel API üzerinden ilk yönetici kurulumunu yapın, ardından update.php akışıyla güncel yerel şemaya (11) geçin. Ayrıntılı güncelleme akışı docs/GUNCELLEME.md dosyasındadır. Üretim config dosyasını kopyalamayın. npm run dev PHP API'yi 8088 portunda başlatır ve Vite geliştirme sunucusunu açar; MySQL ayrıca çalışmalıdır.
+API için boş yerel veritabanına database/schema.sql yükleyin. public/api/config.example.php dosyasını public/api/config.php olarak kopyalayıp yalnızca yerel test bilgileri, rastgele kurulum anahtarı ve yerel HTTP için require_https=false ayarlayın. Yerel API üzerinden ilk yönetici kurulumunu yapın, ardından update.php akışıyla güncel yerel şemaya (12) geçin. Ayrıntılı güncelleme akışı docs/GUNCELLEME.md dosyasındadır. Üretim config dosyasını kopyalamayın. npm run dev PHP API'yi 8088 portunda başlatır ve Vite geliştirme sunucusunu açar; MySQL ayrıca çalışmalıdır.
 
 ```sh
 npm run dev -- --host 127.0.0.1
@@ -41,7 +41,7 @@ Codex değişiklik yapmadan AGENTS.md dosyasını okumalıdır. Geçmiş sürüm
 
 Her sürümde iki ZIP üretilir: `finans-paneli-<sürüm>-hosting.zip` yalnız doğrudan web dizinine yüklenecek uygulama dosyalarıdır; `finans-paneli-<sürüm>.zip` kurulum belgeleri ve başlangıç SQL'i içeren tam pakettir. Mevcut kurulum güncellemelerinde hosting ZIP'i yeterlidir; `api/config.php` korunur. Her ZIP'in ayrı SHA-256 dosyası vardır.
 
-GitHub Actions `Hosting release` iş akışı `v<package.json sürümü>` etiketi GitHub'a gönderildiğinde testleri çalıştırır, paketi hazırlar ve GitHub Release'e ekler. Örneğin 1.13.2 için `v1.13.2`. İş akışı ve paketleme dosyaları önce ilgili commit'te bulunmalıdır. Actions'ın depoda etkin ve iş akışının Release yazma yetkisine sahip olması gerekir. Manuel `workflow_dispatch` çalıştırması yalnızca indirilebilir Actions artifact'ı üretir; Release yayımlamaz.
+GitHub Actions `Hosting release` iş akışı `v<package.json sürümü>` etiketi GitHub'a gönderildiğinde testleri çalıştırır, paketi hazırlar ve GitHub Release'e ekler. Örneğin 1.14.0 için `v1.14.0`. İş akışı ve paketleme dosyaları önce ilgili commit'te bulunmalıdır. Actions'ın depoda etkin ve iş akışının Release yazma yetkisine sahip olması gerekir. Manuel `workflow_dispatch` çalıştırması yalnızca indirilebilir Actions artifact'ı üretir; Release yayımlamaz.
 
 ## İzole API ve tarayıcı testleri
 
@@ -75,6 +75,6 @@ npm run demo:stop
 
 Yerel Chromium gerekiyorsa `QA_BROWSER_BIN=/usr/bin/chromium` tanımlayın. Docker gereklidir. Kapsamlı demo Nisan–Ekim 2026 geçmişi, 4 banka/kasa/KMH hesabı, 10 cari, 3 kart, geçmiş ekstreler ve gelecek taksitler içerir. Tarih 13 Ekim 2026'ya sabitlenir. Normal demo yenileme de bu geniş profili oluşturur; mevcut verileri silen yönetici onayı korunur. `profile=compact` yalnız küçük kabul testi fixture'ıdır.
 
-Çalışır demo ve giriş bilgileri yalnız Git dışında `.qa/current-demo` dosyasının gösterdiği klasördeki `local-session.json` içinde saklanır. Bu dosyayı paylaşmayın. Yerel sunucu yalnız 127.0.0.1'de dinler; dış hosting yayını değildir. `demo:stop` yalnız bu demo koşusunun konteynerlerini ve yerel kimlik bilgilerini kaldırır. Ortam yeniden başlarsa `demo:start` yeniden çalıştırılır. Ayrıntılı bulgular `docs/TEST-RAPORU-1.13.2.md` içindedir.
+Çalışır demo ve giriş bilgileri yalnız Git dışında `.qa/current-demo` dosyasının gösterdiği klasördeki `local-session.json` içinde saklanır. Bu dosyayı paylaşmayın. Yerel sunucu yalnız 127.0.0.1'de dinler; dış hosting yayını değildir. `demo:stop` yalnız bu demo koşusunun konteynerlerini ve yerel kimlik bilgilerini kaldırır. Ortam yeniden başlarsa `demo:start` yeniden çalıştırılır. Ayrıntılı bulgular `docs/TEST-RAPORU-1.14.0.md` içindedir.
 
 `npm run test:backups`, yalnız koşucunun oluşturduğu izole veritabanında yedekleme, bozuk dosya/ilişki, geri alma, kullanıcı yetkileri, cron ve demo temizliği senaryolarını doğrular. Canlı veritabanı hedeflemez.

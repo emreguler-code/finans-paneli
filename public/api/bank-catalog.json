@@ -1,0 +1,171 @@
+{
+  "banks": [
+    {
+      "code": "garanti",
+      "name": "Garanti BBVA",
+      "programs": [
+        "bonus"
+      ]
+    },
+    {
+      "code": "yapikredi",
+      "name": "Yapı Kredi",
+      "programs": [
+        "world"
+      ]
+    },
+    {
+      "code": "akbank",
+      "name": "Akbank",
+      "programs": [
+        "axess"
+      ]
+    },
+    {
+      "code": "isbank",
+      "name": "Türkiye İş Bankası",
+      "programs": [
+        "maximum"
+      ]
+    },
+    {
+      "code": "ziraat",
+      "name": "Ziraat Bankası",
+      "programs": [
+        "bankkart"
+      ]
+    },
+    {
+      "code": "halkbank",
+      "name": "Halkbank",
+      "programs": [
+        "paraf"
+      ]
+    },
+    {
+      "code": "vakifbank",
+      "name": "VakıfBank",
+      "programs": [
+        "world"
+      ]
+    },
+    {
+      "code": "qnb",
+      "name": "QNB",
+      "programs": [
+        "cardfinans"
+      ]
+    },
+    {
+      "code": "enpara",
+      "name": "Enpara",
+      "programs": []
+    },
+    {
+      "code": "denizbank",
+      "name": "DenizBank",
+      "programs": [
+        "bonus"
+      ]
+    },
+    {
+      "code": "teb",
+      "name": "Türk Ekonomi Bankası (TEB)",
+      "programs": [
+        "bonus"
+      ]
+    },
+    {
+      "code": "ing",
+      "name": "ING",
+      "programs": [
+        "bonus"
+      ]
+    },
+    {
+      "code": "hsbc",
+      "name": "HSBC",
+      "programs": [
+        "advantage"
+      ]
+    },
+    {
+      "code": "sekerbank",
+      "name": "Şekerbank",
+      "programs": [
+        "bonus"
+      ]
+    },
+    {
+      "code": "kuveytturk",
+      "name": "Kuveyt Türk",
+      "programs": [
+        "saglam"
+      ]
+    },
+    {
+      "code": "turkiyefinans",
+      "name": "Türkiye Finans",
+      "programs": [
+        "happy"
+      ]
+    },
+    {
+      "code": "albaraka",
+      "name": "Albaraka Türk",
+      "programs": []
+    },
+    {
+      "code": "ziraatkatilim",
+      "name": "Ziraat Katılım",
+      "programs": []
+    },
+    {
+      "code": "vakifkatilim",
+      "name": "Vakıf Katılım",
+      "programs": []
+    },
+    {
+      "code": "emlakkatilim",
+      "name": "Türkiye Emlak Katılım",
+      "programs": []
+    },
+    {
+      "code": "fibabanka",
+      "name": "Fibabanka",
+      "programs": []
+    },
+    {
+      "code": "odeabank",
+      "name": "Odeabank",
+      "programs": []
+    },
+    {
+      "code": "burgan",
+      "name": "Burgan Bank",
+      "programs": []
+    },
+    {
+      "code": "anadolubank",
+      "name": "Anadolubank",
+      "programs": []
+    },
+    {
+      "code": "tom",
+      "name": "TOM Katılım",
+      "programs": []
+    }
+  ],
+  "programs": {
+    "bonus": "Bonus",
+    "world": "World",
+    "axess": "Axess",
+    "maximum": "Maximum",
+    "bankkart": "Bankkart",
+    "paraf": "Paraf",
+    "cardfinans": "CardFinans",
+    "advantage": "Advantage",
+    "saglam": "Sağlam Kart",
+    "happy": "Happy Card"
+  }
+}

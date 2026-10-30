@@ -73,7 +73,7 @@ try {
     if($action==='logout'&&$method==='POST'){$_SESSION=[];session_destroy();reply(['ok'=>true]);}
     $actor=v2Actor($db);if(!$actor)fail('Hesabınız etkin değil. Yeniden giriş yapın.',401);
     require __DIR__.'/v2/upgrade.php';
-    if((int)$db->query('SELECT schema_version FROM app_meta WHERE id=1')->fetchColumn()<11)reply(['error'=>'Yeni sürüm için yönetici güncellemesi gerekiyor.','upgradeRequired'=>true],503);
+    if((int)$db->query('SELECT schema_version FROM app_meta WHERE id=1')->fetchColumn()<12)reply(['error'=>'Yeni sürüm için yönetici güncellemesi gerekiyor.','upgradeRequired'=>true],503);
     require __DIR__.'/v2/backups.php';
     require __DIR__.'/v2/main.php';
 } catch(DomainException $e){if(isset($db)&&$db->inTransaction())$db->rollBack();fail($e->getMessage());}

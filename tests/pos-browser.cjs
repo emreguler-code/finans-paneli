@@ -1,6 +1,7 @@
+const {more:entryMore}=require('./entry-helpers.cjs');
 module.exports=async({p,go,ok,out})=>{
  const close=async()=>p.getByRole('button',{name:'Paneli kapat',exact:true}).last().click();
- async function supplier(){await go('Cari hesaplar');await p.locator('.party-row').filter({hasText:'Yıldız Tedarik'}).click();await p.locator('.summary-band').getByRole('button',{name:'Düzenle',exact:true}).click();await p.getByRole('dialog').waitFor();await p.getByText('Tedarikçi bilgileri',{exact:true}).click()}
+ async function supplier(){await go('Cari hesaplar');await p.locator('.party-row').filter({hasText:'Yıldız Tedarik'}).click();await p.locator('.summary-band').getByRole('button',{name:'Düzenle',exact:true}).click();await p.getByRole('dialog').waitFor();await entryMore(p);await p.getByText('Tedarikçi bilgileri',{exact:true}).click()}
  await p.setViewportSize({width:1440,height:1000});await supplier();
  ok('Supplier optional POS has three independent checkboxes',await p.locator('.pos-options input[type=checkbox]').count()===3);
  await p.getByRole('checkbox',{name:'Garanti Bonus',exact:true}).check();await p.getByRole('checkbox',{name:'Yapı Kredi World',exact:true}).check();

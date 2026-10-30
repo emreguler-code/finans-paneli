@@ -1,10 +1,10 @@
 # Yedekleme ve gerçek veriye geçiş
 
-Finans 1.13.2 · Şema 11 · PHP 8.3+ / PDO MySQL.
+Finans 1.14.0 · Şema 12 · PHP 8.3+ / PDO MySQL.
 
 ## Demo verilerini temizleyerek başlamak
 
-1. Hosting ZIP'ini yüklerken `api/config.php` dosyanızı koruyun. `update.php` üzerinden şema durumunu kontrol edin; şema 11 için yeni geçiş yoktur.
+1. Hosting ZIP'ini yüklerken `api/config.php` dosyanızı koruyun. `update.php` üzerinden şema durumunu kontrol edin; 1.14.0 için şema 11 → 12 geçişini uygulayın. Güncelleme mevcut verilerin yedeğini alır; finansal kayıtları korur.
 2. Yönetici olarak **Ayarlar → Gerçek veriye başla → Demo verilerini temizle** seçin.
 3. Mevcut yönetici parolanızı ve istenen onay metnini girin. Sunucuda geri yüklenebilir bir **Temizleme öncesi** yedeği alınmadan hiçbir iş kaydı silinmez.
 4. Cari, hesap, kart, işlem, araç, kampanya ve yönetici olmayan kullanıcı kayıtları temizlenir. Yönetici hesapları, parolaları, uygulama yapılandırması ve yedekler korunur. Finansal çalışma alanı boşalır; temizleme olayı denetim geçmişine kaydedilir.
@@ -23,7 +23,7 @@ Yedek yalnız veritabanı kayıtlarını kapsar; uygulama dosyaları ve `api/con
 ## Yedek dosyası yükle ve geri yükle
 
 - **Yedek dosyası yükle** yalnız dosyayı doğrulayıp listeye ekler; mevcut veri değişmez.
-- Bu sürümün `finans-backup-2` biçimi ve aynı veritabanı şeması desteklenir. Güncelleme aracının eski `finans-backup-1` dosyaları veya rastgele SQL dosyaları bu menüden çalıştırılmaz.
+- Bu sürümün `finans-backup-2` biçimi ve şema 12 desteklenir. Önceki 1.13.x sürümünün şema 11 yedekleri de desteklenir; geri yüklemede yeni kart banka alanı boş başlangıç değeriyle tamamlanır, şema 12 korunur. Güncelleme aracının eski `finans-backup-1` dosyaları veya rastgele SQL dosyaları bu menüden çalıştırılmaz.
 - Seçilen satırda **Geri yükle** ile mevcut yönetici parolası ve `GERİ YÜKLE` onayı istenir. Önce mevcut durumun **Geri yükleme öncesi** yedeği oluşturulur.
 - Tablo/alan listesi, şema, satır sayıları ve SHA-256 bütünlüğü doğrulanır. Dosya içindeki SQL/DDL çalıştırılmaz; izinli tablolara parametreli veri eklenir.
 - Değiştirme InnoDB işlemi içinde ve mevcut kayıt/bakım kilidiyle yapılır. Bozuk ilişki/SQL hatasında tüm veritabanı değişikliği geri alınır. Yabancı anahtar denetimi kapatılmaz.

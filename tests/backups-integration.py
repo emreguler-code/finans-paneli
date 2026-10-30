@@ -39,7 +39,7 @@ baseline=financial(state());initial_user=state()['user']
 ok('Backup status starts with disabled automatic schedule',call('backup_status')[1]['automatic']['enabled'] is False)
 ok('CSRF protects manual backup creation',call('backup_create',{},token='wrong')[0]==403)
 ok('Read-only request cannot create a backup',call('backup_create')[0]==405)
-code,result=call('backup_create',{});assert code==200,result;manual=result['backup'];ok('Manual backup records all managed table counts',manual['schema']==11 and manual['counts']['fin_events']==len(baseline['events']))
+code,result=call('backup_create',{});assert code==200,result;manual=result['backup'];ok('Manual backup records all managed table counts',manual['schema']==12 and manual['counts']['fin_events']==len(baseline['events']))
 code,blob=call('backup_download',params={'id':manual['id']});ok('Downloaded backup is complete and has a file checksum',code==200 and blob.endswith(b'\n') and hashlib.sha256(blob).hexdigest()==manual['sha256'])
 lines=blob.splitlines();footer=json.loads(lines[-1]);ok('Backup footer independently verifies row content',hashlib.sha256(b'\n'.join(lines[:-1])+b'\n').hexdigest()==footer['sha256'])
 ok('Backup never includes installation config or setup token',os.environ['API_TEST_SETUP_TOKEN'].encode() not in blob and b'config.php' not in blob)
@@ -52,7 +52,7 @@ bad=edited(blob,lambda rows:rows[0].update(schema=999));ok('Incompatible schema 
 def bad_table(rows):
  row=next(r for r in rows if 'table' in r);row['table']='users`; DROP TABLE accounts; --'
 ok('Table names are validated even with a recomputed checksum',upload(edited(blob,bad_table))[0]==422)
-bad=blob.replace(b'"schema":11',b'"schema":12',1);ok('Modified backup cannot pass integrity or schema checks',upload(bad)[0]==422)
+bad=blob.replace(b'"schema":12',b'"schema":13',1);ok('Modified backup cannot pass integrity or schema checks',upload(bad)[0]==422)
 ok('Rejected imports leave no catalog entries',len(call('backup_status')[1]['backups'])==count)
 viewer_pass=secrets.token_hex(16);code,v=post('user_save',username='backup-viewer',shortName='Backup Viewer',password=viewer_pass,role='viewer',active=True);assert code==200,v
 assert call('login',dict(username='backup-viewer',password=viewer_pass))[0]==200
@@ -154,6 +154,15 @@ ok('Legacy weekly settings become daily at 03:00 without immediate backup',call(
 ok('CLI scheduler works without a browser session on the next scheduled day',scheduled('2030-01-08T03:00:00+03:00') is True)
 auto=next(b for b in call('backup_status')[1]['backups'] if b['kind']=='automatic')
 code,cron_blob=call('backup_download',params={'id':auto['id']});old_created=next(json.loads(l)['row']['created_at'] for l in blob.splitlines() if json.loads(l).get('table')=='users');cron_created=next(json.loads(l)['row']['created_at'] for l in cron_blob.splitlines() if json.loads(l).get('table')=='users');ok('Cron and API snapshots preserve the same timestamp timezone',code==200 and old_created==cron_created)
+def legacy_schema11(rows):
+ rows[0]['schema']=11;rows[0]['tables']['cards'].remove('bank')
+ for row in rows:
+  if row.get('table')=='cards':row['row'].pop('bank')
+  if row.get('table')=='app_meta':row['row']['schema_version']=11
+code,legacy=upload(edited(blob,legacy_schema11));assert code==200,legacy
+ok('Previous release schema-11 backups remain importable with their original schema label',legacy['backup']['schema']==11)
+old_financial=financial(state());code,result=call('backup_restore',dict(id=legacy['backup']['id'],password=password,confirm='GERİ YÜKLE'));assert code==200,result
+ok('Previous release backup restores financial data and keeps current schema 12',state()['schemaVersion']==12 and financial(state())==old_financial)
 code,result=post('demo_seed',profile='compact');ok('Legacy updater demo replacement also creates a safety backup',code==200 and any(b['kind']=='before_demo' for b in call('backup_status')[1]['backups']))
 (runtime/'backup-checks.json').write_text(json.dumps({'passed':len(checks),'checks':checks}))
 print('Backup restore and demo-clear checks complete',len(checks))

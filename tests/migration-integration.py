@@ -23,7 +23,7 @@ def ok(name,test):
  checks+=1;print('PASS',name,flush=True)
 sql('USE finans_test;'+fixture['schema']+fixture['sample'])
 call('session');assert call('setup',creds)[0]==200
-ok('Version 1 migrates directly to schema 11',call('update_apply',{})[0]==200 and call('state')[1]['schemaVersion']==11)
+ok('Version 1 migrates directly to schema 12',call('update_apply',{})[0]==200 and call('state')[1]['schemaVersion']==12)
 s=call('state')[1]
 ok('Legacy administrator and total cash preserved',s['user']['username']==creds['username'] and sum(a['balance_cents'] for a in s['accounts'])==12480000)
 ok('Legacy card debt preserved',round(sum(c['debt'] for c in s['cards'])*100)==2430000)
@@ -59,7 +59,7 @@ ok('Repeat after recovery is harmless',call('update_apply',{})[0]==200 and call(
 before=call('state')[1]
 sql('USE finans_test; ALTER TABLE parties DROP COLUMN pos_programs; UPDATE app_meta SET schema_version=7 WHERE id=1;')
 code,blocked=call('state');ok('Schema 7 requires the POS migration',code==503 and blocked.get('upgradeRequired'))
-ok('Schema 7 migrates to schema 11',call('update_apply',{})[0]==200 and call('state')[1]['schemaVersion']==11)
+ok('Schema 7 migrates to schema 12',call('update_apply',{})[0]==200 and call('state')[1]['schemaVersion']==12)
 after=call('state')[1]
 ok('POS migration keeps existing financial facts',after['events']==before['events'] and [a['balance_cents'] for a in after['accounts']]==[a['balance_cents'] for a in before['accounts']])
 ok('POS migration defaults every existing party to no selection',all(p['pos_programs']==[] for p in after['parties']))
@@ -71,16 +71,21 @@ ok('Tracking migration preserves financial facts',call('state')[1]['events']==af
 before=call('state')[1]
 sql('USE finans_test; ALTER TABLE cards DROP COLUMN linked_account_id; UPDATE app_meta SET schema_version=9 WHERE id=1;')
 ok('Schema 9 requires linkage migration',call('state')[0]==503)
-ok('Schema 9 migrates to 10',call('update_apply',{})[0]==200 and call('state')[1]['schemaVersion']==11)
+ok('Schema 9 migrates to 10',call('update_apply',{})[0]==200 and call('state')[1]['schemaVersion']==12)
 after=call('state')[1]
 ok('Link migration preserves administrator and financial facts',call('login',dict(username=creds['username'],password=creds['password']))[0]==200 and before['events']==after['events'] and all(c['linked_account_id'] is None for c in after['cards']))
 ok('Link migration is idempotent',call('update_apply',{})[0]==200 and call('state')[1]['events']==after['events'])
 before=call('state')[1]
 sql('USE finans_test; ALTER TABLE parties DROP COLUMN profile_json; UPDATE app_meta SET schema_version=10 WHERE id=1;')
 ok('Schema 10 requires optional party profile migration',call('state')[0]==503)
-ok('Schema 10 upgrades to 11',call('update_apply',{})[0]==200 and call('state')[1]['schemaVersion']==11)
+ok('Schema 10 upgrades to 12',call('update_apply',{})[0]==200 and call('state')[1]['schemaVersion']==12)
 after=call('state')[1]
 ok('Party profile migration preserves financial facts',before['events']==after['events'] and [a['balance_cents'] for a in before['accounts']]==[a['balance_cents'] for a in after['accounts']])
 ok('Party profile migration starts with no invented metadata',all(not p['profile'] for p in after['parties']))
 ok('Party profile migration preserves login and retries safely',call('login',dict(username=creds['username'],password=creds['password']))[0]==200 and call('update_apply',{})[0]==200)
-sql('DROP DATABASE finans_backup_test;');print(json.dumps({'passed':checks,'failed':0}),flush=True)
+sql('DROP DATABASE finans_backup_test;');# Exact upgrade path used by the user's currently installed 1.13.x release.
+prior=call('state')[1];sql("USE finans_test;ALTER TABLE cards DROP COLUMN bank;UPDATE app_meta SET schema_version=11 WHERE id=1;")
+code,result=call('update_apply',{});after=call('state')[1]
+ok('Schema 11 upgrades safely to 12 and records a recovery backup',code==200 and after['schemaVersion']==12 and result['backupReady'])
+ok('Bank metadata migration preserves existing financial records',prior['accounts']==after['accounts'] and prior['events']==after['events'] and [{k:v for k,v in c.items() if k!='bank'} for c in prior['cards']]==[{k:v for k,v in c.items() if k!='bank'} for c in after['cards']])
+print(json.dumps({'passed':checks,'failed':0}),flush=True)

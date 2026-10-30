@@ -1,6 +1,6 @@
 # Finans Paneli güncellemesi
 
-Yüklenecek sürüm ZIP dosya adında belirtilir. 1.11.0 sürümü şema 11'i kullanır. Mevcut kayıtlar ve yönetici hesapları korunur. Şema 10 kurulumuna isteğe bağlı cari bilgi alanı eklenir; şema 9 kurulumunda ayrıca kart hesap bağlantısı tamamlanır; daha eski sürümler önce gerekli ara geçişleri tamamlar. Dosyaları yükledikten sonra yöneticiyle update.php üzerinden veritabanını güncelleyin.
+Yüklenecek sürüm ZIP dosya adında belirtilir. 1.14.0 sürümü şema 12'yi kullanır. Şema 11'e yalnız kartın banka adı alanı eklenir. Mevcut kayıtlar ve yönetici hesapları korunur. Şema 10 kurulumuna isteğe bağlı cari bilgi alanı eklenir; şema 9 kurulumunda ayrıca kart hesap bağlantısı tamamlanır; daha eski sürümler önce gerekli ara geçişleri tamamlar. Dosyaları yükledikten sonra yöneticiyle update.php üzerinden veritabanını güncelleyin.
 
 1. Veritabanı ve mevcut dosyaları yedekleyin.
 2. `-hosting.zip` içeriğini doğrudan mevcut web dizinine yükleyin (tam ZIP kullanıyorsanız `hosting/` içeriğini yükleyin). Mevcut `api/config.php` dosyasını koruyun. `api/v2/migrations/` klasörünü de yükleyin.
@@ -22,6 +22,10 @@ Demo ayrı bir SQL dökümünü elle yüklemeyi gerektirmez; paket içindeki API
 
 ## 1.13.0: yedekleme ve gerçek veriye geçiş
 
-Ayarlar menüsü yöneticiye yedek al/indir/yükle/geri yükle ve demo temizliği sunar. Şema 11 korunur. Özel yedek klasörü web kökünün dışında ve PHP için yazılabilir olmalıdır; alt dizine kurulumda veya üst dizin yazılamıyorsa config.php içinde backup_dir için mutlak, özel bir yol tanımlayın. Yapılandırma dosyasını ve özel yedek klasörünü güncellemede koruyun.
+Ayarlar menüsü yöneticiye yedek al/indir/yükle/geri yükle ve demo temizliği sunar. 1.14.0 ile şema 12 kullanılır; şema 11 yedekleri geri yüklenebilir. Özel yedek klasörü web kökünün dışında ve PHP için yazılabilir olmalıdır; alt dizine kurulumda veya üst dizin yazılamıyorsa config.php içinde backup_dir için mutlak, özel bir yol tanımlayın. Yapılandırma dosyasını ve özel yedek klasörünü güncellemede koruyun.
 
 Hosting ZIP'ini yüklemek kayıtları silmez. Gerçek veriye başlamak için Ayarlar → Demo verilerini temizle adımını yönetici parolasıyla uygulayın. Önce otomatik bir güvenlik yedeği alınır; yönetici olmayan kullanıcılar ve iş kayıtları temizlenir, yönetici hesapları korunur. Günlük/haftalık yedek Ayarlar'dan açılır. Uygulama kapalıyken de çalışması için hosting cron görevinde PHP 8.3+ ile api/backup-cron.php çalıştırılır; görev kendiliğinden kurulmaz.
+
+## 1.14.0 kurulumu
+
+Mevcut api/config.php ve özel yedek klasörünü koruyarak hosting ZIP'ini yükleyin. Yöneticiyle update.php üzerinden şema 12 geçişini uygulayın. Güncelleme öncesi sunucu yedeği alınır; yalnız kart banka adı metadatası eklenir, finansal kayıtlar ve yönetici hesabı korunur. Demo yenileme/temizleme seçeneğini kullanmayın. Önceki 1.13.x şema-11 Finans yedekleri yeni sürümde desteklenir. Otomatik yedek yalnız Türkiye saatiyle 03.00 cron ile, tüm türlerde toplam 5 kopya kuralıyla sürer.

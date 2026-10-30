@@ -152,7 +152,7 @@ function enhanceCardState(PDO $db,array $s): array {
   if($own)$list[count($list)-1]['remaining_cents']=(int)round($c['statement']*100);
   $c['statement_credit_cents']=$own?max(0,$latestRemaining-(int)round($c['statement']*100)):0;
   $c['statement_total_cents']=$own?$latestTotal:max(0,(int)round($c['statement']*100)-$postRepay);$c['paid_cents']=$own?$latestPaid:max(0,-$postRepay);$c['unbilled_cents']=$current;$c['future_cents']=$future;$c['available_cents']=(int)$c['limit_cents']-(int)round($c['debt']*100);$c['statements']=$list;$c['statement_difference_cents']=$latestDifference;
- }unset($c);$s['schemaVersion']=11;return $s;
+ }unset($c);$s['schemaVersion']=12;return $s;
 }
 
 function seedDemo(PDO $db,bool $comprehensive=true): array {

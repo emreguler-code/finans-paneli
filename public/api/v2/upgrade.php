@@ -130,7 +130,7 @@ function upgradeCardLink(PDO $db): array {
   return ['ok'=>true,'message'=>'Kart hesap bağlantısı güncellemesi tamamlandı.','backupReady'=>true];
  } finally {if($db->inTransaction())$db->rollBack();$db->query("SELECT RELEASE_LOCK('finans_update')");}
 }
-function upgrade(PDO $db): array {
+function upgradeProfiles(PDO $db): array {
  permit('admin');$v=(int)$db->query('SELECT schema_version FROM app_meta WHERE id=1')->fetchColumn();
  if($v>=11)return ['ok'=>true,'message'=>'Veritabanı güncel.'];
  if($v<10)upgradeCardLink($db);
@@ -144,6 +144,20 @@ function upgrade(PDO $db): array {
   return ['ok'=>true,'message'=>'Cari bilgi alanları güncellendi.','backupReady'=>true];
  } finally {if($db->inTransaction())$db->rollBack();$db->query("SELECT RELEASE_LOCK('finans_update')");}
 }
-if($action==='update_status'){permit('admin');reply(['version'=>(int)$db->query('SELECT schema_version FROM app_meta WHERE id=1')->fetchColumn(),'target'=>11,'backupReady'=>isset($_SESSION['backup_path'])&&is_file($_SESSION['backup_path'])]);}
+function upgrade(PDO $db): array {
+ permit('admin');$v=(int)$db->query('SELECT schema_version FROM app_meta WHERE id=1')->fetchColumn();
+ if($v>=12)return ['ok'=>true,'message'=>'Veritabanı güncel.'];
+ if($v<11)upgradeProfiles($db);
+ if(!(int)$db->query("SELECT GET_LOCK('finans_update',0)")->fetchColumn())throw new DomainException('Başka bir güncelleme devam ediyor.');
+ try {
+  if($v>=11){$_SESSION['backup_path']=backupDatabase($db);$_SESSION['backup_created']=time();}
+  addColumn($db,'cards','bank',"VARCHAR(160) NOT NULL DEFAULT ''");
+  $db->beginTransaction();$db->query('SELECT id FROM app_meta WHERE id=1 FOR UPDATE')->fetch();
+  audit($db,'system','12','upgrade',['version'=>$v],['version'=>12],'Ortak banka adları için kart metadata alanı; finansal kayıtlar korunur');
+  $db->exec('UPDATE app_meta SET schema_version=12 WHERE id=1');$db->commit();
+  return ['ok'=>true,'message'=>'Banka bilgisi alanı güncellendi.','backupReady'=>true];
+ } finally {if($db->inTransaction())$db->rollBack();$db->query("SELECT RELEASE_LOCK('finans_update')");}
+}
+if($action==='update_status'){permit('admin');reply(['version'=>(int)$db->query('SELECT schema_version FROM app_meta WHERE id=1')->fetchColumn(),'target'=>12,'backupReady'=>isset($_SESSION['backup_path'])&&is_file($_SESSION['backup_path'])]);}
 if($action==='update_backup'){permit('admin');$p=$_SESSION['backup_path']??'';if(!$p||!is_file($p))fail('Bu oturumda yedek bulunamadı.',404);header('Content-Type: application/octet-stream');header('Content-Disposition: attachment; filename="finans-yedek-'.date('Ymd').'.jsonl"');header('Cache-Control: no-store');readfile($p);exit;}
 if($action==='update_apply'&&$method==='POST'){permit('admin');reply(upgrade($db));}

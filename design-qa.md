@@ -1,23 +1,15 @@
-# Finans 1.13.2 bakım doğrulaması
+# Finans 1.14.0 tasarım doğrulaması
 
-Otomatik yedekleme kartı günlük Türkiye saati 03.00, cron gerekliliği ve tüm türlerde 5 kopya sınırını açıklar; haftalık/sıklık seçimi kaldırılmıştır. 504 tarayıcı kontrolü geçti. 390 px görüntü incelendi; 768/390/320 px taşma yok. Kanıt `.qa/080a374e80aa/browser/settings-backups-390.png`. Fiziksel cihaz veya canlı cron testi yapılmadı.
+final result: passed
 
-# Finans 1.13.1 bakım doğrulaması
+30 Ekim 2026. Kaynak: onaylı tam sayfa kart oluşturma ve kompakt alt işlem alanı görselleri; docs/TASARIM-ILKELERI.md ve docs/SONRAKI-SURUM-NOTLARI.md.
 
-Ayarlar yükleme hatası sonlanır ve yeniden deneme sunar. Yapılandırma açıklaması 1440, 390 ve 320 px genişliklerinde taşma olmadan gösterilir; 390 px görüntü incelendi. Diğer sayfa tasarımı değiştirilmedi. Kanıt `.qa/632abd4f3aba/browser/settings-storage-error-*.png`; 502 tarayıcı kontrolü geçti. Fiziksel cihaz veya canlı hosting testi yapılmadı.
+Kaynaklar: `/workspace/generated_images/exec-4879f0ae-5724-4e29-9ffe-066582705cdd.png` ve `/workspace/generated_images/exec-84adf05e-3da6-4468-be85-e961c3431f3f.png` (1487×1058). Gerçek derlenmiş uygulama görüntüleri `.qa/design-114/card-create-desktop.png`, `dock-desktop.png` (1440×1024), `dock-768.png`, `dock-390.png`, `dock-320.png`. Kaynak ve uygulama birlikte görsel olarak incelendi; kıyaslama ortak içerik sınırları ve bileşen rolleri üzerinden yapıldı, farklı viewportlar piksel eşitliği olarak değerlendirilmedi. Onaylı proje oranı 1,9:1, mevcut Inter/Lucide, renk ve boşluk tokenları yaklaşık görsel ölçülerinin önündedir. Sentetik veri ve tarih farklılıkları tasarım farkı sayılmadı.
 
-# Finans 1.13.0 tasarım doğrulaması
+- Kart, hesap, cari, araç oluşturma: ortak başlık, Kaydet/Vazgeç, ana bilgi ve isteğe bağlı yardımcı bölüm. Desktop 1,9:1, dar ekranda tek sütun. Giriş ekranında içeriksiz filtre düğmesi yok; genel arama erişilebilir.
+- Ekleme/düzenleme alt alanı ana ve yardımcı sütunların ortak kenarlarında biter; sol menüye veya dış boşluklara yayılmaz. Masaüstü temel alanlar yatay, Diğer seçenekler açıkça etiketli; mobil iki sütun ve açıklama tam satır. Arka plan blur/karartma yok.
+- Mobil alt gezinme 56 px + safe-area; dört hedef, en az 44 px dokunma alanı. Yeni kayıt sayfasında aynı bölgede bağlamsal Kaydet/Vazgeç. Klavye görünümünde gezinme gizlenir; form görünür viewport içinde kalır.
+- İncelemede saptanıp giderilenler: alt formdaki gereksiz 20 px alan marjları; cari tablosunun eski 1000 px minimum genişliğinden taşması; Genel etiketinin kırılması; dar ekranda kesilen tarih; form açılışında gecikmeli odağın hızlı veri girişini bozabilmesi.
+- Türkçe doğrulama, kapalı ayrıntıları açan hata odağı, görünür fokus, taslak iptali onayı, gerçek tarayıcı Geri/İleri ve sayfa yenileme kontrol edildi. Banka araması 320/390 px içinde kalır.
 
-30 Ekim 2026 · Sonuç: **passed**. Ayarlar ekranı mevcut Sade Netlik düzenine eklendi; önceki sayfa tasarımları korunur.
-
-Kaynak: kullanıcının Ayarlar menüsü, yedekleme/geri yükleme/otomatik yedek ve boş veriye geçiş talebi; docs/TASARIM-ILKELERI.md. İşlem ve tehlikeli eylem onayları ortak Sheet/EntryForm dilini paylaşır.
-
-Kanıt: `.qa/2e36f7bae663/browser/settings-*` ve geniş veride `.qa/design-113/settings-*`, `empty-start.png`. 1440 px masaüstü ve 768/390/320 px dar görünümde gerçek derlenmiş uygulama incelendi. Yatay taşma yok; yedek satırı eylemleri en az 44 px. Tam sayfa mobil ekranındaki sabit alt navigasyon, ilk görünüm yüksekliğinde yakalanır; tek ekran yüksekliği iddiası değildir.
-
-- Ayarlar, Görünüm ve bilgiler üstünde; yalnız yöneticilerde ve mobil Diğer menüsünde görünür.
-- Tek tam genişlik durum özeti; 1,9:1 içerik/yan sütun, ortak kırılımlarla dar ekranda tek sütun. Yerel Inter, Lucide, renk/boşluk/köşe rolleri korunur.
-- Listeye ait sıralama içerikte, yedek indirme/geri yükleme kendi satırındadır. Arama ve tür/tarih filtreleri ortak üst satırdadır; tarih seçimi ek blur/sayfa kayması oluşturmaz.
-- Yüklemenin henüz geri yükleme olmadığı, mevcut yönetici parolasının korunacağı, ön güvenlik yedeği ve gerçek modda temizliğin kapalı olması metinle açıklanır. Otomatik yedeğin yönetici etkinliği ile cron arasındaki farkı görünürdür.
-- Dolu demo → boş gerçek mod → yedekten aynı dolu veri akışı arayüzden tamamlandı. Ardından yerel ortam boş gerçek modda bırakıldı. Canlı hosting kendiliğinden değiştirilmez.
-
-Sınırlar: fiziksel mobil cihaz/ekran okuyucu testi ve kullanıcının hosting cron kurulumu yapılmış sayılmaz. Yedek dosyaları ve oturum bilgileri görsel rapora/depoya eklenmez; ekranlar sentetik veridir.
+Son kanıt: `.qa/cda670b4b084/browser/checks.json`; 591 kontrol, sıfır çalışma zamanı hatası. 1920/1440/1100/768/390/320 px senaryoları. Fiziksel iOS/Android, gerçek mobil klavye ve ekran okuyucu testi yapılmadı; klavye visualViewport benzetimiyle doğrulandı. Görseller ve test verisi sentetiktir; özel oturum/config/yedek dosyaları depoya eklenmez.

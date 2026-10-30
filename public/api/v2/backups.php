@@ -29,7 +29,7 @@ function backupPath(string $id): string {
  $path=backupRoot().'/'.$id.'.jsonl';if(!is_file($path)||is_link($path))throw new DomainException('Yedek dosyası bulunamadı.');return $path;
 }
 function backupShape(PDO $db): array {
- if((int)$db->query('SELECT schema_version FROM app_meta WHERE id=1')->fetchColumn()!==11)throw new DomainException('Yedek için uygulama ve veritabanı şeması aynı sürümde olmalı.');
+ if((int)$db->query('SELECT schema_version FROM app_meta WHERE id=1')->fetchColumn()!==12)throw new DomainException('Yedek için uygulama ve veritabanı şeması aynı sürümde olmalı.');
  $tables=$db->query('SHOW TABLES')->fetchAll(PDO::FETCH_COLUMN);$shape=[];
  foreach(BACKUP_TABLES as $table){if(!in_array($table,$tables,true))throw new DomainException('Veritabanı yapısı eksik; önce güncellemeyi tamamlayın.');
   $q=$db->prepare('SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=?');$q->execute([$table]);if(strcasecmp((string)$q->fetchColumn(),'InnoDB')!==0)throw new DomainException('Yedek geri yükleme için uygulama tabloları InnoDB olmalı.');
@@ -46,11 +46,11 @@ function backupCreate(PDO $db,string $kind='manual',bool $prune=true): array {
  $hash=hash_init('sha256');$counts=array_fill_keys(BACKUP_TABLES,0);$bytes=0;$stamp=(new DateTimeImmutable())->format('Y-m-d\TH:i:s.uP');
  $write=function(array $row,bool $include=true)use($f,$hash,&$bytes){$line=json_encode($row,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR)."\n";$bytes+=strlen($line);if(strlen($line)>2097152)throw new DomainException('Tek bir kayıt yedek satırı sınırını aşıyor; hosting yedeği kullanın.');if($bytes>BACKUP_MAX)throw new DomainException('Yedek 32 MB sınırını aşıyor; hosting üzerinden veritabanı dışa aktarımı kullanın.');if(fwrite($f,$line)!==strlen($line))throw new RuntimeException('Yedek dosyası tamamlanamadı.');if($include)hash_update($hash,$line);};
  try{
-  $db->beginTransaction();$write(['format'=>'finans-backup-2','schema'=>11,'created_at'=>$stamp,'kind'=>$kind,'tables'=>$shape]);
+  $db->beginTransaction();$write(['format'=>'finans-backup-2','schema'=>12,'created_at'=>$stamp,'kind'=>$kind,'tables'=>$shape]);
   foreach($shape as $table=>$columns){$q=$db->query("SELECT * FROM `$table`");while($row=$q->fetch()){$write(['table'=>$table,'row'=>$row]);$counts[$table]++;}}
   $write(['complete'=>true,'counts'=>$counts,'sha256'=>hash_final($hash)],false);if(!fflush($f))throw new RuntimeException('Yedek diske yazılamadı.');if(function_exists('fsync')&&!fsync($f))throw new RuntimeException('Yedek kalıcı olarak yazılamadı.');fclose($f);$f=null;$db->commit();
   if(!rename($tmp,$path))throw new RuntimeException('Yedek tamamlanamadı.');
-  $meta=['id'=>$id,'created_at'=>$stamp,'kind'=>$kind,'schema'=>11,'size'=>filesize($path),'sha256'=>hash_file('sha256',$path),'counts'=>$counts];backupWriteJson($root.'/'.$id.'.meta.json',$meta);
+  $meta=['id'=>$id,'created_at'=>$stamp,'kind'=>$kind,'schema'=>12,'size'=>filesize($path),'sha256'=>hash_file('sha256',$path),'counts'=>$counts];backupWriteJson($root.'/'.$id.'.meta.json',$meta);
  }catch(Throwable $e){if($db->inTransaction())$db->rollBack();if(is_resource($f))fclose($f);@unlink($tmp);@unlink($path);throw $e;}
  if($prune)backupPrune([$id]);return $meta;
 }
@@ -58,7 +58,7 @@ function backupValidate(PDO $db,string $path): array {
  if(filesize($path)>BACKUP_MAX||filesize($path)===0)throw new DomainException('Yedek boş veya 32 MB sınırından büyük.');
  $shape=backupShape($db);$f=fopen($path,'rb');if(!$f)throw new DomainException('Yedek okunamadı.');$hash=hash_init('sha256');$counts=array_fill_keys(BACKUP_TABLES,0);$header=null;$complete=false;
  try{while(($line=fgets($f,2097153))!==false){if(strlen($line)>2097152||!str_ends_with($line,"\n"))throw new DomainException('Yedek satırı eksik veya çok büyük.');$row=json_decode($line,true,64,JSON_THROW_ON_ERROR);if(!is_array($row)||$complete)throw new DomainException('Yedek içeriği geçersiz.');
-   if($header===null){if(($row['format']??'')!=='finans-backup-2'||($row['schema']??0)!==11||($row['tables']??[])!==$shape)throw new DomainException('Bu yedek uygulama şemasıyla uyumlu değil. Aynı şema sürümünden Finans yedeği seçin.');$header=$row;hash_update($hash,$line);continue;}
+   if($header===null){if(($row['schema']??0)===11){$shape['cards']=array_values(array_filter($shape['cards'],fn($column)=>$column!=='bank'));}if(($row['format']??'')!=='finans-backup-2'||!in_array($row['schema']??0,[11,12],true)||($row['tables']??[])!==$shape)throw new DomainException('Bu yedek uygulama şemasıyla uyumlu değil. Aynı şema sürümünden Finans yedeği seçin.');$header=$row;hash_update($hash,$line);continue;}
    if(($row['complete']??false)===true){if(($row['counts']??[])!==$counts||!is_string($row['sha256']??null)||!hash_equals(hash_final($hash),$row['sha256']))throw new DomainException('Yedek bütünlük kontrolü başarısız.');$complete=true;continue;}
    $table=$row['table']??'';$data=$row['row']??null;if(!is_string($table)||!isset($shape[$table])||!is_array($data)||array_keys($data)!==$shape[$table])throw new DomainException('Yedekte beklenmeyen tablo veya alan var.');foreach($data as $v)if(!is_scalar($v)&&$v!==null)throw new DomainException('Yedek alanı geçersiz.');$counts[$table]++;hash_update($hash,$line);
   }
@@ -75,7 +75,7 @@ function backupRestore(PDO $db,string $id,array $admin): array {
  try{
   $db->beginTransaction();$db->query('SELECT id FROM app_meta WHERE id=1 FOR UPDATE')->fetch();foreach(array_reverse($order) as $table)$db->exec("DELETE FROM `$table`");
   foreach($order as $table){rewind($f);$columns=$valid['header']['tables'][$table];$sql='INSERT INTO `'.$table.'` (`'.implode('`,`',$columns).'`) VALUES ('.implode(',',array_fill(0,count($columns),'?')).')';$insert=$db->prepare($sql);while(($line=fgets($f))!==false){$row=json_decode($line,true,64,JSON_THROW_ON_ERROR);if(($row['table']??'')===$table)$insert->execute(array_values($row['row']));}}
-  if((int)$db->query('SELECT schema_version FROM app_meta WHERE id=1')->fetchColumn()!==11)throw new DomainException('Yedek şema kaydı geçersiz.');
+  if((int)$db->query('SELECT schema_version FROM app_meta WHERE id=1')->fetchColumn()!==(int)$valid['header']['schema'])throw new DomainException('Yedek şema kaydı geçersiz.');if($valid['header']['schema']===11)$db->exec('UPDATE app_meta SET schema_version=12 WHERE id=1');
   $q=$db->prepare('SELECT id FROM users WHERE username=?');$q->execute([$admin['username']]);$existing=$q->fetchColumn();
   if($existing){$q=$db->prepare("UPDATE users SET password_hash=?,role='admin',active=1 WHERE id=?");$q->execute([$admin['password_hash'],$existing]);$adminId=(int)$existing;}
   else{unset($admin['id']);$admin['role']='admin';$admin['active']=1;$q=$db->prepare('INSERT INTO users (`'.implode('`,`',array_keys($admin)).'`) VALUES ('.implode(',',array_fill(0,count($admin),'?')).')');$q->execute(array_values($admin));$adminId=(int)$db->lastInsertId();}
@@ -111,7 +111,7 @@ if(str_starts_with($action,'backup_')||$action==='demo_clear'){
   elseif($action==='backup_settings'){if(!is_bool($body['enabled']??null))throw new DomainException('Otomatik yedek ayarlarını kontrol edin.');backupWriteJson(backupRoot().'/settings.json',['enabled'=>$body['enabled'],'interval'=>'daily']);backupPrune();$response=['automatic'=>backupOptions()];}
   elseif($action==='backup_upload'){
    $file=$_FILES['backup']??null;if(!$file||$file['error']!==UPLOAD_ERR_OK||!is_uploaded_file($file['tmp_name'])||$file['size']>BACKUP_MAX)throw new DomainException('Yedek yüklenemedi. Dosya 32 MB ve hosting yükleme sınırının altında olmalı.');
-   $valid=backupValidate($db,$file['tmp_name']);$id=bin2hex(random_bytes(16));$path=backupRoot().'/'.$id.'.jsonl';if(!move_uploaded_file($file['tmp_name'],$path))throw new RuntimeException('Yedek yüklenemedi.');chmod($path,0600);$meta=['id'=>$id,'created_at'=>(new DateTimeImmutable())->format('Y-m-d\TH:i:s.uP'),'kind'=>'uploaded','schema'=>11,'size'=>filesize($path),'sha256'=>hash_file('sha256',$path),'counts'=>$valid['counts'],'original_date'=>$valid['header']['created_at']??null];backupWriteJson(backupRoot().'/'.$id.'.meta.json',$meta);backupPrune([$id]);$response=['backup'=>$meta];
+   $valid=backupValidate($db,$file['tmp_name']);$id=bin2hex(random_bytes(16));$path=backupRoot().'/'.$id.'.jsonl';if(!move_uploaded_file($file['tmp_name'],$path))throw new RuntimeException('Yedek yüklenemedi.');chmod($path,0600);$meta=['id'=>$id,'created_at'=>(new DateTimeImmutable())->format('Y-m-d\TH:i:s.uP'),'kind'=>'uploaded','schema'=>$valid['header']['schema'],'size'=>filesize($path),'sha256'=>hash_file('sha256',$path),'counts'=>$valid['counts'],'original_date'=>$valid['header']['created_at']??null];backupWriteJson(backupRoot().'/'.$id.'.meta.json',$meta);backupPrune([$id]);$response=['backup'=>$meta];
   }
   elseif($action==='backup_restore'){$admin=backupReauthenticate($db,$body);if(field($body,'confirm',40,true)!=='GERİ YÜKLE')throw new DomainException('Geri yükleme onayını yazın.');$response=['safetyBackup'=>backupRestore($db,field($body,'id',32,true),$admin),'csrf'=>$_SESSION['csrf'],'reload'=>true];}
   elseif($action==='demo_clear'){backupReauthenticate($db,$body);if(field($body,'confirm',60,true)!=='DEMO VERİLERİNİ SİL')throw new DomainException('Demo temizleme onayını yazın.');$response=['safetyBackup'=>backupClearDemo($db),'reload'=>true];}

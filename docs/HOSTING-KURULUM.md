@@ -15,7 +15,7 @@ Hosting ZIP'ini açarken `api/config.php` dosyanızı koruyun; bu dosya pakette 
 2. Boş bir veritabanı ve yalnızca bu veritabanına erişen bir kullanıcı oluşturun. `database/schema.sql` dosyasını phpMyAdmin veya hosting panelinizden içe aktarın.
 3. Sunucuda `api/config.example.php` dosyasını `api/config.php` olarak kopyalayın. Veritabanı bilgilerini girin. En az 32 karakterlik kriptografik rastgele bir `setup_token` üretin; `require_https=true` kalsın. Gerçek config dosyasını GitHub'a yüklemeyin.
 4. HTTPS üzerinden uygulamayı açın. İlk yönetici kurulumunda kullanıcı adı, en az 12 karakterlik parola ve kurulum anahtarını girin.
-5. Yönetici olarak giriş yapın, aynı dizindeki `update.php` sayfasını açıp güncellemeyi uygulayın. Hedef şema sürümü 11'dur.
+5. Yönetici olarak giriş yapın, aynı dizindeki `update.php` sayfasını açıp güncellemeyi uygulayın. Hedef şema sürümü 12’dir.
 6. Uygulamaya dönün. Giriş, boş hesap listeleri ve hesap oluşturma işlemini kontrol edin. Bu paket gerçek kullanıcı/işlem verisi veya demo kayıtları içermez.
 
 ## Mevcut kurulumun güncellenmesi
@@ -28,6 +28,10 @@ ZIP ve `.sha256` dosyasını birlikte indirin; bulunduğunuz dizinde `sha256sum 
 
 ## 1.13.0: yedekleme ve gerçek veriye geçiş
 
-Ayarlar menüsü yöneticiye yedek al/indir/yükle/geri yükle ve demo temizliği sunar. Şema 11 korunur. Özel yedek klasörü web kökünün dışında ve PHP için yazılabilir olmalıdır; alt dizine kurulumda veya üst dizin yazılamıyorsa config.php içinde backup_dir için mutlak, özel bir yol tanımlayın. Yapılandırma dosyasını ve özel yedek klasörünü güncellemede koruyun.
+Ayarlar menüsü yöneticiye yedek al/indir/yükle/geri yükle ve demo temizliği sunar. 1.14.0 ile şema 12 kullanılır; şema 11 yedekleri geri yüklenebilir. Özel yedek klasörü web kökünün dışında ve PHP için yazılabilir olmalıdır; alt dizine kurulumda veya üst dizin yazılamıyorsa config.php içinde backup_dir için mutlak, özel bir yol tanımlayın. Yapılandırma dosyasını ve özel yedek klasörünü güncellemede koruyun.
 
 Hosting ZIP'ini yüklemek kayıtları silmez. Gerçek veriye başlamak için Ayarlar → Demo verilerini temizle adımını yönetici parolasıyla uygulayın. Önce otomatik bir güvenlik yedeği alınır; yönetici olmayan kullanıcılar ve iş kayıtları temizlenir, yönetici hesapları korunur. Günlük/haftalık yedek Ayarlar'dan açılır. Uygulama kapalıyken de çalışması için hosting cron görevinde PHP 8.3+ ile api/backup-cron.php çalıştırılır; görev kendiliğinden kurulmaz.
+
+## 1.14.0 kurulumu
+
+Mevcut api/config.php ve özel yedek klasörünü koruyarak hosting ZIP'ini yükleyin. Yöneticiyle update.php üzerinden şema 12 geçişini uygulayın. Güncelleme öncesi sunucu yedeği alınır; yalnız kart banka adı metadatası eklenir, finansal kayıtlar ve yönetici hesabı korunur. Demo yenileme/temizleme seçeneğini kullanmayın. Önceki 1.13.x şema-11 Finans yedekleri yeni sürümde desteklenir. Otomatik yedek yalnız Türkiye saatiyle 03.00 cron ile, tüm türlerde toplam 5 kopya kuralıyla sürer.

@@ -387,3 +387,48 @@ Ortak formda bölümler, Türkçe hata gösterimi, değişmiş taslağı kapatma
 30 Ekim 2026. Kullanıcı demo verilerini silip sıfır iş kaydıyla gerçek veri işlemeye geçmek ve Görünüm ve bilgiler üstünde Ayarlar menüsünde yedek al/geri yükle/otomatik yedek özelliklerini eklemek istedi. Bu istek uygulama kapsamıdır; yalnız not alma değildir.
 
 Ayarlar yalnız yöneticilerde görünür. Yedekler özel sunucu dizininde, yüklenen dosyalar bütünlük/şema kontrolüyle alınır. Geri yükleme ve temizleme güvenlik yedeğinden sonra yapılır, güncel yönetici parolası korunur; diğer oturumlar geçersiz kılınır. Gerçek veri modunda demo temizleme engellenir. Günlük/haftalık ve 14 otomatik yedek; yönetici uygulamasında kontrol ve yalnız CLI cron desteği. Mevcut hosting bağlantısı olmadığından canlı veri bu çalışma ortamından silinmez; kullanıcı güncelleme sonrası Ayarlar'dan temizler. Şema 11 kalır, yedekleme kılavuzu docs/YEDEKLEME.md.
+
+## 30 Ekim 2026 — Ortak banka seçimi ve tam sayfa kayıt oluşturma (onaylı sonraki kapsam)
+
+Kullanıcı gerçek saha denemelerinde kart eklerken banka listesinin eksik kaldığını bildirdi ve geniş hazır liste + seçim içinden hızlı banka ekleme önerisini onayladı. Banka seçimi aranabilir olacak; listede bulunmayan banka, formdan ayrılmadan adıyla eklenebilecek. Bankalar hesap ve kredi kartı oluşturma akışlarının ortak kaynağı olacak. Aynı banka adının büyük/küçük harf farkıyla yinelenmesi önlenecek. Banka ile kart programı ayrı kavramlardır; bankaya uygun programlar önerilir, program isteğe bağlı kalır. Logosu olmayan bankada standart banka ikonu kullanılır. Ayarlar'da banka/program yönetimi ileride ayrıca ele alınabilir; bu yönetim sayfası için bu aşamada uygulama kararı alınmadı.
+
+Kullanıcı tam sayfa **Kredi kartı ekle** görsel denemesini beğendi; aynı yaklaşımı **kredi kartı ekleme, hesap ekleme, cari ekleme ve araç ekleme** akışlarının tümü için onayladı. Görsel referans bu konuşmada 30 Ekim'de gösterilen tek tam sayfa kart ekleme tasarımıdır. Sonraki ayrıntılar geliştirilebilir; genel yön onaylıdır.
+
+- Oluşturma akışı modal yerine ayrı sayfa olur; mevcut sidebar, üst bar ve sayfa çerçevesi korunur. Başlık hangi kaydın eklendiğini açıkça belirtir.
+- Geri gezinme başlıkta; Vazgeç ve kaydetme eylemleri aynı başlık satırında gruplanır. Form bağımsız kaydedilen iki forma bölünmez, tek kayıt/tek kaydetme davranışı korunur.
+- Ana sütunda gerekli temel bilgiler ve kayıt türüne göre ilgili bölümler yer alır. Sağ sütunda isteğe bağlı ayrıntılar, uygun olduğunda kompakt önizleme ve kısa açıklamalar bulunur. Alanların yeri kayıt türüne göre anlamlı biçimde belirlenir; kart alanları diğer türlere aynen kopyalanmaz.
+- Kaynak görsel bir taslak yönüdür; nihai uygulamada mevcut Sade Netlik tipografi, renk, kontrol ölçüleri ve **1,9:1** ana/sağ sütun oranı esas alınır. Yeni kayıt sayfasına gereksiz metrikler, uyarı listeleri veya tekrarlanan marka bilgisi eklenmez.
+- Dar ekranlarda ana ve isteğe bağlı alanlar okunabilir tek akışta toplanır; kaydetme ve hata alanlarına erişim korunur, yatay taşma oluşmaz. Mevcut bilgi alanları, finansal anlamlar, zorunlu doğrulamalar ve değişmiş taslağı terk etme uyarısı korunur.
+- Kartta banka/ad/limit ve ekstre takvimi ana alandadır; program, kart sahibi, son dört hane, bağlı hesap, ödeme ağı ve mevcut borçla başlatma sağ alanda düzenlenebilir. Program önerilir ama zorunlu değildir; bağlı hesap otomatik ödeme değildir. Ekstre borcu başlangıç toplam borcunun içindedir, üzerine eklenmez.
+- Bu karar yeni kayıt oluşturma akışlarını kapsar; mevcut kayıt düzenleme ve finansal işlem ekleme pencerelerinin dönüşümü ayrıca kararlaştırılacaktır.
+
+Not ve görsel onay aşamasıdır. Bu kayıtta uygulama kodu, veritabanı, sürüm veya yayın değiştirilmedi; dört akışın kodlanması henüz başlatılmadı.
+
+## 30 Ekim 2026 — Düzenleme ve işlem ekleme için alttan açılan kompakt alan (onaylı)
+
+Kullanıcı, referans olarak alt kenarında yatay işlem giriş alanı bulunan bir hesap hareketleri ekranını paylaştı. Düzenleme ve finansal işlem ekleme akışlarının da merkez modal yerine sayfanın altından açılan kompakt bir alan kullanmasını istedi. Önceki bölümde bu akışların ayrıca kararlaştırılacağı notu bu kararla tamamlanmıştır.
+
+- İşlem ekle veya ilgili düzenleme eylemine basılınca alt kenardan giriş/düzenleme alanı açılır; kullanıcı bulunduğu kaydın ve hareket listesinin bağlamını korur. Referans başka bir ürünün renklerini, tipografisini veya kalabalık liste düzenini aktarmak için kullanılmaz.
+- Masaüstünde yatay alan değerlendirilir: işlem türüne göre tutar, açıklama ve gerekli cari/hesap/kart seçimi gibi temel bilgiler ilk görünümde olur. Seçili kayıt bağlamı mümkün olduğunda önceden doldurulur; kullanıcıdan gereksiz yeniden seçim istenmez.
+- Tarih, vade, etiket, belge ve diğer alanların hangilerinin temel veya isteğe bağlı olduğu işlem türüne göre belirlenir. Zorunlu bir alan seçenekler içinde gizlenmez. Genişleyen **Diğer seçenekler** alanı ikincil bilgileri sunar; mevcut veri alanları kaldırılmaz veya mali anlamları değiştirilmez.
+- Düzenleme aynı yüzeyde mevcut değerleri gösterir. İlgili zorunlu gerekçe, yetki, doğrulama ve değişmiş taslağı terk etme kuralları korunur. Kaydetme ve iptal/kapatma eylemleri kolay erişilir; işlem sürerken çift gönderim engellenir.
+- Bu yaklaşım yeni kayıt oluşturma sayfalarının yerine geçmez: kredi kartı/hesap/cari/araç **oluşturma** ayrı tam sayfa; mevcut kayıt **düzenleme** ve finansal **işlem ekleme** alt kenardan açılan alandır. Önceki merkez modal kuralı bu kapsam için değişmiştir.
+- Mobilde alanlar yatay sıkıştırılmaz; okunabilir biçimde yeniden akar. Alt gezinme çubuğu, ekran klavyesi ve güvenli ekran alanıyla çakışmamalı; hareket listesinin son satırları erişilebilir kalmalıdır. Açılma, içerik için yer ayırma ve mobil yükseklik davranışı nihai tasarımda birlikte doğrulanacaktır. Kullanıcı bu mesajda arka plan örtüsü/blur, sürükleme veya sürekli açık durma davranışı belirtmedi; bunlar ayrıca tasarlanmalıdır.
+
+Not alma aşaması sürüyor. Bu kayıtta uygulama kodu, veritabanı ve sürüm değiştirilmedi; paketleme/yayın yapılmadı.
+
+### Kompakt alt giriş alanı — son görsel onayı
+
+30 Ekim 2026. Kullanıcı son gösterilen kompakt tasarımı onayladı ve **düzenleme alanının da aynı görünümde olmasını** açıkça istedi. Referans, konuşmada gösterilen son görseldir; yerel görsel `/workspace/generated_images/exec-84adf05e-3da6-4468-be85-e961c3431f3f.png`. Önceki geniş/tam kenara yayılan alt alan taslağının yerine bu sürüm geçerlidir.
+
+- Alt alanın sol ve sağ kenarları ana içerik + yardımcı sütunun birleşik içerik sınırlarıyla hizalanır; aradaki sütun boşluğunu kapsar. Sidebar'a veya sayfanın dış kenar boşluklarına uzanmaz.
+- Ayrı büyük başlık/alt eylem satırları yerine küçük bağlam başlığı, tek yatay temel alan sırası, kompakt seçenek düğmesi ve Kaydet bulunur. Ek alanlar **Diğer** düğmesiyle açılır; sağ üstte kapatma vardır. Sıkıştırma için mevcut yazı ve 44px kontrol/dokunma ölçüleri küçültülmez.
+- Görselde işlem türü, açıklama, tutar ve tarih temel sıradadır; gerçek işlem türünün gerekli diğer alanları bu düzene uyarlanır. Kaydın bağlamı korunur, zorunlu alanlar gizlenmez. Uygun finansal etki açıklaması küçük ve ikincil kalır.
+- Düzenleme aynı panel yerleşimini kullanır; seçili kaydın mevcut değerleri doldurulur, ilgili bağlam ve düzenleme durumu küçük başlıkta açıkça belirtilir. Kapalı ek alanların kayıtlı değerleri kaybolmaz; gerekçe/izin/doğrulama kuralları korunur.
+- Arka plandaki sayfa görünür kalır. Alt alana yer ayrılarak hareketlere erişim korunur; dar ekran ve klavye davranışı mevcut mobil tasarım ölçüleriyle ayrıca doğrulanır.
+
+Bu onay tasarım kapsamını kesinleştirir. Kullanıcı bu mesajda kodlama/paketleme/yayın istemedi; yalnız notlar güncellendi.
+
+## 1.14.0 — Toplu uygulama ve gönderim onayı
+
+Kullanıcı, yukarıdaki onaylı banka seçimi, dört tam sayfa oluşturma ve kompakt işlem/düzenleme alanını kodlayıp tasarım ilkeleri ve mobil/masaüstü taşmalar açısından kontrol ederek göndermemizi istedi. Önceki not alma / kodlamaya geçilmedi ifadeleri bu kapsam için tarihsel kayıttır. Mobil alt gezinme ve form eylemleri aynı kapsamda optimize edilir. Veri/kullanıcı temizliği istenmedi; sadece izole test verileri kullanılır. Kart banka adı metadatası için şema 12'ye güvenli geçiş ve şema 11 yedek uyumluluğu sağlanır. Özel banka adı kayıtla birlikte kaydedilir; bağımsız banka yönetim ekranı bu sürüme eklenmez.

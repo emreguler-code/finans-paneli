@@ -72,7 +72,7 @@ function saveEntity(PDO $db,string $entity,array $b): array {
   $linked=field($b,'linked_account_id',40);if($linked!==''){$account=row($db,'accounts',$linked);if(!$account['active']&&($old['linked_account_id']??null)!==$linked)throw new DomainException('Arşivlenmiş hesap yeni bağlantı için seçilemez.');}
  }
 
- $v=['holder'=>field($b,'holder',160),'name'=>field($b,'name',160,true),'limit_cents'=>cents($b,'limit'),'due'=>validDate(field($b,'due',10,true),true),'statement_date'=>validDate(field($b,'statementDate',10,true)),'cut_day'=>(int)($b['cutDay']??0),'last_four'=>field($b,'lastFour',4)];if($v['limit_cents']<=0||$v['cut_day']<1||$v['cut_day']>31||($v['last_four']&&!preg_match('/^\d{4}$/D',$v['last_four'])))throw new DomainException('Limit, kesim günü veya son dört haneyi kontrol edin.');if($v['due']<$v['statement_date'])throw new DomainException('Son ödeme tarihi hesap kesiminden önce olamaz.');
+ $v=['bank'=>array_key_exists('bank',$b)?field($b,'bank',160):($old['bank']??''),'holder'=>field($b,'holder',160),'name'=>field($b,'name',160,true),'limit_cents'=>cents($b,'limit'),'due'=>validDate(field($b,'due',10,true),true),'statement_date'=>validDate(field($b,'statementDate',10,true)),'cut_day'=>(int)($b['cutDay']??0),'last_four'=>field($b,'lastFour',4)];if($v['limit_cents']<=0||$v['cut_day']<1||$v['cut_day']>31||($v['last_four']&&!preg_match('/^\d{4}$/D',$v['last_four'])))throw new DomainException('Limit, kesim günü veya son dört haneyi kontrol edin.');if($v['due']<$v['statement_date'])throw new DomainException('Son ödeme tarihi hesap kesiminden önce olamaz.');
  if($old&&!empty($old['opening_statement_date'])&&$v['statement_date']<$old['opening_statement_date'])throw new DomainException('Ekstre tarihi başlangıç döneminden önce olamaz.');
  if(array_key_exists('linked_account_id',$b))$v['linked_account_id']=$linked?:null;
  $v['statement_needs_review']=0;if(!$old||empty($old['opening_statement_date']))$v['opening_statement_date']=$v['statement_date'];
@@ -81,8 +81,11 @@ function saveEntity(PDO $db,string $entity,array $b): array {
  $v=['username'=>field($b,'username',80,true),'short_name'=>field($b,'shortName',80,true),'role'=>field($b,'role',20,true)];if(!in_array($v['role'],V2_ROLES,true))throw new DomainException('Rol geçersiz.');$password=field($b,'password',128,!$old);if($password){if(strlen($password)<12||strlen($password)>72)throw new DomainException('Parola 12–72 bayt uzunluğunda olmalı.');$v['password_hash']=password_hash($password,PASSWORD_DEFAULT);}
  }
  if(in_array($entity,['account','card'],true)){
- $catalog=['garanti'=>['bonus'],'yapikredi'=>['world'],'akbank'=>['axess']];
+ $banks=bankCatalog();$catalog=array_column($banks,'programs','code');
  if(array_key_exists('bank_code',$b)){$v['bank_code']=field($b,'bank_code',40);if($v['bank_code']!==''&&!array_key_exists($v['bank_code'],$catalog))throw new DomainException('Banka seçimini kontrol edin.');}
+ if(!array_key_exists('bank',$b)&&$old)$v['bank']=$old['bank']??'';
+ $selectedCode=$v['bank_code']??($old['bank_code']??'');
+ if($selectedCode!==''){$v['bank']=array_column($banks,'name','code')[$selectedCode];}elseif(!empty($v['bank'])){$name=trim(preg_replace('/\s+/u',' ',$v['bank']));foreach($banks as $known)if(bankKey($known['name'])===bankKey($name)){$v['bank_code']=$known['code'];$name=$known['name'];break;}if(empty($v['bank_code']))foreach(array_merge($db->query("SELECT bank FROM accounts WHERE bank<>''")->fetchAll(),$db->query("SELECT bank FROM cards WHERE bank<>''")->fetchAll()) as $known)if(bankKey($known['bank'])===bankKey($name)){$name=$known['bank'];break;}$v['bank']=$name;}
  if($entity==='card'){
  $bank=$v['bank_code']??($old['bank_code']??'');
  $program=array_key_exists('program_code',$b)?field($b,'program_code',40):($old['program_code']??'');

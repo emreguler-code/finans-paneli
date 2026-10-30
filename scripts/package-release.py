@@ -27,7 +27,7 @@ import subprocess
 tracked = subprocess.check_output(["git", "ls-files", "-z", "public/api", "database"], cwd=ROOT).decode().split("\0")
 for name in filter(None, tracked):
     source = ROOT / name
-    if name.startswith("public/api/") and source.suffix == ".php" and source.name != "config.php":
+    if name.startswith("public/api/") and (source.suffix == ".php" and source.name != "config.php" or name == "public/api/bank-catalog.json"):
         files["hosting/" + name.removeprefix("public/")] = source
     elif name.startswith("database/") and source.suffix == ".sql" and source.name != "sample-data.sql":
         files[name] = source

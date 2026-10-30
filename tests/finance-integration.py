@@ -25,7 +25,7 @@ def event(**b):
 call('session')
 code,r=call('login',dict(username=os.environ['API_TEST_USERNAME'],password=os.environ['API_TEST_PASSWORD']));assert code==200,r
 code,r=call('update_apply',{});ok('Schema 11 update succeeds',code==200)
-ok('Schema 11 active',state()['schemaVersion']==11)
+ok('Schema 12 active',state()['schemaVersion']==12)
 code,r=post('demo_seed',profile='compact');assert code==200,r
 ok('Demo seed succeeds',r.get('demoReady'))
 ok('Administrator login survives demo reset',call('login',dict(username=os.environ['API_TEST_USERNAME'],password=os.environ['API_TEST_PASSWORD']))[0]==200)
@@ -184,5 +184,14 @@ linked_after=state()
 ok('Card linkage never changes financial facts',linked_before['events']==linked_after['events'] and [a['balance_cents'] for a in linked_before['accounts']]==[a['balance_cents'] for a in linked_after['accounts']] and [c['debt'] for c in linked_before['cards']]==[c['debt'] for c in linked_after['cards']])
 exec(compile((Path(__file__).with_name('tracking-integration.py')).read_text(),'tracking-integration.py','exec'))
 exec(compile((Path(__file__).with_name('profile-integration.py')).read_text(),'profile-integration.py','exec'))
+# Shared bank catalog and persisted free-name directory: no new financial facts.
+bank_before=state();TODAY=bank_before['today'];catalog=json.loads((Path(__file__).parents[1]/'public/api/bank-catalog.json').read_text())['banks']
+ok('Shared bank catalog includes 25 retail and participation banks',len(catalog)>=25 and len({b['code'] for b in catalog})==len(catalog))
+code,r=post('account_save',name='QA ortak banka',type='Banka hesabı',bank='  Saha   Bankası  ',bank_code='',opening='0');assert code==200,r
+code,r=post('card_save',name='QA banka kartı',holder='',bank='SAHA BANKASI',bank_code='',program_code='',limit='10000',opening='0',statement='0',statementDate=TODAY,due=TODAY,cutDay=int(TODAY[-2:]));assert code==200,r
+ok('Account and card custom bank names resolve to the same canonical name',next(a for a in state()['accounts'] if a['name']=='QA ortak banka')['bank']==next(c for c in state()['cards'] if c['name']=='QA banka kartı')['bank']=='Saha Bankası')
+code,r=post('card_save',name='QA Maximum kartı',bank_code='isbank',bank='',program_code='maximum',limit='25000',opening='0',statement='0',statementDate=TODAY,due=TODAY,cutDay=int(TODAY[-2:]));ok('New catalog bank accepts its own program',code==200 and next(c for c in state()['cards'] if c['name']=='QA Maximum kartı')['bank']=='Türkiye İş Bankası')
+ok('New catalog bank rejects another bank program',post('card_save',name='QA yanlış program',bank_code='isbank',program_code='axess',limit='25000',opening='0',statement='0',statementDate=TODAY,due=TODAY,cutDay=int(TODAY[-2:]))[0]==422)
+ok('Bank metadata never creates financial events',bank_before['events']==state()['events'])
 Path(os.environ['QA_STATE_PATH']).write_text(json.dumps(state(),ensure_ascii=False))
 print(json.dumps({'passed':len(checks),'failed':0}))

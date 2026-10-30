@@ -150,3 +150,9 @@ Araç ana listesi ve detay kategorileri tek sütun yatay satırlardır; Özet/İ
 - Genel bakış araması 3 karakter/300 ms sonrası cari/işlem/hesap/kart/araç önerilerini alana bağlı pencerede gösterir; sonuçlar dönem filtresinden bağımsızdır. Diğer menüler bağlamsal aramayı korur.
 - Varsayılan Bu Ay görüntüleme dönemi etkin filtre sayılmaz; özel dönem temizlenince Bu Ay'a dönülür ve rozet/çip kalkar. Cari liste özeti ana/sağ sütunun tamamını kapsar.
 - Mobil kart özeti ana kullanılabilir limit + limit göstergesi, iki metrik, belirgin son ödeme satırı ve kapalı Daha fazla alanını kullanır. Bilgi/düzenleme aynı özet içinde ayrı boş satır açmadan durur; masaüstü ayrıntıları korunur.
+
+## 1.14.0 — Onaylı kayıt giriş yüzeyleri
+
+Kart, hesap, cari ve araç oluşturma modal yerine tam sayfadır. Başlık/geri/eylemler ortak dilde, ana/yardımcı alanlar masaüstünde 1,9:1 oranındadır. Düzenleme ve finansal işlem ekleme alt kenarda, dış sayfa boşluklarına uzanmadan aynı içerik sınırlarına hizalı kompakt alandır. Arka plan bulanmaz; liste kaydırılabilir ve son satırlar için alan ayrılır. Gerekli alanlar açık, diğerleri Diğer üzerinden erişilirdir. Metin ve 44px alanlar sıkıştırmak için küçültülmez.
+
+Mobilde oluşturma sayfasının Kaydet/Vazgeç çubuğu alt gezinmenin yerini alır; işlem/düzenleme alanı normal gezinmenin üstünde durur, klavye açıkken gezinme gizlenir. Alanlar okunabilir iki/tek sütuna akar, kaydetme erişilir kalır. Dört ana gezinme hedefi aynı kısa etiketlerle korunur. Değişmiş taslak ayrılmadan önce korunur; kapalı ayrıntılardaki değerler kaybolmaz.
