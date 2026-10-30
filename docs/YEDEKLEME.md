@@ -1,6 +1,6 @@
 # Yedekleme ve gerçek veriye geçiş
 
-Finans 1.13.1 · Şema 11 · PHP 8.3+ / PDO MySQL.
+Finans 1.13.2 · Şema 11 · PHP 8.3+ / PDO MySQL.
 
 ## Demo verilerini temizleyerek başlamak
 
@@ -44,17 +44,27 @@ Bu örneği kendi hosting yolunuza göre değiştirin. Örneğin web kökü `/ho
 
 ## Otomatik yedekleme
 
-**Ayarlar → Otomatik yedek al** seçeneğinde günlük veya haftalık dönem seçilir. Yönetici uygulamayı açınca ve açıkken 15 dakikada bir kontrol yapılır. Günlükte İstanbul takvim gününde, haftalıkta ISO haftasında en fazla bir otomatik yedek oluşturulur. Elle alınan yedekler bu kontrolün yerine geçmez.
+**Ayarlar → Otomatik yedek al** açıkken her gün **Türkiye saatiyle 03.00** için yedek planlanır. Ayarlar'a girmek, sayfayı yenilemek veya seçeneği açmak yedek oluşturmaz. Tarayıcıdan otomatik yedek başlatılmaz; açık uygulama veya oturum gerekmez.
 
-Son **14 otomatik yedek** tutulur; elle alınan, yüklenen, temizleme ve geri yükleme öncesi yedekler otomatik silinmez. Eski günlerde uygulama kapalıysa geriye dönük hayali yedek oluşturulmaz.
-
-Uygulama kapalıyken de yedek için hosting cron görevine PHP 8.3+ ile bu dosyayı ekleyin:
+Zamanında çalışması için hosting panelinde PHP 8.3+ ile bir cron görevi oluşturulmalıdır:
 
 ```sh
 /usr/bin/php /home/hosting-kullanicisi/public_html/api/backup-cron.php
 ```
 
-Hostinginizin PHP 8.3+ yolunu ve gerçek kurulum konumunu kullanın. Örneğin saatte bir çalıştırın (`0 * * * *`); betik her çağrıda yalnız Ayarlar'da etkin ve dönemi gelmişse yedek alır. Betik web üzerinden çağrılınca 404 verir, URL'ye parola veya anahtar koymak gerekmez. Cron görevinin kurulumunu bu paket hosting panelinizde kendiliğinden yapamaz. Başarısız cron çalışması sıfır olmayan çıkış kodu üretir.
+Gerçek PHP yolunu ve uygulama alt klasördeyse o konumu kullanın. Hosting cron saat dilimi **Europe/Istanbul** ise `0 3 * * *`; saat dilimi **UTC** ise `0 0 * * *` seçin. Saat dilimini hosting panelinden doğrulayın. Betik İstanbul saatine göre yalnız 03.00–03.59 aralığında, günde en fazla bir başarılı otomatik yedek oluşturur. Normal görev 03.00 için kurulmalıdır; saat içindeki tekrar denemeler ikinci yedek üretmez. Bu pencere kaçırılırsa gündüz telafi yedeği oluşturulmaz; sonraki gece beklenir.
+
+Son başarılı çalışma günü, yedek dosyalarından ayrı özel bir kayıtla korunur. Günün otomatik dosyası 5 dosya sınırı nedeniyle silinse bile aynı gece ikinci kez otomatik yedek alınmaz. Eski günlük/haftalık seçenekler günlük 03.00 planına dönüşür; açık/kapalı tercihi korunur. Önceden kurulmuş saatte bir cron da yalnız 03.00 kontrolünde çalışır; yeni cron'u günde bir kez kurmak yeterlidir.
+
+Cron URL'si web üzerinden 404 verir. Parola veya anahtar URL'ye konmaz. Bu paket hosting panelinde görevi kendiliğinden kuramaz. Cron kurulmadan yalnız seçeneği açmak otomatik yedekleme sağlamaz. Başarısız cron çalışması sıfır olmayan çıkış kodu üretir.
+
+## En fazla 5 yedek
+
+Sunucuda **tüm türler birlikte en fazla 5 yedek** tutulur: elle alınan, otomatik, yüklenen ve işlem öncesi güvenlik yedekleri aynı sınıra dahildir. Yeni dosya tamamen yazıldıktan/doğrulandıktan sonra en eski dosyalar silinir; yeni tamamlanan dosya korunur. Mevcut 5'ten fazla yedek, sonraki yedek oluşturma/yükleme veya **Ayarları kaydet** işleminde bu sınıra iner. Sayfaya bakmak kendi başına dosya oluşturmaz ya da silmez.
+
+Geri yüklemede seçilmiş kaynak dosya işlem tamamlanana kadar korunur; güvenlik kopyasıyla geçici olarak 6 dosya oluşabilir. İşlem bitince yeniden 5'e indirilir ve yeni güvenlik yedeği korunur. Başarısız yedek üretimi mevcut sağlam kopyaları azaltmaz. Eski dosya silinemiyorsa izin hatası bildirilir; dosya izinleri hostingde düzeltilmelidir.
+
+Uzun süre saklamak istediğiniz yedekleri indirin; indirilmiş kopyalar sunucunun sınırından etkilenmez. Dosya biçimi ve 32 MB sınırı korunmuştur; sıkıştırma bu sürümde eklenmemiştir.
 
 ## Eski demo yenileme yolu
 

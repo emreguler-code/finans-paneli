@@ -58,15 +58,33 @@ viewer_pass=secrets.token_hex(16);code,v=post('user_save',username='backup-viewe
 assert call('login',dict(username='backup-viewer',password=viewer_pass))[0]==200
 for action,body in [('backup_status',None),('backup_create',{}),('backup_restore',{}),('demo_clear',{})]:ok('Viewer cannot access '+action,call(action,body)[0]==403)
 assert call('login',dict(username=username,password=password))[0]==200
-assert call('backup_settings',dict(enabled=True,interval='daily'))[0]==200
-ok('First due automatic tick creates one backup',call('backup_auto_tick',{})[1]['created'] is True)
-ok('Repeated automatic tick does not duplicate a period',call('backup_auto_tick',{})[1]['created'] is False)
-for _ in range(15):
- php('$root='+json.dumps(str(root))+";foreach(glob($root.'/*.meta.json') as $path){$m=json_decode(file_get_contents($path),true);if($m['kind']==='automatic'){$m['created_at']='2000-01-01T00:00:00+03:00';file_put_contents($path,json_encode($m));}}")
- assert call('backup_auto_tick',{})[1]['created']
-backups=call('backup_status')[1]['backups'];ok('Retention keeps 14 automatic backups and all manual backups',sum(b['kind']=='automatic' for b in backups)==14 and any(b['id']==manual['id'] for b in backups))
-assert call('backup_settings',dict(enabled=False,interval='weekly'))[0]==200
-ok('Disabled automatic schedule makes no backups',call('backup_auto_tick',{})[1]['created'] is False)
+def scheduled(at):
+ # Exercise the same CLI scheduler with a controlled clock, no browser or production DB.
+ prefix="$action='scheduler_test';$config=require "+json.dumps(str(runtime/'web/api/config.php'))+";require "+json.dumps(str(runtime/'web/api/v2/backups.php'))+";"
+ connect="$db=new PDO('mysql:host='.$config['db_host'].';port='.$config['db_port'].';dbname='.$config['db_name'].';charset=utf8mb4',$config['db_user'],$config['db_password'],[PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,PDO::ATTR_DEFAULT_FETCH_MODE=>PDO::FETCH_ASSOC]);$db->exec(\"SET time_zone = '+03:00'\");$db->query(\"SELECT GET_LOCK('finans_update',5)\");"
+ return json.loads(php(prefix+connect+'echo json_encode((bool)backupAutomatic($db,new DateTimeImmutable('+json.dumps(at)+')));'))
+assert call('backup_settings',dict(enabled=True))[0]==200
+n=len(call('backup_status')[1]['backups'])
+ok('Enabling automatic backups does not create a snapshot',n==count)
+for _ in range(3):assert call('backup_auto_tick',{})[1]['created'] is False;assert call('backup_status')[0]==200
+ok('Browser ticks and repeated settings reads never create automatic backups',len(call('backup_status')[1]['backups'])==n)
+ok('Scheduler cannot create a backup before 03:00 Istanbul',scheduled('2030-01-01T02:59:59+03:00') is False)
+ok('Scheduler creates once at 03:00 Istanbul using UTC cron time',scheduled('2030-01-01T00:00:00Z') is True)
+ok('Repeated cron within 03:00 hour does not duplicate daily backup',scheduled('2030-01-01T03:20:00+03:00') is False)
+ok('Scheduler does not make late daytime backups',scheduled('2030-01-02T12:00:00+03:00') is False)
+for day in range(2,8):assert scheduled(f'2030-01-{day:02}T03:00:00+03:00') is True
+backups=call('backup_status')[1]['backups'];ok('All backup kinds together are limited to five files',len(backups)==5)
+# Manual backups must also be bounded, and pruning must not reset the daily schedule.
+manual_ids=[]
+for _ in range(6):
+ code,created=call('backup_create',{});assert code==200;manual_ids.append(created['backup']['id'])
+ok('Manual backup creation retains exactly the newest five snapshots',set(b['id'] for b in call('backup_status')[1]['backups'])==set(manual_ids[-5:]))
+ok('Rotation removes old payload and catalog files from disk',php('$root='+json.dumps(str(root))+';echo count(glob($root.\"/*.jsonl\")).\"/\".count(glob($root.\"/*.meta.json\"));')=='5/5')
+ok('Evicting automatic files does not permit a second automatic backup today',scheduled('2030-01-07T03:40:00+03:00') is False)
+code,fresh=upload(blob);assert code==200;manual=fresh['backup']
+ok('Import retains the uploaded file and respects the five backup limit',len(call('backup_status')[1]['backups'])==5 and any(b['id']==manual['id'] for b in call('backup_status')[1]['backups']))
+assert call('backup_settings',dict(enabled=False))[0]==200
+ok('Disabled schedule makes no backups even at 03:00',scheduled('2030-01-08T03:00:00+03:00') is False)
 sql("CREATE TABLE unrelated_business (id INT PRIMARY KEY) ENGINE=InnoDB;INSERT INTO unrelated_business VALUES(1)")
 code,r=call('demo_clear',dict(password='wrong',confirm='DEMO VERİLERİNİ SİL'));ok('Wrong administrator password cannot clear data',code==422 and financial(state())==baseline)
 ok('Explicit typed clear confirmation is required',call('demo_clear',dict(password=password,confirm='sil'))[0]==422)
@@ -83,9 +101,12 @@ ok('New real-data records can be entered after clear',state()['accounts'][0]['ba
 u=next(u for u in state()['users'] if u['id']==state()['user']['id']);new_password=secrets.token_hex(18)
 code,r=post('user_save',id=u['id'],version=u['version'],username=username,shortName=u['short_name'],role='admin',password=new_password,active=True,reason='Test password preservation');assert code==200,r;password=new_password
 other_session=json.load(other.open(URL+'?action=session'));other_request=urllib.request.Request(URL+'?action=login',data=json.dumps(dict(username=username,password=password)).encode(),headers={'Content-Type':'application/json','X-CSRF-Token':other_session['csrf']});assert json.load(other.open(other_request))['user']==username
+code,fresh=upload(blob);assert code==200;manual=fresh['backup']
+php('$root='+json.dumps(str(root))+';$path=$root.\"/'+manual['id']+'.meta.json\";$m=json_decode(file_get_contents($path),true);$m[\"created_at\"]=\"1999-01-01T00:00:00+03:00\";file_put_contents($path,json_encode($m));')
 code,r=call('backup_restore',dict(id=manual['id'],password=password,confirm='GERİ YÜKLE'));assert code==200,r
 ok('Restore revokes other authenticated sessions before they can use old record identities',json.load(other.open(URL+'?action=session'))['user'] is None)
 ok('Restore recovers every financial module exactly',financial(state())==baseline)
+ok('Oldest restore target survives safety backup until restore completes; newest safety is retained',len(call('backup_status')[1]['backups'])==5 and any(b['id']==r['safetyBackup']['id'] for b in call('backup_status')[1]['backups']))
 ok('Restore preserves the current administrator password',call('login',dict(username=username,password=password))[0]==200)
 ok('Restore creates a safety snapshot of the replaced real records',r['safetyBackup']['kind']=='before_restore' and r['safetyBackup']['counts']['accounts']==1)
 ok('Restore leaves unrelated tables intact',sql('SELECT COUNT(*) FROM unrelated_business')=='1')
@@ -93,6 +114,7 @@ ok('Restore leaves unrelated tables intact',sql('SELECT COUNT(*) FROM unrelated_
 u=next(u for u in state()['users'] if u['id']==state()['user']['id'])
 code,r=post('user_save',id=u['id'],version=u['version'],username='recovery-admin',shortName='Kurtarma yöneticisi',role='admin',password='',active=True,reason='Restore identity coverage');assert code==200,r;username='recovery-admin'
 assert call('login',dict(username=username,password=password))[0]==200
+code,fresh=upload(blob);assert code==200;manual=fresh['backup']
 code,r=call('backup_restore',dict(id=manual['id'],password=password,confirm='GERİ YÜKLE'));assert code==200,r
 ok('Administrator absent from old backup is preserved without id collision',state()['user']['username']==username and call('login',dict(username=username,password=password))[0]==200 and financial(state())==baseline)
 # Structurally valid file with invalid FK must roll back the entire replacement.
@@ -101,6 +123,7 @@ code,bad=upload(edited(blob,break_fk));assert code==200,bad
 before=financial(state());code,r=call('backup_restore',dict(id=bad['backup']['id'],password=password,confirm='GERİ YÜKLE'));ok('Invalid relationships roll back the entire restore',code==503 and financial(state())==before)
 ok('Failed restore releases maintenance lock',call('backup_create',{})[0]==200)
 # Never let FK cascades affect an unrelated application, including another schema.
+code,fresh=upload(blob);assert code==200;manual=fresh['backup']
 party=before['parties'][0]['id'];sql(f'CREATE TABLE unrelated_link (id INT PRIMARY KEY,party_id INT UNSIGNED,FOREIGN KEY(party_id) REFERENCES parties(id) ON DELETE CASCADE) ENGINE=InnoDB;INSERT INTO unrelated_link VALUES(1,{party})')
 ok('Related non-application tables block restore before deletion',call('backup_restore',dict(id=manual['id'],password=password,confirm='GERİ YÜKLE'))[0]==422 and sql('SELECT COUNT(*) FROM unrelated_link')=='1' and financial(state())==before);sql('DROP TABLE unrelated_link')
 sql(f'CREATE DATABASE finans_external_guard;CREATE TABLE finans_external_guard.link (id INT PRIMARY KEY,party_id INT UNSIGNED,FOREIGN KEY(party_id) REFERENCES finans_test.parties(id) ON DELETE CASCADE) ENGINE=InnoDB;INSERT INTO finans_external_guard.link VALUES(1,{party})')
@@ -127,9 +150,8 @@ try:
 except urllib.error.HTTPError as e:http_code=e.code
 ok('Cron cannot be invoked over HTTP',http_code==404)
 assert call('backup_settings',dict(enabled=True,interval='weekly'))[0]==200
-ok('Weekly schedule avoids another backup in the same week',call('backup_auto_tick',{})[1]['created'] is False)
-php('$root='+json.dumps(str(root))+";foreach(glob($root.'/*.meta.json') as $path){$m=json_decode(file_get_contents($path),true);if($m['kind']==='automatic'){$m['created_at']='2000-01-01T00:00:00+03:00';file_put_contents($path,json_encode($m));}}")
-ok('CLI cron creates a due backup without a browser session', 'oluşturuldu' in php('include '+json.dumps(str(cron))+';'))
+ok('Legacy weekly settings become daily at 03:00 without immediate backup',call('backup_status')[1]['automatic']['time']=='03:00' and call('backup_status')[1]['automatic']['interval']=='daily')
+ok('CLI scheduler works without a browser session on the next scheduled day',scheduled('2030-01-08T03:00:00+03:00') is True)
 auto=next(b for b in call('backup_status')[1]['backups'] if b['kind']=='automatic')
 code,cron_blob=call('backup_download',params={'id':auto['id']});old_created=next(json.loads(l)['row']['created_at'] for l in blob.splitlines() if json.loads(l).get('table')=='users');cron_created=next(json.loads(l)['row']['created_at'] for l in cron_blob.splitlines() if json.loads(l).get('table')=='users');ok('Cron and API snapshots preserve the same timestamp timezone',code==200 and old_created==cron_created)
 code,result=post('demo_seed',profile='compact');ok('Legacy updater demo replacement also creates a safety backup',code==200 and any(b['kind']=='before_demo' for b in call('backup_status')[1]['backups']))

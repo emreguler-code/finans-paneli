@@ -1,3 +1,7 @@
+# Finans 1.13.2 bakım doğrulaması
+
+Otomatik yedekleme kartı günlük Türkiye saati 03.00, cron gerekliliği ve tüm türlerde 5 kopya sınırını açıklar; haftalık/sıklık seçimi kaldırılmıştır. 504 tarayıcı kontrolü geçti. 390 px görüntü incelendi; 768/390/320 px taşma yok. Kanıt `.qa/080a374e80aa/browser/settings-backups-390.png`. Fiziksel cihaz veya canlı cron testi yapılmadı.
+
 # Finans 1.13.1 bakım doğrulaması
 
 Ayarlar yükleme hatası sonlanır ve yeniden deneme sunar. Yapılandırma açıklaması 1440, 390 ve 320 px genişliklerinde taşma olmadan gösterilir; 390 px görüntü incelendi. Diğer sayfa tasarımı değiştirilmedi. Kanıt `.qa/632abd4f3aba/browser/settings-storage-error-*.png`; 502 tarayıcı kontrolü geçti. Fiziksel cihaz veya canlı hosting testi yapılmadı.
