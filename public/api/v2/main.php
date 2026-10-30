@@ -125,6 +125,11 @@ $key=requestKey($body);$hash=hash('sha256',json_encode([$actor['id'],$action,$bo
 if(in_array($action,['event_status','user_save','demo_seed']))permit('admin');else permit(!empty($body['id'])?'edit':'create');
 if(!(int)$db->query("SELECT GET_LOCK('finans_update',5)")->fetchColumn())fail('Güncelleme sürüyor. Kayıt girişi geçici olarak kapalı.',503);
 try{
+ // The legacy updater can also replace business data with demo data. Protect that entry point too.
+ if($action==='demo_seed'){
+  $retry=$db->prepare('SELECT COUNT(*) FROM write_requests WHERE request_key=?');$retry->execute([$key]);
+  if(!(int)$retry->fetchColumn())foreach(BACKUP_TABLES as $table){if(in_array($table,['app_meta','users','login_attempts','audit_log','write_requests'],true))continue;if($db->query("SELECT 1 FROM `$table` LIMIT 1")->fetchColumn()){$safety=backupCreate($db,'before_demo');$_SESSION['backup_path']=backupPath($safety['id']);$_SESSION['backup_created']=time();break;}}
+ }
  $db->beginTransaction();$db->query('SELECT id FROM app_meta WHERE id=1 FOR UPDATE')->fetch();$q=$db->prepare('SELECT * FROM write_requests WHERE request_key=?');$q->execute([$key]);$seen=$q->fetch();
  if($seen){if(!hash_equals($seen['payload_hash'],$hash))throw new DomainException('Aynı kayıt anahtarı farklı içerikle kullanıldı.');$result=json_decode($seen['result_json'],true);$db->rollBack();$result['duplicate']=true;}
  else{

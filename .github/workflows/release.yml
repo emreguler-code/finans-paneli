@@ -41,6 +41,7 @@ jobs:
         run: |
           npm run test:api
           npm run test:migrations
+          npm run test:backups
       - name: Prepare browser for checks
         id: chromium
         timeout-minutes: 5

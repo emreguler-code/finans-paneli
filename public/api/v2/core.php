@@ -5,6 +5,7 @@ const V2_ROLES=['admin','editor','user','viewer'];
 const V2_KINDS=['Açılış','Alacak','Borç','Tahsilat','Ödeme','Virman','Kart harcaması','Kart iadesi','Kart ödemesi'];
 function v2Actor(PDO $db): ?array {
  if(empty($_SESSION['uid']))return null;
+ if(function_exists('workspaceEpoch')&&($_SESSION['workspace_epoch']??'initial')!==workspaceEpoch()){unset($_SESSION['uid'],$_SESSION['username']);return null;}
  $q=$db->prepare('SELECT * FROM users WHERE id=?');$q->execute([$_SESSION['uid']]);$u=$q->fetch();
  if(!$u || (isset($u['active'])&&!$u['active']))return null;
  return ['id'=>(int)$u['id'],'username'=>$u['username'],'short_name'=>$u['short_name']??explode(' ',$u['username'])[0],'role'=>((int)$db->query('SELECT schema_version FROM app_meta WHERE id=1')->fetchColumn()>=3?$u['role']:null)??((int)$u['id']==(int)$db->query('SELECT MIN(id) FROM users')->fetchColumn()?'admin':'viewer')];

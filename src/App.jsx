@@ -1,3 +1,5 @@
+import {SettingsPage} from './SettingsPage';
+import {api} from './api';
 import {GlobalSearchTools,GlobalSearchPage} from './GlobalSearch';
 import {useNavigation} from './Navigation';
 import {NotificationsPage} from './NotificationsPage';
@@ -14,12 +16,12 @@ import { globalEventAmount } from './list-utils.mjs';
 import { DatePicker } from './DatePicker';
 import { presetRange } from './date-utils.mjs';
 import { useState, useEffect, useRef } from "react";
-import { Users, LayoutDashboard, ArrowLeftRight, Landmark, CreditCard, ChartNoAxesCombined, Search, Bell, Plus, ChevronRight, ChevronDown, PanelLeftClose, PanelLeftOpen, ArrowDownLeft, ArrowUpRight, ArrowRight, CircleAlert, Check, X, Wallet, CalendarDays, MoreHorizontal, Settings, Car, Gift, UserRoundCog } from "lucide-react";
+import { Users, LayoutDashboard, ArrowLeftRight, Landmark, CreditCard, ChartNoAxesCombined, Search, Bell, Plus, ChevronRight, ChevronDown, PanelLeftClose, PanelLeftOpen, ArrowDownLeft, ArrowUpRight, ArrowRight, CircleAlert, Check, X, Wallet, CalendarDays, MoreHorizontal, Settings, Settings2, Car, Gift, UserRoundCog } from "lucide-react";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 import { money, day } from "./data";
 import { FinanceHub, FinanceDialog } from "./Finance";
 import { can } from "./ui";
-const navigation = [["Genel bakış", LayoutDashboard], ["Cari hesaplar", Users], ["Tahsilat & Ödeme", ArrowLeftRight], ["Ödeme Planı", CalendarDays], ["Hesaplar", Landmark], ["Kredi kartları", CreditCard], ["Kampanyalar", Gift], ["Araçlarım", Car], ["Raporlar", ChartNoAxesCombined], ["Kullanıcılar", UserRoundCog]];
+const navigation = [["Genel bakış", LayoutDashboard], ["Cari hesaplar", Users], ["Tahsilat & Ödeme", ArrowLeftRight], ["Ödeme Planı", CalendarDays], ["Hesaplar", Landmark], ["Kredi kartları", CreditCard], ["Kampanyalar", Gift], ["Araçlarım", Car], ["Raporlar", ChartNoAxesCombined], ["Kullanıcılar", UserRoundCog],["Ayarlar",Settings2]];
 const descriptions = {
   "Genel bakış": "Bugünün durumu, hareketlerin ve sıradaki adımların.",
   Hareketler: "Banka ve kasa kayıtlarını tek yerden incele.",
@@ -97,7 +99,8 @@ export function App({
   const [notificationTarget,setNotificationTarget]=useState(null),[routeKey,setRouteKey]=useState(0);
   const [notificationScope,setNotificationScope]=useState({source:'all'});
   function showNotifications(scope={source:'all'}){go('Bildirimler');nav.navigate({page:'Bildirimler',source:scope.source||'all'},{replace:true});setNotificationScope(scope);setRouteKey(key=>key+1)}
-  useEffect(()=>{if(page==='Kullanıcılar'&&!can(fullData.user,'admin'))nav.navigate({page:'Genel bakış'},{replace:true})},[page,fullData.user.role]);
+  useEffect(()=>{if(['Kullanıcılar','Ayarlar'].includes(page)&&!can(fullData.user,'admin'))nav.navigate({page:'Genel bakış'},{replace:true})},[page,fullData.user.role]);
+  useEffect(()=>{if(!can(fullData.user,'admin'))return;let live=true;const check=()=>api('backup_auto_tick',{}).then(r=>{if(r.created)window.dispatchEvent(new Event('finans-backup-created'))}).catch(e=>{if(live)notify('Otomatik yedek alınamadı',e.message)});check();const timer=setInterval(check,15*60*1000);return()=>{live=false;clearInterval(timer)}},[fullData.user.id,fullData.user.role]);
   const notifications = groupAlerts(collectAlerts(fullData),TODAY);
   function openNotification(alert){setScope('all');setSearch('');setKind('all');setClaimFilter('all');setDrawer(null);setBell(false);setMobileMore(false);if(['Kredi kartları','Kampanyalar'].includes(alert.page))setCardsMenu(true);nav.navigate({page:alert.page,record:alert.account!==undefined?String(alert.account):alert.vehicleId?String(alert.vehicleId):'',event:alert.eventId?String(alert.eventId):'',entry:alert.vehicleId?String(alert.recordId):'',tab:alert.vehicleId?'İşlemler':alert.eventId?'Gelecek dönem hareketleri':''},{fresh:true});setNotificationTarget(alert);setRouteKey(key=>key+1);if(alert.account!==undefined)setScope(alert.account);if(alert.section==='Gecikmiş')setClaimFilter('late');if(alert.entity){const rows=alert.entity==='campaign'?fullData.campaigns:fullData.vehicle_records;const item=rows.find(item=>item.id===alert.recordId);if(item)openFinance({entity:alert.entity,item})}}
   const accountName = id => accounts.find(a => a.id === id)?.name;
@@ -443,13 +446,13 @@ export function App({
         </div>
         <div className="workspace-label">KİŞİSEL ÇALIŞMA ALANI</div>
         <nav aria-label="Ana navigasyon">
-          {navigation.filter(([name]) => (name !== 'Kullanıcılar' || can(fullData.user, 'admin'))&&(name!=='Kampanyalar'||cardsMenu)).map(([name, Icon]) => <button key={name} className={(page === name ? "active " : "")+(name==='Kampanyalar'?'navigation-submenu':'')} aria-current={page === name ? "page" : undefined} aria-label={name} aria-expanded={name==='Kredi kartları'?cardsMenu:undefined} onClick={() => navigateMenu(name)}>
+          {navigation.filter(([name]) => name!=='Ayarlar'&&(name !== 'Kullanıcılar' || can(fullData.user, 'admin'))&&(name!=='Kampanyalar'||cardsMenu)).map(([name, Icon]) => <button key={name} className={(page === name ? "active " : "")+(name==='Kampanyalar'?'navigation-submenu':'')} aria-current={page === name ? "page" : undefined} aria-label={name} aria-expanded={name==='Kredi kartları'?cardsMenu:undefined} onClick={() => navigateMenu(name)}>
               <Icon size={20} />
               <span>{name}</span>{name==='Kredi kartları'&&<ChevronDown size={16} className={cardsMenu?'submenu-chevron rotate-open':'submenu-chevron'}/>}
               {name === "Ödeme Planı" && late.length > 0 && !compact && <em>{late.length}</em>}
             </button>)}
         </nav>
-        <div className="sidebar-bottom">
+        <div className="sidebar-bottom">{can(fullData.user,'admin')&&<button aria-label="Ayarlar" aria-current={page==='Ayarlar'?'page':undefined} className={page==='Ayarlar'?'active':''} onClick={()=>navigateMenu('Ayarlar')}><Settings2 size={18}/><span>Ayarlar</span></button>}
           <button onClick={() => setDrawer({
           type: "info"
         })}>
@@ -497,7 +500,7 @@ export function App({
               <span className="sr-only">İşlem ekle</span>
             </button>
           </div>}
-          {page === "Arama" ? <GlobalSearchPage data={fullData}/> : page === "Bildirimler" ? <NotificationsPage key={routeKey+nav.revision} data={fullData} initialScope={{...notificationScope,source:nav.route.source}} onOpenNotification={openNotification}/> : page !== "Genel bakış" ? <FinanceHub key={page+'-'+routeKey+'-'+nav.revision} page={page} onNotifications={showNotifications} onOpenNotification={openNotification} initialEventId={notificationTarget?.eventId||Number(nav.route.event)||undefined} initialRecord={notificationTarget?.recordId} initialParty={notificationTarget?.partyId} initialDate={notificationTarget?.date} data={fullData} onState={applyState} notify={notify} open={openFinance} search="" initialAccount={scope} initialDue={claimFilter} onLabel={setPartyLabel} /> : <>
+          {page === "Ayarlar" ? <SettingsPage key={nav.revision} data={fullData} notify={notify}/> : page === "Arama" ? <GlobalSearchPage data={fullData}/> : page === "Bildirimler" ? <NotificationsPage key={routeKey+nav.revision} data={fullData} initialScope={{...notificationScope,source:nav.route.source}} onOpenNotification={openNotification}/> : page !== "Genel bakış" ? <FinanceHub key={page+'-'+routeKey+'-'+nav.revision} page={page} onNotifications={showNotifications} onOpenNotification={openNotification} initialEventId={notificationTarget?.eventId||Number(nav.route.event)||undefined} initialRecord={notificationTarget?.recordId} initialParty={notificationTarget?.partyId} initialDate={notificationTarget?.date} data={fullData} onState={applyState} notify={notify} open={openFinance} search="" initialAccount={scope} initialDue={claimFilter} onLabel={setPartyLabel} /> : <>
               <div className="snapshot-label">
                 <span>GÜNCEL DURUM</span>
                 <span>
@@ -568,7 +571,7 @@ export function App({
         </button>
       </nav>
       {mobileMore && <div className="mobile-more">
-          {navigation.filter(([name]) => !["Genel bakış", "Hareketler", "Raporlar", "Tahsilat & Ödeme"].includes(name) && (name !== "Kullanıcılar" || can(fullData.user, "admin")) && (name!=="Kampanyalar"||cardsMenu)).map(([name, Icon]) => <button key={name} className={name==='Kampanyalar'?'navigation-submenu':''} aria-expanded={name==='Kredi kartları'?cardsMenu:undefined} onClick={() => navigateMenu(name)}>
+          {navigation.filter(([name]) => !["Genel bakış", "Hareketler", "Raporlar", "Tahsilat & Ödeme"].includes(name) && (!['Kullanıcılar','Ayarlar'].includes(name) || can(fullData.user, "admin")) && (name!=="Kampanyalar"||cardsMenu)).map(([name, Icon]) => <button key={name} className={name==='Kampanyalar'?'navigation-submenu':''} aria-expanded={name==='Kredi kartları'?cardsMenu:undefined} onClick={() => navigateMenu(name)}>
               <Icon size={20} />
               {name}
               {name==='Kredi kartları'?<ChevronDown size={16} className={cardsMenu?'rotate-open':''}/>:<ChevronRight size={16}/>}

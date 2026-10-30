@@ -19,3 +19,9 @@ Yeni kurulum için ZIP içindeki `KURULUM.md` belgesini kullanın. Eski kurulumd
 Bu işlem mevcut finansal kayıtları, araç ve kampanya takip kayıtlarını siler; gerçek verileriniz varsa demo seçeneğini kullanmayın. Yönetici hesapları, mevcut şifreleri ve kurulum yapılandırması korunur. Yönetici dışındaki demo kullanıcıları da temizlenir. Paket yedi aylık, 623 kayıtlı kapsamlı demoyu üreten kodu içerir: 4 hesap, 10 cari, 3 kredi kartı, geçmiş ekstreler, iadeler, kısmi ödemeler, planlı hareketler ve gelecek taksitler. Aynı işlem tekrar yapılırsa önceki demo değiştirilir; kayıtlar çoğaltılmaz. Demoda ayrıca 4 araç, 48 geçmiş/güncel araç kaydı, prim taksitleri ve 2 kampanya bulunur. Bu ek takip kayıtları 623 finansal kayda ilave bakiye hareketi oluşturmaz. Demo günü 13 Ekim 2026'dır.
 
 Demo ayrı bir SQL dökümünü elle yüklemeyi gerektirmez; paket içindeki API oluşturur. Normal dosya güncellemesi demoyu kendiliğinden yüklemez.
+
+## 1.13.0: yedekleme ve gerçek veriye geçiş
+
+Ayarlar menüsü yöneticiye yedek al/indir/yükle/geri yükle ve demo temizliği sunar. Şema 11 korunur. Özel yedek klasörü web kökünün dışında ve PHP için yazılabilir olmalıdır; alt dizine kurulumda veya üst dizin yazılamıyorsa config.php içinde backup_dir için mutlak, özel bir yol tanımlayın. Yapılandırma dosyasını ve özel yedek klasörünü güncellemede koruyun.
+
+Hosting ZIP'ini yüklemek kayıtları silmez. Gerçek veriye başlamak için Ayarlar → Demo verilerini temizle adımını yönetici parolasıyla uygulayın. Önce otomatik bir güvenlik yedeği alınır; yönetici olmayan kullanıcılar ve iş kayıtları temizlenir, yönetici hesapları korunur. Günlük/haftalık yedek Ayarlar'dan açılır. Uygulama kapalıyken de çalışması için hosting cron görevinde PHP 8.3+ ile api/backup-cron.php çalıştırılır; görev kendiliğinden kurulmaz.

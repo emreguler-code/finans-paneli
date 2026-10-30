@@ -10,12 +10,12 @@ def free_port():
  with socket.socket() as sock:
   sock.bind(('127.0.0.1',0));return sock.getsockname()[1]
 def main():
- parser=argparse.ArgumentParser();parser.add_argument('suite',choices=['api','migrations','browser','package','demo']);parser.add_argument('--keep',action='store_true',help='Keep this isolated demo running');args=parser.parse_args()
+ parser=argparse.ArgumentParser();parser.add_argument('suite',choices=['api','migrations','browser','package','demo','backups']);parser.add_argument('--keep',action='store_true',help='Keep this isolated demo running');args=parser.parse_args()
  ident=uuid.uuid4().hex[:12];runtime=ROOT/'.qa'/ident;runtime.mkdir(parents=True)
  names=[];db_name='finans-qa-db-'+ident;api_name='finans-qa-php-'+ident
  password=secrets.token_hex(24);token=secrets.token_hex(32);admin=secrets.token_hex(24)
  db_port=free_port();api_port=free_port();env=os.environ.copy()
- env.update(API_TEST_USERNAME='qa-admin',API_TEST_PASSWORD=admin,API_TEST_SETUP_TOKEN=token,API_TEST_URL=f'http://127.0.0.1:{api_port}/api/index.php',QA_STATE_PATH=str(runtime/'qa-state.json'),QA_SQL_CONTAINER=db_name)
+ env.update(API_TEST_USERNAME='qa-admin',API_TEST_PASSWORD=admin,API_TEST_SETUP_TOKEN=token,API_TEST_URL=f'http://127.0.0.1:{api_port}/api/index.php',QA_STATE_PATH=str(runtime/'qa-state.json'),QA_SQL_CONTAINER=db_name,QA_PHP_CONTAINER=api_name)
  def sql(statement):
   result=run(['docker','exec','-i',db_name,'sh','-c','exec mariadb -uroot -p"$MARIADB_ROOT_PASSWORD" --batch --skip-column-names'],input=statement,text=True,capture_output=True)
   return result.stdout.strip()
@@ -45,7 +45,7 @@ def main():
    shutil.copytree(ROOT/'public',web,ignore=shutil.ignore_patterns('config.php'))
    migrations=web/'api/v2/migrations';migrations.mkdir();shutil.copyfile(ROOT/'database/migrations/002-cari.sql',migrations/'002-cari.sql')
   config=web/'api/config.php';config.write_text("<?php\nreturn "+"['db_host'=>'127.0.0.1','db_port'=>"+str(db_port)+",'db_name'=>'finans_test','db_user'=>'root','db_password'=>'"+password+"','setup_token'=>'"+token+"','require_https'=>false];\n");config.chmod(0o600)
-  if args.suite in ['api','browser','demo']:
+  if args.suite in ['api','browser','demo','backups']:
    sql('USE finans_test;'+(ROOT/'database/schema.sql').read_text())
   if args.suite in ['browser','demo']:
    for source in (ROOT/'dist/client').iterdir():
@@ -84,6 +84,7 @@ def main():
    session=json.load(opener.open(env['API_TEST_URL']+'?action=session'))
    body=json.dumps(dict(username=env['API_TEST_USERNAME'],password=admin,token=token)).encode()
    json.load(opener.open(urllib.request.Request(env['API_TEST_URL']+'?action=setup',data=body,headers={'Content-Type':'application/json','X-CSRF-Token':session['csrf']})))
+   if args.suite=='backups':run(['python3',str(ROOT/'tests/backups-integration.py')],env=env)
    if args.suite=='api':run(['python3',str(ROOT/'tests/finance-integration.py')],env=env)
    if args.suite=='browser':
     # Browser acceptance initializes its own fixture, independent of API-suite mutations.

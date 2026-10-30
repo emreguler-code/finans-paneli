@@ -195,6 +195,7 @@ let activePage;const checks=[],errors=[];const ok=(name,test)=>{if(!test)throw E
  await require('./design110-browser.cjs')({p,go,ok,out});
  await require('./refinements-browser.cjs')({p,go,ok,out});
  await require('./update112-browser.cjs')({p,go,ok,out});
+ await require('./settings-browser.cjs')({p,go,ok,out});
  await p.setViewportSize({width:1440,height:1000});await p.goto(base+'/update.php');
  await p.locator('#status').filter({hasText:'Veritabanı güncel (şema 11)'}).waitFor();
  ok('Current schema has no misleading update action',!await p.locator('#run').isVisible()&&await p.locator('#run').isDisabled());

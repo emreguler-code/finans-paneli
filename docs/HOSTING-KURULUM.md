@@ -25,3 +25,9 @@ Hosting ZIP'ini açarken `api/config.php` dosyanızı koruyun; bu dosya pakette 
 ## Paketi doğrulama
 
 ZIP ve `.sha256` dosyasını birlikte indirin; bulunduğunuz dizinde `sha256sum -c finans-paneli-1.11.0.zip.sha256` çalıştırın. Yeni sürümlerde dosya adındaki sürümü değiştirin.
+
+## 1.13.0: yedekleme ve gerçek veriye geçiş
+
+Ayarlar menüsü yöneticiye yedek al/indir/yükle/geri yükle ve demo temizliği sunar. Şema 11 korunur. Özel yedek klasörü web kökünün dışında ve PHP için yazılabilir olmalıdır; alt dizine kurulumda veya üst dizin yazılamıyorsa config.php içinde backup_dir için mutlak, özel bir yol tanımlayın. Yapılandırma dosyasını ve özel yedek klasörünü güncellemede koruyun.
+
+Hosting ZIP'ini yüklemek kayıtları silmez. Gerçek veriye başlamak için Ayarlar → Demo verilerini temizle adımını yönetici parolasıyla uygulayın. Önce otomatik bir güvenlik yedeği alınır; yönetici olmayan kullanıcılar ve iş kayıtları temizlenir, yönetici hesapları korunur. Günlük/haftalık yedek Ayarlar'dan açılır. Uygulama kapalıyken de çalışması için hosting cron görevinde PHP 8.3+ ile api/backup-cron.php çalıştırılır; görev kendiliğinden kurulmaz.

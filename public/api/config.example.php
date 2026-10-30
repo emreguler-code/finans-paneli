@@ -9,4 +9,7 @@ return [
     // Set a random value of at least 32 characters. Required only for first setup.
     'setup_token' => 'CHANGE_ME_TO_A_RANDOM_32_CHARACTER_SECRET',
     'require_https' => true,
+    // Optional: absolute, writable directory OUTSIDE the web root.
+    // Default: a private application-specific directory beside the web root.
+    // 'backup_dir' => '/home/hosting-user/finans-private-backups',
 ];

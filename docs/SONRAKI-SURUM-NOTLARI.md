@@ -381,3 +381,9 @@ Bulgu ve yaklaşım notlara eklendi. Kullanıcı henüz bu yeni öneri için ayr
 28 Ekim 2026. Kullanıcı bölümlü tek form yaklaşımını ve bekleyen diğer onaylı değişiklikleri tasarım ilkeleriyle birlikte uygulayıp yeni sürümü GitHub'da yayımlamamızı istedi. 1.11.0 sonrası dönem/filtre temizleme, nakit akışı grafik yüksekliği, tam genişlik cari özeti, kategorili genel arama, aktif satır çizgisi, URL tabanlı gezinme/yenileme ve alt menü davranışları, kompakt mobil kart özeti ile ortak veri giriş formu sözleşmesi birlikte 1.12.0 kapsamındadır. Önceki bölümlerdeki not alma/onay bekleme ifadeleri bu kapsam için tarihsel kayıttır.
 
 Ortak formda bölümler, Türkçe hata gösterimi, değişmiş taslağı kapatmadan uyarı, tam/kısmi ödeme ve kısa etki açıklaması uygulanır. Yeni kartta henüz ekstre oluşmadı desteği ayrı veri modeli kararıdır; mevcut zorunlu tarih kuralları korunur. Sürekli taslak saklama, Kaydet ve yeni ekle veya banka bağlantısı bu sürüme eklenmez. Şema 11 ve mevcut finansal hesaplama modeli korunur; üretim verisi/demosu sıfırlanmaz.
+
+# 1.13.0 — Ayarlar, yedekleme ve gerçek veriye geçiş
+
+30 Ekim 2026. Kullanıcı demo verilerini silip sıfır iş kaydıyla gerçek veri işlemeye geçmek ve Görünüm ve bilgiler üstünde Ayarlar menüsünde yedek al/geri yükle/otomatik yedek özelliklerini eklemek istedi. Bu istek uygulama kapsamıdır; yalnız not alma değildir.
+
+Ayarlar yalnız yöneticilerde görünür. Yedekler özel sunucu dizininde, yüklenen dosyalar bütünlük/şema kontrolüyle alınır. Geri yükleme ve temizleme güvenlik yedeğinden sonra yapılır, güncel yönetici parolası korunur; diğer oturumlar geçersiz kılınır. Gerçek veri modunda demo temizleme engellenir. Günlük/haftalık ve 14 otomatik yedek; yönetici uygulamasında kontrol ve yalnız CLI cron desteği. Mevcut hosting bağlantısı olmadığından canlı veri bu çalışma ortamından silinmez; kullanıcı güncelleme sonrası Ayarlar'dan temizler. Şema 11 kalır, yedekleme kılavuzu docs/YEDEKLEME.md.

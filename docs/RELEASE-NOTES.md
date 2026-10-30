@@ -1,17 +1,14 @@
-# Finans Paneli 1.12.0
+# Finans Paneli 1.13.0
 
-Cari, kredi kartı ve işlem ekleme pencereleri ortak **bölümlü tek form** düzenine geçti. Temel bilgiler ve işleme bağlı alanlar açık; ayrıntılar gerektiğinde açılır. Türkçe hata gösterimi, taslağı yanlışlıkla kapatmadan koruma, tam/kısmi ödeme ve işlem etkisi açıklaması eklendi.
+**Ayarlar → Veritabanı yedekleri ve gerçek veriye geçiş** eklendi. Menü, Görünüm ve bilgiler satırının hemen üstündedir ve yalnız yöneticilere açıktır.
 
-- Ana sayfada kategorili genel arama: cari, işlem açıklaması, hesap/kart sahibi ve araç bilgileri. Üç karakter sonrası öneriler; ilgili kayda geçiş ve filtrelenebilir tüm sonuçlar sayfası. Diğer menülerde bağlamsal arama korunur.
-- Ana menü temiz ana listeyi açar. Detaydan geri önceki listeyi korur. URL tabanlı gezinme sayesinde yenilemede açık kayıt korunur; Geri/İleri ve alt menü davranışları düzeltildi. Paylaşılan hosting için özel rewrite gerekmez.
-- Varsayılan Bu Ay dönemi etkin filtre gibi görünmez; özel tarih aralığı temizlenebilir. Nakit akışı grafiği paneldeki yüksekliği kullanır.
-- Cari bakiye özeti iki sütunu kapsar. Aktif hareketin sol çizgisi ana satır ve eylemleri kesintisiz kapsar.
-- Mobil kart özeti kompakt hale geldi; limit, ekstre/dönem tutarları ve ödeme durumu önde, diğer bilgiler Daha fazla bölümünde.
+- Yedek al, indir, dosyadan yükle ve geri yükle.
+- Günlük/haftalık otomatik yedek; son 14 otomatik yedek. Uygulama kapalıyken çalıştırmak için hosting cron desteği.
+- Demo verilerini zorunlu güvenlik yedeğiyle temizle; yönetici hesapları ve parolaları korunur, finansal çalışma alanı boşalır.
+- Geri yükleme öncesi güvenlik yedeği; dosya bütünlüğü ve şema kontrolü; hata durumunda tüm değişikliğin geri alınması.
 
-## İndirme ve yükleme
+**Yükleme:** `finans-paneli-1.13.0-hosting.zip` içeriğini doğrudan web köküne yükleyin; mevcut `api/config.php` dosyanızı koruyun. Şema 11 olarak kalır; `update.php` üzerinden durumu kontrol edin.
 
-**Mevcut hosting'i güncellemek için:** `finans-paneli-1.12.0-hosting.zip` içeriğini doğrudan web köküne yükleyin. Mevcut **`api/config.php` dosyasını koruyun**. Sonrasında `update.php` üzerinden durumu kontrol edin.
+Sonrasında yönetici hesabıyla **Ayarlar → Demo verilerini temizle** adımını kullanın. Hostingdeki kayıtlar paket yüklenince kendiliğinden silinmez.
 
-Şema **11** olarak kalır; zaten şema 11 kullanan kurulumda yeni veritabanı geçişi gerekmez. Önceki şemalardan geçiş dosyaları pakette korunur. Mevcut yönetici hesabı ve kayıtlar korunur. Hostingde Node.js gerekmez.
-
-Tam paket ayrıca kurulum belgeleri ve başlangıç şemasını içerir. Her ZIP'in ayrı SHA-256 dosyası vardır. Demo yenileme ayrı ve isteğe bağlıdır; canlı kayıtlar otomatik sıfırlanmaz. Bu sürüm GitHub'da yayımlanır; hosting'e otomatik kurulmaz.
+Yedek dizini web kökü dışında ve PHP için yazılabilir olmalı. Gerekirse config.php içinde `backup_dir` tanımlayın. Cron betiği: `api/backup-cron.php` (yalnız PHP CLI). Ayrıntılar: [Yedekleme kılavuzu](https://github.com/emreguler-code/finans-paneli/blob/main/docs/YEDEKLEME.md).

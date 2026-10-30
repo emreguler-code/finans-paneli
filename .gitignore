@@ -22,3 +22,4 @@ uploads/
 *.sql.gz
 *.bak
 .DS_Store
+.finans-private-*/

@@ -18,14 +18,17 @@ session_set_cookie_params(['httponly'=>true,'secure'=>$secure,'samesite'=>'Stric
 session_start();
 if (!isset($_SESSION['csrf'])) $_SESSION['csrf']=bin2hex(random_bytes(32));
 $action=$_GET['action']??'state';
+require __DIR__.'/v2/private-storage.php';
 $method=$_SERVER['REQUEST_METHOD'];
 if (!in_array($method,['GET','POST'],true)) fail('Desteklenmeyen yöntem.',405);
 $body=[];
 if ($method==='POST') {
-    if ((int)($_SERVER['CONTENT_LENGTH']??0)>16384) fail('İstek çok büyük.',413);
+    if ((int)($_SERVER['CONTENT_LENGTH']??0)>($action==='backup_upload'?34603008:16384)) fail('İstek çok büyük.',413);
     if (!hash_equals($_SESSION['csrf'],$_SERVER['HTTP_X_CSRF_TOKEN']??'')) fail('Oturum doğrulaması geçersiz. Sayfayı yenileyin.',403);
+    if($action==='backup_upload'){$body=[];}else{
     try {$body=json_decode(file_get_contents('php://input'),true,32,JSON_THROW_ON_ERROR);} catch(Throwable $e){fail('Geçersiz JSON.');}
     if (!is_array($body)) fail('Geçersiz istek.');
+    }
 }
 function field(array $body,string $key,int $max=160,bool $required=false): string {
     if(isset($body[$key])&&!is_string($body[$key])) fail('Geçersiz alan: '.$key);
@@ -62,7 +65,7 @@ try {
             if(!$user||(isset($user['active'])&&!$user['active'])||!password_verify($password,$user['password_hash'])) fail('Kullanıcı adı veya parola hatalı.',401);
             $id=(int)$user['id'];$username=$user['username'];
         }
-        session_regenerate_id(true);$_SESSION['uid']=$id;$_SESSION['username']=$username;$_SESSION['last_seen']=time();$_SESSION['csrf']=bin2hex(random_bytes(32));
+        session_regenerate_id(true);$_SESSION['uid']=$id;$_SESSION['username']=$username;$_SESSION['last_seen']=time();$_SESSION['csrf']=bin2hex(random_bytes(32));$_SESSION['workspace_epoch']=workspaceEpoch();
         $db->prepare('DELETE FROM login_attempts WHERE ip_hash=?')->execute([$ip]);reply(['user'=>$username,'csrf'=>$_SESSION['csrf']]);
     }
     if(!isset($_SESSION['uid']) || time()-($_SESSION['last_seen']??0)>7200){unset($_SESSION['uid'],$_SESSION['username']);fail('Devam etmek için giriş yapın.',401);}
@@ -71,6 +74,7 @@ try {
     $actor=v2Actor($db);if(!$actor)fail('Hesabınız etkin değil. Yeniden giriş yapın.',401);
     require __DIR__.'/v2/upgrade.php';
     if((int)$db->query('SELECT schema_version FROM app_meta WHERE id=1')->fetchColumn()<11)reply(['error'=>'Yeni sürüm için yönetici güncellemesi gerekiyor.','upgradeRequired'=>true],503);
+    require __DIR__.'/v2/backups.php';
     require __DIR__.'/v2/main.php';
 } catch(DomainException $e){if(isset($db)&&$db->inTransaction())$db->rollBack();fail($e->getMessage());}
 catch(Throwable $e){if(isset($db)&&$db->inTransaction())$db->rollBack();error_log('Finans API error: '.$e->getMessage());fail('İşlem tamamlanamadı. Veritabanı bağlantısını ve sunucu hata günlüğünü kontrol edin.',503);}
