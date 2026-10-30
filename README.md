@@ -1,6 +1,6 @@
-# Finans Paneli 1.13.0
+# Finans Paneli 1.13.1
 
-1.13.0, şema 11 kullanır: Ayarlar menüsü, özel veritabanı yedekleri, geri yükleme, günlük/haftalık otomatik yedek ve güvenlik yedeğiyle demo temizliği. [Sürüm kapsamı](docs/SURUM-1.13.0.md) · [Yedekleme kılavuzu](docs/YEDEKLEME.md).
+1.13.1, alt klasöre hosting kurulumunda özel yedek dizini seçimini ve Ayarlar hata/yeniden deneme ekranını düzeltir; şema 11 kullanır: Ayarlar menüsü, özel veritabanı yedekleri, geri yükleme, günlük/haftalık otomatik yedek ve güvenlik yedeğiyle demo temizliği. [Sürüm kapsamı](docs/SURUM-1.13.1.md) · [Yedekleme kılavuzu](docs/YEDEKLEME.md).
 
 Sade Netlik tasarımında cari hesaplar, banka/kasa, kredi kartları, ödeme planı ve raporlar. React/Vite arayüz; PHP/MySQL API. Banka bağlantısı yoktur.
 
@@ -41,7 +41,7 @@ Codex değişiklik yapmadan AGENTS.md dosyasını okumalıdır. Geçmiş sürüm
 
 Her sürümde iki ZIP üretilir: `finans-paneli-<sürüm>-hosting.zip` yalnız doğrudan web dizinine yüklenecek uygulama dosyalarıdır; `finans-paneli-<sürüm>.zip` kurulum belgeleri ve başlangıç SQL'i içeren tam pakettir. Mevcut kurulum güncellemelerinde hosting ZIP'i yeterlidir; `api/config.php` korunur. Her ZIP'in ayrı SHA-256 dosyası vardır.
 
-GitHub Actions `Hosting release` iş akışı `v<package.json sürümü>` etiketi GitHub'a gönderildiğinde testleri çalıştırır, paketi hazırlar ve GitHub Release'e ekler. Örneğin 1.13.0 için `v1.13.0`. İş akışı ve paketleme dosyaları önce ilgili commit'te bulunmalıdır. Actions'ın depoda etkin ve iş akışının Release yazma yetkisine sahip olması gerekir. Manuel `workflow_dispatch` çalıştırması yalnızca indirilebilir Actions artifact'ı üretir; Release yayımlamaz.
+GitHub Actions `Hosting release` iş akışı `v<package.json sürümü>` etiketi GitHub'a gönderildiğinde testleri çalıştırır, paketi hazırlar ve GitHub Release'e ekler. Örneğin 1.13.1 için `v1.13.1`. İş akışı ve paketleme dosyaları önce ilgili commit'te bulunmalıdır. Actions'ın depoda etkin ve iş akışının Release yazma yetkisine sahip olması gerekir. Manuel `workflow_dispatch` çalıştırması yalnızca indirilebilir Actions artifact'ı üretir; Release yayımlamaz.
 
 ## İzole API ve tarayıcı testleri
 
@@ -75,6 +75,6 @@ npm run demo:stop
 
 Yerel Chromium gerekiyorsa `QA_BROWSER_BIN=/usr/bin/chromium` tanımlayın. Docker gereklidir. Kapsamlı demo Nisan–Ekim 2026 geçmişi, 4 banka/kasa/KMH hesabı, 10 cari, 3 kart, geçmiş ekstreler ve gelecek taksitler içerir. Tarih 13 Ekim 2026'ya sabitlenir. Normal demo yenileme de bu geniş profili oluşturur; mevcut verileri silen yönetici onayı korunur. `profile=compact` yalnız küçük kabul testi fixture'ıdır.
 
-Çalışır demo ve giriş bilgileri yalnız Git dışında `.qa/current-demo` dosyasının gösterdiği klasördeki `local-session.json` içinde saklanır. Bu dosyayı paylaşmayın. Yerel sunucu yalnız 127.0.0.1'de dinler; dış hosting yayını değildir. `demo:stop` yalnız bu demo koşusunun konteynerlerini ve yerel kimlik bilgilerini kaldırır. Ortam yeniden başlarsa `demo:start` yeniden çalıştırılır. Ayrıntılı bulgular `docs/TEST-RAPORU-1.13.0.md` içindedir.
+Çalışır demo ve giriş bilgileri yalnız Git dışında `.qa/current-demo` dosyasının gösterdiği klasördeki `local-session.json` içinde saklanır. Bu dosyayı paylaşmayın. Yerel sunucu yalnız 127.0.0.1'de dinler; dış hosting yayını değildir. `demo:stop` yalnız bu demo koşusunun konteynerlerini ve yerel kimlik bilgilerini kaldırır. Ortam yeniden başlarsa `demo:start` yeniden çalıştırılır. Ayrıntılı bulgular `docs/TEST-RAPORU-1.13.1.md` içindedir.
 
 `npm run test:backups`, yalnız koşucunun oluşturduğu izole veritabanında yedekleme, bozuk dosya/ilişki, geri alma, kullanıcı yetkileri, cron ve demo temizliği senaryolarını doğrular. Canlı veritabanı hedeflemez.

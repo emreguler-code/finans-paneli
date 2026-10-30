@@ -1,6 +1,6 @@
 # Yedekleme ve gerçek veriye geçiş
 
-Finans 1.13.0 · Şema 11 · PHP 8.3+ / PDO MySQL.
+Finans 1.13.1 · Şema 11 · PHP 8.3+ / PDO MySQL.
 
 ## Demo verilerini temizleyerek başlamak
 
@@ -32,15 +32,15 @@ Yedek yalnız veritabanı kayıtlarını kapsar; uygulama dosyaları ve `api/con
 
 ## Özel sunucu dizini
 
-Varsayılan olarak uygulama web dizininin yanında, uygulamaya özel `.finans-private-...` dizini kullanılır. Dizin 0700, dosyalar 0600 izinleriyle oluşturulur. Web kökü, DocumentRoot veya bunların içindeki bir konum kabul edilmez. PHP'nin özel dizine yazabilmesi gerekir.
+Varsayılan olarak uygulama web dizininin yanında, uygulamaya özel `.finans-private-...` dizini kullanılır. Uygulama `public_html/finans` gibi alt klasördeyse standart hosting web kökü (`public_html`, `httpdocs`, `htdocs` vb.) belirlenir ve özel dizin onun dışına alınır. Bu çözüm web ve CLI cron için aynıdır. Dizin 0700, dosyalar 0600 izinleriyle oluşturulur. Web kökü, DocumentRoot veya bunların içindeki bir konum kabul edilmez. PHP'nin özel dizine yazabilmesi gerekir.
 
-Alt dizine kurulumda veya üst dizin yazılamıyorsa `api/config.php` içinde açıkça web kökü dışında bir konum tanımlayın:
+Standart olmayan bir DocumentRoot kullanılıyorsa veya üst dizin yazılamıyorsa `api/config.php` içinde açıkça web kökü dışında bir konum tanımlayın:
 
 ```php
 'backup_dir' => '/home/hosting-kullanicisi/finans-private-backups',
 ```
 
-Bu örneği kendi hosting yolunuza göre değiştirin. Yedek klasörünü `public_html` içine koymayın. Yapılandırma dosyasını ve özel klasörü güncellemelerde koruyun. Sunucudaki yönetici dosya izinleri, finansal verilerin korunmasının bir parçasıdır. Git deposu veya hosting ZIP'i yedek dosyalarını içermez.
+Bu örneği kendi hosting yolunuza göre değiştirin. Örneğin web kökü `/home/hesabim/public_html` ise `/home/hesabim/finans-private-backups` kullanılabilir. Mevcut config.php içindeki `return [...]` dizisine virgülle ayrılan bir ayar olarak ekleyin; veritabanı bilgilerini değiştirmeyin. Hosting `open_basedir` ile dış dizine erişimi kapatmışsa sağlayıcıdan özel dizine PHP erişimi isteyin; korumayı kaldırıp yedekleri web köküne taşımayın. Ayarı tamamladıktan sonra Ayarlar sayfasında **Yeniden dene** seçin. Yedek klasörünü `public_html` içine koymayın. Yapılandırma dosyasını ve özel klasörü güncellemelerde koruyun. Sunucudaki yönetici dosya izinleri, finansal verilerin korunmasının bir parçasıdır. Git deposu veya hosting ZIP'i yedek dosyalarını içermez.
 
 ## Otomatik yedekleme
 

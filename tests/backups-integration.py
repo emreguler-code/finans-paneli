@@ -110,6 +110,17 @@ ok('Cross-database cascade relations also block demo clear',call('demo_clear',di
 code="$action='test';$config=require "+json.dumps(str(runtime/'web/api/config.php'))+";$config['backup_dir']="+json.dumps(str(runtime/'web/unsafe-backups'))+";$_SERVER['DOCUMENT_ROOT']="+json.dumps(str(runtime/'web'))+";require "+json.dumps(str(runtime/'web/api/v2/private-storage.php'))+";try{backupRoot();echo 'unsafe';}catch(DomainException $e){echo 'rejected';}"
 ok('Public web-root backup storage is rejected',php(code)=='rejected')
 ok('Rejected storage does not modify finance data',financial(state())==before)
+ok('Unsafe configured storage is rejected before directory creation',php('echo is_dir('+json.dumps(str(runtime/'web/unsafe-backups'))+')?"created":"absent";')=='absent')
+# Reproduce shared hosting: app in public_html/finans; CLI has no DOCUMENT_ROOT.
+nested=runtime/'hosting/public_html/finans/api/v2'
+php('$dir='+json.dumps(str(nested))+';mkdir($dir,0700,true);copy('+json.dumps(str(runtime/'web/api/v2/private-storage.php'))+',$dir."/private-storage.php");')
+resolver="$action='test';$config=['db_name'=>'nested-test','setup_token'=>'synthetic'];require "+json.dumps(str(nested/'private-storage.php'))+";"
+http_root=php(resolver+'$_SERVER["DOCUMENT_ROOT"]='+json.dumps(str(runtime/'hosting/public_html'))+';echo backupRoot();')
+cli_root=php(resolver+'unset($_SERVER["DOCUMENT_ROOT"]);echo backupRoot(false);')
+ok('Subdirectory install stores backups outside public_html with the same CLI path',http_root==cli_root and Path(http_root).parent==runtime/'hosting')
+unsafe=json.dumps(str(runtime/'hosting/public_html/unsafe-cron'))
+ok('CLI also rejects configured public_html storage',php(resolver+"$config['backup_dir']="+unsafe+";try{backupRoot();echo 'unsafe';}catch(DomainException $e){echo 'rejected';}")=='rejected')
+
 cron=runtime/'web/api/backup-cron.php';ok('CLI cron respects disabled schedule', 'gerekmiyor' in php('include '+json.dumps(str(cron))+';'));
 try:
  response=op.open(URL.replace('index.php','backup-cron.php'));http_code=response.status

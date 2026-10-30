@@ -1,5 +1,10 @@
 module.exports=async({p,go,ok,out})=>{
- const fs=require('fs'),path=require('path');await p.setViewportSize({width:1440,height:1000});await go('Ayarlar');await p.locator('.backup-import button').waitFor();
+ const fs=require('fs'),path=require('path');await p.setViewportSize({width:1440,height:1000});const blocked='**/api/index.php?action=backup_status*';
+ await p.route(blocked,route=>route.fulfill({status:422,contentType:'application/json',body:JSON.stringify({error:'Yedekler web kökü içinde saklanamaz. backup_dir yolunu web kökü dışına alın.'})}));
+ await go('Ayarlar');await p.getByRole('alert').waitFor();
+ ok('Backup failure stops loading and explains private hosting configuration',await p.locator('.settings-page').innerText().then(t=>t.includes('Yedeklemeye erişilemiyor')&&t.includes('Yedek listesi alınamadı')&&t.includes('/home/hosting-kullanicisi/finans-private-backups')&&!t.includes('Yükleniyor')));
+ for(const width of [1440,390,320]){await p.setViewportSize({width,height:1000});ok('Storage error guidance fits viewport '+width,await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await p.screenshot({path:out+'/settings-storage-error-'+width+'.png',fullPage:true})}
+ await p.unroute(blocked);await p.getByRole('button',{name:'Yeniden dene',exact:true}).click();await p.setViewportSize({width:1440,height:1000});await p.locator('.backup-import button').waitFor();
  await p.waitForFunction(()=>document.querySelector('.settings-page .page-title .primary-button')?.disabled===false);
  ok('Settings sits immediately above appearance and information',await p.locator('.sidebar-bottom').evaluate(el=>el.querySelectorAll('button')[0].textContent==='Ayarlar'&&el.querySelectorAll('button')[1].textContent.includes('Görünüm ve bilgiler')));
  ok('Settings uses the shared full-width summary and content proportions',await p.locator('.settings-page .summary-field').count()===4&&await p.locator('.settings-workspace').evaluate(el=>{const a=el.children[0].getBoundingClientRect(),b=el.children[1].getBoundingClientRect();return Math.abs(a.width/b.width-1.9)<.02}));

@@ -1,3 +1,7 @@
+# Finans 1.13.1 bakım doğrulaması
+
+Ayarlar yükleme hatası sonlanır ve yeniden deneme sunar. Yapılandırma açıklaması 1440, 390 ve 320 px genişliklerinde taşma olmadan gösterilir; 390 px görüntü incelendi. Diğer sayfa tasarımı değiştirilmedi. Kanıt `.qa/632abd4f3aba/browser/settings-storage-error-*.png`; 502 tarayıcı kontrolü geçti. Fiziksel cihaz veya canlı hosting testi yapılmadı.
+
 # Finans 1.13.0 tasarım doğrulaması
 
 30 Ekim 2026 · Sonuç: **passed**. Ayarlar ekranı mevcut Sade Netlik düzenine eklendi; önceki sayfa tasarımları korunur.
