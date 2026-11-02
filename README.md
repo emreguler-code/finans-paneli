@@ -1,6 +1,6 @@
-# Finans Paneli 1.14.0
+# Finans Paneli 1.15.0
 
-1.14.0: kart/hesap/cari/araç için tam sayfa kayıt oluşturma, içerik sınırlarına hizalı kompakt işlem/düzenleme alanı, 25 bankalık ortak aranabilir liste ve hızlı yeni banka girişi. Mobilde bağlama uygun kompakt alt eylemler; şema 12. [Sürüm kapsamı](docs/SURUM-1.14.0.md) · [Yedekleme kılavuzu](docs/YEDEKLEME.md).
+1.15.0: ortak cari ekleme/düzenleme sayfası, tek satır işlem alanları, sabit kredi kartı hedefi, okunabilir takvim, cron kurulum komutu, tekrarlı yedek onayı ve güvenlik yedekli fabrika sıfırlaması. Şema 12. [Sürüm kapsamı](docs/SURUM-1.15.0.md) · [Yedekleme kılavuzu](docs/YEDEKLEME.md).
 
 Sade Netlik tasarımında cari hesaplar, banka/kasa, kredi kartları, ödeme planı ve raporlar. React/Vite arayüz; PHP/MySQL API. Banka bağlantısı yoktur.
 

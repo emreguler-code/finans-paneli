@@ -13,7 +13,7 @@ import {can, fmt} from './ui';
 import {DatePicker} from './DatePicker';
 import {exportRows} from './csv.mjs';
 import {cardPeriodRows, cardEventEffect, operationLabel} from './operations.mjs';
-export function AccountPage({page,data,open,search='',initialAccount='all',initialEventId,onNotifications}){
+export function AccountPage({page,data,open:openRecord,search='',initialAccount='all',initialEventId,onNotifications}){
  const isCard=page==='Kredi kartları';const source=isCard?data.cards:data.accounts;
  const nav=useNavigation();const [record,selectRecord]=useRecordState(page);
  const [selected,setSelected]=useState(source.find(x=>String(x.id)===String(record||initialAccount))?.id),[tab,setTab]=useRouteTab(isCard?'Dönem içi işlemler':'Hesap hareketleri'),[archived,setArchived]=useScopedState(page+':archived',false),[filters,setFilters]=useState(false),[sort,setSort]=useScopedState(page+':sort','date-desc'),[cancelled,setCancelled]=useScopedState(page+':cancelled',Boolean(initialEventId&&data.events.find(e=>e.id===initialEventId)?.cancelled)),[from,setFrom]=useScopedState(page+':from',''),[to,setTo]=useScopedState(page+':to',''),[statementId,setStatementId]=useScopedState(page+':statementId',nav.route.statement||'');
@@ -21,6 +21,7 @@ export function AccountPage({page,data,open,search='',initialAccount='all',initi
  const [detail,setDetail]=useState(Boolean(record)||initialAccount!=='all');
  const [listScroll,setListScroll]=useScopedState(page+':listScroll',0);
  const [focusEvent,setFocusEvent]=useState(null);
+ function open(context){openRecord(isCard&&detail&&context.entity==='event'?{...context,lockedCardId:selected}:context)}
  function openAlert(alert){const event=data.events.find(e=>e.id===alert.eventId);nav.navigate({page,record:String(alert.account),event:event?String(event.id):'',tab:event?.scheduled?'Gelecek dönem hareketleri':'Hesap hareketleri'},{fresh:true});if(!event){const account=source.find(a=>a.id===alert.account);if(account)open({entity:isCard?'card':'account',mode:'view',item:account})}}
  const [tag,setTag]=useScopedState(page+':tag','all'),[minAmount,setMinAmount]=useScopedState(page+':minAmount',''),[maxAmount,setMaxAmount]=useScopedState(page+':maxAmount','');
  const [searchQuery,setSearchQuery]=useScopedState(page+':searchQuery','');

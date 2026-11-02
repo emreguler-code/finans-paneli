@@ -156,3 +156,7 @@ Araç ana listesi ve detay kategorileri tek sütun yatay satırlardır; Özet/İ
 Kart, hesap, cari ve araç oluşturma modal yerine tam sayfadır. Başlık/geri/eylemler ortak dilde, ana/yardımcı alanlar masaüstünde 1,9:1 oranındadır. Düzenleme ve finansal işlem ekleme alt kenarda, dış sayfa boşluklarına uzanmadan aynı içerik sınırlarına hizalı kompakt alandır. Arka plan bulanmaz; liste kaydırılabilir ve son satırlar için alan ayrılır. Gerekli alanlar açık, diğerleri Diğer üzerinden erişilirdir. Metin ve 44px alanlar sıkıştırmak için küçültülmez.
 
 Mobilde oluşturma sayfasının Kaydet/Vazgeç çubuğu alt gezinmenin yerini alır; işlem/düzenleme alanı normal gezinmenin üstünde durur, klavye açıkken gezinme gizlenir. Alanlar okunabilir iki/tek sütuna akar, kaydetme erişilir kalır. Dört ana gezinme hedefi aynı kısa etiketlerle korunur. Değişmiş taslak ayrılmadan önce korunur; kapalı ayrıntılardaki değerler kaybolmaz.
+
+## 1.15.0 — Cari düzenleme ve tek satır işlem alanı
+
+Cari ekleme/düzenleme ortak tam sayfadır; diğer düzenleme yüzeyleri önceki kurallarını korur. Alt işlem alanında bağımsız başlık satırı yoktur; X Kaydet yanında, tarih yalnız erişilebilir etiketli takvim ikonu olarak görünür. Temel kontroller masaüstünde tek satır; ayrıntılar ve finansal etki Diğer içinde, hatalar gerektiğinde görünürdür. Mobilde tek satıra zorlama veya 44 px altı hedef yoktur. Tek aylık takvim gövdesi yedi eşit sütunla kullanılabilir genişliği doldurur; ikonuna bağlı açılır, blur veya sayfa kayması yoktur.

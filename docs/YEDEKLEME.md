@@ -71,3 +71,11 @@ Uzun süre saklamak istediğiniz yedekleri indirin; indirilmiş kopyalar sunucun
 `update.php` içindeki mevcut demo yenileme işlevi de, iş verisi varsa yenilemeden önce yeni biçimde özel bir güvenlik yedeği alır. Kayıt tekrarının aynı istek anahtarıyla yeniden denenmesi ikinci temizlik veya gereksiz yeni yedek oluşturmaz.
 
 Cron'u çalıştıran kullanıcı ile web PHP sürecinin özel yedek klasörüne erişebilmesi gerekir. Hosting farklı kullanıcılarla çalıştırıyorsa özel klasörün izinlerini hosting sağlayıcınızla düzenleyin; klasörü web köküne taşımayın.
+
+## 1.15.0 — Tekrarlı yedek ve fabrika sıfırlaması
+
+Ayarlar → Hosting cron kurulumu bölümünde gerçek betik yolu ve düzenlenebilir PHP CLI yoluyla kopyalanabilir komut bulunur. PHP CLI yolu sağlayıcıdan doğrulanmalıdır. İstanbul için `0 3 * * *`, UTC için `0 0 * * *` kullanılır; komutu kopyalamak görevi kurmaz.
+
+İstanbul takvim gününde daha önce yedek varsa yeni elle yedek onay gerektirir. Onay güncel en son kopyaya bağlıdır; başka oturum yeni yedek alırsa tekrar sorulur. Saklama sınırında silinecek kopya tarihi açıklanır. Aynı istek anahtarıyla tekrar deneme dosya sayısını artırmaz. Geri yükleme ve sıfırlama öncesi zorunlu güvenlik yedekleri bu elle yedek onayıyla atlanmaz.
+
+Fabrika ayarlarına sıfırla gerçek veriler dahil tüm uygulama kayıtlarını ve diğer kullanıcıları siler; yalnız işlemi yapan yöneticinin hesabını/parola özetini korur. Yönetici parolası ve `FABRİKA AYARLARINA SIFIRLA` yazılı onayı gerekir. Önce geri yüklenebilir güvenlik yedeği alınır; başarısızsa sıfırlama başlamaz. Mevcut özel yedek dosyaları/config silinmez; ilişkisiz tablolar korunur; diğer oturumlar geçersiz olur. İşlem uygulama tarafından kendiliğinden çalıştırılmaz.

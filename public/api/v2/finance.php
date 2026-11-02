@@ -65,6 +65,7 @@ function eventInput(PDO $db,array $b,?array $old): array {
  if($scheduled&&!$due)$due=$date;
  $time=field($b,'time',8)?:'12:00:00';if(!preg_match('/^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$/D',$time))throw new DomainException('Saat geçersiz.');if(strlen($time)===5)$time.=':00';
  $account=field($b,'account',40)?:null;$target=field($b,'target',40)?:null;$card=!empty($b['cardId'])?(int)$b['cardId']:null;$targetCard=!empty($b['targetCardId'])?(int)$b['targetCardId']:null;
+ if(!empty($b['lockedCardId'])&&(int)$b['lockedCardId']!==$card)throw new DomainException('Bu form başka karta kaydedilemez.');
  $settled=in_array($kind,['Alacak','Borç'])?cents($b,'settled'):0;
  if($settled<0||$settled>$n)throw new DomainException('Ödenen/tahsil edilen tutar toplamı aşamaz.');
  if(in_array($op,['salary','employee_purchase']))$settled=0;
@@ -89,6 +90,7 @@ function eventInput(PDO $db,array $b,?array $old): array {
   if((in_array($kind,['Tahsilat','Ödeme'])||$settled)&&!$card&&!$account)throw new DomainException('İşlem hesabı seçin.');
   if(!in_array($kind,['Tahsilat','Ödeme'])&&!$settled){$account=null;$card=null;}
  }
+ if(!empty($b['lockedCardId'])&&(int)$b['lockedCardId']!==$card)throw new DomainException('Kart detayındaki işlem ilgili karta işlenmeli.');
  foreach([['parties',$pid],['accounts',$account],['accounts',$target],['cards',$card],['cards',$targetCard]] as [$table,$id])if($id&&!row($db,$table,$id)['active'])throw new DomainException('Arşivlenmiş hesaba işlem eklenemez.');
  $period=field($b,'periodDate',10)?:$date;$period=validDate($period,true);
  if(!$card)$period=$date;

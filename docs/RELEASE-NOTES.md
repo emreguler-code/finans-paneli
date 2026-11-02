@@ -1,12 +1,14 @@
-# Finans Paneli 1.14.0
+# Finans Paneli 1.15.0
 
-30 Ekim 2026 · Şema 12.
+2 Kasım 2026 · Şema 12 (yeni veritabanı geçişi gerektirmez).
 
-- Kredi kartı, hesap, cari ve araç oluşturma: ortak başlık/eylemler ve 1,9:1 ana/yardımcı alanlarla tam sayfa.
-- İşlem ekleme ve kayıt düzenleme: ana/yardımcı sütunların ortak sınırına hizalı kompakt alt alan; gerekli bilgiler açık, diğer seçenekler erişilebilir. Mevcut alan ve finansal anlamlar korunur.
-- 25 bankalık aranabilir ortak liste; aynı form içinde özel banka adı girişi. Banka adı hesap/kartla birlikte kaydedilir, diğer menüde seçilebilir; büyük/küçük harf ve boşluk farklılıkları yinelenmez. Programlar bankaya göre önerilir ve isteğe bağlıdır.
-- Mobilde kompakt dört hedefli gezinme; oluşturma sayfasında bağlamsal Kaydet/Vazgeç, işlem alanında gezinme ve klavye için uygun boşluk.
-- Türkçe doğrulama, kapalı alanları açan hata odağı, kaydedilmemiş taslak koruması, mevcut değerlerle düzenleme ve idempotent kayıt istekleri.
-- Şema 11 → 12, yalnız kart banka adı metadatasını ekler. Güncelleme yedek alır; kullanıcı ve finansal kayıtları temizlemez. 1.13.x şema-11 yedekleri geri yüklenebilir. Gece 03.00 cron ve toplam 5 yedek kuralı korunur.
+- Cari ekleme ve düzenleme ortak **Cari Ekle / Değiştir** tam sayfasını kullanır. Mevcut bilgiler dolu gelir; gerekçe isteğe bağlıdır, değişiklikler kaydedilir. Düzenleme adresi yenilendiğinde aynı kaydı açar.
+- İşlem alanları ortak tek yatay temel satıra indirildi. Ayrı bağlam başlığı kaldırıldı, X Kaydet yanına taşındı. Tarih yalnız takvim ikonuyla seçilir; tek aylık takvimin sıkışan yedi gün sütunu düzeltildi. Ayrıntılar ve işlem etkisi Diğer altında korunur; mobilde alanlar taşmadan akar.
+- Kredi kartı detayında işlem hedefi görüntülenen karttır. İşlem hesabı/kart değiştirme seçimi yoktur. Ödeme için ayrı Kaynak hesap yalnız kasa/banka hesaplarını sunar; yeni karttan karta aktarım API'de de reddedilir. Eski kayıtlar korunur.
+- Ayarlar'da hosting için kopyalanabilir PHP cron komutu ve İstanbul/UTC zamanlama bilgisi. Gece Türkiye saati 03.00 ve toplam beş yedek kuralı korunur.
+- Aynı gün yeniden elle yedek alırken onay, son yedek ve varsa silinecek en eski kopyanın zamanı gösterilir. Aynı isteğin tekrarları ek yedek oluşturmaz. Yeni yedek tamamlanmadan eski kopya silinmez.
+- **Fabrika ayarlarına sıfırla**, yönetici parolası ve yazılı onayla çalışır. Önce güvenlik yedeği alınır; yalnız işlemi yapan yönetici ve parolası korunur, diğer uygulama verileri/kullanıcıları temizlenir. Mevcut yedekler, hosting yapılandırması ve uygulama dışı tablolar korunur. Demo temizliğinden ayrı, gerçek veri modunda da kullanılabilir.
 
-Hosting paketini yüklerken api/config.php ve özel yedek klasörünüzü koruyun. Ardından update.php üzerinden Veritabanını güncelle işlemini uygulayın. Hostingde kendiliğinden dağıtım veya veri temizliği yapılmaz.
+## Hosting kurulumu
+
+Yalnız web dosyaları için `finans-paneli-1.15.0-hosting.zip` kullanın. `api/config.php` ve özel yedek dizinini koruyun. Mevcut şema 12 kurulumunda ek veritabanı güncellemesi yoktur; daha eski kurulumda `update.php` akışını tamamlayın. Gerçek veriler kendiliğinden temizlenmez veya sıfırlanmaz. Cron görevi hosting panelinden ayrıca kurulmalıdır.

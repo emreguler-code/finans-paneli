@@ -82,7 +82,7 @@ let activePage;const checks=[],errors=[];const ok=(name,test)=>{if(!test)throw E
  await p.locator('input[name=opening]').fill('1234,56');ok('Entity money input shares live grouping',await p.locator('input[name=opening]').inputValue()==='1.234,56');
  await p.locator('.entry-page').getByRole('button',{name:'Vazgeç',exact:true}).click();if(await p.getByRole('button',{name:'Değişikliklerden vazgeç',exact:true}).count())await p.getByRole('button',{name:'Değişikliklerden vazgeç',exact:true}).click();
  if(await p.locator('.party-row').count())await p.locator('.party-row').filter({hasText:'Ada Tasarım'}).click();await p.getByRole('button',{name:'Düzenle',exact:true}).first().click();
- ok('Party edit form retains entity details',await p.locator('input[name=name]').inputValue()==='Ada Tasarım');await p.getByRole('button',{name:'Paneli kapat',exact:true}).last().click();if(await p.getByRole('button',{name:'Değişikliklerden vazgeç',exact:true}).count())await p.getByRole('button',{name:'Değişikliklerden vazgeç',exact:true}).click();
+ ok('Party edit form retains entity details',await p.locator('input[name=name]').inputValue()==='Ada Tasarım');await p.locator('.entry-page .page-title').getByRole('button',{name:'Vazgeç',exact:true}).click();if(await p.getByRole('button',{name:'Değişikliklerden vazgeç',exact:true}).count())await p.getByRole('button',{name:'Değişikliklerden vazgeç',exact:true}).click();
  await go('Hesaplar');await p.locator('.account-open').first().click();await p.locator('.summary-band').getByRole('button',{name:'Hesap bilgileri',exact:true}).click();
  ok('Account details and audit use extracted dialog',await p.getByRole('dialog').locator('.cari-info').count()===1);await p.getByRole('button',{name:'Paneli kapat',exact:true}).last().click();if(await p.getByRole('button',{name:'Değişikliklerden vazgeç',exact:true}).count())await p.getByRole('button',{name:'Değişikliklerden vazgeç',exact:true}).click();
  await go('Kullanıcılar');await p.getByRole('button',{name:'Yeni kayıt ekle',exact:true}).click();
@@ -197,6 +197,7 @@ let activePage;const checks=[],errors=[];const ok=(name,test)=>{if(!test)throw E
  await require('./refinements-browser.cjs')({p,go,ok,out});
  await require('./update112-browser.cjs')({p,go,ok,out});
  await require('./entry114-browser.cjs')({p,go,ok,out});
+ await require('./update115-browser.cjs')({p,go,ok,out});
  await require('./settings-browser.cjs')({p,go,ok,out});
  await p.setViewportSize({width:1440,height:1000});await p.goto(base+'/update.php');
  await p.locator('#status').filter({hasText:'Veritabanı güncel (şema 12)'}).waitFor();

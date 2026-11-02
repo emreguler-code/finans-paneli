@@ -432,3 +432,61 @@ Bu onay tasarım kapsamını kesinleştirir. Kullanıcı bu mesajda kodlama/pake
 ## 1.14.0 — Toplu uygulama ve gönderim onayı
 
 Kullanıcı, yukarıdaki onaylı banka seçimi, dört tam sayfa oluşturma ve kompakt işlem/düzenleme alanını kodlayıp tasarım ilkeleri ve mobil/masaüstü taşmalar açısından kontrol ederek göndermemizi istedi. Önceki not alma / kodlamaya geçilmedi ifadeleri bu kapsam için tarihsel kayıttır. Mobil alt gezinme ve form eylemleri aynı kapsamda optimize edilir. Veri/kullanıcı temizliği istenmedi; sadece izole test verileri kullanılır. Kart banka adı metadatası için şema 12'ye güvenli geçiş ve şema 11 yedek uyumluluğu sağlanır. Özel banka adı kayıtla birlikte kaydedilir; bağımsız banka yönetim ekranı bu sürüme eklenmez.
+
+## 31 Ekim 2026 — Yeni sürüm notları: ortak cari ekleme/düzenleme sayfası
+
+Durum: kullanıcı tarafından onaylı karar; not alma aşaması. Bu talep kodlama, paketleme veya yayın başlatmaz.
+
+- Cari oluşturma ve cari düzenleme aynı tam sayfa formunu kullanacak. Sayfa başlığı her iki durumda da **Cari Ekle / Değiştir** olacak.
+- Yeni cari eklerken form yeni kayıt için açılacak; mevcut cariyi düzenlerken önceki bilgiler alanlara dolu gelecek, kullanıcı yalnız değiştirmek istediği verileri değiştirecek. Girilmeyen/değiştirilmeyen mevcut bilgiler korunacak.
+- Düzenlemeye ilişkin açıklama / değişiklik gerekçesi isteğe bağlı kalacak; açıklama boşken de kaydedilebilecek.
+- Düzenleme gerçekleştiğinde değişiklik logu tutulacak; log kaydı açıklama yazılmasına bağlı olmayacak.
+- Paylaşılan görseldeki mevcut tam sayfa temel bilgiler ve yardımcı ayrıntılar düzeni, projenin tipografi/boşluk/1,9:1 oran ve mobil kurallarıyla korunacak.
+- Bu karar, 1.14.0'daki “düzenleme kompakt alt alanda” kuralını **cari kartı düzenleme için** değiştirir. Cari işlem hareketi ekleme/düzenleme ve diğer kayıt türleri için bu notla yeni bir kapsam kararı alınmadı.
+
+## 2 Kasım 2026 — İşlem alt alanını tek satıra indirme ve takvim düzeltmesi
+
+Durum: onaylı yeni sürüm notu; not alma aşaması sürüyor, uygulama/yayın başlatılmadı.
+
+- Alt işlem alanında ayrı bir satır oluşturan “İşlem ekle · Ada Tasarım” bağlam başlığı kaldırılacak. Kapatma (X) düğmesi Kaydet düğmesinin yanına taşınacak; taslak koruması devam edecek.
+- Masaüstünde temel işlem alanları, takvim, Diğer, Kaydet ve kapatma aynı yatay satırda olacak. İçerik ana/yardımcı sütunların ortak sınırlarında kalacak; dış sayfa boşluklarına uzamayacak. İsteğe bağlı ayrıntılar ve gerekli doğrulama mesajları erişilebilir kalacak. Mobilde tek satıra zorlamak için kontroller küçültülmeyecek veya yatay taşma oluşturulmayacak.
+- İşlem tarihi için form satırında yalnız takvim ikonu gösterilecek; gün/ay/yıl metni ve ayrı tarih etiketiyle yer tüketilmeyecek. Erişilebilir ad “İşlem tarihi” olacak; seçili tarih açılan takvimde okunabilir şekilde korunacak. Bu görsel sadeleştirme tarih değerini ya da kullanıcı seçimini değiştirmeyecek.
+- Paylaşılan görselde takvim günleri pencerenin dar bir bölümüne sıkışıyor; takvim gövdesi ve yedi gün sütununun oranı düzeltilecek. Gün adları ve tarihler eşit, okunabilir sütunlarda, açılan pencerenin kullanılabilir genişliğini dolduracak.
+- Takvim tıklanan ikona bağlı açılacak; arka planı bulanıklaştırmayacak, sayfayı itmeyecek. Ekran kenarlarına uyum, mobil genişlik ve alt işlem alanıyla çakışma uygulama aşamasında kontrol edilecek.
+
+## 2 Kasım 2026 — Tüm işlem girişlerinde ortak tek satır ve kart ödeme kaynağı
+
+Durum: onaylı yeni sürüm notu; uygulama/yayın başlatılmadı.
+
+- Önceki tek satır kararı yalnız cariyle sınırlı olmayacak: kredi kartı ve diğer işlem ekleme alanları da aynı sade düzeni kullanacak. Ayrı başlık satırı kaldırılacak, X Kaydet yanında bulunacak, işlem tarihi yalnız takvim ikonuyla seçilecek. İçerik sınırları, Diğer seçenekler, doğrulama ve mobil taşmama kuralları ortak kalacak.
+- Kredi kartı detayında **İşlem hesabı seçimi tamamen kaldırılacak**; bu alan kaynak hesap değildir ve başka bir karta işlem ekleme olanağı vermeyecek. İşlem doğrudan görüntülenen karta kaydedilecek. Başka karta işlem eklemek için o kartın detayına girilecek.
+- **Ödeme eklerken ayrıca Kaynak hesap seçimi** gösterilecek; yalnız kasa/banka hesabı seçilebilecek. Hiçbir kredi kartı kaynak hesap olamayacak; karttan karta virman yeni işlem seçeneği olmayacak. Harcama eklerken bu ödeme kaynağı alanı gösterilmeyecek.
+- Seçili kredi kartı işlemin bağlamı/hedefi olarak korunacak; kaynak seçimi seçili kartı yanlışlıkla başka bir karta dönüştürmeyecek. Kart harcamaları yine ilgili karta işlenecek; ödeme kaynağı kuralı harcamayı kasa/banka harcamasına çevirmeyecek.
+- Bu finansal kısıt yalnız açılır listedeki görünür seçeneklerle bırakılmayacak; uygulama aşamasında API doğrulamasıyla karttan karta yeni aktarım da engellenecek. Mevcut eski hareketler bu not nedeniyle silinmeyecek veya yeniden hesaplanmayacak.
+
+Kullanıcının aynı günkü netleştirmesi: Axess detayında World seçilerek World'e işlem yazılması hatalı bağlam davranışıdır. Hedef kart seçilemez; açık detaydan belirlenir. İşlem hesabı alanını yalnız filtrelemek yeterli değildir, kaldırılmalıdır. Ödeme kaynağı ayrı bir kavram ve ayrı alandır. Bu netleştirme önceki muğlak “işlem hesabı/kart ödeme kaynağı” ifadesinin yerini alır.
+
+## 2 Kasım 2026 — Cron kurulum bilgisi ve tekrarlanan elle yedek onayı
+
+Durum: onaylı yeni sürüm notu; uygulama/yayın başlatılmadı.
+
+- Ayarlar'daki otomatik yedekleme bölümünde hosting panelinin Cron / Zamanlanmış görev alanına girilecek **kopyalanabilir komut** ve zamanlama bilgisi gösterilecek. Komut PHP CLI ile uygulamanın `api/backup-cron.php` dosyasını çalıştıracak; hosting PHP yolu ve uygulamanın kurulu olduğu tam dosya yolu açıkça ayrılacak. Örnek yollar gerçek sunucu yolu gibi sunulmayacak; veritabanı parolası veya anahtar komuta konmayacak.
+- Mevcut günlük Türkiye saati 03.00 kuralı korunacak. Hosting zamanlaması Europe/Istanbul ise `0 3 * * *`, UTC ise `0 0 * * *` bilgisi verilecek. Uygulamadaki seçeneği açmak cron görevi kurulduğu anlamına gelmeyecek; hosting paneline otomatik kurulum bu notun kapsamında değil.
+- Aynı gün (Europe/Istanbul takvim günü) daha önce başarılı yedek alınmışsa, kullanıcı yeniden **Yedek al** dediğinde yeni elle yedek oluşturmadan önce onay gösterilecek. Son yedeğin tarih/saati, yeni yedek oluşturulacağı ve saklama sınırının etkisi açıklanacak; Vazgeç / Yeniden yedek al eylemleri sunulacak.
+- Toplam beş yedek sınırı korunacak. Uyarı genel olarak “eskisi silinecektir” demeyecek: yalnız rotasyon gerçekten bir kopyayı silecekse **silinecek en eski yedeğin tarih/saatini** belirtecek. Beşten az kopya varken silinme olmayacağı doğru aktarılacak. Aynı gün yeni elle yedek almak önceki aynı gün kopyasını koşulsuz değiştirmeyecek.
+- Peş peşe çift tıklama/tekrarlanan istekler aynı işlem için birden fazla yedek üretmeyecek; işlem sürerken düğme kilitli kalacak ve sunucu tarafında tekrar/eşzamanlılık koruması doğrulanacak. Onay iptal edilince dosya oluşturulmayacak veya silinmeyecek.
+- Yeni yedek başarıyla tamamlanmadan mevcut kopya silinmeyecek; başarısız yedekleme eski yedekleri kaybettirmeyecek. Geri yükleme/veri temizliği öncesindeki zorunlu güvenlik yedekleri bu elle yedek onayı nedeniyle atlanmayacak. Cron'un günde en fazla bir başarılı otomatik yedek üretmesi ve Ayarlar'a girişin yedek almaması korunacak.
+
+## 2 Kasım 2026 — Fabrika ayarlarına sıfırlama
+
+Durum: onaylı yeni sürüm notu; canlı sıfırlama veya kodlama/yayın talimatı değildir.
+
+- Ayarlar sayfasındaki **Demo verilerini temizle** düğmesinin yanına **Fabrika ayarlarına sıfırla** eklenecek. Demo temizliğinden farklı, açıkça yıkıcı bir eylem olarak ayrışacak; mobilde düğmeler taşmadan yerleşecek.
+- Uygulamanın veritabanındaki tüm kullanıcı verileri, finansal kayıtlar, cariler, hesaplar, kartlar, araçlar, kampanyalar ve diğer kullanıcı hesapları temizlenecek. Yalnız işlemi yapan yöneticinin kullanıcı hesabı ve mevcut parola özeti korunacak; yönetici uygulamaya aynı kullanıcı adı/parolayla girebilecek. Parola düz metne çevrilmeyecek veya yeni parola atanmayacak.
+- Uygulama boş, gerçek veri girişine hazır durumda açılacak; demo verileri otomatik yüklenmeyecek. Geçerli şema/migrasyon yapısı korunacak; paylaşılan veritabanındaki uygulama dışı tablolar silinmeyecek.
+- Yalnız yönetici kullanabilecek. İşlemden önce mevcut yönetici parolasıyla yeniden doğrulama ve açık yazılı sıfırlama onayı istenecek; gerçek verilerin de silineceği açıkça belirtilecek. Demo temizliğinin gerçek veri modundaki engeli bu ayrı sıfırlama eylemine uygulanmayacak.
+- Sıfırlama öncesi geri yüklenebilir güvenlik yedeği zorunlu olacak; yedek başarısızsa sıfırlama başlamayacak. Özel yedek dosyaları ve hosting yapılandırması bu işlemle silinmeyecek. Veri temizliği yarım kalmayacak şekilde atomik yürütülecek, diğer oturumlar geçersiz kılınacak ve sıfırlama olayı denetim kaydına yazılacak.
+
+## 2 Kasım 2026 — 1.15.0 toplu uygulama ve yayın onayı
+
+Kullanıcı notları alınan değişikliklerin hazırlanıp GitHub'a yüklenmesini istedi. Yukarıdaki cari ortak sayfa, tek satır işlem alanları/takvim, sabit kart hedefi/ödeme kaynağı, cron kurulum bilgisi, tekrarlı yedek onayı ve yönetici koruyan fabrika sıfırlaması uygulama kapsamıdır. Önceki yalnız not alma ifadeleri bu onaya kadar olan durumu belirtir. Canlı veri sıfırlanmaz; yıkıcı işlevler yalnız izole test verisinde doğrulanır.

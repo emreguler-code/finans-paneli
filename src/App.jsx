@@ -54,18 +54,22 @@ export function App({
   const [contextKey, setContextKey] = useState(0);
   const returnRoute=useRef(null),contextRoute=useRef(null);
   const createPages={party:'Cari hesaplar',account:'Hesaplar',card:'Kredi kartları',vehicle:'Araçlarım'};
+  const editingParty=nav.route.page==='Cari hesaplar'&&nav.route.entry==='duzenle';
+  const entryPage=nav.route.record==='yeni'||editingParty;
   const creating=financeContext&&createPages[financeContext.entity]&&!financeContext.item?.id&&!['view','history','status'].includes(financeContext.mode);
-  function closeFinance(){setFinanceContext(null);if(nav.route.record==='yeni'){nav.clearBlocker();nav.navigate(returnRoute.current||{page:nav.route.page},{replace:true})}}
+  function closeFinance(){setFinanceContext(null);if(entryPage){nav.clearBlocker();nav.navigate(returnRoute.current||(editingParty?{...nav.route,entry:''}:{page:nav.route.page}),{replace:true})}}
   useEffect(()=>{if(nav.route.record==='yeni'&&!financeContext){const entity=Object.keys(createPages).find(key=>createPages[key]===nav.route.page);if(entity&&can(fullData.user,'create')){contextRoute.current=routeHash(nav.route);setFinanceContext({entity});setContextKey(k=>k+1)}else nav.navigate({page:nav.route.page},{replace:true})}},[nav.route.page,nav.route.record]);
+  useEffect(()=>{if(editingParty&&!financeContext){const item=fullData.parties.find(p=>p.id===Number(nav.route.record));if(item&&can(fullData.user,'edit')){contextRoute.current=routeHash(nav.route);setFinanceContext({entity:'party',item});setContextKey(k=>k+1)}else nav.navigate({...nav.route,entry:''},{replace:true})}},[editingParty,nav.route.record]);
   function openFinance(c,bypass=false) {
     if(!bypass){nav.guard(()=>openFinance(c,true));return;}
     contextRoute.current=routeHash(nav.route);
     if(createPages[c.entity]&&!c.item?.id&&!['view','history','status'].includes(c.mode)){returnRoute.current=nav.route;contextRoute.current=routeHash({page:createPages[c.entity],record:'yeni'});nav.navigate({page:createPages[c.entity],record:'yeni'})}
+    if(c.entity==='party'&&c.item?.id&&!['view','history','status'].includes(c.mode)){returnRoute.current=nav.route;const route={page:'Cari hesaplar',record:String(c.item.id),entry:'duzenle'};contextRoute.current=routeHash(route);nav.navigate(route)}
     setContextKey(k => k + 1);
     setFinanceContext(c);
     setDrawer(null);
   }
-  useEffect(()=>{if(financeContext&&contextRoute.current&&routeHash(nav.route)!==contextRoute.current)setFinanceContext(null)},[nav.route.page,nav.route.record,nav.route.tab]);
+  useEffect(()=>{if(financeContext&&contextRoute.current&&routeHash(nav.route)!==contextRoute.current)setFinanceContext(null)},[nav.route.page,nav.route.record,nav.route.tab,nav.route.entry]);
   const [overviewFilters,setOverviewFilters]=useState(false);
   const [partyLabel, setPartyLabel] = useState('');
   const {
@@ -497,7 +501,7 @@ export function App({
             </span>
           </div>
         </div></header>
-        <main className="main-content"><div id="entry-page-root"/>{nav.route.record==='yeni'&&<GlobalSearchTools data={fullData} showFilters={false}/>}
+        <main className="main-content"><div id="entry-page-root"/>{entryPage&&<GlobalSearchTools data={fullData} showFilters={false}/>}
           {page === "Genel bakış" && <GlobalSearchTools data={fullData} placeholder="Genel bakış hareketlerinde ara" filters={overviewFilters} setFilters={setOverviewFilters} resultCount={visible.length} reset={()=>{setSearch('');setScope('all');setKind('all');setOverviewRange(presetRange('Bu Ay',TODAY))}}><label>Hesap<select value={scope} onChange={e=>setScope(e.target.value)}><option value="all">Tüm hesaplar</option>{accounts.map(a=><option key={a.id} value={a.id}>{a.name}</option>)}</select></label><label>Tarih aralığı<DatePicker range defaultRange={presetRange('Bu Ay',TODAY)} from={overviewRange.from} to={overviewRange.to} today={TODAY} clearable={false} onChange={range=>setOverviewRange(range.from&&range.to?range:presetRange('Bu Ay',TODAY))}/></label><label>İşlem<select value={kind} onChange={e=>setKind(e.target.value)}><option value="all">Tümü</option>{[...new Set(tx.map(t=>t.kind))].map(k=><option key={k}>{k}</option>)}</select></label></GlobalSearchTools>}
           {page === "Genel bakış" && <div className="page-title">
             <div>
@@ -509,7 +513,7 @@ export function App({
               <span className="sr-only">İşlem ekle</span>
             </button>
           </div>}
-          {nav.route.record==='yeni'?null:page === "Ayarlar" ? <SettingsPage key={nav.revision} data={fullData} notify={notify}/> : page === "Arama" ? <GlobalSearchPage data={fullData}/> : page === "Bildirimler" ? <NotificationsPage key={routeKey+nav.revision} data={fullData} initialScope={{...notificationScope,source:nav.route.source}} onOpenNotification={openNotification}/> : page !== "Genel bakış" ? <FinanceHub key={page+'-'+routeKey+'-'+nav.revision} page={page} onNotifications={showNotifications} onOpenNotification={openNotification} initialEventId={notificationTarget?.eventId||Number(nav.route.event)||undefined} initialRecord={notificationTarget?.recordId} initialParty={notificationTarget?.partyId} initialDate={notificationTarget?.date} data={fullData} onState={applyState} notify={notify} open={openFinance} search="" initialAccount={scope} initialDue={claimFilter} onLabel={setPartyLabel} /> : <>
+          {entryPage?null:page === "Ayarlar" ? <SettingsPage key={nav.revision} data={fullData} notify={notify}/> : page === "Arama" ? <GlobalSearchPage data={fullData}/> : page === "Bildirimler" ? <NotificationsPage key={routeKey+nav.revision} data={fullData} initialScope={{...notificationScope,source:nav.route.source}} onOpenNotification={openNotification}/> : page !== "Genel bakış" ? <FinanceHub key={page+'-'+routeKey+'-'+nav.revision} page={page} onNotifications={showNotifications} onOpenNotification={openNotification} initialEventId={notificationTarget?.eventId||Number(nav.route.event)||undefined} initialRecord={notificationTarget?.recordId} initialParty={notificationTarget?.partyId} initialDate={notificationTarget?.date} data={fullData} onState={applyState} notify={notify} open={openFinance} search="" initialAccount={scope} initialDue={claimFilter} onLabel={setPartyLabel} /> : <>
               <div className="snapshot-label">
                 <span>GÜNCEL DURUM</span>
                 <span>

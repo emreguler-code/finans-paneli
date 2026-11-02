@@ -4,9 +4,10 @@ import os,json,uuid,hashlib,urllib.request,urllib.error,http.cookiejar,subproces
 URL=os.environ['API_TEST_URL'];runtime=Path(os.environ['QA_STATE_PATH']).parent;checks=[];csrf='';password=os.environ['API_TEST_PASSWORD'];username=os.environ['API_TEST_USERNAME']
 assert os.environ['QA_SQL_CONTAINER'].startswith('finans-qa-db-')
 op=urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
-def call(action,body=None,params=None,token=None,raw=None,content_type=None):
+def call(action,body=None,params=None,token=None,raw=None,content_type=None,confirm_backup=True):
  global csrf
  from urllib.parse import urlencode
+ if action=='backup_create' and body is not None:body={'requestId':str(uuid.uuid4()),**body}
  headers={'X-CSRF-Token':csrf if token is None else token};payload=raw if raw is not None else json.dumps(body).encode() if body is not None else None
  if payload is not None:headers['Content-Type']=content_type or 'application/json'
  request=urllib.request.Request(URL+'?'+urlencode({'action':action,**(params or {})}),data=payload,headers=headers)
@@ -14,6 +15,7 @@ def call(action,body=None,params=None,token=None,raw=None,content_type=None):
   response=op.open(request);code=response.status;blob=response.read();kind=response.headers.get('Content-Type','');data=json.loads(blob) if 'json' in kind else blob
  except urllib.error.HTTPError as e:code=e.code;data=json.load(e)
  if isinstance(data,dict) and 'csrf' in data:csrf=data['csrf']
+ if action=='backup_create' and confirm_backup and isinstance(data,dict) and data.get('confirmationRequired'):return call(action,{**body,'confirmLatest':data['last']['id']},confirm_backup=False)
  return code,data
 def post(a,**body):return call(a,dict(requestId=str(uuid.uuid4()),**body))
 def ok(name,test):
@@ -56,7 +58,7 @@ bad=blob.replace(b'"schema":12',b'"schema":13',1);ok('Modified backup cannot pas
 ok('Rejected imports leave no catalog entries',len(call('backup_status')[1]['backups'])==count)
 viewer_pass=secrets.token_hex(16);code,v=post('user_save',username='backup-viewer',shortName='Backup Viewer',password=viewer_pass,role='viewer',active=True);assert code==200,v
 assert call('login',dict(username='backup-viewer',password=viewer_pass))[0]==200
-for action,body in [('backup_status',None),('backup_create',{}),('backup_restore',{}),('demo_clear',{})]:ok('Viewer cannot access '+action,call(action,body)[0]==403)
+for action,body in [('backup_status',None),('backup_create',{}),('backup_restore',{}),('demo_clear',{}),('factory_reset',{})]:ok('Viewer cannot access '+action,call(action,body)[0]==403)
 assert call('login',dict(username=username,password=password))[0]==200
 def scheduled(at):
  # Exercise the same CLI scheduler with a controlled clock, no browser or production DB.
@@ -164,5 +166,28 @@ ok('Previous release schema-11 backups remain importable with their original sch
 old_financial=financial(state());code,result=call('backup_restore',dict(id=legacy['backup']['id'],password=password,confirm='GERİ YÜKLE'));assert code==200,result
 ok('Previous release backup restores financial data and keeps current schema 12',state()['schemaVersion']==12 and financial(state())==old_financial)
 code,result=post('demo_seed',profile='compact');ok('Legacy updater demo replacement also creates a safety backup',code==200 and any(b['kind']=='before_demo' for b in call('backup_status')[1]['backups']))
+
+# Manual duplicates require explicit consent before creating another file.
+items=call('backup_status')[1]['backups'];key=str(uuid.uuid4())
+code,prompt=call('backup_create',{'requestId':key},confirm_backup=False)
+ok('Same-day repeat asks before creating or pruning any backup',code==200 and prompt.get('confirmationRequired') and call('backup_status')[1]['backups']==items)
+ok('Repeat warning names actual rotation victim only at capacity',prompt['willDelete']['id']==items[-1]['id'] if len(items)>=5 else prompt['willDelete'] is None)
+code,repeat=call('backup_create',{'requestId':key,'confirmLatest':prompt['last']['id']},confirm_backup=False);assert code==200,repeat
+catalog=call('backup_status')[1]['backups'];code,retry=call('backup_create',{'requestId':key,'confirmLatest':prompt['last']['id']},confirm_backup=False)
+ok('Identical manual request retries never rotate another backup',code==200 and retry.get('duplicate') and retry['backup']['id']==repeat['backup']['id'] and call('backup_status')[1]['backups']==catalog)
+# Factory reset is distinct from demo clear and preserves only the current administrator.
+assert post('user_save',username='second-reset-admin',shortName='Second admin',role='admin',password='Synthetic-reset-password-24')[0]==200
+before_reset=financial(state());original_hash=sql('SELECT password_hash FROM users WHERE id='+str(state()['user']['id']));reset_body=dict(password=password,confirm='FABRİKA AYARLARINA SIFIRLA')
+ok('Factory reset requires password and exact typed confirmation',call('factory_reset',{**reset_body,'password':'wrong'})[0]==422 and call('factory_reset',{**reset_body,'confirm':'sil'})[0]==422 and financial(state())==before_reset)
+code,result=call('factory_reset',reset_body);assert code==200,result
+clean=state();ok('Factory reset clears all business modules and keeps current admin only',not clean['demo'] and all(not clean[k] for k in ['events','parties','accounts','cards','vehicles','vehicle_records','campaigns','campaign_entries','claims']) and sql('SELECT COUNT(*) FROM users')=='1' and sql('SELECT password_hash FROM users')==original_hash)
+ok('Factory reset writes audit and retains recoverable safety snapshot',result['safetyBackup']['kind']=='before_reset' and sql("SELECT COUNT(*) FROM audit_log WHERE operation='factory_reset'")=='1')
+ok('Current administrator can log in with unchanged password after reset',call('login',dict(username=username,password=password))[0]==200)
+# A real workspace can also be explicitly reset; source safety snapshot can restore previous records.
+assert post('account_save',name='Real account',type='Kasa',opening='10')[0]==200
+ok('Factory reset is available in real-data mode',call('factory_reset',reset_body)[0]==200 and not state()['accounts'])
+code,r=call('backup_restore',dict(password=password,confirm='GERİ YÜKLE',id=result['safetyBackup']['id']));assert code==200,r
+ok('Pre-reset safety snapshot restores all financial data',financial(state())==before_reset)
+
 (runtime/'backup-checks.json').write_text(json.dumps({'passed':len(checks),'checks':checks}))
 print('Backup restore and demo-clear checks complete',len(checks))

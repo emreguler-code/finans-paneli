@@ -4,7 +4,7 @@ module.exports=async({p,go,ok,out})=>{
  const nav=async name=>{if(p.viewportSize().width>760)await go(name);else{await p.locator('.mobile-nav').getByRole('button',{name:'Diğer',exact:true}).click();await p.locator('.mobile-more').getByRole('button',{name,exact:true}).click()}};
  for(const width of [1440,768,390,320]){
   await p.setViewportSize({width,height:width<760?844:1024});
-  for(const [page,label,title] of [['Kredi kartları','Kart ekle','Kredi kartı ekle'],['Hesaplar','Hesap ekle','Hesap ekle'],['Cari hesaplar','Yeni kayıt ekle','Cari oluştur'],['Araçlarım','Araç ekle','Araç ekle']]){
+  for(const [page,label,title] of [['Kredi kartları','Kart ekle','Kredi kartı ekle'],['Hesaplar','Hesap ekle','Hesap ekle'],['Cari hesaplar','Yeni kayıt ekle','Cari Ekle / Değiştir'],['Araçlarım','Araç ekle','Araç ekle']]){
    await nav(page);await p.getByRole('button',{name:label,exact:true}).click();await p.locator('.entry-page h1').filter({hasText:title}).waitFor();
    ok(title+' is a real page without modal '+width,await p.locator('.drawer-layer').count()===0&&p.url().includes('/yeni')&&await p.locator('.entry-page').getAttribute('aria-modal')===null);
    ok(title+' fits viewport '+width,await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));

@@ -29,3 +29,7 @@ Hosting ZIP'ini yüklemek kayıtları silmez. Gerçek veriye başlamak için Aya
 ## 1.14.0 kurulumu
 
 Mevcut api/config.php ve özel yedek klasörünü koruyarak hosting ZIP'ini yükleyin. Yöneticiyle update.php üzerinden şema 12 geçişini uygulayın. Güncelleme öncesi sunucu yedeği alınır; yalnız kart banka adı metadatası eklenir, finansal kayıtlar ve yönetici hesabı korunur. Demo yenileme/temizleme seçeneğini kullanmayın. Önceki 1.13.x şema-11 Finans yedekleri yeni sürümde desteklenir. Otomatik yedek yalnız Türkiye saatiyle 03.00 cron ile, tüm türlerde toplam 5 kopya kuralıyla sürer.
+
+## 1.15.0 güncellemesi
+
+Yalnız web dosyaları içeren 1.15.0 hosting ZIP'ini kullanabilirsiniz. Mevcut `api/config.php` ve özel yedek dizinini koruyun. Şema 12 değişmedi; 1.14.0'dan geçişte ek migrasyon yoktur. Daha eski şemalarda `update.php` gereklidir. Yeni fabrika sıfırlama düğmesi yalnız açık parola/yazılı onayla çalışır; güncelleme herhangi bir veriyi kendiliğinden temizlemez. Cron komutu Ayarlar → Hosting cron kurulumu bölümünden alınabilir; sağlayıcınızın PHP CLI yolu/saat dilimini doğrulayın.

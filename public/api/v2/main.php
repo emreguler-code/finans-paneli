@@ -136,7 +136,7 @@ try{
  $db->beginTransaction();$db->query('SELECT id FROM app_meta WHERE id=1 FOR UPDATE')->fetch();$q=$db->prepare('SELECT * FROM write_requests WHERE request_key=?');$q->execute([$key]);$seen=$q->fetch();
  if($seen){if(!hash_equals($seen['payload_hash'],$hash))throw new DomainException('Aynı kayıt anahtarı farklı içerikle kullanıldı.');$result=json_decode($seen['result_json'],true);$db->rollBack();$result['duplicate']=true;}
  else{
- if($action==='event_save')$result=saveEvent($db,$body);
+ if($action==='event_save'){if(($body['operation']??'')==='card_transfer')throw new DomainException('Karttan karta aktarım yapılamaz. Kart ödemesi için kasa veya banka hesabı seçin.');$result=saveEvent($db,$body);}
  elseif($action==='statement_save')$result=saveStatement($db,$body);
  elseif($action==='demo_seed')$result=seedDemo($db,($body['profile']??'comprehensive')!=='compact');
  elseif($action==='event_status'){$id=(int)($body['id']??0);$old=row($db,'fin_events',$id);versionCheck($old,$body);$cancelled=(int)(bool)($body['cancelled']??true);$reason=field($body,'reason',1000,true);$db->prepare('UPDATE fin_events SET cancelled=?,version=version+1 WHERE id=?')->execute([$cancelled,$id]);audit($db,'event',(string)$id,$cancelled?'cancel':'restore',$old,row($db,'fin_events',$id),$reason);$result=['id'=>$id];}

@@ -41,7 +41,7 @@ function backupOrder(PDO $db): array {
  foreach($q as $row){$t=$row['TABLE_NAME'];$p=$row['REFERENCED_TABLE_NAME'];if($row['TABLE_SCHEMA']!==$database){if(isset($deps[$p]))throw new DomainException('Başka bir veritabanı uygulama verisine bağlı; geri yükleme uygulanamaz.');continue;}if(isset($deps[$t])&&$row['REFERENCED_TABLE_SCHEMA']!==$database)throw new DomainException('Uygulama başka bir veritabanına bağlı; geri yükleme uygulanamaz.');if(isset($deps[$t])&&$t!==$p){if(!isset($deps[$p]))throw new DomainException('Uygulama dışında bir tablo ilişkisi var; geri yükleme uygulanamaz.');$deps[$t][]=$p;}elseif(!isset($deps[$t])&&isset($deps[$p]))throw new DomainException('Başka bir tablo uygulama verisine bağlı; geri yükleme uygulanamaz.');}
  $order=[];while($deps){$progress=false;foreach($deps as $t=>$parents){if(!array_diff($parents,$order)){$order[]=$t;unset($deps[$t]);$progress=true;}}if(!$progress)throw new DomainException('Tablo ilişkileri güvenli sıraya alınamadı.');}return $order;
 }
-function backupCreate(PDO $db,string $kind='manual',bool $prune=true): array {
+function backupCreate(PDO $db,string $kind='manual',bool $prune=true,string $requestHash=''): array {
  $root=backupRoot();$shape=backupShape($db);$id=bin2hex(random_bytes(16));$tmp=$root.'/'.$id.'.pending';$path=$root.'/'.$id.'.jsonl';$f=fopen($tmp,'xb');if(!$f)throw new RuntimeException('Yedek oluşturulamadı.');chmod($tmp,0600);
  $hash=hash_init('sha256');$counts=array_fill_keys(BACKUP_TABLES,0);$bytes=0;$stamp=(new DateTimeImmutable())->format('Y-m-d\TH:i:s.uP');
  $write=function(array $row,bool $include=true)use($f,$hash,&$bytes){$line=json_encode($row,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR)."\n";$bytes+=strlen($line);if(strlen($line)>2097152)throw new DomainException('Tek bir kayıt yedek satırı sınırını aşıyor; hosting yedeği kullanın.');if($bytes>BACKUP_MAX)throw new DomainException('Yedek 32 MB sınırını aşıyor; hosting üzerinden veritabanı dışa aktarımı kullanın.');if(fwrite($f,$line)!==strlen($line))throw new RuntimeException('Yedek dosyası tamamlanamadı.');if($include)hash_update($hash,$line);};
@@ -50,7 +50,7 @@ function backupCreate(PDO $db,string $kind='manual',bool $prune=true): array {
   foreach($shape as $table=>$columns){$q=$db->query("SELECT * FROM `$table`");while($row=$q->fetch()){$write(['table'=>$table,'row'=>$row]);$counts[$table]++;}}
   $write(['complete'=>true,'counts'=>$counts,'sha256'=>hash_final($hash)],false);if(!fflush($f))throw new RuntimeException('Yedek diske yazılamadı.');if(function_exists('fsync')&&!fsync($f))throw new RuntimeException('Yedek kalıcı olarak yazılamadı.');fclose($f);$f=null;$db->commit();
   if(!rename($tmp,$path))throw new RuntimeException('Yedek tamamlanamadı.');
-  $meta=['id'=>$id,'created_at'=>$stamp,'kind'=>$kind,'schema'=>12,'size'=>filesize($path),'sha256'=>hash_file('sha256',$path),'counts'=>$counts];backupWriteJson($root.'/'.$id.'.meta.json',$meta);
+  $meta=['id'=>$id,'created_at'=>$stamp,'kind'=>$kind,'schema'=>12,'size'=>filesize($path),'sha256'=>hash_file('sha256',$path),'counts'=>$counts]+($requestHash?['request_hash'=>$requestHash]:[]);backupWriteJson($root.'/'.$id.'.meta.json',$meta);
  }catch(Throwable $e){if($db->inTransaction())$db->rollBack();if(is_resource($f))fclose($f);@unlink($tmp);@unlink($path);throw $e;}
  if($prune)backupPrune([$id]);return $meta;
 }
@@ -83,10 +83,10 @@ function backupRestore(PDO $db,string $id,array $admin): array {
   audit($db,'system',$id,'backup_restore',null,['backup'=>$id,'safety_backup'=>$safety['id']],'Veritabanı yedeği geri yüklendi; mevcut yönetici parolası korundu.');backupPrune([$safety['id']]);$pruned=true;$newEpoch=bin2hex(random_bytes(32));backupWriteJson(backupRoot().'/session-epoch.json',['epoch'=>$newEpoch]);$changedEpoch=true;$db->commit();$_SESSION['workspace_epoch']=$newEpoch;$_SESSION['uid']=$adminId;$_SESSION['username']=$admin['username'];session_regenerate_id(true);$_SESSION['csrf']=bin2hex(random_bytes(32));return $safety;
  }finally{fclose($f);if($db->inTransaction()){$db->rollBack();if($changedEpoch)backupWriteJson(backupRoot().'/session-epoch.json',['epoch'=>$oldEpoch]);}if(!$pruned)backupPrune([$safety['id']]);}
 }
-function backupClearDemo(PDO $db): array {
- if(!$db->query('SELECT demo_date FROM app_meta WHERE id=1')->fetchColumn())throw new DomainException('Örnek veri modu kapalı. Gerçek veri bu işlemle temizlenemez.');
- $oldEpoch=workspaceEpoch();$changedEpoch=false;$order=backupOrder($db);$safety=backupCreate($db,'before_clear');$db->beginTransaction();
- try{$db->query('SELECT id FROM app_meta WHERE id=1 FOR UPDATE')->fetch();foreach(array_reverse($order) as $table)if(!in_array($table,['app_meta','users','login_attempts'],true))$db->exec("DELETE FROM `$table`");$db->exec("DELETE FROM users WHERE role<>'admin'");$db->exec('UPDATE app_meta SET demo_date=NULL WHERE id=1');audit($db,'system','demo','demo_clear',null,['backup'=>$safety['id']],'Örnek veri ortamı temizlendi; yönetici hesapları korundu.');$newEpoch=bin2hex(random_bytes(32));backupWriteJson(backupRoot().'/session-epoch.json',['epoch'=>$newEpoch]);$changedEpoch=true;$db->commit();$_SESSION['workspace_epoch']=$newEpoch;return $safety;}catch(Throwable $e){if($db->inTransaction())$db->rollBack();if($changedEpoch)backupWriteJson(backupRoot().'/session-epoch.json',['epoch'=>$oldEpoch]);throw $e;}
+function backupClearDemo(PDO $db,?array $admin=null): array {
+ if(!$admin&&!$db->query('SELECT demo_date FROM app_meta WHERE id=1')->fetchColumn())throw new DomainException('Örnek veri modu kapalı. Gerçek veri bu işlemle temizlenemez.');
+ $oldEpoch=workspaceEpoch();$changedEpoch=false;$order=backupOrder($db);$safety=backupCreate($db,$admin?'before_reset':'before_clear');$db->beginTransaction();
+ try{$db->query('SELECT id FROM app_meta WHERE id=1 FOR UPDATE')->fetch();foreach(array_reverse($order) as $table)if(!in_array($table,['app_meta','users','login_attempts'],true))$db->exec("DELETE FROM `$table`");$admin?$db->prepare('DELETE FROM users WHERE id<>?')->execute([$admin['id']]):$db->exec("DELETE FROM users WHERE role<>'admin'");if($admin)$db->exec('DELETE FROM login_attempts');$db->exec('UPDATE app_meta SET demo_date=NULL WHERE id=1');audit($db,'system',$admin?'workspace':'demo',$admin?'factory_reset':'demo_clear',null,['backup'=>$safety['id']],$admin?'Fabrika ayarlarına sıfırlandı; yalnız mevcut yönetici korundu.':'Örnek veri ortamı temizlendi; yönetici hesapları korundu.');$newEpoch=bin2hex(random_bytes(32));backupWriteJson(backupRoot().'/session-epoch.json',['epoch'=>$newEpoch]);$changedEpoch=true;$db->commit();$_SESSION['workspace_epoch']=$newEpoch;return $safety;}catch(Throwable $e){if($db->inTransaction())$db->rollBack();if($changedEpoch)backupWriteJson(backupRoot().'/session-epoch.json',['epoch'=>$oldEpoch]);throw $e;}
 }
 function backupAutomatic(PDO $db,?DateTimeImmutable $now=null): ?array {
  // Browser activity never creates scheduled backups. Hosting cron owns the clock.
@@ -99,21 +99,31 @@ function backupAutomatic(PDO $db,?DateTimeImmutable $now=null): ?array {
  foreach(backupCatalog() as $row)if($row['kind']==='automatic'&&(new DateTimeImmutable($row['created_at']))->setTimezone(new DateTimeZone('Europe/Istanbul'))->format('Y-m-d')===$day){backupWriteJson($path,['last_automatic_date'=>$day]);return null;}
  $meta=backupCreate($db,'automatic');backupWriteJson($path,['last_automatic_date'=>$day]);return $meta;
 }
-if(str_starts_with($action,'backup_')||$action==='demo_clear'){
+if(str_starts_with($action,'backup_')||in_array($action,['demo_clear','factory_reset'],true)){
  permit('admin');$read=['backup_status','backup_download'];if(in_array($action,$read,true)&&$method!=='GET'||!in_array($action,$read,true)&&$method!=='POST')fail('Bu işlem için yöntem geçersiz.',405);
  if($action==='backup_download'){$id=(string)($_GET['id']??'');$path=backupPath($id);backupValidate($db,$path);header('Content-Type: application/octet-stream');header('Content-Disposition: attachment; filename="finans-yedek-'.$id.'.jsonl"');header('Content-Length: '.filesize($path));header('Cache-Control: no-store, private');readfile($path);exit;}
- if($action==='backup_status')reply(['today'=>date('Y-m-d'),'backups'=>backupCatalog(),'automatic'=>backupOptions(),'demo'=>(bool)$db->query('SELECT demo_date FROM app_meta WHERE id=1')->fetchColumn(),'maxBytes'=>BACKUP_MAX,'uploadMaxBytes'=>min(BACKUP_MAX,backupIniBytes(ini_get('upload_max_filesize')),max(0,backupIniBytes(ini_get('post_max_size'))-65536))]);
+ if($action==='backup_status')reply(['today'=>date('Y-m-d'),'cronScript'=>realpath(__DIR__.'/../backup-cron.php'),'backups'=>backupCatalog(),'automatic'=>backupOptions(),'demo'=>(bool)$db->query('SELECT demo_date FROM app_meta WHERE id=1')->fetchColumn(),'maxBytes'=>BACKUP_MAX,'uploadMaxBytes'=>min(BACKUP_MAX,backupIniBytes(ini_get('upload_max_filesize')),max(0,backupIniBytes(ini_get('post_max_size'))-65536))]);
  if($action==='backup_auto_tick')reply(['created'=>false,'cronRequired'=>true]);
  if(!(int)$db->query("SELECT GET_LOCK('finans_update',5)")->fetchColumn())fail('Başka bir kayıt veya bakım işlemi sürüyor. Biraz sonra deneyin.',409);
  $response=null;
  try{
-  if($action==='backup_create')$response=['backup'=>backupCreate($db)];
+  if($action==='backup_create'){
+   $key=requestKey($body);$requestHash=hash('sha256',$actor['id'].':'.$key);$ledgerPath=backupRoot().'/manual-requests.json';$ledger=is_file($ledgerPath)?json_decode(file_get_contents($ledgerPath),true,128,JSON_THROW_ON_ERROR):[];
+   if(isset($ledger[$requestHash]))$response=['backup'=>$ledger[$requestHash],'duplicate'=>true];
+   else{
+    $items=backupCatalog();foreach($items as $item)if(($item['request_hash']??'')===$requestHash){$response=['backup'=>$item,'duplicate'=>true];break;}if($response===null){$last=$items[0]??null;$today=(new DateTimeImmutable('now',new DateTimeZone('Europe/Istanbul')))->format('Y-m-d');
+    $sameDay=false;foreach($items as $item)if($item['kind']!=='uploaded'&&(new DateTimeImmutable($item['created_at']))->setTimezone(new DateTimeZone('Europe/Istanbul'))->format('Y-m-d')===$today){$sameDay=true;break;}
+    if($sameDay&&($body['confirmLatest']??'')!==$last['id'])$response=['confirmationRequired'=>true,'last'=>$last,'willDelete'=>count($items)>=5?end($items):null];
+    else{$meta=backupCreate($db,'manual',true,$requestHash);$ledger[$requestHash]=$meta;backupWriteJson($ledgerPath,array_slice($ledger,-64,null,true));$response=['backup'=>$meta];}}
+   }
+  }
   elseif($action==='backup_settings'){if(!is_bool($body['enabled']??null))throw new DomainException('Otomatik yedek ayarlarını kontrol edin.');backupWriteJson(backupRoot().'/settings.json',['enabled'=>$body['enabled'],'interval'=>'daily']);backupPrune();$response=['automatic'=>backupOptions()];}
   elseif($action==='backup_upload'){
    $file=$_FILES['backup']??null;if(!$file||$file['error']!==UPLOAD_ERR_OK||!is_uploaded_file($file['tmp_name'])||$file['size']>BACKUP_MAX)throw new DomainException('Yedek yüklenemedi. Dosya 32 MB ve hosting yükleme sınırının altında olmalı.');
    $valid=backupValidate($db,$file['tmp_name']);$id=bin2hex(random_bytes(16));$path=backupRoot().'/'.$id.'.jsonl';if(!move_uploaded_file($file['tmp_name'],$path))throw new RuntimeException('Yedek yüklenemedi.');chmod($path,0600);$meta=['id'=>$id,'created_at'=>(new DateTimeImmutable())->format('Y-m-d\TH:i:s.uP'),'kind'=>'uploaded','schema'=>$valid['header']['schema'],'size'=>filesize($path),'sha256'=>hash_file('sha256',$path),'counts'=>$valid['counts'],'original_date'=>$valid['header']['created_at']??null];backupWriteJson(backupRoot().'/'.$id.'.meta.json',$meta);backupPrune([$id]);$response=['backup'=>$meta];
   }
   elseif($action==='backup_restore'){$admin=backupReauthenticate($db,$body);if(field($body,'confirm',40,true)!=='GERİ YÜKLE')throw new DomainException('Geri yükleme onayını yazın.');$response=['safetyBackup'=>backupRestore($db,field($body,'id',32,true),$admin),'csrf'=>$_SESSION['csrf'],'reload'=>true];}
+  elseif($action==='factory_reset'){$admin=backupReauthenticate($db,$body);if(field($body,'confirm',60,true)!=='FABRİKA AYARLARINA SIFIRLA')throw new DomainException('Sıfırlama onayını yazın.');$response=['safetyBackup'=>backupClearDemo($db,$admin),'reload'=>true];}
   elseif($action==='demo_clear'){backupReauthenticate($db,$body);if(field($body,'confirm',60,true)!=='DEMO VERİLERİNİ SİL')throw new DomainException('Demo temizleme onayını yazın.');$response=['safetyBackup'=>backupClearDemo($db),'reload'=>true];}
   else fail('Yedek işlemi bulunamadı.',404);
  }finally{if($db->inTransaction())$db->rollBack();$db->query("SELECT RELEASE_LOCK('finans_update')");}
