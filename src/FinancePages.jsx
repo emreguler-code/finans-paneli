@@ -1,3 +1,4 @@
+import {ContentColumns,PageFooter} from './AppShell';
 import {useRecordState,useNavigation} from './Navigation';
 import {PartyContext} from './PartyContext';
 import {RecentActivity} from './ActivityPanels';
@@ -171,6 +172,6 @@ export function FinancePages({
           label: day(date) + (group === 'Haftalık' ? ' haftası' : '')
         })} />}{table}</></>}
  </>;
- return <div className="cari-page finance-page">{!plan&&header}{error&&<p className="cari-error" role="alert">{error}</p>}{listSummary}{cari&&selected&&!party&&<p className="empty" role="status">Bu cari bulunamadı veya erişilemiyor. <button className="text-button" onClick={()=>select(null)}>Cari hesaplara dön</button></p>}{cari?<div className="party-workspace"><div className="party-main">{content}</div><aside className="context-aside">{party?<PartyContext {...{party,data,open}}/>:<RecentActivity data={data} source="parties" title="Son 5 işlem" open={open}/>}</aside></div>:content}
- {!isUsers&&<footer><span>{data.demo ? 'Örnek veriler' : 'Kalıcı kayıtlar'} · Banka bağlantısı yok</span><span>Tutarlar Türk lirası (TL)</span></footer>}</div>;
+ return <div className="cari-page finance-page">{!plan&&header}{error&&<p className="cari-error" role="alert">{error}</p>}{listSummary}{cari&&selected&&!party&&<p className="empty" role="status">Bu cari bulunamadı veya erişilemiyor. <button className="text-button" onClick={()=>select(null)}>Cari hesaplara dön</button></p>}{cari?<ContentColumns className="party-workspace"><div className="party-main">{content}</div><aside className="context-aside">{party?<PartyContext {...{party,data,open}}/>:<RecentActivity data={data} source="parties" title="Son 5 işlem" open={open}/>}</aside></ContentColumns>:content}
+ {!isUsers&&<PageFooter><span>{data.demo ? 'Örnek veriler' : 'Kalıcı kayıtlar'} · Banka bağlantısı yok</span><span>Tutarlar Türk lirası (TL)</span></PageFooter>}</div>;
 }

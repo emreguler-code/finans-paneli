@@ -107,7 +107,7 @@ let activePage;const checks=[],errors=[];const ok=(name,test)=>{if(!test)throw E
     ok(name+' no carousel remains at '+width,await p.locator('.carousel-viewport,.carousel-arrow').count()===0);
    }
    if(name==='Raporlar'){
-    ok('Report grid follows 4/2/1 columns at '+width,await p.locator('.report-metrics .summary-fields').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length)===(width>1100?4:width>760?2:1));
+    ok('Report grid follows 4/2/1 columns at '+width,await p.locator('.report-metrics .summary-fields').evaluate(el=>{const frame=el.closest('.content-frame'),s=getComputedStyle(frame),w=frame.clientWidth-parseFloat(s.paddingLeft)-parseFloat(s.paddingRight);return getComputedStyle(el).gridTemplateColumns.split(' ').length===(w<600?1:w<1240?2:4)}));
     await p.locator('.report-metrics .cari-total').first().evaluate(el=>{el.firstChild.textContent='999.999.999,99 ';});
     ok('Large report amount stays together at '+width,await p.locator('.report-metrics .cari-total').first().evaluate(el=>el.scrollWidth<=el.clientWidth+1));
    }
@@ -163,8 +163,8 @@ let activePage;const checks=[],errors=[];const ok=(name,test)=>{if(!test)throw E
    const geometry=await p.locator('.page-search-row').evaluate(el=>{const parts=[el.querySelector('.cari-search'),...el.querySelectorAll(':scope>button')].map(e=>e.getBoundingClientRect());return parts.every(r=>Math.abs(r.height-44)<1&&Math.abs(r.top-parts[0].top)<1)});
    ok(name+' search controls align at 44px '+width,geometry);
    const titleAdd=p.locator('main .page-title .primary-button').first();if(await titleAdd.count())ok(name+' add action shares title row '+width,await titleAdd.evaluate(el=>{const action=el.getBoundingClientRect(),heading=el.closest('.page-title').firstElementChild.getBoundingClientRect();return action.top<heading.bottom&&action.left>=heading.right+4}));
-   ok(name+' frame aligns with search '+width,await p.evaluate(()=>{const main=document.querySelector('.main-content'),box=main.getBoundingClientRect(),style=getComputedStyle(main),search=document.querySelector('.page-search-row').getBoundingClientRect();return Math.abs(search.left-box.left-parseFloat(style.paddingLeft))<2&&document.documentElement.scrollWidth<=innerWidth}));
-   if(width>760)ok(name+' restores date '+width,await p.locator('.date-label').isVisible()&&(await p.locator('.date-label').innerText()).includes('2026'));
+   ok(name+' frame aligns with search '+width,await p.evaluate(()=>{const main=document.querySelector('.content-frame'),box=main.getBoundingClientRect(),style=getComputedStyle(main),menu=document.querySelector('.shell-menu-button').getBoundingClientRect();return Math.abs(menu.left-box.left-parseFloat(style.paddingLeft))<2&&document.documentElement.scrollWidth<=innerWidth}));
+   if(width>1280)ok(name+' restores date '+width,await p.locator('.date-label').isVisible()&&(await p.locator('.date-label').innerText()).includes('2026'));
    for(const bar of await p.locator('.ledger-view .content-tools').all())ok(name+' ledger tools align right '+width,await bar.evaluate(el=>{const panel=el.closest('.ledger-view').getBoundingClientRect(),tools=el.querySelector('.cari-toolbar-actions').getBoundingClientRect();return panel.right-tools.right>=0&&panel.right-tools.right<=24}));
    if(name==='Raporlar')await p.waitForTimeout(1600);
    await p.screenshot({path:out+'/layout-review-'+name.replaceAll(' ','-')+'-'+width+'.png',fullPage:true});
@@ -198,6 +198,7 @@ let activePage;const checks=[],errors=[];const ok=(name,test)=>{if(!test)throw E
  await require('./update112-browser.cjs')({p,go,ok,out});
  await require('./entry114-browser.cjs')({p,go,ok,out});
  await require('./update115-browser.cjs')({p,go,ok,out});
+ await require('./layout116-browser.cjs')({p,go,ok,out});
  await require('./settings-browser.cjs')({p,go,ok,out});
  await p.setViewportSize({width:1440,height:1000});await p.goto(base+'/update.php');
  await p.locator('#status').filter({hasText:'Veritabanı güncel (şema 12)'}).waitFor();

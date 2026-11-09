@@ -1,0 +1,30 @@
+/* Geometry only: theme and component paint never own these measurements. */
+
+:root {
+  --shell-nav-full: 216px;
+  --shell-nav-compact: 72px;
+  --shell-header-height: 64px;
+  --shell-nav-height: 56px;
+  --shell-content-max: 1500px;
+  --shell-gutter: 32px;
+  --shell-section-gap: 24px;
+  --shell-column-gap: 20px;
+  --shell-primary-ratio: 1.9;
+  --layer-navigation: 120;
+  --layer-popover: 160;
+  --layer-confirmation: 300;
+}
+
+@media (max-width:1280px) {
+  :root {
+    --shell-gutter: 24px;
+  }
+}
+
+@media (max-width:760px) {
+  :root {
+    --shell-header-height: 56px;
+    --shell-gutter: 12px;
+    --shell-section-gap: 16px;
+  }
+}

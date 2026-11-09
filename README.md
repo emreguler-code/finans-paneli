@@ -1,6 +1,6 @@
-# Finans Paneli 1.15.0
+# Finans Paneli 1.16.0
 
-1.15.0: ortak cari ekleme/düzenleme sayfası, tek satır işlem alanları, sabit kredi kartı hedefi, okunabilir takvim, cron kurulum komutu, tekrarlı yedek onayı ve güvenlik yedekli fabrika sıfırlaması. Şema 12. [Sürüm kapsamı](docs/SURUM-1.15.0.md) · [Yedekleme kılavuzu](docs/YEDEKLEME.md).
+1.16.0: tüm sayfalarda ortak dokuz bölgeli React kabuğu; içerik genişliğine uyarlanan sütunlar ve tablolar, kalıcı menü tercihi, yüksekliğine yer ayrılan işlem çubuğu ve bağımsız taslak onayı. Mevcut Sade Netlik görünümü korunur; yerleşim ve tema değerleri ayrıdır. Şema 12. [Sürüm kapsamı](docs/SURUM-1.16.0.md) · [Yerleşim sözleşmesi](docs/GLOBAL-YERLESIM-SOZLESMESI.md) · [Yedekleme kılavuzu](docs/YEDEKLEME.md).
 
 Sade Netlik tasarımında cari hesaplar, banka/kasa, kredi kartları, ödeme planı ve raporlar. React/Vite arayüz; PHP/MySQL API. Banka bağlantısı yoktur.
 

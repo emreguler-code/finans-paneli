@@ -21,7 +21,7 @@ def main():
   return result.stdout.strip()
  try:
   docker_env=runtime/'db.env';docker_env.write_text(f'MARIADB_ROOT_PASSWORD={password}\nMARIADB_ROOT_HOST=%\nMARIADB_DATABASE=finans_test\n');docker_env.chmod(0o600)
-  run(['docker','run','-d','--name',db_name,'--network','host','--env-file',str(docker_env),DB_IMAGE,f'--port={db_port}','--bind-address=127.0.0.1'],stdout=subprocess.DEVNULL);names.append(db_name)
+  run(['docker','run','-d','--name',db_name,'--network','host','--env-file',str(docker_env),*(['--tmpfs','/var/lib/mysql:rw,size=2g'] if os.environ.get('QA_DB_TMPFS')=='1' else []),DB_IMAGE,f'--port={db_port}','--bind-address=127.0.0.1'],stdout=subprocess.DEVNULL);names.append(db_name)
   for _ in range(60):
    if subprocess.run(['docker','exec',db_name,'healthcheck.sh','--connect','--innodb_initialized'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL).returncode==0:break
    time.sleep(1)
@@ -111,7 +111,7 @@ def main():
   print(f'PASS {args.suite}: isolated services and fixtures; output {runtime.relative_to(ROOT)}')
  finally:
   retained=args.suite=='demo' and args.keep and (runtime/'local-session.json').exists()
-  for name in ([] if retained else reversed(names)):subprocess.run(['docker','rm','-f',name],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+  for name in ([] if retained else reversed(names)):subprocess.run(['docker','rm','-fv',name],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
   for secret in [runtime/'db.env',runtime/'web/api/config.php']+([ROOT/'.qa/baseline-1.6/hosting/api/config.php'] if args.suite=='browser' else []):
    if not retained:secret.unlink(missing_ok=True)
 if __name__=='__main__':main()

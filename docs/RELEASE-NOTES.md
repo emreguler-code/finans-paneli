@@ -1,14 +1,17 @@
-# Finans Paneli 1.15.0
+# Finans Paneli 1.16.0
 
-2 Kasım 2026 · Şema 12 (yeni veritabanı geçişi gerektirmez).
+9 Kasım 2026 · Şema 12; veritabanı geçişi yok.
 
-- Cari ekleme ve düzenleme ortak **Cari Ekle / Değiştir** tam sayfasını kullanır. Mevcut bilgiler dolu gelir; gerekçe isteğe bağlıdır, değişiklikler kaydedilir. Düzenleme adresi yenilendiğinde aynı kaydı açar.
-- İşlem alanları ortak tek yatay temel satıra indirildi. Ayrı bağlam başlığı kaldırıldı, X Kaydet yanına taşındı. Tarih yalnız takvim ikonuyla seçilir; tek aylık takvimin sıkışan yedi gün sütunu düzeltildi. Ayrıntılar ve işlem etkisi Diğer altında korunur; mobilde alanlar taşmadan akar.
-- Kredi kartı detayında işlem hedefi görüntülenen karttır. İşlem hesabı/kart değiştirme seçimi yoktur. Ödeme için ayrı Kaynak hesap yalnız kasa/banka hesaplarını sunar; yeni karttan karta aktarım API'de de reddedilir. Eski kayıtlar korunur.
-- Ayarlar'da hosting için kopyalanabilir PHP cron komutu ve İstanbul/UTC zamanlama bilgisi. Gece Türkiye saati 03.00 ve toplam beş yedek kuralı korunur.
-- Aynı gün yeniden elle yedek alırken onay, son yedek ve varsa silinecek en eski kopyanın zamanı gösterilir. Aynı isteğin tekrarları ek yedek oluşturmaz. Yeni yedek tamamlanmadan eski kopya silinmez.
-- **Fabrika ayarlarına sıfırla**, yönetici parolası ve yazılı onayla çalışır. Önce güvenlik yedeği alınır; yalnız işlemi yapan yönetici ve parolası korunur, diğer uygulama verileri/kullanıcıları temizlenir. Mevcut yedekler, hosting yapılandırması ve uygulama dışı tablolar korunur. Demo temizliğinden ayrı, gerçek veri modunda da kullanılabilir.
+- Onaylı dokuz bölge tüm sayfalarda ortak React kabuğuyla yönetilir. Header, içerik ve hızlı işlem aynı kenarlara hizalanır; ana kaydırma sahibi içeriktir.
+- Sidebar tam, ikon şeridi ve gizli durumlarına sahiptir. Geniş ekranda da manuel seçim yapılır; tercih tarayıcıda korunur. Mobil menü odak korumalı panel olarak açılır.
+- Sütunlar monitör adına göre değil, kullanılabilir içerik genişliğine göre düzenlenir. Yeterli alanda 1,9:1; dar alanda yardımcı bilgiler ana içeriğin altındadır. Tablolar kendi bölgelerinin genişliğinde okunabilir kompakt satırlara geçer.
+- Hızlı işlem alt bölgesi kendi yüksekliği kadar yer ayırır. İçerik, yardımcı bilgiler ve footer üstüne binmez; dar ekranda alanlar sarılır, mobil klavyeye göre yükseklik sınırlanır.
+- Taslaktan vazgeçme onayı alt satıra sıkışmaz: bağımsız merkezi katman, okunabilir iki eylem, odak koruması ve taslağı saklayan Escape/dışarı tıklama.
+- Renk değerleri tema dosyasında, kabuk ölçüleri yerleşim dosyalarındadır. Mevcut Sade Netlik korunur. Yeni tema veya tema seçici bu sürümde yoktur.
+- Finansal hesaplama, kayıt hedefleri, yedekleme kuralları ve mevcut veriler aynı davranışı korur.
 
-## Hosting kurulumu
+## Hosting paketi
 
-Yalnız web dosyaları için `finans-paneli-1.15.0-hosting.zip` kullanın. `api/config.php` ve özel yedek dizinini koruyun. Mevcut şema 12 kurulumunda ek veritabanı güncellemesi yoktur; daha eski kurulumda `update.php` akışını tamamlayın. Gerçek veriler kendiliğinden temizlenmez veya sıfırlanmaz. Cron görevi hosting panelinden ayrıca kurulmalıdır.
+`finans-paneli-1.16.0-hosting.zip` yalnız web dosyalarıdır. `api/config.php` ve özel yedek dizinini koruyun. Mevcut şema 12 için ek veritabanı güncellemesi gerekmez; daha eski kurulumda standart `update.php` akışını izleyin. GitHub sürümü kullanıcının ayrıca verdiği yayın talimatıyla hazırlanır; hosting üzerine canlı kurulum yapılmaz.
+
+Ayrıntılar: [Yerleşim sözleşmesi](GLOBAL-YERLESIM-SOZLESMESI.md), [test raporu](TEST-RAPORU-1.16.0.md).

@@ -1,3 +1,4 @@
+import {AppShell,MainShell,HeaderRegion,ShellContent,ComposerHost,ContentColumns,PageFooter,SidebarControls,useShellLayout} from './AppShell';
 import {routeHash} from './routes.mjs';
 import {SettingsPage} from './SettingsPage';
 import {api} from './api';
@@ -97,7 +98,8 @@ export function App({
   };
   const page=nav.route.page;
   const setPage=p=>nav.navigate({page:p});
-  const [compact, setCompact] = useState(false),
+  const shell=useShellLayout(),compact=shell.mode==='compact',setCompact=value=>shell.choose(value?'compact':'full');
+  const
     [mobileMore, setMobileMore] = useState(false),
     [scope, setScope] = useState("all"),
     [search, setSearch] = useState(""),
@@ -108,7 +110,7 @@ export function App({
     [toast, setToast] = useState(null);
   const bellButton=useRef(null);
   const [cardsMenu,setCardsMenu]=useState(false);
-  const navigateMenu=name=>{setCardsMenu(['Kredi kartları','Kampanyalar'].includes(name));go(name,true)};
+  const navigateMenu=name=>{shell.setOpen(false);setCardsMenu(['Kredi kartları','Kampanyalar'].includes(name));go(name,true)};
   useEffect(()=>setCardsMenu(['Kredi kartları','Kampanyalar'].includes(page)),[page]);
   const [notificationTarget,setNotificationTarget]=useState(null),[routeKey,setRouteKey]=useState(0);
   const [notificationScope,setNotificationScope]=useState({source:'all'});
@@ -326,23 +328,23 @@ export function App({
           left: -18,
           bottom: 0
         }}>
-              <CartesianGrid stroke="#E5EBEF" vertical={false} />
+              <CartesianGrid stroke="var(--chart-grid)" vertical={false} />
               <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{
-            fill: "#596879",
+            fill: "var(--muted)",
             fontSize: 12
           }} minTickGap={20} />
               <YAxis axisLine={false} tickLine={false} tick={{
-            fill: "#596879",
+            fill: "var(--muted)",
             fontSize: 12
           }} tickFormatter={v => v === 0 ? "0" : money(v / 1000) + " bin"} />
               <Tooltip cursor={{
-            fill: "#F0F5F6"
+            fill: "var(--chart-hover)"
           }} contentStyle={{
-            border: "1px solid #DDE3E8",
+            border: "1px solid var(--line)",
             borderRadius: 10,
             fontSize: 12
           }} formatter={(v, n) => [money(v) + " TL", n]} />
-              <Bar dataKey="incoming" name="Gelen para" fill="#087F8C" radius={[3, 3, 0, 0]} maxBarSize={14} isAnimationActive={false} />
+              <Bar dataKey="incoming" name="Gelen para" fill="var(--brand)" radius={[3, 3, 0, 0]} maxBarSize={14} isAnimationActive={false} />
               <Bar dataKey="outgoing" name="Giden para" fill="var(--muted)" radius={[3, 3, 0, 0]} maxBarSize={14} isAnimationActive={false} />
             </BarChart>
           </ResponsiveContainer>}
@@ -447,8 +449,8 @@ export function App({
         </button>
       </div>
     </section>;
-  return <div className={"app " + (compact ? "compact" : "")}>
-      <aside className="sidebar" inert={!!drawer}>
+  return <AppShell layout={shell}>
+      <aside className="sidebar" data-region="1" inert={!!drawer||shell.mode==='hidden'} aria-label="Sol gezinme" role={shell.mode==='drawer'?'dialog':undefined} aria-modal={shell.mode==='drawer'?true:undefined}>
         <div className="brand">
           <span className="brand-mark">
             <ChartNoAxesCombined size={21} />
@@ -459,7 +461,7 @@ export function App({
         </div>
         <div className="workspace-label">KİŞİSEL ÇALIŞMA ALANI</div>
         <nav aria-label="Ana navigasyon">
-          {navigation.filter(([name]) => name!=='Ayarlar'&&(name !== 'Kullanıcılar' || can(fullData.user, 'admin'))&&(name!=='Kampanyalar'||cardsMenu)).map(([name, Icon]) => <button key={name} className={(page === name ? "active " : "")+(name==='Kampanyalar'?'navigation-submenu':'')} aria-current={page === name ? "page" : undefined} aria-label={name} aria-expanded={name==='Kredi kartları'?cardsMenu:undefined} onClick={() => navigateMenu(name)}>
+          {navigation.filter(([name]) => name!=='Ayarlar'&&(name !== 'Kullanıcılar' || can(fullData.user, 'admin'))&&(name!=='Kampanyalar'||cardsMenu)).map(([name, Icon]) => <button key={name} className={(page === name ? "active " : "")+(name==='Kampanyalar'?'navigation-submenu':'')} aria-current={page === name ? "page" : undefined} aria-label={name} title={name} aria-expanded={name==='Kredi kartları'?cardsMenu:undefined} onClick={() => navigateMenu(name)}>
               <Icon size={20} />
               <span>{name}</span>{name==='Kredi kartları'&&<ChevronDown size={16} className={cardsMenu?'submenu-chevron rotate-open':'submenu-chevron'}/>}
               {name === "Ödeme Planı" && late.length > 0 && !compact && <em>{late.length}</em>}
@@ -482,8 +484,8 @@ export function App({
           </div>
         </div>
       </aside>
-      <div className="main-shell" inert={!!drawer}>
-        <header className="topbar"><div className="topbar-inner">
+      <MainShell blocked={!!drawer||shell.mode==='drawer'}>
+        <HeaderRegion><SidebarControls layout={shell}/>
           <div id="page-search-host" />
           <div className="top-actions">
             <div className="notification-holder">
@@ -500,10 +502,10 @@ export function App({
               })}</b>
             </span>
           </div>
-        </div></header>
-        <main className="main-content"><div id="entry-page-root"/>{entryPage&&<GlobalSearchTools data={fullData} showFilters={false}/>}
+        </HeaderRegion>
+        <ShellContent><div id="entry-page-root"/>{entryPage&&<GlobalSearchTools data={fullData} showFilters={false}/>}
           {page === "Genel bakış" && <GlobalSearchTools data={fullData} placeholder="Genel bakış hareketlerinde ara" filters={overviewFilters} setFilters={setOverviewFilters} resultCount={visible.length} reset={()=>{setSearch('');setScope('all');setKind('all');setOverviewRange(presetRange('Bu Ay',TODAY))}}><label>Hesap<select value={scope} onChange={e=>setScope(e.target.value)}><option value="all">Tüm hesaplar</option>{accounts.map(a=><option key={a.id} value={a.id}>{a.name}</option>)}</select></label><label>Tarih aralığı<DatePicker range defaultRange={presetRange('Bu Ay',TODAY)} from={overviewRange.from} to={overviewRange.to} today={TODAY} clearable={false} onChange={range=>setOverviewRange(range.from&&range.to?range:presetRange('Bu Ay',TODAY))}/></label><label>İşlem<select value={kind} onChange={e=>setKind(e.target.value)}><option value="all">Tümü</option>{[...new Set(tx.map(t=>t.kind))].map(k=><option key={k}>{k}</option>)}</select></label></GlobalSearchTools>}
-          {page === "Genel bakış" && <div className="page-title">
+          {page === "Genel bakış" && <div className="page-title" data-region="4">
             <div>
               <h1>{page === "Genel bakış" ? "Finansal görünüm" : page}</h1>
               <p>{descriptions[page]}</p>
@@ -520,7 +522,7 @@ export function App({
                   {fullDate} itibarıyla <i />
                 </span>
               </div>
-              <section className="summary">
+              <section className="summary" data-region="5">
                 <div className="metric major">
                   <div className="metric-label">
                     <Wallet size={16} />
@@ -551,11 +553,11 @@ export function App({
                     <div className="metric-note">{note}</div>
                   </button>)}
               </section>
-              <div className="dashboard-grid">
+              <ContentColumns className="dashboard-grid">
                 {cashflow}
                 {attention}
-              </div>
-              <div className="dashboard-grid lower">
+              </ContentColumns>
+              <ContentColumns className="dashboard-grid lower">
                 <section className="panel transactions-panel">
                   <Heading title="Son hareketler" sub="Tüm işlem türleri · Seçili dönem ve hesap kapsamı">
                     <button className="text-action" onClick={() => setPage("Raporlar")}>
@@ -565,15 +567,14 @@ export function App({
                   {table(true)}
                 </section>
                 {accountsPanel}
-              </div>
-              <footer>
+              </ContentColumns>
+              <PageFooter>
                 <span>{demo ? "Örnek veriler" : "Kalıcı kayıtlar"} · Banka bağlantısı yok</span>
                 <span>Tutarlar Türk lirası (TL)</span>
-              </footer>
+              </PageFooter>
             </>}
-        </main>
-      </div>
-      <div id="entry-dock-root"/><nav inert={!!drawer} className="mobile-nav" aria-label="Mobil navigasyon">
+        </ShellContent>
+      <ComposerHost/><nav inert={!!drawer} className="mobile-nav" aria-label="Mobil navigasyon">
         {[["Genel bakış", "Özet", LayoutDashboard], ["Raporlar", "Raporlar", ChartNoAxesCombined], ["Tahsilat & Ödeme", "Ödeme", ArrowLeftRight]].map(([p, l, Icon]) => <button key={p} aria-current={page===p?"page":undefined} className={page === p ? "active" : ""} onClick={() => navigateMenu(p)}>
             <Icon size={20} />
             {l}
@@ -582,7 +583,7 @@ export function App({
           <MoreHorizontal size={20} />
           Diğer
         </button>
-      </nav>
+      </nav></MainShell>
       {mobileMore && <div className="mobile-more">
           {navigation.filter(([name]) => !["Genel bakış", "Hareketler", "Raporlar", "Tahsilat & Ödeme"].includes(name) && (!['Kullanıcılar','Ayarlar'].includes(name) || can(fullData.user, "admin")) && (name!=="Kampanyalar"||cardsMenu)).map(([name, Icon]) => <button key={name} className={name==='Kampanyalar'?'navigation-submenu':''} aria-expanded={name==='Kredi kartları'?cardsMenu:undefined} onClick={() => navigateMenu(name)}>
               <Icon size={20} />
@@ -735,5 +736,5 @@ export function App({
             <X size={18} />
           </button>
         </div>}
-    </div>;
+    </AppShell>;
 }

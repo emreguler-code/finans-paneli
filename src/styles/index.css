@@ -1,5 +1,7 @@
 /* Keep component precedence explicit; responsive refinements follow desktop rules. */
 @import "./tokens.css";
+@import "./theme.css";
+@import "./layout-tokens.css";
 @import "./parties.css";
 @import "./forms.css";
 @import "./base.css";
@@ -18,3 +20,5 @@
 @import "./refinements.css";
 
 @import "./entry-surfaces.css";
+
+@import "./app-shell.css";

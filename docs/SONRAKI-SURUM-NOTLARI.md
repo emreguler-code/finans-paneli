@@ -490,3 +490,82 @@ Durum: onaylı yeni sürüm notu; canlı sıfırlama veya kodlama/yayın talimat
 ## 2 Kasım 2026 — 1.15.0 toplu uygulama ve yayın onayı
 
 Kullanıcı notları alınan değişikliklerin hazırlanıp GitHub'a yüklenmesini istedi. Yukarıdaki cari ortak sayfa, tek satır işlem alanları/takvim, sabit kart hedefi/ödeme kaynağı, cron kurulum bilgisi, tekrarlı yedek onayı ve yönetici koruyan fabrika sıfırlaması uygulama kapsamıdır. Önceki yalnız not alma ifadeleri bu onaya kadar olan durumu belirtir. Canlı veri sıfırlanmaz; yıkıcı işlevler yalnız izole test verisinde doğrulanır.
+
+## 1.15.0 sonrası notlar — Taslaktan vazgeçme onayı alt alanda kesiliyor
+
+Durum: kullanıcı hatayı bildirdi ve öneri istedi; çözüm önerisi henüz onaylanmadı. Kodlama/yayın başlatılmadı.
+
+- Kullanıcının ekran görüntüsünde kaydedilmemiş değişiklikler onayı tek satır işlem alanının içine sıkışıyor; başlık/açıklama ve ikinci düğme tam görünmüyor. Mevcut EntrySurface onayı alt alanın içinde oluşturuyor; alt alanın yükseklik/kaydırma sınırları onayı etkiliyor.
+- Öneri: onayı alt formdan bağımsız, ortak bir portal üzerinden viewport katmanında küçük bir onay penceresi olarak göstermek. Masaüstünde ortada yaklaşık 380–420 px; mobilde ekran kenarlarından boşluk bırakan, klavye açıkken de tamamen erişilebilir boyut. Alt işlem alanı büyütülmeyecek veya kaydırılmayacak.
+- Metin: “Değişiklikler kaydedilmedi” / “Çıkarsanız girdiğiniz bilgiler kaybolacak.” Eylemler: birincil “Düzenlemeye dön”, ikincil yıkıcı “Değişikliklerden vazgeç”. Masaüstünde yan yana, dar ekranda gerekirse alt alta; düğmeler kesilmeyecek.
+- Önerilen etkileşim: hafif karartma, arka planı bulanıklaştırmadan; ilk odak Düzenlemeye dön'de, Tab odağı onayda kalır. Esc veya dışarı tıklama taslağı silmez, düzenlemeye döner. Vazgeçme yalnız açık yıkıcı düğmeyle gerçekleşir; düzenlemeye dönünce değerler ve odak korunur.
+- X, Escape ve menü/geri ile ayrılma aynı ortak onayı kullanmalı. Onay uygulandığında hem masaüstü/mobil hem de gerçek düğme konumu, görünürlük ve klavye kontrolleri yapılmalı; yalnız DOM'da bulunması yeterli sayılmamalı.
+
+## 9 Kasım 2026 — Global uyarlanabilir yerleşim mimarisi incelemesi
+
+Durum: kullanıcı bölünmüş masaüstü penceresinde okunabilirlik sorununu bildirdi; React/React DOM/Vue ve ortak header/sidebar/content yönetimi hakkında ayrıntılı yönlendirme istedi. Aşağıdakiler öneridir; uygulama/yayın onayı değildir. Önceki taslaktan vazgeçme onayı önerisi de bekleyen not olarak korunur.
+
+Kanıt: kullanıcının bu mesajda gönderdiği Mavi Ofis ekranı ve mevcut kaynak kodu. Ekranda tam sol menü + altı sütunlu hareket tablosu + sağ bilgi sütunu birlikte korunuyor; açıklamalar bölünüyor ve işlem türleri kısalıyor. base.css normal sidebar 216 px; context.css sağ cari sütununu 1100 px altında alta geçiriyor; system.css 761 px üzerinde tablo minimumlarını, entry-surfaces.css 1101 px üzerinde bunları kaldıran ayrı kuralı içeriyor. Bu tespit canlı tüm sayfa/cihaz denetimi değil, gönderilen ekran ve kaynak incelemesidir.
+
+Önerilen teknik yön:
+- React + mevcut React DOM devam etsin; Vue'ye geçiş bu yerleşim sorununu kendiliğinden çözmez. React bileşen/state yönetir, React DOM tarayıcıya yerleştirir; görünüm uyarlaması esas olarak CSS Grid/Flexbox, media/container queries ve ortak ölçü sözleşmesiyle çözülür.
+- Header / Sidebar / Content bir HTML tabloyla değil ortak AppShell içinde CSS Grid bölgeleriyle yönetilsin. PageLayout; PageHeader, SummaryBar, MainContent/ContextAside ve EntryComposer/OverlayHost sözleşmelerini paylaşsın. Sayfalar kendi shell ölçülerini tekrar tanımlamasın.
+- Sol gezinmenin tam, ikon şeridi ve açılır panel durumları olsun. Otomatik daralma ile kullanıcının tercihi ayrı yönetilsin; yeterli alan geldiğinde tercih geri gelebilsin. Ana içerik okunabilirliği önce gelsin.
+- 1,9:1 ana/yardımcı oran yalnız iki sütun da okunabilir minimumları sağlıyorsa kullanılsın. Alan azaldığında sağ modüller alta taşınsın veya görünür etiketli açılır bilgi alanına dönüşsün; veri kaybolmasın. Başlangıç çalışma eşiği içerik alanında yaklaşık 1200 CSS px; kesin değer gerçek içerik minimumlarıyla ölçülerek belirlensin.
+- İçerik/bileşen genişliği container queries ile izlensin; yalnız pencere genişliği veya cihaz türüne güvenilmesin. Aynı pencere genişliği, açık/kapalı sidebar ve yardımcı sütun nedeniyle farklı kullanılabilir alan verebilir.
+- Ledger/tablo için geniş, orta, dar sunumları: orta alanda etiket/ekleyen gibi ikincil metadata açıklama altında veya genişleyen satırda birleşsin; tarih/açıklama/tutar ve gerekiyorsa bakiye okunur kalsın. Daha dar alanda kompakt hareket listesine geçilsin. Bu sütun birleştirmeleri öneridir, onaysız sıra/anlam değişikliği yapılmasın. Tutar/yön/işlem anlamı ellipsis ile kaybolmasın; yazı küçülterek çözülmesin. Yoğun rapor tablosunda gerekirse yalnız yerel tablo kaydırması kullanılsın.
+- Tek satır işlem alanı yalnız gerekli kontroller okunur sığıyorsa tek satır olsun; orta/dar genişlikte kontrollü iki satıra aksın. Sabit form, alt nav ve sanal klavye ölçüleri ortak tokenlarla uyumlansın.
+- Global OverlayHost/portal ile takvim/popover/onaylar formun overflow/yükseklik sınırından bağımsız açılsın. Özellikle bekleyen vazgeçme onayı sıkışması aynı katman mimarisi kapsamında ele alınsın.
+- Header'da arama öncelikli; tarih/kısayol gibi ikincil öğeler alan azaldığında sadeleşsin. Erişilebilir etiketler ve en az 44 px hedefler korunsun. Layout ölçüsü CSS'te, menü/odak/taslak etkileşim durumu React'te tutulsun; her resize olayında JS piksel hesabı temel çözüm olmasın.
+
+Önerilen uygulama sırası: mevcut breakpoint/min-width/overflow/!important envanteri ve tek merkezde sadeleştirme → ortak shell/overlay altyapısı → zor örnek cari detayda doğrulama → hesap/kart/araç/rapor/ayarlar ve formlara yayma → görsel regresyon. Önce masaüstü yarım pencere ve orta genişlikler kabul kriterleriyle netleştirilsin.
+
+Kabul kapsamı önerisi: 320/390/768/960/1024/1180/1268/1280/1366/1440/1536/1920 CSS px, kırılma eşiğinin hemen altı/üstü, açık/kapalı sidebar, tarayıcı zoom %125/%150/%200, uzun adlar ve büyük tutarlar, yatay mobil ve klavye. Sadece scrollWidth kontrolü yetmez; anlamlı sütun genişliği, kritik metinlerin tam görünmesi, düğmelerin çakışmaması, odak ve onay görünürlüğü görüntülerle denetlensin. Kritik akışlar fiziksel telefonda da doğrulansın; yapılmadan fiziksel test iddiası olmasın. Mutlak “hiç sorun çıkmaz” garantisi yerine ortak kurallar ve tekrarlanabilir regresyon kontrolleri kurulsun.
+
+## 9 Kasım 2026 — Uyarlanabilir yerleşim taslakları
+
+Kullanıcı mimari yaklaşımı uygun bulup taslak istedi. Kod/yayın değiştirilmeden üç bağımsız görsel taslak hazırlandı; her biri aynı cari detayının geniş, bölünmüş pencere ve mobil durumlarını karşılaştırır. Görseller sentetik konsepttir, çalışan arayüz testi değildir. Tipografi/ölçek ve finansal örnekler uygulama sırasında gerçek bileşenlerle doğrulanmalıdır.
+
+Kullanıcıya göründükleri sırayla seçim eşlemesi:
+1. Akışkan sütunlar — genişte mevcut ana/sağ oranı, dar pencerede bilgi alanı aşağı; `/workspace/generated_images/exec-cd6bd876-04d7-4e5b-8416-8f180d289e77.png`.
+2. Odaklı çalışma alanı — tam geniş hareketler ve istek üzerine bağlam paneli; `/workspace/generated_images/exec-7327ef71-ba64-4ce0-a0ae-e186f7160a30.png`.
+3. Sekmeli çalışma alanı — aynı sayfada Hareketler / Durum ve bilgiler görünümü; `/workspace/generated_images/exec-80ddd79e-45e0-47c0-afdc-8cb4867dddcd.png`.
+
+Henüz görsel seçilmedi. Mimari yaklaşımın onayı bu üç alternatiften birini otomatik seçmez; uygulama başlamadı.
+
+## 9 Kasım 2026 — Seçilen yön ve ana yerleşim kutuları eskizi
+
+Kullanıcı üç taslaktan **1 / Akışkan sütunlar** yönünü beğendi. Düzeltme: bölünmüş pencerede hızlı işlem alanı yardımcı bilgilerden önce gelmemeli; kendi alt bölgesinde durmalı, bilgi alanının üstüne binmemeli. Kullanıcı henüz uygulama istemedi; önce ana kutuların üzerinden konuşup sonrasında içeriklerini belirlemek istiyor.
+
+Bu nedenle tek yapısal eskiz üretildi: `/workspace/generated_images/exec-a1e64e49-6c7c-48df-afc6-1dcb3b0c7d50.png`. Aynı mimarinin geniş ve dar/bölünmüş pencere hâlleri; ürün içeriği/işlem satırları olmadan numaralı bölgeler:
+1 sidebar; 2 header; 3 content dış çerçevesi; onun içinde 4 sayfa başlığı, 5 ortak özet, 6 ana içerik, 7 yardımcı içerik, 8 sayfa footer'ı. 9 hızlı işlem alanı ayrı alt bölge olarak kendi yüksekliğine yer ayrılarak hizalanır. Dar durumda 7, 6'nın altına; 8 ikisinin altına gelir. 9, yardımcı içerikle ana içerik arasına girmez ve içerik üstüne binmez.
+
+Eskiz konuşma aracıdır; ölçüler/kaydırma davranışı, hangi kutuların sabitleneceği ve kutu içerikleri henüz kesinleşmedi. Global mimari seçimi tek başına kodlama/yayın onayı sayılmaz.
+
+## 9 Kasım 2026 — Kutu şeması ve görünüm/yerleşim ayrımı onaylandı
+
+Kullanıcı dokuz kutulu şemayı site geneli için onayladı ve tasarım kriterlerine alınmasını istedi. Kriterler `docs/GLOBAL-YERLESIM-SOZLESMESI.md` ve tasarım ilkeleri belgesine işlendi. Tüm sayfalar aynı bölge sözleşmesini paylaşacak; her kutunun davranışı ve içeriği sırayla konuşulacak. Yerleşim, görsel tema, bileşen stilleri ve etkileşim/veri ayrı tutulacak. İleride renk şeması/tema değiştirme ihtimali için anlamsal token sınırları hazırlanacak; bugün yeni tema, seçici veya uygulama/yayın talimatı verilmedi.
+
+Sonraki görüşme başlangıcı olarak Sidebar önerileri (henüz ayrıca onaylanmadı): genişte yazılı menü; orta genişlikte ikon şeridi; dar/mobilde kullanıcı açtığında görünen gezinme paneli; yeterli yer yokken tam menü tercihi ana içeriği ezmesin; genişlik geri geldiğinde kullanıcı tercihi geri uygulanabilsin. Uzun menüde gezinme kaydırılabilsin, alt ayarlara erişim korunabilsin. Kesin eşikler, genişlikler ve sabitlik bir sonraki karardır.
+
+## Sidebar önerileri onaylandı — her genişlikte küçültme ve gizleme
+
+Kullanıcı Sidebar başlangıç önerilerini uygun buldu ve geniş ekranda bile küçültme ile tamamen gizleme seçeneklerinin her zaman bulunmasını istedi. Tam menü / ikon şeridi / gizli durumları ayrı ele alınacak; gizliyken yeniden açma kontrolü erişilebilir kalacak, kullanıcının tercihi otomatik genişlemeyle kaybolmayacak. Menüden boşalan alan ortak içerik düzenine katılacak. Global yerleşim sözleşmesi ve tasarım kriterlerine işlendi. Kesin ölçüler, kontrol konumu ve saklama kapsamı henüz görüşülecek; kodlama/yayın başlatılmadı.
+
+## Header onayı ve Content görüşmesine geçiş
+
+Kullanıcı Header görev dağılımını uygun bulup devam edilmesini istedi. Onay global yerleşim sözleşmesine ve tasarım kriterlerine işlendi. Önerilen yaklaşık yükseklikler henüz değişmez ölçü değildir. Sıradaki 3 Content çerçevesi için ortak kenarlar, kullanılabilir alan, ana/yardımcı kırılması ve kaydırma önerileri sunulacak; henüz ayrıca onaylı sayılmaz. Not/kriter aşaması sürüyor, uygulama veya yayın yapılmadı.
+
+## Başlık/özet ayrımı onayı ve kalan bölümler için son öneri
+
+Kullanıcı 4 Sayfa başlığı / 5 Özet ayrımını mantıklı buldu ve diğer bölümler için görüş verilip mimari görüşmenin sonuçlandırılmasını istedi. Önceki Content yaklaşımı da uygun bulunmuştu; bu onaylar tasarım kriterlerine işlendi. 6 ana içerik, 7 yardımcı içerik, 8 footer, 9 hızlı işlem bölgesi ve bağımsız açılır katmanlar için son öneri paketi `docs/GLOBAL-YERLESIM-SOZLESMESI.md` içine eklendi. Öncelik okunabilir ana içerik, ortak kaydırma, gerektiğinde alta geçen yardımcı alan, akış sonunda footer ve kendi yüksekliği ayrılan hızlı formdur. Son öneri paketi ayrıca onay bekler; kodlama/paketleme/yayın başlatılmadı.
+
+## Son yerleşim paketi onaylandı — tema/kodlama sırası sorusu
+
+Kullanıcı kalan bölgeler ve katman davranışlarını “onaylıyorum” diyerek kabul etti; ardından kodlamaya şimdi mi geçileceği, tema değişikliklerinin de birlikte mi yapılacağı konusunda görüş istedi. Tasarım onayı kaydedildi; soru kodlama/yayın talimatı olarak yorumlanmadı. Öneri: mevcut tema korunarak global kabuk/responsive/katman ve token ayrımını önce doğrulamak, yeni tema tasarımlarını bundan sonra ayrı çalışmak. Tema seçicisi ve yeni paletler henüz onaylı kapsam değildir.
+
+## 9 Kasım 2026 — 1.16.0 kodlama aşaması
+
+Kullanıcı “evet, başla bakalım o zaman kodlamaya” dedi. Yukarıdaki global yerleşim kapsamı mevcut Sade Netlik görünümüyle uygulamaya alındı. Yeni tema/tema seçici ayrı çalışma olarak kaldı. Dokuz bölge, içerik genişliğine bağlı uyarlama, kalıcı menü tercihi, bağımsız onay ve tema/yerleşim ayrımı kodlandı; uygulama eşikleri [global sözleşmede](GLOBAL-YERLESIM-SOZLESMESI.md), sürüm özeti [1.16.0 kapsamında](SURUM-1.16.0.md). Bu talimat GitHub veya canlıya yayın talimatı değildir.
+
+1.16.0 ek yayın onayı: Kullanıcı kodlama tamamlandıktan sonra “git huba yükle” talimatını verdi. Hazır kaynak, sürüm etiketi ve doğrulanmış hosting paketleri GitHub’a yayımlanır. Önceki yayın yapılmayacağına dair kapsam cümleleri önceki aşamanın tarihçesidir; canlı hosting kurulumu bu talimata dahil değildir.

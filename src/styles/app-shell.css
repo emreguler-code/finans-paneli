@@ -1,0 +1,842 @@
+/* Shared nine-region layout. No page owns shell offsets or viewport breakpoints. */
+
+html:has(.layout-shell),body:has(.layout-shell) {
+  height: 100%;
+  overflow: hidden;
+}
+
+.layout-shell {
+  --sidebar: var(--shell-nav-full);
+  height: min(var(--visible-height,100dvh),100dvh);
+  min-height: 0;
+  width: 100%;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: var(--sidebar) minmax(0,1fr);
+  background: var(--surface-page);
+}
+
+.layout-shell[data-sidebar="compact"] {
+  --sidebar: var(--shell-nav-compact);
+}
+
+.layout-shell[data-sidebar="hidden"],.layout-shell[data-sidebar="drawer"] {
+  --sidebar: 0px;
+}
+
+.layout-shell>.sidebar {
+  grid-column: 1;
+  grid-row: 1;
+  position: relative;
+  inset: auto;
+  width: var(--sidebar);
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 12px 16px;
+  background: var(--surface-navigation);
+  overflow: hidden;
+  z-index: 30;
+}
+
+.layout-shell[data-sidebar="hidden"]>.sidebar {
+  display: none;
+}
+
+.layout-shell>.sidebar nav {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  padding: 0 0 8px;
+}
+
+.layout-shell .sidebar-bottom {
+  flex-shrink: 0;
+  margin-top: auto;
+}
+
+.layout-shell .sidebar-bottom .demo-note {
+  white-space: normal;
+}
+
+.layout-shell .sidebar button {
+  min-height: 44px;
+  flex-shrink: 0;
+}
+
+.layout-shell .sidebar .brand {
+  margin: 0 10px 28px;
+  flex-shrink: 0;
+}
+
+.layout-shell[data-sidebar="full"] .sidebar .workspace-label,.layout-shell[data-sidebar="full"] .sidebar button span,.layout-shell[data-sidebar="full"] .sidebar .demo-note {
+  display: initial;
+}
+
+.layout-shell[data-sidebar="compact"] .sidebar .workspace-label,.layout-shell[data-sidebar="compact"] .sidebar button span,.layout-shell[data-sidebar="compact"] .sidebar .demo-note,.layout-shell[data-sidebar="compact"] .sidebar .submenu-chevron,.layout-shell[data-sidebar="compact"] .sidebar nav button em {
+  display: none;
+}
+
+.layout-shell[data-sidebar="compact"] .sidebar .brand {
+  margin: 0 auto 28px;
+}
+
+.layout-shell[data-sidebar="compact"] .sidebar button {
+  justify-content: center;
+  padding: 10px;
+  position: relative;
+}
+
+.layout-shell[data-sidebar="compact"] .sidebar button:focus-visible {
+  outline-offset: -2px;
+}
+
+.layout-shell[data-sidebar="drawer"]>.sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: min(280px,calc(100vw - 48px));
+  height: min(var(--visible-height,100dvh),100dvh);
+  z-index: var(--layer-navigation);
+}
+
+.shell-nav-backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay-dim);
+  z-index: calc(var(--layer-navigation) - 1);
+}
+
+.layout-shell>.main-shell {
+  grid-column: 2;
+  grid-row: 1;
+  margin-left: 0;
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0,1fr) auto auto;
+}
+
+.layout-shell .topbar {
+  position: relative;
+  inset: auto;
+  height: auto;
+  min-height: var(--shell-header-height);
+  padding: 0;
+  display: block;
+  z-index: 40;
+  background: var(--surface-raised);
+}
+
+.layout-shell .topbar-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: var(--shell-content-max);
+  margin: 0 auto;
+  padding: 10px var(--shell-gutter);
+  min-width: 0;
+  min-height: var(--shell-header-height);
+}
+
+.layout-shell .top-actions {
+  margin: 0;
+  flex: 0 0 auto;
+  gap: 12px;
+  min-width: 0;
+}
+
+.layout-shell #page-search-host {
+  flex: 1;
+  min-width: 0;
+}
+
+.layout-shell .page-search-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+}
+
+.layout-shell .page-search-row .cari-search {
+  flex: 1;
+  min-width: 0;
+  width: auto;
+  max-width: none;
+}
+
+.layout-shell .page-search-row input {
+  width: 100%;
+  min-width: 0;
+}
+
+.layout-shell .page-search-row button {
+  flex-shrink: 0;
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+}
+
+.layout-shell .topbar .date-label {
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.layout-shell .shell-menu-button {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  flex-shrink: 0;
+}
+
+.shell-menu-options {
+  display: grid;
+  padding: 8px;
+}
+
+.shell-menu-options button {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  min-height: 44px;
+  text-align: left;
+  padding: 10px;
+  border-radius: var(--radius-control);
+}
+
+.shell-menu-options button[aria-pressed="true"],.shell-menu-options button:hover {
+  background: var(--surface-hover);
+}
+
+.skip-content {
+  position: fixed;
+  top: -80px;
+  background: var(--surface-raised);
+  padding: 12px;
+  z-index: 400;
+}
+
+.skip-content:focus {
+  top: 8px;
+}
+
+.layout-shell .main-content {
+  grid-row: 2;
+  min-height: 0;
+  min-width: 0;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0 !important;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+  scroll-padding: 24px;
+  overscroll-behavior: contain;
+}
+
+.layout-shell .content-frame {
+  width: 100%;
+  max-width: var(--shell-content-max);
+  min-width: 0;
+  margin: 0 auto;
+  padding: 24px var(--shell-gutter);
+  container-type: inline-size;
+  container-name: workspace;
+}
+
+.layout-shell .finance-page {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.layout-shell .workspace-columns {
+  display: grid;
+  grid-template-columns: minmax(0,1.9fr) minmax(0,1fr);
+  gap: var(--shell-column-gap);
+  align-items: start;
+  min-width: 0;
+}
+
+.layout-shell .workspace-columns>* {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.layout-shell .context-aside {
+  display: flex;
+  flex-direction: column;
+  gap: var(--shell-column-gap);
+  min-width: 0;
+}
+
+.layout-shell .context-aside,.layout-shell .account-alerts,.layout-shell .tracking-reminders,.layout-shell .plan-aside {
+  position: static;
+  max-height: none;
+  overflow: visible;
+}
+
+.layout-shell .page-title,.layout-shell [data-region="4"] {
+  min-width: 0;
+  gap: 16px;
+}
+
+.layout-shell .page-heading-identity {
+  min-width: 0;
+}
+
+.layout-shell .page-footer,.layout-shell .content-frame>.finance-page>footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+  min-height: 0;
+}
+
+.layout-shell .entry-columns {
+  display: grid;
+  grid-template-columns: minmax(0,1.9fr) minmax(0,1fr);
+  gap: var(--shell-column-gap);
+  align-items: start;
+}
+
+.layout-shell .summary-fields {
+  grid-template-columns: repeat(var(--summary-count,4),minmax(0,1fr));
+}
+
+.layout-shell #entry-dock-root {
+  grid-row: 3;
+  width: 100%;
+  max-width: var(--shell-content-max);
+  margin: 0 auto;
+  padding: 8px var(--shell-gutter) 12px;
+  container-type: inline-size;
+  container-name: composer;
+}
+
+.layout-shell #entry-dock-root:empty {
+  display: none;
+  padding: 0;
+}
+
+.layout-shell .entry-dock {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  max-width: 100%;
+  max-height: min(52dvh,calc(var(--visible-height,100dvh) - var(--shell-header-height) - 76px));
+  min-width: 0;
+  margin: 0;
+  padding: 12px 16px;
+  animation: none;
+  overflow: auto;
+  background: var(--surface-raised) !important;
+  box-shadow: none;
+}
+
+.layout-shell .entry-dock .entry-form {
+  grid-template-columns: minmax(0,1fr) auto;
+}
+
+.layout-shell .entry-dock .dock-primary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.layout-shell .entry-dock .dock-primary .cari-field {
+  flex: 1 1 130px;
+  min-width: 100px;
+}
+
+.layout-shell .entry-dock .dock-primary .cari-field:has(input[name="description"]) {
+  flex: 2 1 200px;
+}
+
+.layout-shell .entry-dock .dock-primary .compact-date,.layout-shell .entry-dock .dock-more-field {
+  flex: 0 0 44px;
+  min-width: 44px;
+}
+
+.layout-shell .entry-dock .sheet-footer {
+  padding-top: 24px;
+  position: static;
+  gap: 8px;
+  align-self: start;
+}
+
+.layout-shell .entry-dock .dock-primary>.cari-error,.layout-shell .entry-dock .dock-primary>.cari-hint {
+  flex-basis: 100%;
+}
+
+.layout-shell .entry-dock .entry-section-fields {
+  min-width: 0;
+}
+
+.layout-shell .mobile-nav {
+  grid-row: 4;
+  position: static;
+  inset: auto;
+  width: 100%;
+  display: none;
+  height: calc(var(--shell-nav-height) + env(safe-area-inset-bottom));
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.composer-open .layout-shell .toast {
+  bottom: calc(var(--composer-height,0px) + 24px);
+}
+
+/* Tables respond to the primary region, not the monitor or sidebar state. */
+
+.layout-shell .ledger-view {
+  min-width: 0;
+  container-type: inline-size;
+  container-name: ledger;
+}
+
+.layout-shell .cari-table-scroll {
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.layout-shell .ledger-view .finance-table {
+  display: table;
+  width: 100%;
+  min-width: 0;
+  table-layout: fixed;
+}
+
+.layout-shell .ledger-view thead {
+  display: table-header-group;
+}
+
+.layout-shell .ledger-view tbody {
+  display: table-row-group;
+}
+
+.layout-shell .ledger-view tr {
+  display: table-row;
+}
+
+.layout-shell .ledger-view td,.layout-shell .ledger-view th {
+  display: table-cell;
+  min-width: 0;
+  overflow-wrap: break-word;
+  padding-left: 12px !important;
+  padding-right: 12px !important;
+}
+
+.layout-shell .ledger-view .mobile-ledger-cell {
+  display: none;
+}
+
+.layout-shell .ledger-view th:nth-child(1) {
+  width: 14%;
+}
+
+.layout-shell .ledger-view th:nth-child(2) {
+  width: 30%;
+}
+
+.layout-shell .ledger-view th:nth-child(3) {
+  width: 18%;
+}
+
+.layout-shell .ledger-view th:nth-child(4) {
+  width: 16%;
+}
+
+.layout-shell .ledger-view th:nth-child(5) {
+  width: 22%;
+}
+
+.layout-shell .ledger-view .party-ledger th:nth-child(1) {
+  width: 13%;
+}
+
+.layout-shell .ledger-view .party-ledger th:nth-child(2) {
+  width: 27%;
+}
+
+.layout-shell .ledger-view .party-ledger th:nth-child(3) {
+  width: 8%;
+}
+
+.layout-shell .ledger-view .party-ledger th:nth-child(4) {
+  width: 16%;
+}
+
+.layout-shell .ledger-view .party-ledger th:nth-child(5) {
+  width: 18%;
+}
+
+.layout-shell .ledger-view .party-ledger th:nth-child(6) {
+  width: 18%;
+}
+
+.layout-shell .ledger-view .cari-badge {
+  height: auto;
+  min-height: 24px;
+  white-space: normal;
+  text-overflow: clip;
+  overflow: visible;
+  max-width: 100%;
+  padding: 3px 8px;
+  line-height: 1.5;
+}
+
+.layout-shell .ledger-view .cari-entry-kind {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.layout-shell .ledger-view td[data-label="Tutar"],.layout-shell .ledger-view td[data-label="Bakiye"] {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.layout-shell .ledger-view .ledger-action-row td {
+  display: table-cell;
+}
+
+.layout-shell .ledger-view .expense-tag {
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: normal;
+}
+
+@container workspace (width < 1240px) {
+  .layout-shell .workspace-columns,.layout-shell .entry-columns {
+    grid-template-columns: minmax(0,1fr);
+  }
+  .layout-shell .context-aside {
+    display: grid;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+  }
+  .layout-shell .context-aside>.party-context {
+    grid-column: 1/-1;
+  }
+  .layout-shell .summary-fields {
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    row-gap: 20px;
+  }
+  .layout-shell .summary-field {
+    padding: 4px 20px;
+    border-left: 1px solid var(--line);
+  }
+  .layout-shell .summary-field:nth-child(odd) {
+    padding-left: 0;
+    border-left: 0;
+  }
+  .layout-shell .summary-field:nth-child(even) {
+    padding-right: 0;
+  }
+  .layout-shell .summary-dates {
+    grid-template-columns: repeat(3,minmax(0,1fr));
+  }
+}
+
+@container workspace (width < 800px) {
+  .layout-shell .context-aside {
+    display: flex;
+  }
+  .layout-shell .account-grid .account-face {
+    grid-template-columns: minmax(0,1fr);
+    gap: 12px;
+    padding: 20px 0;
+  }
+  .layout-shell .account-grid .account-face-balance,.layout-shell .account-grid .card-limit-area,.layout-shell .account-grid .kmh-card-body,.layout-shell .account-grid .account-face>footer {
+    border-left: 0;
+    padding-left: 0;
+  }
+  .layout-shell .account-grid .account-face>footer {
+    border-top: 1px solid var(--line);
+    padding-top: 12px;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .layout-shell .account-ledger-heading {
+    flex-wrap: wrap;
+  }
+  .layout-shell .summary-dates {
+    grid-template-columns: repeat(2,minmax(0,1fr));
+  }
+  .layout-shell .report-distributions {
+    grid-template-columns: 1fr;
+  }
+}
+
+@container ledger (width < 880px) {
+  .layout-shell .ledger-view thead {
+    display: none;
+  }
+  .layout-shell .ledger-view tr>td:not(.mobile-ledger-cell) {
+    display: none;
+  }
+  .layout-shell .ledger-view tr>.mobile-ledger-cell {
+    display: table-cell;
+    padding: 12px 16px !important;
+    width: 100%;
+  }
+  .layout-shell .ledger-view tr.expanded>.mobile-ledger-cell {
+    box-shadow: inset 3px 0 0 var(--brand);
+  }
+  .layout-shell .ledger-view .ledger-action-row>td {
+    display: table-cell;
+  }
+  .layout-shell .mobile-txn-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .layout-shell .mobile-txn-top>div {
+    min-width: 0;
+  }
+  .layout-shell .mobile-txn-kind {
+    font-weight: 500;
+  }
+  .layout-shell .mobile-txn-top time {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .layout-shell .mobile-txn-description {
+    margin: 6px 0 0;
+    overflow-wrap: anywhere;
+  }
+  .layout-shell .mobile-txn-details {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .layout-shell .mobile-txn-details small {
+    display: block;
+  }
+  .layout-shell .mobile-running-balance {
+    text-align: right;
+  }
+}
+
+@container composer (width < 1050px) {
+  .layout-shell .entry-dock .entry-form {
+    grid-template-columns: minmax(0,1fr);
+  }
+  .layout-shell .entry-dock .sheet-footer {
+    padding: 0;
+    justify-content: flex-end;
+    position: sticky;
+    bottom: -8px;
+    background: var(--surface-raised);
+    z-index: 2;
+  }
+  .layout-shell .entry-dock .dock-primary {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width:1280px) {
+  .layout-shell .topbar .date-label,.layout-shell .header-divider,.layout-shell .page-search-row kbd {
+    display: none;
+  }
+}
+
+@media (max-width:760px) {
+  .layout-shell .topbar-inner {
+    padding: 6px var(--shell-gutter);
+    gap: 6px;
+  }
+  .layout-shell .top-actions {
+    gap: 0;
+  }
+  .layout-shell .page-search-row {
+    gap: 4px;
+  }
+  .layout-shell .page-search-row .cari-search {
+    padding: 0 8px;
+  }
+  .layout-shell .page-search-row .cari-search>svg {
+    display: none;
+  }
+  .layout-shell .content-frame {
+    padding: 16px var(--shell-gutter);
+  }
+  .layout-shell .mobile-nav {
+    display: grid;
+    grid-template-columns: repeat(4,minmax(0,1fr));
+  }
+  .layout-shell .entry-dock {
+    max-height: min(52dvh,calc(var(--visible-height,100dvh) - 130px));
+    padding: 8px 12px;
+  }
+  .layout-shell .entry-dock .dock-primary {
+    display: grid;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: 10px;
+  }
+  .layout-shell .entry-dock .dock-primary .cari-field {
+    min-width: 0;
+    width: auto;
+  }
+  .layout-shell .entry-dock .dock-primary .cari-field:has(input[name="description"]) {
+    grid-column: 1/-1;
+  }
+  .layout-shell .entry-dock .sheet-footer {
+    display: flex;
+    width: 100%;
+    padding: 0;
+  }
+  .layout-shell .entry-dock .sheet-footer .primary-button {
+    flex: 1;
+  }
+  .layout-shell #entry-dock-root {
+    padding-top: 4px;
+    padding-bottom: 8px;
+  }
+  .layout-shell .topbar:has(#search:focus) .shell-menu-button,.layout-shell .topbar:has(#search:focus) .top-actions {
+    display: none;
+  }
+  .layout-shell .entry-page {
+    padding-bottom: 90px;
+  }
+  .layout-shell .summary-fields {
+    grid-template-columns: repeat(2,minmax(0,1fr));
+  }
+  .layout-shell .mobile-more {
+    bottom: calc(var(--shell-nav-height) + env(safe-area-inset-bottom) + 8px);
+  }
+}
+
+.keyboard-open .layout-shell .mobile-nav {
+  display: none;
+}
+
+.keyboard-open .layout-shell .entry-dock {
+  inset: auto;
+  max-height: calc(var(--visible-height,100dvh) - var(--shell-header-height) - 30px);
+}
+
+/* Confirmations are rendered outside the app and every overflow boundary. */
+
+.overlay-layer {
+  position: fixed;
+  inset: 0;
+  z-index: var(--layer-confirmation,300);
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  height: min(var(--visible-height,100dvh),100dvh);
+  top: var(--visible-top,0px);
+}
+
+.overlay-shade {
+  position: absolute;
+  inset: 0;
+  background: var(--overlay-dim);
+  border: 0;
+  backdrop-filter: none;
+}
+
+.discard-layer .discard-confirm {
+  position: relative;
+  inset: auto;
+  transform: none;
+  width: min(420px,100%);
+  max-height: 100%;
+  overflow: auto;
+  z-index: 1;
+  background: var(--surface-raised);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-dialog);
+  padding: 24px;
+  box-shadow: 0 12px 32px var(--palette-202c3918);
+}
+
+.discard-layer h2 {
+  font-size: var(--text-section);
+  margin: 0 0 12px;
+}
+
+.discard-layer p {
+  font-size: var(--text-body);
+  margin: 0 0 20px;
+}
+
+.confirmation-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.confirmation-actions button {
+  min-height: 44px;
+  flex: 1 1 160px;
+  white-space: normal;
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .layout-shell * {
+    scroll-behavior: auto;
+  }
+}
+
+@container ledger (width < 880px) {
+  .layout-shell .ledger-view .finance-table tr.ledger-action-row {
+    display: table-row;
+  }
+  .layout-shell .ledger-view .finance-table tr.ledger-action-row>td {
+    display: table-cell !important;
+  }
+}
+
+.layout-shell .account-alerts {
+  display: block;
+}
+
+.layout-shell .mobile-alert-trigger {
+  display: none;
+}
+
+.layout-shell .page-search-row .cari-search:focus-within {
+  outline-offset: 0;
+}
+
+#page-filter-host:empty {
+  display: none;
+}
+
+#page-filter-host>.search-chips {
+  margin: 0 0 16px;
+}
+
+/* Reserve the native content scrollbar in the common header/composer frame too. */
+
+.layout-shell .topbar-inner,.layout-shell #entry-dock-root {
+  max-width: calc(var(--shell-content-max) + var(--shell-scrollbar-width,0px));
+  padding-right: calc(var(--shell-gutter) + var(--shell-scrollbar-width,0px));
+}
+
+@container workspace (width < 600px) {
+  .layout-shell .report-metrics .summary-fields {
+    grid-template-columns: minmax(0,1fr);
+  }
+}
+
+@container ledger (width < 880px) {
+  .layout-shell .mobile-txn-top > strong { white-space: nowrap; flex-shrink: 0; }
+  .layout-shell .mobile-txn-top > strong small { display: inline; }
+}

@@ -31,12 +31,12 @@ function renderFields(node,fields,draft,setDraft,path='f'){
 const active=f=>f.range?Boolean(f.value.from||f.value.to)&&!(f.defaultRange&&f.value.from===f.defaultRange.from&&f.value.to===f.defaultRange.to):f.check?f.value!==f.empty:!['','all','Tümü',String(f.empty)].includes(String(f.value));
 const valueLabel=f=>f.range?[f.value.from,f.value.to].filter(Boolean).join(' – '):f.check?(f.value?'Evet':'Hayır'):f.options.find(x=>String(x.value)===String(f.value))?.label||f.value;
 export function ListTools({query,setQuery,placeholder='Hareketlerde ara',filters=false,setFilters=()=>{},reset,sort,setSort,sortOptions=[],csv,children,resultCount,scopeControl,searchEnabled=true,showActions=true,showFilters=true,onSearchSubmit,onSearchKeyDown,onSearchText,suggestions,activeSuggestion,hideQueryChip=false,searchFeedback,onFiltersApplied}){
- const [host,setHost]=useState(null),[text,setText]=useState(query),[draft,setDraft]=useState({}),[error,setError]=useState('');
+ const [host,setHost]=useState(null),[chipHost,setChipHost]=useState(null),[text,setText]=useState(query),[draft,setDraft]=useState({}),[error,setError]=useState('');
  const querySetter=useRef(setQuery);querySetter.current=setQuery;
  const [composing,setComposing]=useState(false);
  const filterButton=useRef(null);
  const input=useRef(null),fields=fieldsIn(children),applied=fields.filter(active);
- useLayoutEffect(()=>{setHost(document.getElementById('page-search-host'))},[]);
+ useLayoutEffect(()=>{setHost(document.getElementById('page-search-host'));setChipHost(document.getElementById('page-filter-host'))},[]);
  useLayoutEffect(()=>setText(query),[query]);
  useEffect(()=>{const q=text.trim();if(filters||composing||q===query||(q.length>0&&q.length<3))return;const timer=setTimeout(()=>querySetter.current(q),300);return()=>clearTimeout(timer)},[text,query,filters,composing]);
  function close(){setFilters(false);setDraft({});setError('');input.current?.focus()}
@@ -47,13 +47,14 @@ export function ListTools({query,setQuery,placeholder='Hareketlerde ara',filters
  }
  function clear(){reset();setText('');close()}
  function clearDraft(){setDraft(Object.fromEntries(fields.map(field=>[field.key,field.empty])));setText('');setError('')}
+ const chips=(!hideQueryChip&&query||applied.length>0)&&<div className="search-chips">{!hideQueryChip&&query&&<button type="button" onClick={()=>{setQuery('');setText('')}}>Arama: {query}<X size={14}/></button>}{applied.map(f=><button type="button" key={f.key} onClick={()=>f.change(f.empty)}>{f.label}{valueLabel(f)?': '+valueLabel(f):''}<X size={14}/></button>)}<button type="button" className="text-button" onClick={clear}>Temizle</button></div>;
  const search=<div className="page-search" onKeyDown={e=>{if(e.key==='Escape'&&!e.target.closest('[role=dialog]')){e.stopPropagation();setText(query);close()}else if(e.key==='Enter'&&filters&&!e.target.closest('button,select,[role=dialog]'))apply(e)}}>
   <form className="page-search-row" role="search" onSubmit={e=>{if(!e.defaultPrevented)apply(e)}}>
    <label className="cari-search"><Search size={18}/><input ref={input} id="search" aria-label={placeholder} placeholder={placeholder} value={text} aria-autocomplete={suggestions?'list':undefined} aria-controls={suggestions?'global-search-suggestions':undefined} aria-activedescendant={activeSuggestion} onKeyDown={onSearchKeyDown} onChange={e=>{setText(e.target.value);onSearchText?.(e.target.value)}} onCompositionStart={()=>setComposing(true)} onCompositionEnd={e=>{setComposing(false);setText(e.currentTarget.value)}} aria-keyshortcuts="Control+k Meta+k"/><kbd aria-hidden="true">Ctrl K</kbd></label>
    {showFilters&&<button ref={filterButton} type="button" className={'list-icon '+(filters||applied.length?'active':'')} aria-label="Filtrele" title="Filtrele" aria-expanded={filters} aria-controls="page-search-filters" onClick={()=>{if(filters)close();else{setDraft({});setError('');setFilters(true)}}}><SlidersHorizontal size={18}/>{applied.length>0&&<span className="filter-count">{applied.length}</span>}</button>}
    <button className="primary-button search-submit icon-only" type="submit" aria-label="Ara" title="Ara"><Search size={18}/></button>
   </form>
-  {(!hideQueryChip&&query||applied.length>0)&&<div className="search-chips">{!hideQueryChip&&query&&<button type="button" onClick={()=>{setQuery('');setText('')}}>Arama: {query}<X size={14}/></button>}{applied.map(f=><button type="button" key={f.key} onClick={()=>f.change(f.empty)}>{f.label}{valueLabel(f)?': '+valueLabel(f):''}<X size={14}/></button>)}<button type="button" className="text-button" onClick={clear}>Temizle</button></div>}
+  {chips&&(chipHost?createPortal(chips,chipHost):chips)}
   {filters&&<FloatingPanel id="page-search-filters" anchor={filterButton.current} alignTo={host} title="Filtreler" className="search-filter-panel" width={host?.clientWidth||600} onClose={()=>{setText(query);close()}}><div className="finance-filters shared-filters" onKeyDown={e=>{if(e.key==='Enter'&&e.target.matches('input'))apply(e)}}>{scopeControl}{renderFields(children,fields,draft,setDraft)}</div>{error&&<p role="alert" className="cari-error">{error}</p>}<div className="search-filter-actions" onKeyDown={e=>{if(e.key==='Enter')apply(e)}}><button type="button" className="secondary-button" onClick={()=>{setText(query);close()}}>Vazgeç</button><button type="button" className="secondary-button" onClick={clearDraft}>Temizle</button><button type="button" className="primary-button" onClick={apply} aria-label="Ara">Uygula</button></div></FloatingPanel>}
   {searchFeedback&&<p className="cari-error" role="status">{searchFeedback}</p>}
   {suggestions?.({anchor:input.current,host,filters})}

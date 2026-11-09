@@ -160,3 +160,21 @@ Mobilde oluşturma sayfasının Kaydet/Vazgeç çubuğu alt gezinmenin yerini al
 ## 1.15.0 — Cari düzenleme ve tek satır işlem alanı
 
 Cari ekleme/düzenleme ortak tam sayfadır; diğer düzenleme yüzeyleri önceki kurallarını korur. Alt işlem alanında bağımsız başlık satırı yoktur; X Kaydet yanında, tarih yalnız erişilebilir etiketli takvim ikonu olarak görünür. Temel kontroller masaüstünde tek satır; ayrıntılar ve finansal etki Diğer içinde, hatalar gerektiğinde görünürdür. Mobilde tek satıra zorlama veya 44 px altı hedef yoktur. Tek aylık takvim gövdesi yedi eşit sütunla kullanılabilir genişliği doldurur; ikonuna bağlı açılır, blur veya sayfa kayması yoktur.
+
+## 9 Kasım 2026 — Onaylı global kutu sistemi ve tema ayrımı
+
+Tüm sayfalarda ortak dokuz bölge sözleşmesi kullanılacak: 1 Sidebar, 2 Header, 3 Content çerçevesi, içinde 4 Sayfa başlığı / 5 Özet / 6 Ana içerik / 7 Yardımcı içerik / 8 Footer ve çerçeveyle hizalı ayrı 9 Hızlı işlem alanı. Dar genişlikte yardımcı alan ana içeriğin altına taşınır; hızlı işlem bölgesinin kendi yüksekliğine yer ayrılır, diğer bölgeleri örtmez. Bölgeler ortak kabuğun slotlarıdır; gereksiz boş kutular oluşturulmaz. Kesin ölçüler ve sabit/kaydırma davranışları sırayla görüşülecektir.
+
+Yerleşim, görsel tema, ortak bileşen stilleri ve etkileşim/veri davranışı ayrı sorumluluklardır. Renk veya düğme görünümü değiştirmek kabuk ölçülerini ve diğer sayfaların düzenini değiştirmemelidir. Anlamsal renkler tema tokenlarıyla; bölge ölçüleri yerleşim tokenlarıyla; düğme gibi öğeler kapsamı belli varyantlarla yönetilir. Tipografi/boyut değişikliklerinin ölçü etkisi esnek akış ve responsive testlerle ele alınır. Çoklu tema gelecekteki olasılık olarak desteklenecek mimari karardır; yeni tema veya seçici henüz istenmedi.
+
+Ayrıntılı geçerli sözleşme: [Global yerleşim sözleşmesi](GLOBAL-YERLESIM-SOZLESMESI.md). Bu onay gelecek düzenin kriteridir; kodlama/yayın başlatmaz. Önceki sabit breakpoint ve koşulsuz iki sütun kuralları yeni mimariye taşınırken bu sözleşmeye göre gözden geçirilecektir; henüz değiştirilmiş sayılmaz.
+
+Sidebar manuel kontrolü: Geniş ekran dahil her genişlikte kullanıcıya küçültme ve tamamen gizleme olanağı sunulur. Tam / ikon şeridi / gizli durumları ayrıdır; otomatik responsive uyarlama kullanıcının tercihini silmez. Gizliyken yeniden açma kontrolü erişilebilir kalır. Menü alanı boş bırakılmadan ortak yerleşim kalan genişliği kullanır. Ayrıntılar global yerleşim sözleşmesindeki Sidebar bölümündedir.
+
+Header görev dağılımı onaylandı: menü kontrolü, esnek ve kapsamı anlaşılır arama, uygulanabilir filtre, bildirim ve yer uygunsa ikincil kontroller tek ortak satırdadır. Gizli sidebar'ın açma kontrolü Header'da erişilebilir kalır. Header kaydırırken üstte erişilir kalır; açılır öğeler sayfayı itmez. Kesin ölçüler ve dar genişlik geçişleri global yerleşim sözleşmesi üzerinden doğrulanacaktır.
+
+Content ve başlık/özet ayrımı kullanıcı tarafından uygun bulundu: 3 ortak dış çerçevedir; 4 sayfa kimliği ve ana eylemleri, 5 güncel metrikleri taşır. 4 sade başlık satırı, 5 gerektiğinde tek bölümlenmiş özet yüzeyidir; her ikisine ayrı panel zorunlu değildir. 6–9 ve açılır katmanların detayları global yerleşim sözleşmesinde son öneri paketi olarak kaydedildi; bu son öneriler henüz ayrıca onaylı uygulama sayılmaz.
+
+Kullanıcı son 6–9 bölge davranışlarını ve bağımsız açılır katman önerisini onayladı. Önceki “son öneri henüz onaylı değil” ifadelerinin yerini bu onay alır. Tek içerik akışı, alta taşınan yardımcı alan, akış sonundaki footer, yüksekliğine yer ayrılan hızlı işlem bölgesi ve küçük merkezi taslak onayı geçerli kapsamdır. Kesin ölçüler testle doğrulanacak; tema/kodlama çalışma sırası görüşülüyor, henüz yeni uygulama/yayın talimatı verilmedi.
+
+1.16.0 uygulama kaydı: Son kodlama talimatı önceki not aşamasını yürürlüğe aldı. Dokuz bölgeli ortak kabuk, içerik container'ına bağlı sütunlar, kalıcı sidebar tercihi, tek ana kaydırma, kendi yüksekliğine yer ayrılan işlem bölgesi ve bağımsız merkezi taslak onayı uygulandı. Tema renkleri `theme.css`, kabuk ölçüleri `layout-tokens.css/app-shell.css` içinde ayrıldı. Kesin başlangıç ölçüleri ve davranışlar global sözleşmenin 1.16.0 bölümünde; yeni tema ve canlı/GitHub yayını bu aşamanın kapsamı değildir.
