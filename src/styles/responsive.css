@@ -61,14 +61,8 @@
 }
 @media(max-width:760px){
   .ledger-view .party-ledger{min-width:0}
-  .ledger-view .finance-table td:last-child{padding:0!important;width:auto}
-  .ledger-view .finance-table tr.expanded{box-shadow:inset 3px 0 var(--brand);border-bottom:0;margin-bottom:0}
   .ledger-view .expanded td:first-child{box-shadow:none}
-  .ledger-view .finance-table tr.ledger-action-row{box-shadow:inset 3px 0 var(--brand);border:0;margin:0;padding:0;background:var(--palette-f0f7f8)}
   .ledger-view .ledger-action-row>td{box-shadow:none}
-  .ledger-view .finance-table td[data-label="İşlem"]{grid-column:1;grid-row:3;min-width:0}
-  .ledger-view .finance-table td[data-label="Etiket"]{grid-column:1;grid-row:4}
-  .ledger-view .finance-table td[data-label="Bakiye"]{grid-column:1/-1;grid-row:5;text-align:right}
   .ledger-view .cari-entry-kind{display:flex;gap:5px;flex-wrap:wrap}
   .ledger-view .cari-entry-kind .cari-badge{width:110px;min-width:110px;max-width:110px;height:27px;line-height:27px}
   .ledger-view .expense-tag{margin-left:0}

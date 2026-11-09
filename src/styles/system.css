@@ -79,7 +79,6 @@ form input,form select,.date-trigger{min-height:var(--control-size)}
  .page-search-row .search-submit{min-width:44px;padding:0 8px}
  .search-filter-panel{padding:12px}
  .search-filter-panel .shared-filters{grid-template-columns:minmax(0,1fr)}
- .search-filter-actions{position:sticky;bottom:64px;background:var(--surface-raised);padding:8px 0}
  .search-chips>button{min-height:32px}
  .plan-grid{--calendar-row-min:84px}
  .plan-day{padding:6px 3px}

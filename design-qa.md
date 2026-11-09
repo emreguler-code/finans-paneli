@@ -1,44 +1,42 @@
-# 1.16.0 tasarım doğrulaması
+# 1.17.0 mobil görsel doğrulaması
 
-**Kaynak ve karşılaştırma kapsamı**
+**Kaynak ve durum**
 
-- Görsel yön: `/workspace/generated_images/exec-cd6bd876-04d7-4e5b-8416-8f180d289e77.png` (1756 × 895 px).
-- Dokuz bölge şeması: `/workspace/generated_images/exec-a1e64e49-6c7c-48df-afc6-1dcb3b0c7d50.png` (1536 × 1024 px).
-- Sonraki yazılı onaylar önceliklidir: [global sözleşme](docs/GLOBAL-YERLESIM-SOZLESMESI.md). Özellikle hızlı işlem bölgesi yardımcı içeriğin arasına girmez; kendi grid satırında yer ayırır.
-- Gerçek React + PHP uygulaması, izole sentetik veritabanı ve Chromium üzerinde açıldı. Kaynaklar birden fazla temsili pencere içeren kavramsal panolardır; aynı rota/alanlar karşılaştırıldı, bire bir viewport/piksel eşleşmesi iddia edilmedi. Kaynaktaki örnek tarihler, unvanlar ve hareket sayıları gerçek fixture ile aynı değildir.
-- Chromium ekran görüntüleri DPR 1: masaüstü 1920 × 1080, bölünmüş pencere 1268 × 1000, mobil 390 × 844, onay 320 × 600 CSS px. Piksel boyutları CSS boyutlarıyla aynıdır. Karşılaştırma panolarında kaynak/uygulama yalnız orantılı küçültüldü; özgün kayıtlar ayrıca saklandı.
-- Birlikte incelenen tam görünüm: `docs/tasarimlar/1.16.0/karsilastirma.png`; bölge karşılaştırması: `docs/tasarimlar/1.16.0/bolgeler.png`. Ayrı görüntüleri yan yana görülmüş saymak yerine ortak karşılaştırma panoları açılarak incelendi.
-- Odaklı inceleme: `docs/tasarimlar/1.16.0/etkilesimler.png`, `masaustu.png`, `bolunmus-pencere.png`, `mobil.png`, `taslak-onayi.png` ve `buyuk-tutar-960.png`.
+Kullanıcının mobil ekran görüntülerinde gösterdiği sorunlar ve ardından onayladığı sekiz maddelik inceleme bu düzeltmenin hedefidir. Sorunlar mevcut 1.16.0 uygulamasında ayrıca yeniden üretildi. Canlı ürün veya kullanıcı verisi yerine aynı sentetik yerel demo üzerinde gerçek React + PHP uygulaması açıldı. Yeni tema tasarlanmadı.
 
-**Bulgular ve düzeltme geçmişi**
+- Kaynak kayıtları: `.qa/mobile117-before/webkit-{expanded,menu,reports,accounts,account,filters,plan,notifications}.png`; Chromium karşılıkları aynı klasördedir.
+- Son uygulama kayıtları: `.qa/mobile117-final/` ve odaklı durumlar `.qa/mobile117-checks/`. İncelenen kalıcı kopyalar `docs/tasarimlar/1.17.0/` altındadır.
+- Normalleştirme: kaynak ve son görüntüler 390 × 844 CSS/piksel, DPR 1; tarayıcı çerçevesi/telefon süsü yoktur. Yan yana panolar 804 × 872 px; görüntüler ölçeklenmeden araya 24 px boşluk ve 28 px etiket alanı eklenmiştir. Ek küçük filtre kanıtı 320 × 568 px'dir.
+- Aynı rota, veri, tema ve açık/kapalı durumlar birlikte incelendi. Menü karşılaştırmasında yalnız drawer bileşeni esas alındı; arka plandaki kaydırma/odak ayrıntıları piksel eşleşmesi sayılmadı. Gönderilen fiziksel cihaz görüntüsündeki iOS durum çubuğu emülasyon görüntülerine eklenmedi.
 
-1. [P1, düzeltildi] Tema ayrımında vurgu üzerindeki yazı rolü tanımsız kaldığında Kaydet/Düzenlemeye dön metni koyu görünüyordu. `--text-on-accent: #fff` tanımlandı; gerçek hesaplanan düğme rengine tarayıcı kontrolü eklendi. Önceki odaklı kayıt `etkilesimler-renk-oncesi.png`; aynı viewport/durumda yeniden çekilen `etkilesimler.png` beyaz yazıyı doğrular.
-2. [P2, düzeltildi] 960 px pencerede büyük hareket tutarı, altı sütunlu tablonun ayrılmış tutar alanını aşıyordu. Önceki kayıt `buyuk-tutar-960-oncesi.png`. Ledger'ın kendi genişliği için kompakt sunum eşiği 880 px yapıldı; sonraki `buyuk-tutar-960.png` tam tutarı ve okunabilir açıklamayı doğrular. Yalnız body taşmasına bakılmadı; görünen tutar hücrelerinin kendi scroll/client genişlikleri de kontrol edildi.
-3. [P2, düzeltildi] Ara genişlikte kompakt satırın TL birimi eski masaüstü küçük metin kuralını devralıyordu. Para birimi tutarla aynı satırda tutuldu; kompakt satırların görünür birimleri ayrıca kontrol edildi.
+**Karşılaştırmalar ve düzeltmeler**
 
-**Zorunlu görsel yüzeyler**
+1. [P1, düzeltildi] Açık cari satırı 364 px tabloda 28,66 px hücreye sıkışıyordu. Native tablo ve blok hücre kuralları çakışıyordu. Tek blok akışı uygulandı; kapalı/açık hücre, metadata, eylem genişliği ve seçim çizgisi iki motorda ölçüldü. Kanıt: [expanded-comparison.png](docs/tasarimlar/1.17.0/expanded-comparison.png).
+2. [P1, düzeltildi] Geniş mobil drawer yalnız ikon gösteriyordu. Eski viewport gizleme kuralları kaldırıldı; bölüm adları, marka ve kapatma düğmesi görünür. Masaüstü ikon şeridi korundu. Kanıt: [menu-comparison.png](docs/tasarimlar/1.17.0/menu-comparison.png).
+3. [P2, düzeltildi] Özetlerde mobilde kalan masaüstü kenar/ayraçları ve yüksek boşluklar vardı. Ortak mobil metrik satırları uygulandı; kapalı cari özeti yeniden kontrol edildi. Kanıt: [reports-comparison.png](docs/tasarimlar/1.17.0/reports-comparison.png), [account-comparison.png](docs/tasarimlar/1.17.0/account-comparison.png).
+4. [P2, düzeltildi] Hesap listesi karşılaştırma için çok uzun alan tüketiyordu. Banka/ad/bakiye önceliklendirildi; sahip/IBAN/tür detayda kaldı. Kanıt: [accounts-comparison.png](docs/tasarimlar/1.17.0/accounts-comparison.png).
+5. [P2, düzeltildi] Filtre dar/uzun açılıyor, eski sticky footer panelin altında 64 px boşluk bırakıyordu. Panel genişliği ve görünür yüksekliği uyarlandı; yalnız alan gövdesi kaydırılır, eylemler gerçek alt kenarda kalır. Son kontrol footer ile panel altının çakışmasını da ölçer. Kanıt: [filters-comparison.png](docs/tasarimlar/1.17.0/filters-comparison.png), [320 px kaydırılmış alanlar](docs/tasarimlar/1.17.0/webkit-filters-320.png).
+6. [P2, düzeltildi] Header arama ipucu kesiliyor, arama odaklandığında menü/zil gizleniyordu. Mobil submit gizlendi, kısa ipucu ve klavye Ara/Enter korundu; odak diğer kontrolleri saklamaz. Önce/sonra tüm panolarda görülebilir.
+7. [P2, düzeltildi] Ödeme planı kontrolleri ve bildirimlerin geniş renk zeminleri aşırı alan/ağırlık oluşturuyordu. Plan iki kontrol satırına indirildi; temel hedefler 44 px'dir. Bildirimde kırmızı önem metni/ikonu, beş özet ve tam liste korunur. Kanıt: [plan-comparison.png](docs/tasarimlar/1.17.0/plan-comparison.png), [notifications-comparison.png](docs/tasarimlar/1.17.0/notifications-comparison.png).
+8. [P2, regresyonda bulundu ve düzeltildi] 320 px kart listesinde 100.000,00 TL kullanılabilir limitin birimi kırpılıyordu. Dar görünümde finansal metrikler etiket/tutar satırlarına geçti; tutar ve birim geometrisi iki motorda doğrulandı. Kanıt: [webkit-cards-320.png](docs/tasarimlar/1.17.0/webkit-cards-320.png).
 
-- Tipografi: mevcut yerel Inter 400/500/600 korundu; başlık, bölüm, gövde ve yardımcı metin rolleri aynı. Metinler küçültülerek sığdırılmadı. Uzun ticari unvan kırılır; kritik tutar tek parça görünür. Gerçek cihaz font rasterizasyonu ayrıca ölçülmedi.
-- Boşluk/yerleşim: ortak kenarlar native scrollbar payıyla hizalı. Geniş ekranda 1,9:1; yetersiz içerik genişliğinde yardımcı bölge altta. Başlık ve özet ayrı görevlerde, özet tek yüzey. İşlem çubuğunda iç boşluk, 44 px eylemler ve bağımsız onay görünür. Footer'a kaydırılarak erişim doğrulandı.
-- Renk/tokenlar: mevcut Sade Netlik ve finansal işaret renkleri korundu. CSS renkleri ve grafik boyaları tema değerlerinden gelir. Vurgu rengini değiştirmenin bölge geometrisini değiştirmediği ölçüldü. Bu çalışma yeni tema veya genel kontrast sertifikasyonu değildir.
-- Görseller/ikonlar: mevcut finans logosu ve Lucide ailesi korundu; yeni illüstrasyon, taklit logo veya raster UI eklenmedi. İkon kontrolleri gerçek tıklanabilir bileşenlerdir.
-- Metin/içerik: Türkçe ürün metinleri ve finansal alan anlamları korundu. Şemadaki kutu adları ürün ekranına açıklama olarak taşınmadı. Büyük tutar stres kayıtları yalnız test DOM'unda değiştirildi; finansal API verisine yazılmadı.
+**Beş görsel yüzey**
 
-**Etkileşim ve kabul**
+- Tipografi: yerel Inter 400/500/600 ve sayfa başlığı/gövde rolleri korundu. Mobil rapor sayıları 24 px, temel bakiye 27 px; yazılar genel olarak küçültülmedi. Mobil arama ve filtre girdileri 16 px. Açık satırdaki kelime kelime daralma giderildi.
+- Boşluk/yerleşim: ortak kabuk ve 1,9:1 geniş düzen korunur. Mobilde aynı kenarlı özetler, kısa listeler, tutarlı açık satır ve kullanılabilir filtre gövdesi vardır. Takvim artık ödeme planında daha erken görünür.
+- Renk/tokenlar: Sade Netlik ve finansal yön renkleri korunur. Bildirim zemini sakinleştirildi, önem metin/ikonla sürer. Yeni ham renk veya tema seçici eklenmedi.
+- Görsel/ikon kalitesi: mevcut finans markası, banka işaretleri ve Lucide ikonları kullanılır; görsel taklidi veya yeni raster UI yoktur. Menü adları gerçek metindir.
+- İçerik: finansal hesaplama ve alan anlamları değişmedi. Detayda korunmuş ikincil hesap bilgileri dışında bilgi kaldırılmadı. Testteki büyük tutar metni yalnız DOM stres girdisidir; veritabanına yazılmadı.
 
-Menü tam/kompakt/gizli, yeniden açma, resize/reload sonrası tercih, mobil menü odak izolasyonu, tek içerik kaydırması, yardımcı alanın akışı, footer erişimi, gerçek yüksekliğine yer ayrılan işlem alanı, taslak koruması, merkezi onay odağı, Escape/dışarı tıklama ve vazgeçme sonrası kilitlerin bırakılması tarayıcıda denendi. Mevcut form/takvim/arama/geçmiş/yedekleme regresyonları ve React çalışma zamanı hataları ayrıca kontrol edildi; ayrıntı [test raporunda](docs/TEST-RAPORU-1.16.0.md).
+**Doğrulama ve sınırlar**
 
-**Kabul edilen farklar ve sınırlar**
+702 mevcut tarayıcı kontrolü; izole mobil pakette Chromium 71 + WebKit 71 kontrolü geçti. İki motorda çalışma zamanı hatası yok. Finansal demo uzlaştırması ve paket kurulumu da geçti; [test raporu](docs/TEST-RAPORU-1.17.0.md). Son görüntüler yeniden çekildi ve yukarıdaki ortak panolarda karşılaştırıldı. Açık P0/P1/P2 bulgusu kalmadı.
 
-Kavramsal panonun örnek verisi ve tek tek görsel oranları aynen kopyalanmadı. Mevcut onaylı sütunlar, yerel ikonlar, mobil bakiye özeti ve erişilebilir menü/arama korundu. Kullanıcı tercihi düğmesi header'a eklendi. Bunlar sonraki yazılı onayların ve mevcut ürün davranışının korunmasının sonucudur. Yardımcı bilgiler uzun liste/sonraki sayfalama sonrasında akışta erişilebilir; her veri uzunluğunda aynı ekrana sığma hedeflenmez.
+Fiziksel iPhone/Safari, VoiceOver, gerçek mobil klavye ve iOS safe-area testi yapılmadı. WebKit viewport/touch emülasyonu gerçek cihaz doğrulaması olarak sunulmaz. Görüntüler tam erişilebilirlik uyumu veya bütün veri uzunluklarında kusursuzluk garantisi değildir.
 
-Fiziksel telefon, iOS/Safari, Firefox ve işletim sistemi düzeyinde gerçek tarayıcı zoom testi yapılmadı. Farklı CSS viewport'ları, kısa yatay ekran ve visualViewport klavye simülasyonu kontrol edildi; bunlar gerçek cihaz testinin yerine geçmiş sayılmaz.
-
-**Uygulama kontrol listesi**
-
-- [x] Onaylı bölge düzeni ve mevcut tema birlikte incelendi.
-- [x] Görülen yerleşim/renk sorunları düzeltildi ve yeniden görüntülendi.
-- [x] Geniş, bölünmüş ve mobil görünüm; kritik eylemler ve taslak akışı doğrulandı.
-- [x] Son para birimi düzeltmesi aynı viewportta yeniden görüntülendi; 82 odaklı kontrol ve güncel demo kontrolleri geçti.
+- [x] Kullanıcıdaki temel bozulma iki motorda yeniden üretildi.
+- [x] Başlangıç bulguları ve sonradan yakalanan footer/kart tutarı sorunları düzeltildi.
+- [x] Son durumlar aynı viewportta yeniden çekildi; ortak karşılaştırma ve odaklı alanlar incelendi.
+- [x] Regresyon, finans ve kurulum kontrolleri tamamlandı.
 
 final result: passed

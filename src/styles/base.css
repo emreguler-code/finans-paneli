@@ -1222,20 +1222,6 @@ dd {
   }
 }
 @media (max-width: 1000px) {
-  .sidebar .brand {
-    margin: 0 7px 39px;
-  }
-  .sidebar .brand > span:last-child:not(.brand-mark),
-  .workspace-label,
-  .sidebar button span,
-  .demo-note,
-  .sidebar nav button em {
-    display: none;
-  }
-  .sidebar button {
-    justify-content: center;
-    padding: 12px;
-  }
   .date-label b,
   .search kbd {
     display: none;

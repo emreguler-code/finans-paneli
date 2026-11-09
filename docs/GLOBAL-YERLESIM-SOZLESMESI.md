@@ -131,3 +131,9 @@ Kullanıcının son kodlama talimatıyla ilk aşama uygulandı. Önceki “henü
 - Tema renk rolleri ve eski görünümü koruyan palet değerleri `theme.css` içindedir; tipografi/bileşen tokenları `tokens.css` içindedir. Tema dosyası sidebar/sütun konumu tanımlamaz. Bileşen iç düzenleri mevcut kapsamlarında kalır; yeni kabuk ölçüleri sayfalarda tekrar kurulmaz.
 
 Kesin ölçüler bu sürümün test edilmiş başlangıç değerleridir; gelecekteki yoğunluk/font değişikliği responsive kabul testlerini tekrar gerektirir. Ekran adı veya yalnız yatay taşma olmaması tek başına kabul ölçütü değildir.
+
+## 1.17.0 mobil bileşen düzeltmeleri
+
+Dokuz bölgeli kabuk ve ortak ölçüler korunur. Mobil bileşen sunumları mobile-components.css içinde merkezileştirildi. Önceki “tam tek satır/desktop ayıracı” kuralları mobil bileşenlere zorlanmaz. Drawer metinleri viewport bazlı eski CSS ile saklanamaz. Ledger 880 px altındaki kendi bölgesinde table/tbody/tr/hücre için tutarlı blok sunumunu kullanır; geniş görünüm native tablo olarak kalır.
+
+Mobil filtre genişliği görünür viewport eksi iki yanda 12 px'dir; header'ın altından açılır, görünür alt gezinmeye kadar sınırlandırılır. Başlık ve eylemler panel akışında kalır, alanlar kaydırılır. Ayrı sayfa karartması veya blur eklenmez. Mobil header submit ikonunu gizler ve klavye Ara/Enter kullanır; masaüstü submit korunur. Kullanıcı onaylı kompakt özet/listeler bölge yerleşimini değiştirmez. Yeni görünümün kabulü yalnız taşma yokluğu değil, açık/kapalı durumların ve kritik metin/tutarların gerçek genişlikleridir.

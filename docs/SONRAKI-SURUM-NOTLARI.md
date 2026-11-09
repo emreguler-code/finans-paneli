@@ -569,3 +569,7 @@ Kullanıcı kalan bölgeler ve katman davranışlarını “onaylıyorum” diye
 Kullanıcı “evet, başla bakalım o zaman kodlamaya” dedi. Yukarıdaki global yerleşim kapsamı mevcut Sade Netlik görünümüyle uygulamaya alındı. Yeni tema/tema seçici ayrı çalışma olarak kaldı. Dokuz bölge, içerik genişliğine bağlı uyarlama, kalıcı menü tercihi, bağımsız onay ve tema/yerleşim ayrımı kodlandı; uygulama eşikleri [global sözleşmede](GLOBAL-YERLESIM-SOZLESMESI.md), sürüm özeti [1.16.0 kapsamında](SURUM-1.16.0.md). Bu talimat GitHub veya canlıya yayın talimatı değildir.
 
 1.16.0 ek yayın onayı: Kullanıcı kodlama tamamlandıktan sonra “git huba yükle” talimatını verdi. Hazır kaynak, sürüm etiketi ve doğrulanmış hosting paketleri GitHub’a yayımlanır. Önceki yayın yapılmayacağına dair kapsam cümleleri önceki aşamanın tarihçesidir; canlı hosting kurulumu bu talimata dahil değildir.
+
+## 9 Kasım 2026 — 1.17.0 mobil düzeltme ve yayın onayı
+
+Kullanıcı mobil ekran görüntülerindeki incelemeye katıldı ve “Sana katılıyorum, değişiklikleri hazırla ve githuba yükle” dedi. Açılan cari satırının dar şeride sıkışması, mobil menüde adların kaybolması, özet ayraç/girintileri, hesap listesi boşlukları, uzun filtre paneli, header arama alanı, ödeme planı yoğunluğu ve bildirim zeminleri kapsam içindedir. Yeni tema veya finansal anlam değişikliği istenmedi. Kaynaklar, testler ve hosting paketleri 1.17.0 etiketiyle GitHub'a yayımlanır; canlı hosting kurulumu yapılmaz. Ayrıntılar SURUM-1.17.0.md ve TEST-RAPORU-1.17.0.md içindedir.

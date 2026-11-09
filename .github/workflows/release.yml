@@ -53,9 +53,14 @@ jobs:
           else
             npx playwright install --with-deps chromium
           fi
+      - name: Prepare WebKit for mobile checks
+        run: npx playwright install --with-deps webkit
       - name: Test desktop and mobile workflows
         id: browser
         run: npm run test:browser
+      - name: Test mobile layouts across Chromium and WebKit
+        id: mobile
+        run: npm run test:mobile
       - name: Reconcile comprehensive demo and reports
         id: demo
         run: npm run test:demo

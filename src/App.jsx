@@ -459,6 +459,7 @@ export function App({
               finans<span className="brand-period">.</span>
             </span>}
         </div>
+        {shell.mobile&&<button type="button" className="list-icon sidebar-close" aria-label="Menüyü kapat" onClick={()=>shell.setOpen(false)}><X size={18}/></button>}
         <div className="workspace-label">KİŞİSEL ÇALIŞMA ALANI</div>
         <nav aria-label="Ana navigasyon">
           {navigation.filter(([name]) => name!=='Ayarlar'&&(name !== 'Kullanıcılar' || can(fullData.user, 'admin'))&&(name!=='Kampanyalar'||cardsMenu)).map(([name, Icon]) => <button key={name} className={(page === name ? "active " : "")+(name==='Kampanyalar'?'navigation-submenu':'')} aria-current={page === name ? "page" : undefined} aria-label={name} title={name} aria-expanded={name==='Kredi kartları'?cardsMenu:undefined} onClick={() => navigateMenu(name)}>
@@ -474,7 +475,7 @@ export function App({
             <Settings size={18} />
             <span>Görünüm ve bilgiler</span>
           </button>
-          <button aria-label={compact ? "Menüyü genişlet" : "Menüyü daralt"} onClick={() => setCompact(!compact)}>
+          <button className="sidebar-layout-toggle" aria-label={compact ? "Menüyü genişlet" : "Menüyü daralt"} onClick={() => setCompact(!compact)}>
             {compact ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}
             <span>Menüyü daralt</span>
           </button>
@@ -493,7 +494,7 @@ export function App({
                 <Bell size={18} />
                 {notifications.length > 0 && <i />}
               </button>
-              {bell && <FloatingPanel anchor={bellButton.current} title="Bildirimler" onClose={()=>setBell(false)} width={400}><div className="notification-compact">{['Gecikmiş','Bugün','Yaklaşan','Diğer'].map(section=>{const rows=notifications.slice(0,5).filter(alert=>alert.section===section);return rows.length>0&&<section key={section}><h3>{section}</h3>{rows.map(alert=><button key={alert.id} className={'notification-row '+alert.level} onClick={()=>openNotification(alert)}><CircleAlert size={18}/><span><strong>{alert.title}</strong><small>{alert.count>1?`${alert.groupName} · ${alert.count} kayıt · ${fmt(alert.amount_cents)} TL`:readableAlertDetail(alert.detail)}</small></span><ChevronRight size={16}/></button>)}</section>})}{!notifications.length&&<p className="empty">Dikkat gerektiren bildirim yok.</p>}<button className="text-button preview-all" onClick={()=>showNotifications()}>Tümünü göster ({collectAlerts(fullData).length}) <ChevronRight size={16}/></button></div></FloatingPanel>}
+              {bell && <FloatingPanel anchor={bellButton.current} title="Bildirimler" className="notification-panel" onClose={()=>setBell(false)} width={400}><div className="notification-compact">{['Gecikmiş','Bugün','Yaklaşan','Diğer'].map(section=>{const rows=notifications.slice(0,5).filter(alert=>alert.section===section);return rows.length>0&&<section key={section}><h3>{section}</h3>{rows.map(alert=><button key={alert.id} className={'notification-row '+alert.level} onClick={()=>openNotification(alert)}><CircleAlert size={18}/><span><strong>{alert.title}</strong><small>{alert.count>1?`${alert.groupName} · ${alert.count} kayıt · ${fmt(alert.amount_cents)} TL`:readableAlertDetail(alert.detail)}</small></span><ChevronRight size={16}/></button>)}</section>})}{!notifications.length&&<p className="empty">Dikkat gerektiren bildirim yok.</p>}<button className="text-button preview-all" onClick={()=>showNotifications()}>Tümünü göster ({collectAlerts(fullData).length}) <ChevronRight size={16}/></button></div></FloatingPanel>}
             </div>
             <span className="header-divider" />
             <span className="date-label" aria-label="Çalışma alanı tarihi">

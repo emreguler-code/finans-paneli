@@ -1,6 +1,6 @@
-# Finans Paneli 1.16.0
+# Finans Paneli 1.17.0
 
-1.16.0: tüm sayfalarda ortak dokuz bölgeli React kabuğu; içerik genişliğine uyarlanan sütunlar ve tablolar, kalıcı menü tercihi, yüksekliğine yer ayrılan işlem çubuğu ve bağımsız taslak onayı. Mevcut Sade Netlik görünümü korunur; yerleşim ve tema değerleri ayrıdır. Şema 12. [Sürüm kapsamı](docs/SURUM-1.16.0.md) · [Yerleşim sözleşmesi](docs/GLOBAL-YERLESIM-SOZLESMESI.md) · [Yedekleme kılavuzu](docs/YEDEKLEME.md).
+1.17.0: mobil açık hareket satırı ve menü etiketleri düzeltildi; özetler ve hesap listeleri sıkılaştırıldı; filtre başlığı/eylemleri erişilebilir tutuldu; mobil arama, ödeme planı ve bildirimler sadeleştirildi. Chromium ve WebKit için ayrı mobil kabul paketi eklendi. Şema 12. [Sürüm kapsamı](docs/SURUM-1.17.0.md) · [Test raporu](docs/TEST-RAPORU-1.17.0.md) · [Yerleşim sözleşmesi](docs/GLOBAL-YERLESIM-SOZLESMESI.md).
 
 Sade Netlik tasarımında cari hesaplar, banka/kasa, kredi kartları, ödeme planı ve raporlar. React/Vite arayüz; PHP/MySQL API. Banka bağlantısı yoktur.
 
@@ -54,6 +54,8 @@ npm run release:package
 npx playwright install --with-deps chromium
 npm run test:package
 npm run test:browser
+npx playwright install --with-deps webkit
+npm run test:mobile
 ```
 
 `test:api` sentetik veride finansal işlemleri; `test:migrations` eski verilerin korunmasını, yedeği, başarısız geçişi ve tekrar denemeyi; `test:browser` derlenmiş arayüzü masaüstü ve dar ekranlarda doğrular. `test:browser` öncesinde `npm run build` çalıştırın. Yerel Chromium kullanmak için `QA_BROWSER_BIN=/usr/bin/chromium` tanımlanabilir. Release iş akışı bu kontrollerin hepsini çalıştırır. Eski API sözleşmesi testleri `tests/historical/` altında ayrılmıştır.
@@ -78,3 +80,5 @@ Yerel Chromium gerekiyorsa `QA_BROWSER_BIN=/usr/bin/chromium` tanımlayın. Dock
 Çalışır demo ve giriş bilgileri yalnız Git dışında `.qa/current-demo` dosyasının gösterdiği klasördeki `local-session.json` içinde saklanır. Bu dosyayı paylaşmayın. Yerel sunucu yalnız 127.0.0.1'de dinler; dış hosting yayını değildir. `demo:stop` yalnız bu demo koşusunun konteynerlerini ve yerel kimlik bilgilerini kaldırır. Ortam yeniden başlarsa `demo:start` yeniden çalıştırılır. Ayrıntılı bulgular `docs/TEST-RAPORU-1.14.0.md` içindedir.
 
 `npm run test:backups`, yalnız koşucunun oluşturduğu izole veritabanında yedekleme, bozuk dosya/ilişki, geri alma, kullanıcı yetkileri, cron ve demo temizliği senaryolarını doğrular. Canlı veritabanı hedeflemez.
+
+`test:mobile`, aynı izole fixture üzerinde Chromium ve WebKit motorlarıyla mobil açık/kapalı satır, menü, filtre/takvim, tutar ve özet düzenlerini doğrular. Her iki motorun kurulması gerekir. `QA_BROWSER_ENGINES=chromium` yalnız hedefli yerel kontrol içindir; sürüm kabulünde iki motor birlikte çalışır. WebKit emülasyonu fiziksel iPhone testi değildir.

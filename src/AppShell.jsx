@@ -2,9 +2,9 @@ import {Children,cloneElement,isValidElement,useEffect,useLayoutEffect,useRef,us
 import {Menu,PanelLeftClose,PanelLeftOpen,EyeOff} from 'lucide-react';
 import {FloatingPanel} from './FloatingPanel';
 const preferenceKey='finans.sidebar.preference';
-function useQuery(query){return useSyncExternalStore(callback=>{const m=matchMedia(query);m.addEventListener('change',callback);return()=>m.removeEventListener('change',callback)},()=>matchMedia(query).matches,()=>false)}
+export function useMediaQuery(query){return useSyncExternalStore(callback=>{const m=matchMedia(query);m.addEventListener('change',callback);return()=>m.removeEventListener('change',callback)},()=>matchMedia(query).matches,()=>false)}
 export function useShellLayout(){
- const mobile=useQuery('(max-width:760px)'),narrow=useQuery('(max-width:1280px)');
+ const mobile=useMediaQuery('(max-width:760px)'),narrow=useMediaQuery('(max-width:1280px)');
  const [preference,setPreference]=useState(()=>{try{const value=localStorage.getItem(preferenceKey);return ['full','compact','hidden'].includes(value)?value:'full'}catch{return 'full'}}),[open,setOpen]=useState(false);
  const mode=mobile?(open?'drawer':'hidden'):preference==='hidden'?'hidden':preference==='compact'||narrow?'compact':'full';
  useEffect(()=>setOpen(false),[mobile]);

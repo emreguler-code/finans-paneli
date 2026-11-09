@@ -1,0 +1,246 @@
+/* Component presentation only. The AppShell remains responsible for regions. */
+.search-filter-panel.floating-panel {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+.search-filter-panel > .floating-heading,
+.search-filter-panel > .search-filter-actions,
+.search-filter-panel > .cari-error {
+  flex: 0 0 auto;
+}
+.search-filter-panel > .search-filter-actions {
+  margin: 0;
+  position: static;
+}
+.search-filter-panel .shared-filters {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  align-content: start;
+  margin: 0;
+}
+@media (max-width: 760px) {
+  .layout-shell[data-sidebar="drawer"] .sidebar .brand > span:last-child:not(.brand-mark),
+  .layout-shell[data-sidebar="drawer"] .sidebar .workspace-label,
+  .layout-shell[data-sidebar="drawer"] .sidebar button span,
+  .layout-shell[data-sidebar="drawer"] .sidebar .demo-note,
+  .layout-shell[data-sidebar="drawer"] .sidebar nav button em {
+    display: initial;
+  }
+  .layout-shell[data-sidebar="drawer"] .sidebar button {
+    justify-content: flex-start;
+  }
+  .layout-shell[data-sidebar="drawer"] .sidebar .brand {
+    margin: 0 52px 24px 8px;
+  }
+  .layout-shell .sidebar .sidebar-close {
+    position: absolute;
+    top: 20px;
+    right: 12px;
+    width: 44px;
+    height: 44px;
+    justify-content: center;
+    padding: 0;
+  }
+  .layout-shell[data-sidebar="drawer"] .sidebar .sidebar-layout-toggle {
+    display: none;
+  }
+  .layout-shell .page-search-row .search-submit {
+    display: none;
+  }
+  .layout-shell .page-search-row input {
+    font-size: 16px;
+  }
+  /* Every mobile metric starts at the same edge; desktop dividers do not survive. */
+  .layout-shell .summary-section:where(:not(.party-list-summary):not(.vehicle-detail-summary)) .summary-fields {
+    grid-template-columns: minmax(0,1fr);
+    gap: 0;
+  }
+  .layout-shell .summary-section:where(:not(.party-list-summary):not(.vehicle-detail-summary)) .summary-field:nth-child(n) {
+    display: grid;
+    grid-template-columns: minmax(0,1fr) auto;
+    align-items: center;
+    gap: 4px 12px;
+    margin: 0;
+    padding: 12px 0;
+    border: 0;
+    border-top: 1px solid var(--line);
+  }
+  .layout-shell .party-detail-summary:not(.is-open) .summary-field:not(:first-child) {
+    display: none;
+  }
+  .layout-shell .summary-section .summary-field:first-child {
+    border-top: 0 !important;
+    padding-top: 0 !important;
+  }
+  .layout-shell .summary-section .summary-field:last-child {
+    padding-bottom: 0 !important;
+  }
+  .layout-shell .summary-section .summary-field > small {
+    grid-column: 1 / -1;
+  }
+  .layout-shell .summary-section .summary-value {
+    margin: 0;
+    font-size: 20px;
+    text-align: right;
+  }
+  .layout-shell .summary-section .summary-field > span {
+    font-size: 14px;
+  }
+  .layout-shell .summary-section .summary-primary:nth-child(n) {
+    display: block;
+  }
+  .layout-shell .summary-primary .summary-value {
+    font-size: 27px;
+    text-align: left;
+    margin: 4px 0;
+  }
+  .layout-shell .summary-section .summary-note {
+    margin-top: 12px;
+    padding-top: 12px;
+  }
+  .layout-shell .report-metrics .cari-total {
+    font-size: 24px;
+    line-height: 1.4;
+  }
+  .layout-shell .report-metrics .summary-field {
+    grid-template-columns: minmax(0,1fr);
+  }
+  .layout-shell .report-metrics .summary-value {
+    text-align: left;
+  }
+  .layout-shell .report-metrics .summary-field > span {
+    font-size: 12px;
+  }
+  .layout-shell .account-grid .account-grid-item {
+    padding: 0 16px;
+  }
+  .layout-shell .account-grid .account-face {
+    min-height: 0;
+    padding: 14px 0;
+    gap: 8px;
+  }
+  .layout-shell .account-grid .bank-face .account-owner,
+  .layout-shell .account-grid .bank-face .account-iban,
+  .layout-shell .account-grid .bank-face .account-face-balance > span,
+  .layout-shell .account-grid .bank-face > footer > span:first-child {
+    display: none;
+  }
+  .layout-shell .account-grid .bank-face .account-face-balance {
+    margin: 0;
+  }
+  .layout-shell .account-grid .bank-face > footer:not(:has(> span + span)) {
+    display: none;
+  }
+  .layout-shell .account-grid .bank-face > footer {
+    border: 0;
+    padding: 0;
+  }
+  .layout-shell .account-grid .account-face h2 {
+    margin: 0;
+  }
+  .layout-shell .ledger-view > .account-ledger-heading {
+    padding: 8px 12px;
+    gap: 8px;
+  }
+  .layout-shell .account-ledger-heading .cari-tabs button {
+    padding: 8px;
+    font-size: 12px;
+  }
+  .layout-shell .plan-controls {
+    display: grid;
+    grid-template-columns: 44px minmax(0,1fr) 44px;
+    gap: 8px;
+    padding: 12px;
+  }
+  .layout-shell .plan-period {
+    display: contents;
+  }
+  .layout-shell .plan-period > .text-button {
+    grid-column: 1;
+    grid-row: 2;
+    justify-self: stretch;
+    min-height: 44px;
+    padding: 4px 0;
+  }
+  .layout-shell .plan-views {
+    grid-column: 2 / -1;
+    grid-row: 2;
+    min-width: 0;
+    width: 100%;
+  }
+  .layout-shell .plan-period .date-control,
+  .layout-shell .plan-period .date-trigger {
+    width: 100%;
+    min-width: 0;
+  }
+  .layout-shell .plan-extra-controls {
+    gap: 4px;
+    padding: 0 12px 8px;
+    align-items: flex-start;
+  }
+  .layout-shell .plan-extra-controls button {
+    text-align: left;
+    padding: 4px 0;
+    min-height: 44px;
+  }
+  .search-filter-panel .shared-filters {
+    padding: 12px;
+    gap: 12px;
+  }
+  .search-filter-panel input,
+  .search-filter-panel select,
+  .search-filter-panel .date-trigger {
+    font-size: 16px;
+    min-height: 44px;
+  }
+  .search-filter-panel.floating-panel .search-filter-actions {
+    padding: 12px;
+    gap: 8px;
+  }
+  .search-filter-panel .search-filter-actions button {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 44px;
+    padding: 8px;
+  }
+  .notification-panel .notification-compact {
+    padding: 0 12px 8px;
+  }
+  .notification-panel .notification-row {
+    min-height: 64px;
+    padding: 10px 0;
+    gap: 8px;
+  }
+  .notification-panel .notification-row.danger,
+  .notification-panel .notification-row.warning {
+    background: transparent;
+  }
+  .notification-panel .notification-row > span {
+    min-width: 0;
+    flex: 1;
+  }
+  .notification-panel .notification-row small {
+    margin-top: 4px;
+  }
+}
+@media (max-width: 360px) {
+  .layout-shell .credit-face .limit-legend {
+    grid-template-columns: minmax(0,1fr);
+    gap: 8px;
+  }
+  .layout-shell .credit-face .limit-legend > div {
+    display: grid;
+    grid-template-columns: minmax(0,1fr) auto;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .layout-shell .credit-face .limit-legend strong {
+    white-space: nowrap;
+    text-align: right;
+  }
+}

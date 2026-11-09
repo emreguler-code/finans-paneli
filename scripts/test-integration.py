@@ -10,7 +10,7 @@ def free_port():
  with socket.socket() as sock:
   sock.bind(('127.0.0.1',0));return sock.getsockname()[1]
 def main():
- parser=argparse.ArgumentParser();parser.add_argument('suite',choices=['api','migrations','browser','package','demo','backups']);parser.add_argument('--keep',action='store_true',help='Keep this isolated demo running');args=parser.parse_args()
+ parser=argparse.ArgumentParser();parser.add_argument('suite',choices=['api','migrations','browser','package','demo','backups','mobile']);parser.add_argument('--keep',action='store_true',help='Keep this isolated demo running');args=parser.parse_args()
  ident=uuid.uuid4().hex[:12];runtime=ROOT/'.qa'/ident;runtime.mkdir(parents=True)
  names=[];db_name='finans-qa-db-'+ident;api_name='finans-qa-php-'+ident
  password=secrets.token_hex(24);token=secrets.token_hex(32);admin=secrets.token_hex(24)
@@ -45,9 +45,9 @@ def main():
    shutil.copytree(ROOT/'public',web,ignore=shutil.ignore_patterns('config.php'))
    migrations=web/'api/v2/migrations';migrations.mkdir();shutil.copyfile(ROOT/'database/migrations/002-cari.sql',migrations/'002-cari.sql')
   config=web/'api/config.php';config.write_text("<?php\nreturn "+"['db_host'=>'127.0.0.1','db_port'=>"+str(db_port)+",'db_name'=>'finans_test','db_user'=>'root','db_password'=>'"+password+"','setup_token'=>'"+token+"','require_https'=>false];\n");config.chmod(0o600)
-  if args.suite in ['api','browser','demo','backups']:
+  if args.suite in ['api','browser','demo','backups','mobile']:
    sql('USE finans_test;'+(ROOT/'database/schema.sql').read_text())
-  if args.suite in ['browser','demo']:
+  if args.suite in ['browser','demo','mobile']:
    for source in (ROOT/'dist/client').iterdir():
     if source.is_dir():shutil.copytree(source,web/source.name,dirs_exist_ok=True)
     else:shutil.copyfile(source,web/source.name)
@@ -86,17 +86,17 @@ def main():
    json.load(opener.open(urllib.request.Request(env['API_TEST_URL']+'?action=setup',data=body,headers={'Content-Type':'application/json','X-CSRF-Token':session['csrf']})))
    if args.suite=='backups':run(['python3',str(ROOT/'tests/backups-integration.py')],env=env)
    if args.suite=='api':run(['python3',str(ROOT/'tests/finance-integration.py')],env=env)
-   if args.suite=='browser':
+   if args.suite in ['browser','mobile']:
     # Browser acceptance initializes its own fixture, independent of API-suite mutations.
     session=json.load(opener.open(env['API_TEST_URL']+'?action=session'))
     json.load(opener.open(urllib.request.Request(env['API_TEST_URL']+'?action=update_apply',data=b'{}',headers={'Content-Type':'application/json','X-CSRF-Token':session['csrf']})))
     payload=json.dumps({'requestId':str(uuid.uuid4()),'profile':'compact'}).encode()
     json.load(opener.open(urllib.request.Request(env['API_TEST_URL']+'?action=demo_seed',data=payload,headers={'Content-Type':'application/json','X-CSRF-Token':session['csrf']})))
     env.update(QA_BASE_URL=f'http://127.0.0.1:{api_port}',QA_USERNAME=env['API_TEST_USERNAME'],QA_PASSWORD=admin,QA_OUTPUT_DIR=str(runtime/'browser'))
-    run(['node',str(ROOT/'tests/browser.cjs')],env=env)
+    run(['node',str(ROOT/('tests/mobile117-browser.cjs' if args.suite=='mobile' else 'tests/browser.cjs'))],env=env)
     # Comparison uses the same API data for the prior packaged frontend.
     baseline=ROOT/'.qa/baseline-1.6/hosting'
-    if baseline.exists() and os.environ.get('QA_COMPARE_RELEASE')=='1':
+    if args.suite=='browser' and baseline.exists() and os.environ.get('QA_COMPARE_RELEASE')=='1':
      shutil.copytree(web/'api',baseline/'api',dirs_exist_ok=True)
      env['QA_COMPARE_BASELINE']=str(baseline);env['QA_COMPARE_WEB']=str(web)
      run(['node',str(ROOT/'tests/visual-compare.cjs')],env=env)

@@ -1,6 +1,6 @@
 {
   "name": "finans-v1",
-  "version": "1.16.0",
+  "version": "1.17.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -18,7 +18,8 @@
     "demo:stop": "python3 scripts/stop-demo.py",
     "demo:start": "python3 scripts/test-integration.py demo --keep",
     "test:package": "python3 scripts/test-integration.py package",
-    "test:backups": "python3 scripts/test-integration.py backups"
+    "test:backups": "python3 scripts/test-integration.py backups",
+    "test:mobile": "python3 scripts/test-integration.py mobile"
   },
   "dependencies": {
     "@vitejs/plugin-react": "5.0.4",
