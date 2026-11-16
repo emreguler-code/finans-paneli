@@ -35,7 +35,6 @@ export function FinancePages({
   data,
   open,
   search = '',
-  onLabel,
   initialAccount = 'all',
   initialParty,
   initialDate,
@@ -70,12 +69,7 @@ export function FinancePages({
     plan = page === 'Ödeme Planı',
     isUsers = page === 'Kullanıcılar';
   const party = cari ? data.parties.find(p => p.id === selected) : null;
-  const detail = party,
-    canCreate = can(data.user, 'create');
-  useEffect(() => {
-    onLabel(detail?.name || '');
-    return () => onLabel('');
-  }, [detail?.name]);
+  const canCreate = can(data.user, 'create');
   useEffect(() => {
     if (!cari || party) return;
     const c = new AbortController();

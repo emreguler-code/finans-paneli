@@ -29,7 +29,10 @@ export default [
     },
     rules: {
       ...js.configs.recommended.rules,
-      "no-unused-vars": "off",
+      "no-unused-vars": [
+        "error",
+        { args: "none", caughtErrors: "none", varsIgnorePattern: "^_" },
+      ],
       "unused-imports/no-unused-imports": "error",
       "jsx-references/uses": "error",
       "react-hooks/rules-of-hooks": "error",

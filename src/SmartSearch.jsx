@@ -79,15 +79,13 @@ export function SmartSearch({
     const timer = setTimeout(() => setter.current(text.trim()), 300);
     return () => clearTimeout(timer);
   }, [text, query, composing]);
-  const chips = fields
-    .filter(active)
-    .flatMap((f) =>
-      selectedValues(f.value).map((v) => ({
-        field: f,
-        value: v,
-        label: f.label + ": " + labelFor(f, v),
-      })),
-    );
+  const chips = fields.filter(active).flatMap((f) =>
+    selectedValues(f.value).map((v) => ({
+      field: f,
+      value: v,
+      label: f.label + ": " + labelFor(f, v),
+    })),
+  );
   function choose(f, value) {
     const current = active(f) ? selectedValues(f.value) : [];
     const combined = [...new Set([...current, value])];

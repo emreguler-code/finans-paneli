@@ -14,7 +14,7 @@ const fmt=n=>new Intl.NumberFormat('tr-TR',{minimumFractionDigits:2,maximumFract
  const search=p.locator('#search');let reloads=0;p.on('request',r=>{if(r.isNavigationRequest()&&r.frame()===p.mainFrame())reloads++});
  await nav('Hesaplar');
  ok('Search and filters share one bar without external submit',await p.locator('.smart-search-box>svg').count()===1&&await p.locator('.search-submit').count()===0);
- ok('Search border matches table separator',await p.evaluate(()=>getComputedStyle(document.querySelector('.page-search-row .cari-search')).borderTopColor===getComputedStyle(document.querySelector('.account-list-panel')).borderTopColor));
+ ok('Search border matches table separator',await p.evaluate(()=>getComputedStyle(document.querySelector('.smart-search-box')).borderTopColor===getComputedStyle(document.querySelector('.account-list-panel')).borderTopColor));
  const initialCount=await p.locator('.account-grid-item').count();await search.fill('KM');await p.waitForTimeout(450);ok('Two characters do not apply automatic search',await p.locator('.account-grid-item').count()===initialCount);
  await search.fill('KMH');await p.waitForFunction(()=>document.querySelectorAll('.account-grid-item').length===1&&document.querySelector('.account-face h2')?.textContent==='KMH Deneme Hesabı');ok('Three characters apply automatically',true);
  await search.fill('');await p.waitForFunction(()=>document.querySelectorAll('.account-grid-item').length===4);ok('Clearing search restores all accounts',true);

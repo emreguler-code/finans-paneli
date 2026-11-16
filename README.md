@@ -1,4 +1,6 @@
-# Finans Paneli 1.20.0
+# Finans Paneli 1.21.0
+
+1.21.0: içerik genişliğine bağlı tutarlı yerleşim, yalıtılmış arama/form stilleri ve Firefox dahil otomatik geometri kabulü. [Güncel kapsam](docs/SURUM-1.21.0.md) · [Kod kalite politikası](docs/KOD-KALITESI.md).
 
 Akıllı arama/filtre çipleri, satır içinde işlem türü ve tutar düzenleme, son 30 hareketten kademeli yükleme, gerçek ay sonu bakiye özeti ve boşluk bırakmayan hızlı giriş. Şema 12 korunur. [Bölüm bazında analiz ve sürüm kapsamı](docs/SURUM-1.20.0.md) · [Test raporu ve canlı ekranlar](docs/TEST-RAPORU-1.20.0.md) · [Tasarım ilkeleri](docs/TASARIM-ILKELERI.md).
 

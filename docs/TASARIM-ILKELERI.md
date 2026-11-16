@@ -197,3 +197,8 @@ Cari detayında ad/tür/güncel bakiye kompakt tek yüzeydedir; önceki ayrı ba
 ## 1.20.0 — Son notların yürürlüğü
 
 Ayrıntılı bölüm bazlı analiz SURUM-1.20.0.md içindedir. Arama/filtre aynı çubukta kaldırılabilir çiplerdir; eski harici ara/filtre/sıfırla düğmeleri kalkar. Aktif tarih aynı sütunda iki satır (12 px/500 tarih, 12 px/400 gün-saat-saniye), tekrarsızdır. Finansal düzenleme işlem türü dahil kendi satırında; ilgili alanlar aynı satırda genişler. Görünüm son 30 hareketten başlar, önceki kayıtlar konumu bozmadan eklenir. Gerçek ay sonu bakiyesi filtrelenen toplamla karıştırılmaz. Gizli giriş formu grid'de yer bırakmaz, + aynı konumda yüzer. Ortak davranışlar cari/banka/kart/ödeme/rapor hareketlerinde paylaşılır; araç, takvim, ekstre ve ayarların farklı veri anlamları korunur.
+
+
+## 1.21.0 — Yerleşim ve bileşen sahipliği
+
+Ana/yardımcı sütun dönüşümü, ana tablonun okunabilir minimumunu birlikte karşılar. 1,9:1 masaüstü oranı korunur; yeterli alan yoksa yardımcı bölge tam genişlikte alta iner. Arama ikonları dikey merkezlidir; filtre metinleri kelime/harf bazında parçalanmaz, etiket kendi bütünlüğünde sarılır. Ek işlem alanları yatay alanı kullanır; gereksiz iç içe açılır bölümler kaldırılır. Form eylemleri içerik genişliğiyle büyümez; mobil dokunma hedefleri korunur. Yerleşim hataları viewport ve bileşen geometri testleriyle denetlenir. Tipografi/renk/ikon dili ve finansal anlamlar değişmez.

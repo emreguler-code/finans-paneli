@@ -58,7 +58,6 @@ export function App({
   const createPages={party:'Cari hesaplar',account:'Hesaplar',card:'Kredi kartları',vehicle:'Araçlarım'};
   const editingParty=nav.route.page==='Cari hesaplar'&&nav.route.entry==='duzenle';
   const entryPage=nav.route.record==='yeni'||editingParty;
-  const creating=financeContext&&createPages[financeContext.entity]&&!financeContext.item?.id&&!['view','history','status'].includes(financeContext.mode);
   function closeFinance(){setFinanceContext(null);if(entryPage){nav.clearBlocker();nav.navigate(returnRoute.current||(editingParty?{...nav.route,entry:''}:{page:nav.route.page}),{replace:true})}}
   useEffect(()=>{if(nav.route.record==='yeni'&&!financeContext){const entity=Object.keys(createPages).find(key=>createPages[key]===nav.route.page);if(entity&&can(fullData.user,'create')){contextRoute.current=routeHash(nav.route);setFinanceContext({entity});setContextKey(k=>k+1)}else nav.navigate({page:nav.route.page},{replace:true})}},[nav.route.page,nav.route.record]);
   useEffect(()=>{if(editingParty&&!financeContext){const item=fullData.parties.find(p=>p.id===Number(nav.route.record));if(item&&can(fullData.user,'edit')){contextRoute.current=routeHash(nav.route);setFinanceContext({entity:'party',item});setContextKey(k=>k+1)}else nav.navigate({...nav.route,entry:''},{replace:true})}},[editingParty,nav.route.record]);
@@ -82,7 +81,6 @@ export function App({
   }
   useEffect(()=>{if(financeContext&&contextRoute.current&&routeHash(nav.route)!==contextRoute.current)setFinanceContext(null)},[nav.route.page,nav.route.record,nav.route.tab,nav.route.entry]);
   const [overviewFilters,setOverviewFilters]=useState(false);
-  const [partyLabel, setPartyLabel] = useState('');
   const {
     accounts,
     tx,
@@ -108,7 +106,7 @@ export function App({
   };
   const page=nav.route.page;
   const setPage=p=>nav.navigate({page:p});
-  const shell=useShellLayout(),compact=shell.mode==='compact',setCompact=value=>shell.choose(value?'compact':'full');
+  const shell=useShellLayout(),compact=shell.mode==='compact';
   const
     [mobileMore, setMobileMore] = useState(false),
     [scope, setScope] = useState("all"),
@@ -527,7 +525,7 @@ export function App({
               <span className="sr-only">İşlem ekle</span>
             </button>
           </div>}
-          {entryPage?null:page === "Ayarlar" ? <SettingsPage key={nav.revision} data={fullData} notify={notify}/> : page === "Arama" ? <GlobalSearchPage data={fullData}/> : page === "Bildirimler" ? <NotificationsPage key={routeKey+nav.revision} data={fullData} initialScope={{...notificationScope,source:nav.route.source}} onOpenNotification={openNotification}/> : page !== "Genel bakış" ? <FinanceHub key={page+'-'+routeKey+'-'+nav.revision} page={page} onNotifications={showNotifications} onOpenNotification={openNotification} initialEventId={notificationTarget?.eventId||Number(nav.route.event)||undefined} initialRecord={notificationTarget?.recordId} initialParty={notificationTarget?.partyId} initialDate={notificationTarget?.date} data={fullData} onState={applyState} notify={notify} open={openFinance} search="" initialAccount={scope} initialDue={claimFilter} onLabel={setPartyLabel} /> : <>
+          {entryPage?null:page === "Ayarlar" ? <SettingsPage key={nav.revision} data={fullData} notify={notify}/> : page === "Arama" ? <GlobalSearchPage data={fullData}/> : page === "Bildirimler" ? <NotificationsPage key={routeKey+nav.revision} data={fullData} initialScope={{...notificationScope,source:nav.route.source}} onOpenNotification={openNotification}/> : page !== "Genel bakış" ? <FinanceHub key={page+'-'+routeKey+'-'+nav.revision} page={page} onNotifications={showNotifications} onOpenNotification={openNotification} initialEventId={notificationTarget?.eventId||Number(nav.route.event)||undefined} initialRecord={notificationTarget?.recordId} initialParty={notificationTarget?.partyId} initialDate={notificationTarget?.date} data={fullData} onState={applyState} notify={notify} open={openFinance} search="" initialAccount={scope} initialDue={claimFilter} /> : <>
               <div className="snapshot-label">
                 <span>GÜNCEL DURUM</span>
                 <span>

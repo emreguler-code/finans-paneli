@@ -16,6 +16,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
+      - run: npm audit --audit-level=moderate
       - name: Check PHP syntax
         run: |
           while IFS= read -r -d '' file; do php -l "$file"; done < <(find public -name '*.php' ! -name 'config.php' -print0)
