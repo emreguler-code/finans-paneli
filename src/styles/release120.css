@@ -36,3 +36,14 @@
 @media(max-width:760px){.smart-search-box {padding-top:0!important;padding-bottom:0!important}.smart-search-box .search-options,.smart-search-box .search-clear {min-height:44px;flex-basis:36px}.smart-search-box input {min-height:42px}}
 @media(max-width:350px){.inline-list-tools .smart-search-box>svg {display:none}}
 .vehicle-record-row {min-height:56px}.vehicle-record-actions .list-icon svg {width:16px;height:16px}
+/* Inline editors flatten section wrappers; only context-dependent fields take extra space. */
+.layout-shell .entry-inline {text-align:left}
+.layout-shell .entry-inline .sheet-scroll {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;min-height:0;flex:none}
+.layout-shell .entry-inline .entry-section,.layout-shell .entry-inline .entry-section-fields {display:contents;padding:0;margin:0;border:0}
+.layout-shell .entry-inline .entry-section>h3 {display:none}
+.layout-shell .entry-inline .cari-field {margin:0!important;text-align:left}
+.layout-shell .entry-inline .inline-effect-preview,.layout-shell .entry-inline .cari-error,.layout-shell .entry-inline .entry-errors,.layout-shell .entry-inline label:has(input[name=reason]) {grid-column:1/-1;margin:0}
+.layout-shell .entry-inline .inline-effect-preview {padding:4px 0}
+.layout-shell .entry-inline .inline-effect-preview small {margin:0}
+@container ledger (width < 880px){.layout-shell .entry-inline .sheet-scroll {grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){.layout-shell .entry-inline .sheet-scroll {grid-template-columns:minmax(0,1fr)}}

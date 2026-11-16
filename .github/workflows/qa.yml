@@ -50,7 +50,7 @@ jobs:
           import shutil
           from pathlib import Path
           for p in Path('.qa').rglob('*'):
-              if p.is_file() and (p.suffix == '.png' or p.name in ['checks.json','failure.txt','failure-layout.json']):
+              if p.is_file() and (p.suffix == '.png' or p.name in ['checks.json','failure.txt','failure-layout.json'] or p.name.endswith('-failure.txt')):
                   target = Path('qa-evidence') / p.relative_to('.qa')
                   target.parent.mkdir(parents=True, exist_ok=True)
                   shutil.copyfile(p, target)
@@ -94,7 +94,7 @@ jobs:
           import shutil
           from pathlib import Path
           for p in Path('.qa').rglob('*'):
-              if p.is_file() and (p.suffix == '.png' or p.name in ['checks.json','failure.txt','failure-layout.json']):
+              if p.is_file() and (p.suffix == '.png' or p.name in ['checks.json','failure.txt','failure-layout.json'] or p.name.endswith('-failure.txt')):
                   target = Path('qa-evidence') / p.relative_to('.qa')
                   target.parent.mkdir(parents=True, exist_ok=True)
                   shutil.copyfile(p, target)
