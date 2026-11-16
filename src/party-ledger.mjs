@@ -30,3 +30,14 @@ export function monthlyEffects(events){
  for(const e of events){if(!parts(e.event_date)||e.cancelled||e.scheduled)continue;const key=e.event_date.slice(0,7),m=months.get(key)||{key,label:monthNames[Number(key.slice(5))-1]+' '+key.slice(0,4),positive:0,negative:0,net:0,count:0};const effect=Number(e.party_effect)||0;if(effect>0)m.positive+=effect;else m.negative+=effect;m.net+=effect;m.count++;months.set(key,m);}
  return months;
 }
+export function detailedMovementDate(date,time){
+ const p=parts(date);if(!p)return ['Tarih yok',''];
+ const weekdays=['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
+ const clock=time?(time.length===5?time+':00':time.slice(0,8)):'';
+ return [p.day+' '+monthNames[p.month-1]+' '+p.year,weekdays[new Date(p.stamp).getUTCDay()]+(clock?' · '+clock:'')];
+}
+export function reconciledMonths(events,{effect=e=>Number(e.party_effect)||0,balance=e=>Number(e.party_balance),currentBalance}={}){
+ const rows=events.filter(e=>!e.cancelled&&!e.scheduled&&parts(e.event_date)).slice().sort((a,b)=>(a.event_date+(a.event_time||'')).localeCompare(b.event_date+(b.event_time||''))||Number(a.id)-Number(b.id));
+ let running=Number.isFinite(currentBalance)?currentBalance-rows.reduce((n,e)=>n+effect(e),0):rows.length&&Number.isFinite(balance(rows[0]))?balance(rows[0])-effect(rows[0]):0;
+ const months=new Map();for(const e of rows){const key=e.event_date.slice(0,7),m=months.get(key)||{key,label:monthNames[Number(key.slice(5))-1]+' '+key.slice(0,4),opening:running,positive:0,negative:0,closing:running};const n=effect(e);if(n>0)m.positive+=n;else m.negative+=n;running+=n;m.closing=running;months.set(key,m)}return months;
+}

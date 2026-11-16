@@ -1,3 +1,4 @@
+import {matchesChoice,selectedValues} from './search-query.mjs';
 import {ContentColumns} from './AppShell';
 import {useRecordState,useRouteTab,useNavigation} from './Navigation';
 import {VehicleIcon} from './VehicleIcon';
@@ -21,7 +22,7 @@ export function VehiclesPage({data,open,initialRecord,onNotifications}){
  const vehicle=data.vehicles.find(v=>v.id===selected),all=(data.vehicle_records||[]).filter(r=>r.vehicle_id===vehicle?.id);
  useLayoutEffect(()=>{const record=data.vehicle_records?.find(r=>r.id===initialRecord);if(record){setRecordLimit(data.vehicle_records.length);setExpanded(record.id);setQuery('');setType('all');setFrom('');setTo('')}},[initialRecord]);
  const list=data.vehicles.filter(v=>(archive||v.active)&&`${v.plate} ${v.name} ${v.owner}`.toLocaleLowerCase('tr').includes(query.toLocaleLowerCase('tr')));
- const records=all.filter(r=>(type==='all'||r.type===type||type==='policies'&&['insurance','casco'].includes(r.type))&&(!from||r.date>=from)&&(!to||r.date<=to)&&`${r.title} ${r.company} ${r.policy_no} ${r.notes} ${vehicleTypes[r.type]}`.toLocaleLowerCase('tr').includes(query.toLocaleLowerCase('tr'))).sort((a,b)=>(sort==='date-asc'?1:-1)*(a.date.localeCompare(b.date)||a.id-b.id));
+ const records=all.filter(r=>(matchesChoice(type,r.type)||selectedValues(type).includes('policies')&&['insurance','casco'].includes(r.type))&&(!from||r.date>=from)&&(!to||r.date<=to)&&`${r.title} ${r.company} ${r.policy_no} ${r.notes} ${vehicleTypes[r.type]}`.toLocaleLowerCase('tr').includes(query.toLocaleLowerCase('tr'))).sort((a,b)=>(sort==='date-asc'?1:-1)*(a.date.localeCompare(b.date)||a.id-b.id));
  function inspect(kind){setView('İşlemler');setType(kind);setExpanded(null);setHistory(null);setQuery('');setFrom('');setTo('')}
  function selectVehicle(id){setSelected(id)}
  function targetAlert(alert){const record=data.vehicle_records.find(r=>r.id===alert.recordId);if(record)nav.navigate({page:'Araçlarım',record:String(record.vehicle_id),tab:'İşlemler',entry:String(record.id)},{fresh:true})}

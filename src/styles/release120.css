@@ -1,0 +1,38 @@
+/* Sade Netlik 1.20 — shared search, progressive rows and in-place editing. */
+.smart-search-box {display:flex;align-items:center;flex-wrap:wrap;gap:6px;min-height:44px;height:auto;padding:6px 10px!important;cursor:text}
+.smart-search-box>svg {flex:0 0 18px}.smart-search-box input {flex:1 1 140px;width:auto;min-width:90px;min-height:30px;padding:0;border:0;font:inherit;outline:none;background:transparent}
+.smart-search-box .search-token {display:inline-flex;align-items:center;gap:6px;min-height:30px;max-width:100%;background:var(--surface-hover);color:var(--accent);border-radius:6px;padding:4px 8px;font-size:12px;overflow-wrap:anywhere;text-align:left}
+.search-token svg {flex-shrink:0}.search-clear,.search-options {display:flex;align-items:center;justify-content:center;flex:0 0 30px;min-height:32px;border:0;background:transparent;color:var(--muted)}
+.smart-suggestions [role=listbox] {padding:8px;display:grid;max-height:50dvh;overflow:auto}.smart-suggestions [role=listbox]>button {text-align:left;min-height:44px;padding:10px 12px;border-radius:8px;font-size:14px}
+.smart-suggestions [role=option][aria-selected=true],.smart-suggestions [role=option]:hover {background:var(--surface-hover);color:var(--accent)}
+.smart-search .page-search-row {display:block}.smart-search-box {width:100%}.smart-search .search-chips {display:none}
+.smart-field-editor .shared-filters {display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px}.smart-field-editor label {display:grid;gap:6px;font-size:12px}
+.smart-search .cari-error {font-size:12px;margin:4px 0 0}.inline-list-tools .page-search {min-width:0}
+.layout-shell #entry-dock-root.composer-folded {height:0;min-height:0;padding:0;overflow:visible;container-type:normal}
+.layout-shell .persistent-composer.is-collapsed {height:0;min-height:0;border:0;padding:0;width:0;overflow:visible}
+.party-compose-toggle {z-index:90}
+.movement-date.detailed {display:flex;flex-direction:column;gap:2px;line-height:1.45;white-space:nowrap;font-size:12px}
+.movement-date.detailed>strong {font-size:12px;font-weight:500;color:var(--ink)}.movement-date.detailed>small {font-size:12px;font-weight:400;color:var(--muted);font-variant-numeric:tabular-nums}
+.ledger-month-summary .month-signed {display:inline-flex;align-items:center;gap:4px;white-space:nowrap}.ledger-month-summary td>div>strong:last-child {margin-right:0}
+.ledger-load-row {display:flex;justify-content:center;padding:12px}.ledger-load-row button {min-height:36px;font-size:12px}
+.layout-shell .ledger-view tr.is-editing td {vertical-align:middle}.ledger-editor-slot {min-width:0}.ledger-editor-slot .cari-field {font-size:0;margin:0;display:block;min-width:0}.ledger-editor-slot input,.ledger-editor-slot select {font-size:14px;font-family:inherit;width:100%;min-width:0;min-height:36px;border:1px solid var(--control-border);border-radius:8px;padding:6px;background:var(--surface-raised);color:var(--ink)}
+.ledger-editor-slot .compact-date {width:auto}.ledger-editor-slot .date-trigger {width:100%;min-width:36px;min-height:36px;padding:6px}
+.entry-inline {width:100%;padding:12px 4px;min-width:0}.entry-inline .entry-form,.entry-inline .sheet-scroll {display:block;overflow:visible;padding:0;max-height:none}
+.entry-inline .entry-section-fields {display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}.entry-inline .cari-field {margin:0;font-size:12px;gap:4px}
+.entry-inline .entry-section {margin-bottom:12px}.entry-inline h3 {font-size:12px;font-weight:500;margin:4px 0 8px}.entry-inline .sheet-footer {display:flex;justify-content:flex-end;gap:8px;padding:8px 0 0;border:0;background:none}
+.entry-inline .sheet-footer button {width:36px;min-width:36px;min-height:36px;padding:8px}.entry-inline .entry-effect {display:none}
+.inline-effect-preview {display:flex;flex-wrap:wrap;gap:8px 16px;font-size:12px;color:var(--muted);padding:8px 0}.inline-effect-preview strong {font-weight:500}.inline-effect-preview small {flex-basis:100%;font-size:12px}
+.entry-inline>.surface-body>.entry-form>.sheet-scroll>.cari-field {max-width:none}.entry-inline .inline-effect-preview+label {margin-top:8px}
+@container ledger (width < 880px){
+ .layout-shell .ledger-view tr.is-editing .mobile-ledger-cell {display:none}
+ .layout-shell .ledger-view tr.is-editing>td[data-label] {display:block;width:100%;padding:4px 16px!important}
+ .layout-shell .ledger-view tr.is-editing>td[data-label="Tarih"] {padding-top:12px!important}
+ .layout-shell .ledger-view tr.is-editing>td[data-label="Ekleyen"],.layout-shell .ledger-view tr.is-editing>td[data-label="Bakiye"] {display:none}
+ .ledger-editor-slot .cari-field {font-size:12px;display:grid;gap:4px}.ledger-editor-slot input,.ledger-editor-slot select {min-height:44px;font-size:16px}
+ .entry-inline .entry-section-fields {grid-template-columns:minmax(0,1fr)}.entry-inline .sheet-footer button {width:44px;min-width:44px;min-height:44px}
+ .layout-shell .ledger-view .ledger-month-summary td {display:block}
+}
+@media(max-width:760px){.smart-search-box input {font-size:16px;flex-basis:90px}.smart-search-box>kbd {display:none!important}.smart-search-box .search-options,.smart-search-box .search-clear {min-height:36px;flex-basis:32px}.smart-field-editor .shared-filters {grid-template-columns:1fr}.search-token {min-height:36px!important}.ledger-load-row button {min-height:44px}.entry-inline {padding-left:0;padding-right:0}}
+@media(max-width:760px){.smart-search-box {padding-top:0!important;padding-bottom:0!important}.smart-search-box .search-options,.smart-search-box .search-clear {min-height:44px;flex-basis:36px}.smart-search-box input {min-height:42px}}
+@media(max-width:350px){.inline-list-tools .smart-search-box>svg {display:none}}
+.vehicle-record-row {min-height:56px}.vehicle-record-actions .list-icon svg {width:16px;height:16px}

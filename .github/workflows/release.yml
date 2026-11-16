@@ -130,7 +130,7 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: party-ui-evidence
-          path: .qa/party119/
+          path: .qa/party120/
           if-no-files-found: ignore
       - name: Record release result for Git-only clients
         if: always() && github.event_name == 'push' && steps.validate.conclusion == 'success'

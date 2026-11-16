@@ -1,0 +1,53 @@
+// Frontend acceptance against a deterministic synthetic API. No database or credentials.
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),http=require('node:http');
+const {chromium,webkit}=require('playwright');
+const root=path.resolve(__dirname,'../dist/client'),out=path.resolve(process.env.QA_OUTPUT_DIR||'.qa/party120');fs.mkdirSync(out,{recursive:true});
+const user={id:1,username:'test-admin',short_name:'Test',role:'admin'};
+const party={id:1,name:'Poyraz Gıda',title:'Poyraz Gıda',type:'Tedarikçi',active:true,version:1,phone:'',email:'',tax_no:'',tax_office:'',address:'',notes:'',pos_programs:[],profile:{}};
+let running=0;
+const events=Array.from({length:75},(_,i)=>{
+ const e={id:i+1,version:1,party_id:1,party_name:party.name,kind:i===1?'Ödeme':'Borç',operation:i===1?'payment':'purchase_invoice',amount_cents:i===0?91300:i===1?40000:10000,settled_cents:i===0?20000:0,party_effect:i===0?-71300:i===1?40000:-10000,event_date:new Date(Date.UTC(2026,4,1+i)).toISOString().slice(0,10),event_time:'16:'+String(i%60).padStart(2,'0')+':22',description:i===0?'Kısmi ödenen stok alışı':i===1?'Tedarikçi ödemesi':'Stok alışı '+(i+1),tag:i%3===0?'Otomotiv':i%3===1?'Gıda':'Genel',creator:'Test',created_by:1,cancelled:i===4?1:0,scheduled:false,cash_effect:0,card_effect:0,account_id:null,card_id:null,document_no:'',direction:'Borç'};
+ if(!e.cancelled)running+=e.party_effect;e.party_balance=running;return e;
+});party.balance_cents=running;
+const scheduled={...events[0],id:76,event_date:'2026-11-01',scheduled:true,description:'Planlanan alış',party_effect:0,party_balance:running};
+const data={today:'2026-10-16',demo:true,schemaVersion:12,user,users:[user],parties:[party,{...party,id:2,name:'Ada Tasarım',title:'',type:'Müşteri',balance_cents:1200000},{...party,id:3,name:'Dengeli hesap',title:'',balance_cents:0}],events:[...events,scheduled],accounts:[],cards:[],claims:[],allocations:[],advances:[],tx:[],vehicles:[],vehicle_records:[],vehicle_payments:[],campaigns:[],campaign_entries:[]};
+const results=[];
+const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://localhost');if(url.pathname==='/api/index.php'){const a=url.searchParams.get('action');res.setHeader('Content-Type','application/json');res.end(JSON.stringify(a==='session'?{csrf:'synthetic-csrf',user}:a==='state'?data:a==='parties'?{parties:data.parties}:a==='audit'?{logs:[]}:{}));return}const file=path.join(root,decodeURIComponent(url.pathname));if(!file.startsWith(root+path.sep)&&file!==root+path.sep){res.writeHead(403);res.end();return}const f=fs.existsSync(file)&&fs.statSync(file).isFile()?file:path.join(root,'index.html');res.setHeader('Content-Type',f.endsWith('.js')?'application/javascript':f.endsWith('.css')?'text/css':f.endsWith('.ttf')?'font/ttf':'text/html');res.end(fs.readFileSync(f))});
+(async()=>{
+ await new Promise(resolve=>server.listen(Number(process.env.QA_PORT)||0,'127.0.0.1',resolve));const base='http://127.0.0.1:'+server.address().port;
+ if(process.env.QA_SERVE){console.log('Synthetic UI fixture listening at '+base);await new Promise(()=>{});}
+ for(const engine of (process.env.QA_BROWSER_ENGINES||'chromium,webkit').split(',')){
+  const browser=await {chromium,webkit}[engine].launch({headless:true,...(engine==='chromium'&&process.env.QA_BROWSER_BIN?{executablePath:process.env.QA_BROWSER_BIN,args:['--no-sandbox']}: {})});
+  const context=await browser.newContext({locale:'tr-TR',timezoneId:'Europe/Istanbul',viewport:{width:1440,height:1000}}),p=await context.newPage(),errors=[],checks=[];
+  p.setDefaultTimeout(12000);p.on('pageerror',e=>errors.push(e.message));const ok=(name,value)=>{assert.ok(value,name);checks.push(name);console.log('PASS',engine,name)};
+  const shot=async name=>p.screenshot({path:path.join(out,engine+'-'+name+'.png'),animations:'disabled'});
+  try{
+   await p.goto(base+'/#/cariler/1');await p.locator('.persistent-composer').waitFor();await p.waitForTimeout(300);
+   const ids=()=>p.locator('[data-ledger-id]').evaluateAll(es=>es.map(e=>Number(e.dataset.ledgerId)));
+   ok('Latest thirty rows load in chronological order',JSON.stringify(await ids())===JSON.stringify(Array.from({length:30},(_,i)=>46+i)));
+   ok('Numbered pagination removed',await p.locator('.pagination').count()===0);
+   const more=p.getByRole('button',{name:'Önceki 30 işlemi yükle',exact:true});await more.scrollIntoViewIfNeeded();const prior=await p.locator('[data-ledger-id="46"]').boundingBox();await more.click();const after=await p.locator('[data-ledger-id="46"]').boundingBox();ok('Older thirty rows prepend without moving the anchor',await p.locator('[data-ledger-id]').count()===60&&Math.abs(prior.y-after.y)<3);
+   const main=p.locator('.main-content'),toggle=p.locator('.party-compose-toggle');const before=await main.boundingBox(),a=await toggle.boundingBox();await toggle.click();await p.locator('.composer-folded').waitFor();const b=await toggle.boundingBox(),grown=await main.boundingBox();ok('Hidden composer consumes no layout height',await p.locator('#entry-dock-root').evaluate(e=>e.getBoundingClientRect().height===0)&&grown.height>before.height+50);ok('Floating plus keeps the close-button coordinate',Math.abs(a.x-b.x)<2&&Math.abs(a.y-b.y)<2);await toggle.click();
+   const row=p.locator('[data-ledger-id="75"]');await row.click();ok('Expanded date appears once, with weekday and seconds',await row.locator('.movement-date:visible').count()===1&&/2026/.test(await row.locator('.movement-date:visible').innerText())&&/\d\d:\d\d:\d\d/.test(await row.locator('.movement-date:visible').innerText())&&await p.locator('.party-effect-details time').count()===0);
+   await p.locator('.ledger-action-row').getByRole('button',{name:'İşlemi düzenle',exact:true}).click();await p.locator('.entry-inline').waitFor();await row.locator('input[name=amount]').fill('12345');ok('Amount edits in its original table cell',await row.locator('td[data-label="Tutar"] input').inputValue()==='12.345'&&await p.locator('.entry-dock').count()===0);
+   await row.getByRole('combobox',{name:'İşlem',exact:true}).selectOption('purchase_no_invoice');ok('Operation is editable in the row and explains the new effect',(await p.locator('.inline-effect-preview').innerText()).includes('İşlem türü değişti'));
+   ok('Reason required and native form owns portaled fields',await p.locator('.entry-inline input[name=reason]').getAttribute('required')!==null&&await row.locator('input[name=amount]').evaluate(e=>Boolean(e.form)&&e.form.classList.contains('entry-form')));
+   await p.getByRole('button',{name:'Düzenlemeyi iptal et',exact:true}).click();await p.locator('.entry-inline').waitFor({state:'hidden'});ok('Cancel preserves the existing amount',(await row.locator('[data-label="Tutar"]').innerText()).includes('100,00'));
+   const local=p.locator('.inline-list-tools'),input=local.locator('input');await input.fill('fatura');await p.getByRole('option',{name:'İşlem: Faturalı Alış',exact:true}).click();ok('Suggestion becomes a removable search token',await local.locator('.search-token').count()===1&&await local.locator('.search-token').innerText().then(t=>t.includes('Faturalı Alış')));
+   ok('No separate filter, submit or reset buttons',await local.getByRole('button',{name:/^(Filtrele|Ara|Filtreleri sıfırla)$/}).count()===0);
+   await local.getByRole('button',{name:'Aramayı temizle',exact:true}).click();await input.fill('etiket:otomotiv etiket:gıda');await input.press('Enter');await p.waitForTimeout(100);ok('Multiple tag commands become OR tokens',await local.locator('.search-token').count()===2&&await p.locator('[data-ledger-id] [data-label="Etiket"]').evaluateAll(es=>es.every(e=>['Otomotiv','Gıda'].includes(e.textContent))));
+   const count=await p.locator('[data-ledger-id]').count();await input.fill('bilinmeyen:değer');await input.press('Enter');ok('Unknown command reports an error without changing results',await local.getByRole('alert').count()===1&&await p.locator('[data-ledger-id]').count()===count);
+   const month=await p.locator('.ledger-month-summary').last().innerText();ok('Month reconciles true unfiltered closing balance',month.includes('Devreden:')&&month.includes('Net: '+new Intl.NumberFormat('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2}).format(running/100))&&!month.includes('Listelenen kapsam'));
+   await local.getByRole('button',{name:'Aramayı temizle',exact:true}).click();await p.locator('[data-ledger-id="75"]').click();await shot('desktop');
+   for(const width of [320,390,430,768,960,1440,1920]){
+    await p.setViewportSize({width,height:width===320?568:900});await p.waitForTimeout(100);ok('Page fits '+width,await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+    const last=p.locator('[data-ledger-id]').last();if(await last.getAttribute('aria-expanded')!=='true')await last.click();await p.locator('.ledger-action-row').scrollIntoViewIfNeeded();ok('Active row and actions share width '+width,await p.locator('.ledger-action-row').evaluate(e=>Math.abs(e.getBoundingClientRect().width-e.previousElementSibling.getBoundingClientRect().width)<2));
+    ok('Detailed timestamp appears once '+width,await last.locator('.movement-date:visible').count()===1);
+    if(width<=430){ok('Touch action targets remain 44px '+width,await p.locator('.ledger-actions .icon-button').evaluateAll(es=>es.every(e=>e.getBoundingClientRect().height>=44)));await shot('mobile-'+width)}
+   }
+   await p.emulateMedia({reducedMotion:'reduce'});await p.setViewportSize({width:1440,height:1000});await local.getByRole('button',{name:'Sırala',exact:true}).click();ok('Sort stays anchored without blur',await p.getByRole('dialog',{name:'Sıralama'}).getAttribute('data-floating-panel')!==null&&await p.locator('.backdrop').count()===0);await p.keyboard.press('Escape');
+   ok('No runtime errors',errors.length===0);results.push({engine,checks,errors,browser:browser.version()});
+  }catch(e){await shot('failure');fs.writeFileSync(path.join(out,engine+'-failure.txt'),String(e)+'\n'+await p.locator('body').innerText());throw e}finally{await browser.close()}
+ }
+ fs.writeFileSync(path.join(out,'checks.json'),JSON.stringify(results,null,2));
+})().catch(e=>{console.error(e);process.exitCode=1}).finally(()=>server.close());

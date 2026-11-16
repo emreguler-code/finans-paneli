@@ -1,3 +1,4 @@
+import {LedgerEditingContext} from './LedgerEditing';
 import {AppShell,MainShell,HeaderRegion,ShellContent,ComposerHost,ContentColumns,PageFooter,SidebarControls,useShellLayout} from './AppShell';
 import {usePresence} from './Motion';
 import {routeHash} from './routes.mjs';
@@ -53,6 +54,7 @@ export function App({
   const nav=useNavigation();
   const [fullData, setFullData] = useState(initialData);
   const [financeContext, setFinanceContext] = useState(null);
+  const [inlineActive,setInlineActive]=useState(false);
   const [contextKey, setContextKey] = useState(0);
   const returnRoute=useRef(null),contextRoute=useRef(null);
   const createPages={party:'Cari hesaplar',account:'Hesaplar',card:'Kredi kartları',vehicle:'Araçlarım'};
@@ -63,11 +65,14 @@ export function App({
   useEffect(()=>{if(nav.route.record==='yeni'&&!financeContext){const entity=Object.keys(createPages).find(key=>createPages[key]===nav.route.page);if(entity&&can(fullData.user,'create')){contextRoute.current=routeHash(nav.route);setFinanceContext({entity});setContextKey(k=>k+1)}else nav.navigate({page:nav.route.page},{replace:true})}},[nav.route.page,nav.route.record]);
   useEffect(()=>{if(editingParty&&!financeContext){const item=fullData.parties.find(p=>p.id===Number(nav.route.record));if(item&&can(fullData.user,'edit')){contextRoute.current=routeHash(nav.route);setFinanceContext({entity:'party',item});setContextKey(k=>k+1)}else nav.navigate({...nav.route,entry:''},{replace:true})}},[editingParty,nav.route.record]);
   useEffect(()=>{
-    if(financeContext||entryPage||nav.route.page!=='Cari hesaplar'||!can(fullData.user,'create'))return;
-    const party=fullData.parties.find(p=>p.id===Number(nav.route.record));if(!party)return;
-    contextRoute.current=routeHash(nav.route);setContextKey(k=>k+1);
-    setFinanceContext({entity:'event',lockedPartyId:party.id,persistent:true});
-  },[financeContext,entryPage,nav.route.page,nav.route.record,fullData.user]);
+    if(financeContext||inlineActive||entryPage||!can(fullData.user,'create'))return;
+    let context;
+    if(nav.route.page==='Cari hesaplar'){const party=fullData.parties.find(p=>p.id===Number(nav.route.record));if(party?.active)context={entity:'event',lockedPartyId:party.id,persistent:true}}
+    if(['Hesaplar','Kredi kartları'].includes(nav.route.page)){const card=nav.route.page==='Kredi kartları',item=(card?fullData.cards:fullData.accounts).find(a=>String(a.id)===nav.route.record);if(item?.active)context={entity:'event',persistent:true,lockedCardId:card?item.id:undefined,initial:{account:card?'':item.id,cardId:card?item.id:'',operation:'expense',scheduled:!card&&nav.route.tab==='Gelecek dönem hareketleri'}}}
+    if(nav.route.page==='Tahsilat & Ödeme')context={entity:'event',persistent:true,initial:{operation:'expense'}};
+    if(!context)return;contextRoute.current=routeHash(nav.route);setContextKey(k=>k+1);setFinanceContext(context);
+  },[financeContext,inlineActive,entryPage,nav.route.page,nav.route.record,nav.route.tab,fullData.user]);
+  useEffect(()=>setInlineActive(false),[nav.route.page,nav.route.record,nav.route.tab]);
   function openFinance(c,bypass=false) {
     if(!bypass){nav.guard(()=>openFinance(c,true));return;}
     contextRoute.current=routeHash(nav.route);
@@ -457,7 +462,7 @@ export function App({
         </button>
       </div>
     </section>;
-  return <AppShell layout={shell}>
+  return <LedgerEditingContext.Provider value={{start:callback=>nav.guard(()=>{setFinanceContext(null);setInlineActive(true);callback()}),end:()=>setInlineActive(false),onState:applyState,notify}}><AppShell layout={shell}>
       <aside className="sidebar" data-region="1" inert={!!drawer||shell.mode==='hidden'} aria-label="Sol gezinme" role={shell.mode==='drawer'?'dialog':undefined} aria-modal={shell.mode==='drawer'?true:undefined}>
         <div className="brand">
           <span className="brand-mark">
@@ -745,5 +750,5 @@ export function App({
             <X size={18} />
           </button>
         </div>}
-    </AppShell>;
+    </AppShell></LedgerEditingContext.Provider>;
 }
