@@ -73,6 +73,7 @@ module.exports = async function layoutAcceptance(p, ok, shot) {
       });
     }),
   );
+  await input.scrollIntoViewIfNeeded();
   await shot("firefox-reported-filter-layout");
   await scope
     .getByRole("button", { name: "Arama alanlarını düzenle", exact: true })
@@ -109,6 +110,16 @@ module.exports = async function layoutAcceptance(p, ok, shot) {
     .getByRole("button", { name: "Aramayı temizle", exact: true })
     .click();
   const composer = p.locator(".persistent-composer");
+  ok(
+    "Closed form actions align with amount input",
+    await composer.evaluate((e) => {
+      const a = e.querySelector("input[name=amount]").getBoundingClientRect(),
+        b = e
+          .querySelector(".sheet-footer .primary-button")
+          .getBoundingClientRect();
+      return Math.abs(a.bottom - b.bottom) < 2;
+    }),
+  );
   await composer
     .getByRole("button", { name: "Diğer seçenekler", exact: true })
     .click();

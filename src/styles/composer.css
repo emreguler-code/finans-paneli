@@ -88,6 +88,7 @@
   margin: 0;
 }
 .layout-shell .entry-dock .sheet-footer {
+  align-self: end;
   position: static;
   display: flex;
   align-items: center;
