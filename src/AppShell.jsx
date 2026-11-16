@@ -4,11 +4,13 @@ const preferenceKey='finans.sidebar.preference';
 export function useMediaQuery(query){return useSyncExternalStore(callback=>{const m=matchMedia(query);m.addEventListener('change',callback);return()=>m.removeEventListener('change',callback)},()=>matchMedia(query).matches,()=>false)}
 export function useShellLayout(){
  const mobile=useMediaQuery('(max-width:760px)'),narrow=useMediaQuery('(max-width:1280px)');
- const [preference,setPreference]=useState(()=>{try{const value=localStorage.getItem(preferenceKey);return ['full','compact','hidden'].includes(value)?value:'full'}catch{return 'full'}}),[open,setOpen]=useState(false),[animating,setAnimating]=useState(false);
- useEffect(()=>{if(!animating)return;const timer=setTimeout(()=>setAnimating(false),220);return()=>clearTimeout(timer)},[animating]);
+ const [preference,setPreference]=useState(()=>{try{const value=localStorage.getItem(preferenceKey);return ['full','compact','hidden'].includes(value)?value:'full'}catch{return 'full'}}),[open,setOpenState]=useState(false),[animating,setAnimating]=useState(false),[motionStep,setMotionStep]=useState(0);
+ const markMotion=()=>{setAnimating(true);setMotionStep(n=>n+1)};
+ const setOpen=value=>{markMotion();setOpenState(value)};
+ useEffect(()=>{if(!animating)return;const timer=setTimeout(()=>setAnimating(false),220);return()=>clearTimeout(timer)},[animating,motionStep]);
  const mode=mobile?(open?'drawer':'hidden'):preference==='hidden'?'hidden':preference==='compact'||narrow?'compact':'full';
- useEffect(()=>setOpen(false),[mobile]);
- function choose(value){if(!['full','compact','hidden'].includes(value))return;setAnimating(true);setPreference(value);try{localStorage.setItem(preferenceKey,value)}catch{}if(mobile)setOpen(value!=='hidden')}
+ useEffect(()=>setOpenState(false),[mobile]);
+ function choose(value){if(!['full','compact','hidden'].includes(value))return;markMotion();setPreference(value);try{localStorage.setItem(preferenceKey,value)}catch{}if(mobile)setOpen(value!=='hidden')}
  const cycle=()=>mobile?setOpen(!open):choose(mode==='full'?'compact':mode==='compact'?'hidden':'full');
  return {mobile,preference,mode,open,setOpen,choose,cycle,animating};
 }

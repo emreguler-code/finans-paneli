@@ -40,27 +40,34 @@ jobs:
         run: npm run test:party-ui
       - name: Test financial API and migration recovery
         id: api
+        if: ${{ !cancelled() && steps.tests.outcome == 'success' }}
         run: |
           npm run test:api
           npm run test:migrations
           npm run test:backups
       - name: Test desktop and mobile workflows
         id: browser
+        if: ${{ !cancelled() && steps.tests.outcome == 'success' }}
         run: npm run test:browser
       - name: Test mobile layouts across Chromium and WebKit
         id: mobile
+        if: ${{ !cancelled() && steps.tests.outcome == 'success' }}
         run: npm run test:mobile
       - name: Reconcile comprehensive demo and reports
         id: demo
+        if: ${{ !cancelled() && steps.tests.outcome == 'success' }}
         run: npm run test:demo
       - name: Package hosting files
         id: package
+        if: ${{ !cancelled() && steps.tests.outcome == 'success' }}
         run: python3 scripts/package-release.py
       - name: Test packaged hosting installation
         id: installcheck
+        if: ${{ !cancelled() && steps.tests.outcome == 'success' }}
         run: npm run test:package
       - name: Verify archive
         id: archive
+        if: ${{ !cancelled() && steps.tests.outcome == 'success' }}
         run: |
           cd dist/releases
           sha256sum -c *.sha256

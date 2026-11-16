@@ -21,7 +21,7 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
   const context=await browser.newContext({locale:'tr-TR',timezoneId:'Europe/Istanbul',viewport:{width:1385,height:900}}),p=await context.newPage(),errors=[],checks=[];
   const ok=(name,value)=>{assert.ok(value,name);checks.push(name);console.log('PASS',engine,name)};
   p.setDefaultTimeout(12000);p.on('pageerror',e=>errors.push(e.message));
-  await p.route('**/api/index.php?**',r=>{const a=new URL(r.request().url()).searchParams.get('action');const body=a==='session'?{csrf:'synthetic-csrf',user}:a==='state'?data:a==='parties'?{parties:data.parties}:a==='audit'?{logs:[]}:{};return r.fulfill({status:200,contentType:'application/json',body:JSON.stringify(body)})});
+  await p.route('**/api/index.php?**',r=>{const a=new URL(r.request().url()).searchParams.get('action'),effectiveUser=p.url().includes('viewer=1')?{...user,role:'viewer'}:user;const body=a==='session'?{csrf:'synthetic-csrf',user:effectiveUser}:a==='state'?{...data,user:effectiveUser}:a==='parties'?{parties:data.parties}:a==='audit'?{logs:[]}:{};return r.fulfill({status:200,contentType:'application/json',body:JSON.stringify(body)})});
   const shot=async name=>{await p.evaluate(()=>document.fonts.ready);await p.screenshot({path:path.join(out,engine+'-'+name+'.png'),animations:'disabled'})};
   try{
    await p.goto(base+'/#/cariler/1');await p.locator('.party-heading-name h1').waitFor();
@@ -76,6 +76,7 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
    ok('Stacked auxiliary panel stretches full width',await p.locator('.context-aside').evaluate(e=>Math.abs(e.getBoundingClientRect().width-e.firstElementChild.getBoundingClientRect().width)<2));await shot('directory');
    await p.goto(base+'/#/cariler/1');await composer.waitFor();
    await p.emulateMedia({reducedMotion:'reduce'});await sortButton.click();ok('Reduced motion disables popup animation',await p.getByRole('dialog',{name:'Sıralama'}).evaluate(e=>getComputedStyle(e).animationName==='none'));await p.keyboard.press('Escape');
+   await p.goto(base+'/?viewer=1#/cariler/1');await p.locator('.party-heading-name').waitFor();ok('Viewer has no composer or editing actions',await p.locator('.persistent-composer').count()===0&&await p.getByRole('button',{name:'Düzenle',exact:true}).count()===0);
    ok('No browser runtime errors',errors.length===0);results.push({engine,browser:browser.version(),checks,errors});
   }catch(e){await p.screenshot({path:path.join(out,engine+'-failure.png')});fs.writeFileSync(path.join(out,engine+'-failure-layout.json'),JSON.stringify(await p.locator('.party-heading-row,.party-balance-and-actions,.party-current-balance,.party-heading-actions').evaluateAll(es=>es.map(e=>({className:e.className,rect:e.getBoundingClientRect().toJSON(),display:getComputedStyle(e).display,gap:getComputedStyle(e).gap,minWidth:getComputedStyle(e).minWidth}))),null,2));throw e}finally{await browser.close()}
  }

@@ -1,6 +1,7 @@
 import {EntrySurface} from './EntrySurface';
 import {EntryForm,FormSection} from './EntryForm';
 import {MoneyInput} from './MoneyInput';
+import {LoaderCircle} from 'lucide-react';
 import { useState } from 'react';
 import {api, requestId} from './api';
 import {Sheet, fmt} from './ui';
@@ -74,7 +75,7 @@ export function EventForm({context,data,onClose,onState,notify}){
 <label className="cari-field">İşlem saati<input name="time" type="time" step="1" value={f.time} onInput={ev=>change('time',ev.currentTarget.value)} onChange={ev=>change('time',ev.currentTarget.value)}/></label><label className="cari-field">Belge / fatura no<input name="document" maxLength={160} value={f.document} onChange={ev=>change('document',ev.target.value)}/></label></FormSection><div className="entry-effect" role="status" hidden={!Number.isFinite(total)||total<=0}><strong>İşlem etkisi</strong><p>{effect()}</p></div>
  {e.id&&<label className="cari-field">Değişiklik gerekçesi *<input required maxLength={1000} value={f.reason} onChange={ev=>change('reason',ev.target.value)}/></label>}
  {error&&<p className="cari-error" role="alert">{error}</p>}
- </div><div className="sheet-footer"><button type="button" className="secondary-button" disabled={busy} onClick={onClose}>Vazgeç</button><button className="primary-button" disabled={busy}>{busy?'Kaydediliyor…':e.id?'Kaydet':'İşlemi kaydet'}</button></div></EntryForm></EntrySurface>;
+ </div><div className="sheet-footer"><button type="button" className="secondary-button" disabled={busy} onClick={onClose}>Vazgeç</button><button className="primary-button" disabled={busy}>{busy&&<LoaderCircle className="loading-spinner" size={16}/ >}{busy?'Kaydediliyor…':e.id?'Kaydet':'İşlemi kaydet'}</button></div></EntryForm></EntrySurface>;
 }
 export function StatementForm({context,data,onClose,onState,notify}){
  const card=context.item,old=context.statement;const [f,setF]=useState({requestId:requestId(),date:old?.cut_date||data.today,due:old?.due_date||card.due,total:old?money(old.total_cents):'',reason:''}),[error,setError]=useState(''),[busy,setBusy]=useState(false);

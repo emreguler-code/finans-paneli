@@ -1,4 +1,5 @@
 import {AppShell,MainShell,HeaderRegion,ShellContent,ComposerHost,ContentColumns,PageFooter,SidebarControls,useShellLayout} from './AppShell';
+import {usePresence} from './Motion';
 import {routeHash} from './routes.mjs';
 import {SettingsPage} from './SettingsPage';
 import {api} from './api';
@@ -116,6 +117,7 @@ export function App({
     [toast, setToast] = useState(null);
   const bellButton=useRef(null);
   const [cardsMenu,setCardsMenu]=useState(false);
+  const cardPresence=usePresence(cardsMenu),morePresence=usePresence(mobileMore);
   const navigateMenu=name=>{shell.setOpen(false);setCardsMenu(['Kredi kartları','Kampanyalar'].includes(name));go(name,true)};
   useEffect(()=>setCardsMenu(['Kredi kartları','Kampanyalar'].includes(page)),[page]);
   const [notificationTarget,setNotificationTarget]=useState(null),[routeKey,setRouteKey]=useState(0);
@@ -468,7 +470,7 @@ export function App({
         {shell.mobile&&<button type="button" className="list-icon sidebar-close" aria-label="Menüyü kapat" onClick={()=>shell.setOpen(false)}><X size={18}/></button>}
         <div className="workspace-label">KİŞİSEL ÇALIŞMA ALANI</div>
         <nav aria-label="Ana navigasyon">
-          {navigation.filter(([name]) => name!=='Ayarlar'&&(name !== 'Kullanıcılar' || can(fullData.user, 'admin'))&&(name!=='Kampanyalar'||cardsMenu)).map(([name, Icon]) => <button key={name} className={(page === name ? "active " : "")+(name==='Kampanyalar'?'navigation-submenu':'')} aria-current={page === name ? "page" : undefined} aria-label={name} title={name} aria-expanded={name==='Kredi kartları'?cardsMenu:undefined} onClick={() => navigateMenu(name)}>
+          {navigation.filter(([name]) => name!=='Ayarlar'&&(name !== 'Kullanıcılar' || can(fullData.user, 'admin'))&&(name!=='Kampanyalar'||cardPresence.mounted)).map(([name, Icon]) => <button key={name} data-exiting={name==='Kampanyalar'&&!cardsMenu||undefined} inert={name==='Kampanyalar'&&!cardsMenu||undefined} aria-hidden={name==='Kampanyalar'&&!cardsMenu||undefined} className={(page === name ? "active " : "")+(name==='Kampanyalar'?'navigation-submenu':'')} aria-current={page === name ? "page" : undefined} aria-label={name} title={name} aria-expanded={name==='Kredi kartları'?cardsMenu:undefined} onClick={() => navigateMenu(name)}>
               <Icon size={20} />
               <span>{name}</span>{name==='Kredi kartları'&&<ChevronDown size={16} className={cardsMenu?'submenu-chevron rotate-open':'submenu-chevron'}/>}
               {name === "Ödeme Planı" && late.length > 0 && !compact && <em>{late.length}</em>}
@@ -591,7 +593,7 @@ export function App({
           Diğer
         </button>
       </nav></MainShell>
-      {mobileMore && <div className="mobile-more">
+      {morePresence.mounted && <div className="mobile-more" data-exiting={!mobileMore||undefined} inert={!mobileMore||undefined} aria-hidden={!mobileMore||undefined}>
           {navigation.filter(([name]) => !["Genel bakış", "Hareketler", "Raporlar", "Tahsilat & Ödeme"].includes(name) && (!['Kullanıcılar','Ayarlar'].includes(name) || can(fullData.user, "admin")) && (name!=="Kampanyalar"||cardsMenu)).map(([name, Icon]) => <button key={name} className={name==='Kampanyalar'?'navigation-submenu':''} aria-expanded={name==='Kredi kartları'?cardsMenu:undefined} onClick={() => navigateMenu(name)}>
               <Icon size={20} />
               {name}
