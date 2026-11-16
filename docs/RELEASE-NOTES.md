@@ -1,18 +1,14 @@
-# Finans Paneli 1.17.0
+# Finans Paneli 1.18.0 — cari detayını sadeleştirme
 
-9 Kasım 2026 · Şema 12; veritabanı geçişi yok.
+16 Kasım 2026'da kullanıcı cari ekranı incelemesini onayladı ve kodlama/yayın istedi. Başlangıç GitHub main: b6f5e1392dfdc374e28928861e4a03845e8d18c1 (1.17.0). Bu onay aşağıdaki cari detay kapsamıyla sınırlıdır; önceki hareket modeli ve diğer modüller korunur.
 
-- Mobilde seçilen cari hareketinin dar bir şeride sıkışması düzeltildi. Tür, tarih, açıklama, bakiye ve satıra ait eylemler aynı genişliği kullanır. Eski mobil tablo CSS çakışmaları kaldırıldı.
-- Mobil menüde bölüm adları ve finans markası görünür; belirgin kapatma düğmesi vardır. Masaüstü tam/kompakt/gizli tercihi korunur.
-- Mobil rapor, hesap ve ödeme planı özetlerinde ortak sol kenar ve yatay ayraçlar; daha az dikey boşluk. Cari kapalı özeti kompakt kalır.
-- Banka/kasa listesinde banka, hesap adı ve bakiye öne çıkar. Sahip, IBAN ve hesap türü detayda korunur. Çok dar kredi kartı listesinde tutar ve TL'nin kırpılması engellendi.
-- Mobil filtre görünür genişliği kullanır; başlık ve Vazgeç/Temizle/Uygula eylemleri erişilebilir kalır, alanlar kendi gövdesinde kaydırılır. İç içe takvim aynı bağımsız bağlı katman davranışını korur.
-- Mobil header'da ayrı Ara ikonu gizlendi; kısa arama ipucu ve klavye Ara/Enter eylemi vardır. Arama odağı menü/bildirimi gizlemez. Masaüstü Ara düğmesi korunur.
-- Ödeme planında dönem ve görünüm kontrolleri iki kompakt satırda düzenlendi. Bildirim önizlemelerinde ağır renkli zeminler kaldırıldı; önem ikonu/metni, beş özet ve tam liste bağlantısı korundu.
-- Chromium ve WebKit için mobil kabul paketi eklendi; GitHub sürüm akışı iki motoru da çalıştırır. Finansal hesaplama, API, yedekleme ve mevcut veriler değişmedi.
+- Cari adı, türü ve güncel bakiye tek kompakt yüzeydedir; bakiye sağda ve borcun/alacağın karşı tarafı açıkça yazılıdır. Gereksiz ikinci tür ve boş unvan alanı kapalı görünümden çıkarıldı.
+- Aşağı ok cari bilgilerini aynı kutuda açar. Düzenle ve yeni işlem izinleri korunur. Uzun ad/tutar mobilde kontrollü satırlara geçer.
+- Cari hareketlerinin arama/filtre/sıfırla/sırala/CSV araçları ilgili listede yan yanadır. Header araması bu detayda açık etiketli genel aramadır. Diğer listelerin mevcut portal düzeni değişmez; ortak ListTools yeni yerleşimi destekler.
+- Cari hareket tutarları ve satır bakiyeleri nötr; yön etiketi işaretine göre renkli, iptal etiketi nötrdür. Güncel bakiye üstte renkli kalır. Tutar/Bakiye sütun sırası ve gerçek değerler korunur.
+- Saat ve işlem sırasında ödeme/tahsilat bilgisi genişletilen satırdadır. Brüt tutar, peşin kısım, API party_effect net etkisi ve tarihsel bakiye ayrı anlatılır. İptal/planlanan kaydın güncel bakiyeye dahil olmadığı belirtilir.
+- Tarih sırası görünür, Son hareketler kısayolu yeni→eski sıralar; API'nin kanonik işlem sonrası bakiyesi yeniden hesaplanmaz. Sayfalama korunur.
+- Arama/filtre varken listelenen gerçekleşmiş ve aktif kayıtların party_effect toplamı ayrı adla görünür. Güncel cari bakiye filtrelenmez. Planlanan/iptal kayıtlar bu toplama katılmaz.
+- Gövde kaydırması, 1,9:1 yeterli alan kuralı, mobil blok ledger, türe özel yardımcı bilgiler ve rol kısıtları korunur.
 
-## Hosting güncellemesi
-
-`finans-paneli-1.17.0-hosting.zip` dosyasını mevcut web dosyalarını güncellemek için kullanın; `api/config.php` ve özel yedek dizinini koruyun. Şema 12 kurulumunda ek geçiş gerekmez. Daha eski kurulumlar standart `update.php` akışını kullanır. Bu sürüm GitHub'a yayımlanır; hosting üzerinde canlı kurulum veya veri sıfırlama yapılmaz.
-
-[Test raporu](TEST-RAPORU-1.17.0.md) · [Görsel karşılaştırma](tasarimlar/1.17.0/expanded-comparison.png).
+Finansal API, veritabanı şeması (12), canlı veri ve yönetici hesabı değişmez. Yayın GitHub sürüm paketidir; hosting kurulumu ayrıca yapılır. Yeni otomasyon tetikleyicisi yalnız sürümle eşleşen release/v* dalı veya v* etiketidir; mevcut test kapıları atlanmaz.

@@ -2,6 +2,7 @@ name: Hosting release
 on:
   push:
     tags: ['v*']
+    branches: ['release/v*']
   workflow_dispatch:
     inputs:
       publish_hosting:
@@ -21,11 +22,16 @@ jobs:
         with:
           node-version: '24'
           cache: npm
-      - name: Validate release tag
+      - name: Validate release ref
         id: validate
-        if: startsWith(github.ref, 'refs/tags/')
         run: |
-          test "$GITHUB_REF_NAME" = "v$(node -p "require('./package.json').version")"
+          RELEASE_TAG="v$(node -p "require('./package.json').version")"
+          echo "RELEASE_TAG=$RELEASE_TAG" >> "$GITHUB_ENV"
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            test "$GITHUB_REF_NAME" = "$RELEASE_TAG"
+          elif [[ "$GITHUB_EVENT_NAME" == push ]]; then
+            test "$GITHUB_REF_NAME" = "release/$RELEASE_TAG"
+          fi
       - id: dependencies
         run: npm ci
       - id: tests
@@ -55,6 +61,8 @@ jobs:
           fi
       - name: Prepare WebKit for mobile checks
         run: npx playwright install --with-deps webkit
+      - name: Check compact party UI against synthetic API
+        run: npm run test:party-ui
       - name: Test desktop and mobile workflows
         id: browser
         run: npm run test:browser
@@ -101,24 +109,31 @@ jobs:
           gh release upload "v$VERSION" "dist/releases/finans-paneli-$VERSION-hosting.zip" "dist/releases/finans-paneli-$VERSION-hosting.zip.sha256"
       - name: Publish GitHub release
         id: publish
-        if: startsWith(github.ref, 'refs/tags/')
+        if: github.event_name == 'push'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1 || gh release create "$GITHUB_REF_NAME" --title "Finans Paneli $GITHUB_REF_NAME" --notes-file docs/RELEASE-NOTES.md
-          gh release upload "$GITHUB_REF_NAME" dist/releases/* --clobber
-          gh release view "$GITHUB_REF_NAME" --json isDraft,url,assets > /tmp/finans-published-release.json
+          gh release view "$RELEASE_TAG" >/dev/null 2>&1 || gh release create "$RELEASE_TAG" --target "$GITHUB_SHA" --title "Finans Paneli $RELEASE_TAG" --notes-file docs/RELEASE-NOTES.md
+          gh release upload "$RELEASE_TAG" dist/releases/* --clobber
+          gh release view "$RELEASE_TAG" --json isDraft,url,assets > /tmp/finans-published-release.json
           python3 - <<'PYCODE'
           import json, os
           from pathlib import Path
           release = json.loads(Path('/tmp/finans-published-release.json').read_text())
-          expected = 'finans-paneli-' + os.environ['GITHUB_REF_NAME'].removeprefix('v') + '.zip'
+          expected = 'finans-paneli-' + os.environ['RELEASE_TAG'].removeprefix('v') + '.zip'
           names = {asset['name'] for asset in release['assets']}
           hosting = expected.removesuffix('.zip') + '-hosting.zip'
           assert not release['isDraft'] and {expected, expected + '.sha256', hosting, hosting + '.sha256'} <= names, 'Release assets are missing'
           PYCODE
+      - name: Save browser evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: party-ui-evidence
+          path: .qa/party118/
+          if-no-files-found: ignore
       - name: Record release result for Git-only clients
-        if: always() && startsWith(github.ref, 'refs/tags/')
+        if: always() && github.event_name == 'push'
         env:
           RELEASE_RESULT: ${{ job.status }}
           STEP_RESULTS: ${{ toJSON(steps) }}
@@ -126,7 +141,7 @@ jobs:
           python3 - <<'PYCODE'
           import json, os
           from pathlib import Path
-          tag = os.environ['GITHUB_REF_NAME']
+          tag = os.environ['RELEASE_TAG']
           repository = os.environ['GITHUB_REPOSITORY']
           receipt = {'tag': tag, 'status': os.environ['RELEASE_RESULT'], 'run': f"https://github.com/{repository}/actions/runs/{os.environ['GITHUB_RUN_ID']}", 'release': f"https://github.com/{repository}/releases/tag/{tag}"}
           receipt['commit'] = os.environ['GITHUB_SHA']
@@ -143,5 +158,5 @@ jobs:
           PYCODE
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag -fa "release-status/$GITHUB_REF_NAME" -F /tmp/finans-release-result.json
-          git push --force origin "refs/tags/release-status/$GITHUB_REF_NAME"
+          git tag -fa "release-status/$RELEASE_TAG" -F /tmp/finans-release-result.json
+          git push --force origin "refs/tags/release-status/$RELEASE_TAG"

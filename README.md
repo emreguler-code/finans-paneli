@@ -1,6 +1,6 @@
-# Finans Paneli 1.17.0
+# Finans Paneli 1.18.0
 
-1.17.0: mobil açık hareket satırı ve menü etiketleri düzeltildi; özetler ve hesap listeleri sıkılaştırıldı; filtre başlığı/eylemleri erişilebilir tutuldu; mobil arama, ödeme planı ve bildirimler sadeleştirildi. Chromium ve WebKit için ayrı mobil kabul paketi eklendi. Şema 12. [Sürüm kapsamı](docs/SURUM-1.17.0.md) · [Test raporu](docs/TEST-RAPORU-1.17.0.md) · [Yerleşim sözleşmesi](docs/GLOBAL-YERLESIM-SOZLESMESI.md).
+1.18.0: cari detayında kimlik ve güncel bakiye tek kompakt yüzeyde; aşağı okla satır içi bilgiler; hareketlerin yanında ortak arama/filtre/sıfırla/sırala/CSV; nötr tutarlar, renkli yön etiketleri ve açılan satırda hesap etkisi açıklaması. Şema 12 değişmedi. [Sürüm kapsamı](docs/SURUM-1.18.0.md) · [Yerleşim sözleşmesi](docs/GLOBAL-YERLESIM-SOZLESMESI.md).
 
 Sade Netlik tasarımında cari hesaplar, banka/kasa, kredi kartları, ödeme planı ve raporlar. React/Vite arayüz; PHP/MySQL API. Banka bağlantısı yoktur.
 
@@ -82,3 +82,5 @@ Yerel Chromium gerekiyorsa `QA_BROWSER_BIN=/usr/bin/chromium` tanımlayın. Dock
 `npm run test:backups`, yalnız koşucunun oluşturduğu izole veritabanında yedekleme, bozuk dosya/ilişki, geri alma, kullanıcı yetkileri, cron ve demo temizliği senaryolarını doğrular. Canlı veritabanı hedeflemez.
 
 `test:mobile`, aynı izole fixture üzerinde Chromium ve WebKit motorlarıyla mobil açık/kapalı satır, menü, filtre/takvim, tutar ve özet düzenlerini doğrular. Her iki motorun kurulması gerekir. `QA_BROWSER_ENGINES=chromium` yalnız hedefli yerel kontrol içindir; sürüm kabulünde iki motor birlikte çalışır. WebKit emülasyonu fiziksel iPhone testi değildir.
+
+1.18.0 itibarıyla GitHub bağlantısı üzerinden yayın için `release/v<sürüm>` dalına yapılan push da aynı tam kabul iş akışını çalıştırır. Dal adı package.json sürümüyle tam eşleşmelidir. Bütün kontrollerden sonra ilgili commit hedeflenerek sürüm etiketi ve iki ZIP yayımlanır; cPanel'e otomatik dağıtım yapılmaz. `npm run test:party-ui` derlenmiş arayüzü sentetik API üzerinde Chromium ve WebKit ile ayrıca kontrol eder.
