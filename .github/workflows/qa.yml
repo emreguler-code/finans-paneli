@@ -2,10 +2,11 @@ name: Candidate QA
 on:
   push:
     branches: ['codex/1.19.0']
+    paths-ignore: ['docs/**', 'README.md', 'AGENTS.md']
 permissions:
   contents: read
 jobs:
-  candidate:
+  frontend:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -13,16 +14,11 @@ jobs:
         with:
           node-version: '24'
           cache: npm
-      - id: dependencies
-        run: npm ci
-      - id: tests
-        run: npm test
+      - run: npm ci
+      - run: npm test
       - name: Check PHP syntax
-        id: php
         run: |
-          while IFS= read -r -d '' file; do
-            php -l "$file"
-          done < <(find public -name '*.php' ! -name 'config.php' -print0)
+          while IFS= read -r -d '' file; do php -l "$file"; done < <(find public -name '*.php' ! -name 'config.php' -print0)
       - name: Prepare browser for checks
         id: chromium
         timeout-minutes: 5
@@ -36,39 +32,10 @@ jobs:
           fi
       - name: Prepare WebKit for mobile checks
         run: npx playwright install --with-deps webkit
-      - name: Check compact party UI against synthetic API
-        run: npm run test:party-ui
-      - name: Test financial API and migration recovery
-        id: api
-        if: ${{ !cancelled() && steps.tests.outcome == 'success' }}
+      - run: npm run test:party-ui
+      - name: Package and verify candidate
         run: |
-          npm run test:api
-          npm run test:migrations
-          npm run test:backups
-      - name: Test desktop and mobile workflows
-        id: browser
-        if: ${{ !cancelled() && steps.tests.outcome == 'success' }}
-        run: npm run test:browser
-      - name: Test mobile layouts across Chromium and WebKit
-        id: mobile
-        if: ${{ !cancelled() && steps.tests.outcome == 'success' }}
-        run: npm run test:mobile
-      - name: Reconcile comprehensive demo and reports
-        id: demo
-        if: ${{ !cancelled() && steps.tests.outcome == 'success' }}
-        run: npm run test:demo
-      - name: Package hosting files
-        id: package
-        if: ${{ !cancelled() && steps.tests.outcome == 'success' }}
-        run: python3 scripts/package-release.py
-      - name: Test packaged hosting installation
-        id: installcheck
-        if: ${{ !cancelled() && steps.tests.outcome == 'success' }}
-        run: npm run test:package
-      - name: Verify archive
-        id: archive
-        if: ${{ !cancelled() && steps.tests.outcome == 'success' }}
-        run: |
+          python3 scripts/package-release.py
           cd dist/releases
           sha256sum -c *.sha256
           for archive in *.zip; do python3 -m zipfile -t "$archive"; done
@@ -92,6 +59,50 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: candidate-ui-evidence
+          name: candidate-ui-evidence-frontend
+          path: qa-evidence/
+          if-no-files-found: ignore
+  integration:
+    name: Integration (${{ matrix.suite }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [api, migrations, backups, browser, mobile, demo, package]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Prepare Chrome
+        run: echo "QA_BROWSER_BIN=$(command -v google-chrome)" >> "$GITHUB_ENV"
+      - name: Prepare WebKit
+        if: matrix.suite == 'mobile'
+        run: npx playwright install --with-deps webkit
+      - name: Package installation fixture
+        if: matrix.suite == 'package'
+        run: python3 scripts/package-release.py
+      - name: Test ${{ matrix.suite }}
+        run: npm run test:${{ matrix.suite }}
+      - name: Collect browser screenshots and check results
+        if: always()
+        run: |
+          python3 - <<'PYCODE'
+          import shutil
+          from pathlib import Path
+          for p in Path('.qa').rglob('*'):
+              if p.is_file() and (p.suffix == '.png' or p.name in ['checks.json','failure.txt','failure-layout.json']):
+                  target = Path('qa-evidence') / p.relative_to('.qa')
+                  target.parent.mkdir(parents=True, exist_ok=True)
+                  shutil.copyfile(p, target)
+          PYCODE
+      - name: Save browser evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: candidate-ui-evidence-${{ matrix.suite }}
           path: qa-evidence/
           if-no-files-found: ignore
