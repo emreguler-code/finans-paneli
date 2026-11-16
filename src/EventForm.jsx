@@ -5,7 +5,7 @@ import {Check,X,LoaderCircle} from 'lucide-react';
 import {useState,useEffect,useLayoutEffect,useId} from 'react';
 import {createPortal} from 'react-dom';
 import {api, requestId} from './api';
-import {Sheet, fmt} from './ui';
+import { fmt} from './ui';
 import {DatePicker} from './DatePicker';
 import {formatMoneyInput, normalizeMoney} from './list-utils.mjs';
 import {operations, partyOptions, isInvoice} from './operations.mjs';

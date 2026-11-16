@@ -1,4 +1,4 @@
-import {ContentColumns,PageFooter} from './AppShell';
+import {ContentColumns} from './AppShell';
 import {useEffect,useRef,useState} from 'react';
 import {DatabaseBackup,Download,Upload,RotateCcw} from 'lucide-react';
 import {api,downloadBackup,uploadBackup,requestId} from './api';

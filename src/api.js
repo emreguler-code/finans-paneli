@@ -22,6 +22,6 @@ export async function uploadBackup(file) {
 }
 export async function downloadBackup(id) {
  const response=await fetch(`${import.meta.env.BASE_URL}api/index.php?action=backup_download&id=${encodeURIComponent(id)}`,{credentials:'same-origin',cache:'no-store'});
- if(!response.ok){let result;try{result=await response.json()}catch{}throw new Error(result?.error||'Yedek indirilemedi.')}
+ if(!response.ok){let result;try{result=await response.json()}catch{/* Optional browser storage/response parsing may be unavailable. */}throw new Error(result?.error||'Yedek indirilemedi.')}
  const url=URL.createObjectURL(await response.blob()),a=document.createElement('a');a.href=url;a.download=`finans-yedek-${id}.jsonl`;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
 }

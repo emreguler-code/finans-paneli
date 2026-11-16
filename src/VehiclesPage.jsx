@@ -4,7 +4,7 @@ import {useRecordState,useRouteTab,useNavigation} from './Navigation';
 import {VehicleIcon} from './VehicleIcon';
 import {vehicleKinds,bodyStyles,maintenanceKinds,vehicleProgress} from './vehicle-display.mjs';
 import {useState,useLayoutEffect} from 'react';
-import {Plus,Pencil,Info,Car,ChevronRight,ChevronDown,Shield,Landmark,Wrench,ClipboardCheck,Link,History} from 'lucide-react';
+import {Plus,Pencil,Info,ChevronRight,ChevronDown,Shield,Landmark,Wrench,ClipboardCheck,Link,History} from 'lucide-react';
 import {useScopedState} from './SearchState';
 import {PageHeading,SummaryBar} from './PageLayout';
 import {ListTools,ListActions} from './ListTools';
@@ -12,7 +12,7 @@ import {DatePicker,dateLabel} from './DatePicker';
 import {NotificationPreview} from './ActivityPanels';
 import {AuditHistory} from './AuditHistory';
 import {can,fmt} from './ui';
-import {vehicleTypes,vehiclePaid,vehicleSchedule,currentVehicleRecord,vehicleRecordStatus} from './tracking-utils.mjs';
+import {vehicleTypes,vehiclePaid,currentVehicleRecord,vehicleRecordStatus} from './tracking-utils.mjs';
 import {exportRows} from './csv.mjs';
 const typeIcons={insurance:Shield,casco:Shield,tax:Landmark,maintenance:Wrench,inspection:ClipboardCheck};
 export function VehiclePayment({record,data}){const paid=vehiclePaid(record,data);return <span className="vehicle-payment"><strong className="money-nowrap">{fmt(record.amount_cents)} TL</strong><small>{record.estimated?'Tahmini tutar':paid>=record.amount_cents?'Ödendi':paid>0?'Kısmen ödendi':'Ödenmedi'}</small>{paid>0&&<small>Ödenen <span className="money-nowrap">{fmt(paid)} TL</span></small>}{!record.estimated&&paid<record.amount_cents&&<small>Kalan <span className="money-nowrap">{fmt(record.amount_cents-paid)} TL</span></small>}</span>}

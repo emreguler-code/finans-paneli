@@ -1,35 +1,482 @@
-import {cloneElement,useEffect,useLayoutEffect,useId,useRef,useState} from 'react';
-import {Search,X,ChevronDown} from 'lucide-react';
-import {FloatingPanel} from './FloatingPanel';
-import {fold,fieldAlias,parseSearch,selectedValues} from './search-query.mjs';
-import {presetRange} from './date-utils.mjs';
-const active=f=>f.range?Boolean(f.value.from||f.value.to)&&!(f.defaultRange&&f.value.from===f.defaultRange.from&&f.value.to===f.defaultRange.to):f.check?f.value!==f.empty:!['','all','Tümü',String(f.empty)].includes(String(f.value));
-const labelFor=(f,v)=>f.range?[v.from,v.to].filter(Boolean).join(' – '):f.check?(v?'Evet':'Hayır'):f.options.find(o=>String(o.value)===String(v))?.label||v;
-const multi=f=>['etiket','işlem','ekleyen','cari','hesap','tür','kayıt türü'].includes(fieldAlias(f.label))&&f.options.length>0;
-export function SmartSearch({query='',setQuery,placeholder='Hareketlerde ara',reset,resultCount,fields=[],inline,host,onSearchSubmit,onSearchKeyDown,onSearchText,suggestions,activeSuggestion,searchFeedback,onFiltersApplied}){
- const [text,setText]=useState(query),[opened,setOpened]=useState(false),[editor,setEditor]=useState(false),[draft,setDraft]=useState({}),[error,setError]=useState(''),[index,setIndex]=useState(-1),[composing,setComposing]=useState(false);
- const input=useRef(null),box=useRef(null),id=useId(),setter=useRef(setQuery);setter.current=setQuery;
- useLayoutEffect(()=>setText(query),[query]);
- useEffect(()=>{if(composing||text.includes(':')||text===query||text.trim().length>0&&text.trim().length<3)return;const timer=setTimeout(()=>setter.current(text.trim()),300);return()=>clearTimeout(timer)},[text,query,composing]);
- const chips=fields.filter(active).flatMap(f=>selectedValues(f.value).map(v=>({field:f,value:v,label:f.label+': '+labelFor(f,v)})));
- function choose(f,value){const current=active(f)?selectedValues(f.value):[];const combined=[...new Set([...current,value])];f.change(multi(f)&&combined.length>1?combined:value);setText('');setQuery('');setOpened(false);setIndex(-1);setError('');input.current?.focus({preventScroll:true});onFiltersApplied?.('')}
- function remove(f,value){const remaining=selectedValues(f.value).filter(v=>v!==value);f.change(remaining.length>1?remaining:remaining.length?remaining[0]:f.empty)}
- const q=['odenmemis','odenmeyen'].includes(fold(text))?'acik':fold(text),suggested=fields.flatMap(f=>(f.check?[{value:!f.empty,label:!f.empty?'Evet':'Hayır'}]:f.options).filter(o=>String(o.value)!==String(f.empty)&&!['Tümü','all'].includes(o.value)).filter(o=>!q||fold(f.label+' '+o.label).includes(q)||fold(fieldAlias(f.label)+':'+o.label).includes(q)).slice(0,q?8:3).map(o=>({field:f,value:o.value,label:f.label+': '+o.label}))).slice(0,12);
- const range=fields.find(f=>f.range);if(range&&['bu ay','bugün','dün','bu hafta'].includes(text.toLocaleLowerCase('tr-TR').trim())){const names={'bu ay':'Bu Ay','bugün':'Bugün','dün':'Dün','bu hafta':'Bu Hafta'};const name=names[text.toLocaleLowerCase('tr-TR').trim()];suggested.unshift({field:range,value:presetRange(name,range.child.props.today||new Date().toLocaleDateString('sv-SE')),label:'Tarih: '+name})}
- function submit(ev){ev?.preventDefault();if(index>=0&&suggested[index]){const s=suggested[index];choose(s.field,s.value);return}const parsed=parseSearch(text,fields);if(parsed.errors.length){setError(parsed.errors.join(' '));return}for(const {field,value} of parsed.filters){const group=parsed.filters.filter(x=>x.field.key===field.key).map(x=>x.value);field.change(multi(field)&&group.length>1?[...new Set(group)]:value)}setQuery(parsed.query);setText(parsed.query);setOpened(false);setError('');if(onSearchSubmit&&!parsed.filters.length)onSearchSubmit();onFiltersApplied?.(parsed.query)}
- function clear(){reset?.();setQuery('');setText('');onSearchText?.('');setError('');setOpened(false);input.current?.focus()}
- const show=opened&&fields.length>0&&!suggestions&&(editor||text.trim().length>0&&suggested.length>0);
- function applyFields(){for(const f of fields){const value=draft[f.key]??f.value;if(f.range&&value.from&&value.to&&value.from>value.to){setError('Başlangıç tarihi bitiş tarihinden sonra olamaz.');return}}const min=fields.find(f=>f.child.props.name==='amountMin'),max=fields.find(f=>f.child.props.name==='amountMax');const low=min?(draft[min.key]??min.value):'',high=max?(draft[max.key]??max.value):'';if(low!==''&&high!==''&&Number(low)>Number(high)){setError('Tutar aralığını kontrol edin.');return}fields.forEach(f=>{if(f.key in draft)f.change(draft[f.key])});setOpened(false);setEditor(false);setError('');onFiltersApplied?.(query)}
- return <div className="page-search smart-search" ref={box}>
-  <form className="page-search-row" role="search" aria-label={placeholder} onSubmit={submit}>
-   <div className="cari-search smart-search-box"><Search size={18} aria-hidden="true"/>{chips.map(({field:f,value:v,label})=><button key={f.key+JSON.stringify(v)} type="button" className="search-token" aria-label={label+' filtresini kaldır'} onClick={()=>remove(f,v)}>{label}<X size={12}/></button>)}
-   <input ref={input} id={inline?'party-search':'search'} aria-label={placeholder} placeholder={chips.length?'Aramaya devam et…':placeholder} enterKeyHint="search" value={text} role={fields.length?'combobox':undefined} aria-expanded={fields.length?show:undefined} aria-autocomplete="list" aria-controls={show?id:undefined} aria-activedescendant={index>=0?id+'-'+index:activeSuggestion} onFocus={()=>{setOpened(true);setEditor(false)}} onChange={e=>{setText(e.target.value);setOpened(true);setIndex(-1);setError('');onSearchText?.(e.target.value)}} onCompositionStart={()=>setComposing(true)} onCompositionEnd={()=>setComposing(false)} onKeyDown={e=>{onSearchKeyDown?.(e);if(e.defaultPrevented)return;if(e.key==='ArrowDown'&&show){e.preventDefault();setIndex(i=>Math.min(suggested.length-1,i+1))}if(e.key==='ArrowUp'&&show){e.preventDefault();setIndex(i=>Math.max(0,i-1))}if(e.key==='Escape'){e.preventDefault();e.stopPropagation();setOpened(false);setEditor(false);setText(query);setError('')}if(e.key==='Backspace'&&!text&&chips.length){const c=chips.at(-1);remove(c.field,c.value)}}}/>
-   {(text||query||chips.length>0)&&<button type="button" className="search-clear" aria-label="Aramayı temizle" title="Temizle" onClick={clear}><X size={16}/></button>}{fields.length>0&&<button className="search-options" type="button" aria-label="Arama alanlarını düzenle" title="Arama alanları" aria-expanded={show&&editor} onClick={()=>{setOpened(!(opened&&editor));setEditor(true);setDraft({});setError('')}}><ChevronDown size={16}/></button>}{!inline&&!chips.length&&<kbd aria-hidden="true">Ctrl K</kbd>}
-   </div>
-  </form>
-  {show&&<FloatingPanel id={id} anchor={input.current} alignTo={box.current} width={box.current?.clientWidth||500} title={editor?'Arama alanları':'Arama önerileri'} autoFocus={editor} mobileFit className={editor?'search-filter-panel smart-field-editor':'smart-suggestions'} onClose={()=>{setOpened(false);setEditor(false)}}>{editor?<><div className="finance-filters shared-filters">{fields.map(f=>{const value=draft[f.key]??f.value;return <label key={f.key}>{f.label}{cloneElement(f.child,{...(f.range?value:f.check?{checked:value}:{value:Array.isArray(value)?value[0]:value}),onChange:ev=>setDraft(d=>({...d,[f.key]:f.range?ev:f.check?ev.target.checked:ev.target.value}))})}</label>})}</div><div className="search-filter-actions"><button type="button" className="secondary-button" onClick={()=>{setOpened(false);setEditor(false)}}>Vazgeç</button><button type="button" className="secondary-button" onClick={()=>setDraft(Object.fromEntries(fields.map(f=>[f.key,f.empty])))}>Temizle</button><button type="button" className="primary-button" onClick={applyFields}>Uygula</button></div></>:<div id={id+'-list'} role="listbox" aria-label="Arama filtreleri">{text&&!text.includes(':')&&<button type="button" className="search-text-option" onClick={()=>submit()}>Metinde “{text}” ara</button>}{suggested.map((s,i)=><button type="button" id={id+'-'+i} role="option" aria-selected={i===index} key={s.field.key+JSON.stringify(s.value)} onClick={()=>choose(s.field,s.value)}>{s.label}</button>)}{range&&<button type="button" onClick={()=>{setEditor(true);setDraft({})}}>Tarih aralığı seç…</button>}<button type="button" onClick={()=>{setEditor(true);setDraft({})}}>Tüm arama alanları…</button></div>}{error&&<p className="cari-error" role="alert">{error}</p>}</FloatingPanel>}
-  {(error||searchFeedback)&&<p className="cari-error" role="alert">{error||searchFeedback}</p>}
-  {suggestions?.({anchor:input.current,host,filters:false})}
-  <span className="sr-only" role="status" aria-live="polite">{resultCount===undefined?'':resultCount+' sonuç'}</span>
- </div>;
+import {
+  cloneElement,
+  useEffect,
+  useLayoutEffect,
+  useId,
+  useRef,
+  useState,
+} from "react";
+import { Search, X, ChevronDown } from "lucide-react";
+import { FloatingPanel } from "./FloatingPanel";
+import {
+  fold,
+  fieldAlias,
+  parseSearch,
+  selectedValues,
+} from "./search-query.mjs";
+import { presetRange } from "./date-utils.mjs";
+const active = (f) =>
+  f.range
+    ? Boolean(f.value.from || f.value.to) &&
+      !(
+        f.defaultRange &&
+        f.value.from === f.defaultRange.from &&
+        f.value.to === f.defaultRange.to
+      )
+    : f.check
+      ? f.value !== f.empty
+      : !["", "all", "Tümü", String(f.empty)].includes(String(f.value));
+const labelFor = (f, v) =>
+  f.range
+    ? [v.from, v.to].filter(Boolean).join(" – ")
+    : f.check
+      ? v
+        ? "Evet"
+        : "Hayır"
+      : f.options.find((o) => String(o.value) === String(v))?.label || v;
+const multi = (f) =>
+  ["etiket", "işlem", "ekleyen", "cari", "hesap", "tür", "kayıt türü"].includes(
+    fieldAlias(f.label),
+  ) && f.options.length > 0;
+export function SmartSearch({
+  query = "",
+  setQuery,
+  placeholder = "Hareketlerde ara",
+  reset,
+  resultCount,
+  fields = [],
+  inline,
+  host,
+  onSearchSubmit,
+  onSearchKeyDown,
+  onSearchText,
+  suggestions,
+  activeSuggestion,
+  searchFeedback,
+  onFiltersApplied,
+}) {
+  const [text, setText] = useState(query),
+    [opened, setOpened] = useState(false),
+    [editor, setEditor] = useState(false),
+    [draft, setDraft] = useState({}),
+    [error, setError] = useState(""),
+    [index, setIndex] = useState(-1),
+    [composing, setComposing] = useState(false);
+  const input = useRef(null),
+    box = useRef(null),
+    id = useId(),
+    setter = useRef(setQuery);
+  setter.current = setQuery;
+  useLayoutEffect(() => setText(query), [query]);
+  useEffect(() => {
+    if (
+      composing ||
+      text.includes(":") ||
+      text === query ||
+      (text.trim().length > 0 && text.trim().length < 3)
+    )
+      return;
+    const timer = setTimeout(() => setter.current(text.trim()), 300);
+    return () => clearTimeout(timer);
+  }, [text, query, composing]);
+  const chips = fields
+    .filter(active)
+    .flatMap((f) =>
+      selectedValues(f.value).map((v) => ({
+        field: f,
+        value: v,
+        label: f.label + ": " + labelFor(f, v),
+      })),
+    );
+  function choose(f, value) {
+    const current = active(f) ? selectedValues(f.value) : [];
+    const combined = [...new Set([...current, value])];
+    f.change(multi(f) && combined.length > 1 ? combined : value);
+    setText("");
+    setQuery("");
+    setOpened(false);
+    setIndex(-1);
+    setError("");
+    input.current?.focus({ preventScroll: true });
+    onFiltersApplied?.("");
+  }
+  function remove(f, value) {
+    const remaining = selectedValues(f.value).filter((v) => v !== value);
+    f.change(
+      remaining.length > 1
+        ? remaining
+        : remaining.length
+          ? remaining[0]
+          : f.empty,
+    );
+  }
+  const q = ["odenmemis", "odenmeyen"].includes(fold(text))
+      ? "acik"
+      : fold(text),
+    suggested = fields
+      .flatMap((f) =>
+        (f.check
+          ? [{ value: !f.empty, label: !f.empty ? "Evet" : "Hayır" }]
+          : f.options
+        )
+          .filter(
+            (o) =>
+              String(o.value) !== String(f.empty) &&
+              !["Tümü", "all"].includes(o.value),
+          )
+          .filter(
+            (o) =>
+              !q ||
+              fold(f.label + " " + o.label).includes(q) ||
+              fold(fieldAlias(f.label) + ":" + o.label).includes(q),
+          )
+          .slice(0, q ? 8 : 3)
+          .map((o) => ({
+            field: f,
+            value: o.value,
+            label: f.label + ": " + o.label,
+          })),
+      )
+      .slice(0, 12);
+  const range = fields.find((f) => f.range);
+  if (
+    range &&
+    ["bu ay", "bugün", "dün", "bu hafta"].includes(
+      text.toLocaleLowerCase("tr-TR").trim(),
+    )
+  ) {
+    const names = {
+      "bu ay": "Bu Ay",
+      bugün: "Bugün",
+      dün: "Dün",
+      "bu hafta": "Bu Hafta",
+    };
+    const name = names[text.toLocaleLowerCase("tr-TR").trim()];
+    suggested.unshift({
+      field: range,
+      value: presetRange(
+        name,
+        range.child.props.today || new Date().toLocaleDateString("sv-SE"),
+      ),
+      label: "Tarih: " + name,
+    });
+  }
+  function submit(ev) {
+    ev?.preventDefault();
+    if (index >= 0 && suggested[index]) {
+      const s = suggested[index];
+      choose(s.field, s.value);
+      return;
+    }
+    const parsed = parseSearch(text, fields);
+    if (parsed.errors.length) {
+      setError(parsed.errors.join(" "));
+      return;
+    }
+    for (const { field, value } of parsed.filters) {
+      const group = parsed.filters
+        .filter((x) => x.field.key === field.key)
+        .map((x) => x.value);
+      field.change(
+        multi(field) && group.length > 1 ? [...new Set(group)] : value,
+      );
+    }
+    setQuery(parsed.query);
+    setText(parsed.query);
+    setOpened(false);
+    setError("");
+    if (onSearchSubmit && !parsed.filters.length) onSearchSubmit();
+    onFiltersApplied?.(parsed.query);
+  }
+  function clear() {
+    reset?.();
+    setQuery("");
+    setText("");
+    onSearchText?.("");
+    setError("");
+    setOpened(false);
+    input.current?.focus();
+  }
+  const show =
+    opened &&
+    fields.length > 0 &&
+    !suggestions &&
+    (editor || (text.trim().length > 0 && suggested.length > 0));
+  function applyFields() {
+    for (const f of fields) {
+      const value = draft[f.key] ?? f.value;
+      if (f.range && value.from && value.to && value.from > value.to) {
+        setError("Başlangıç tarihi bitiş tarihinden sonra olamaz.");
+        return;
+      }
+    }
+    const min = fields.find((f) => f.child.props.name === "amountMin"),
+      max = fields.find((f) => f.child.props.name === "amountMax");
+    const low = min ? (draft[min.key] ?? min.value) : "",
+      high = max ? (draft[max.key] ?? max.value) : "";
+    if (low !== "" && high !== "" && Number(low) > Number(high)) {
+      setError("Tutar aralığını kontrol edin.");
+      return;
+    }
+    fields.forEach((f) => {
+      if (f.key in draft) f.change(draft[f.key]);
+    });
+    setOpened(false);
+    setEditor(false);
+    setError("");
+    onFiltersApplied?.(query);
+  }
+  return (
+    <div className="page-search smart-search" ref={box}>
+      <form
+        className="smart-search-form"
+        role="search"
+        aria-label={placeholder}
+        onSubmit={submit}
+      >
+        <div className="smart-search-box">
+          <Search size={18} aria-hidden="true" />
+          <div className="smart-search-content">
+            {chips.map(({ field: f, value: v, label }) => (
+              <button
+                key={f.key + JSON.stringify(v)}
+                type="button"
+                className="search-token"
+                aria-label={label + " filtresini kaldır"}
+                onClick={() => remove(f, v)}
+              >
+                <span>{label}</span>
+                <X size={12} />
+              </button>
+            ))}
+            <input
+              ref={input}
+              id={inline ? "party-search" : "search"}
+              aria-label={placeholder}
+              placeholder={chips.length ? "Aramaya devam et…" : placeholder}
+              enterKeyHint="search"
+              value={text}
+              role={fields.length ? "combobox" : undefined}
+              aria-expanded={fields.length ? show : undefined}
+              aria-autocomplete="list"
+              aria-controls={show ? id : undefined}
+              aria-activedescendant={
+                index >= 0 ? id + "-" + index : activeSuggestion
+              }
+              onFocus={() => {
+                setOpened(true);
+                setEditor(false);
+              }}
+              onChange={(e) => {
+                setText(e.target.value);
+                setOpened(true);
+                setIndex(-1);
+                setError("");
+                onSearchText?.(e.target.value);
+              }}
+              onCompositionStart={() => setComposing(true)}
+              onCompositionEnd={() => setComposing(false)}
+              onKeyDown={(e) => {
+                onSearchKeyDown?.(e);
+                if (e.defaultPrevented) return;
+                if (e.key === "ArrowDown" && show) {
+                  e.preventDefault();
+                  setIndex((i) => Math.min(suggested.length - 1, i + 1));
+                }
+                if (e.key === "ArrowUp" && show) {
+                  e.preventDefault();
+                  setIndex((i) => Math.max(0, i - 1));
+                }
+                if (e.key === "Escape") {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setOpened(false);
+                  setEditor(false);
+                  setText(query);
+                  setError("");
+                }
+                if (e.key === "Backspace" && !text && chips.length) {
+                  const c = chips.at(-1);
+                  remove(c.field, c.value);
+                }
+              }}
+            />
+          </div>
+          <div className="smart-search-controls">
+            {(text || query || chips.length > 0) && (
+              <button
+                type="button"
+                className="search-clear"
+                aria-label="Aramayı temizle"
+                title="Temizle"
+                onClick={clear}
+              >
+                <X size={16} />
+              </button>
+            )}
+            {fields.length > 0 && (
+              <button
+                className="search-options"
+                type="button"
+                aria-label="Arama alanlarını düzenle"
+                title="Arama alanları"
+                aria-expanded={show && editor}
+                onClick={() => {
+                  setOpened(!(opened && editor));
+                  setEditor(true);
+                  setDraft({});
+                  setError("");
+                }}
+              >
+                <ChevronDown size={16} />
+              </button>
+            )}
+            {!inline && !chips.length && <kbd aria-hidden="true">Ctrl K</kbd>}
+          </div>
+        </div>
+      </form>
+      {show && (
+        <FloatingPanel
+          id={id}
+          anchor={input.current}
+          alignTo={box.current}
+          width={Math.min(box.current?.clientWidth || 500, 760)}
+          maxPanelHeight={540}
+          title={editor ? "Arama alanları" : "Arama önerileri"}
+          autoFocus={editor}
+          mobileFit
+          className={
+            editor
+              ? "search-filter-panel smart-field-editor"
+              : "smart-suggestions"
+          }
+          onClose={() => {
+            setOpened(false);
+            setEditor(false);
+          }}
+        >
+          {editor ? (
+            <>
+              <div className="finance-filters shared-filters">
+                {fields.map((f) => {
+                  const value = draft[f.key] ?? f.value;
+                  return (
+                    <label key={f.key}>
+                      {f.label}
+                      {cloneElement(f.child, {
+                        ...(f.range
+                          ? value
+                          : f.check
+                            ? { checked: value }
+                            : {
+                                value: Array.isArray(value) ? value[0] : value,
+                              }),
+                        onChange: (ev) =>
+                          setDraft((d) => ({
+                            ...d,
+                            [f.key]: f.range
+                              ? ev
+                              : f.check
+                                ? ev.target.checked
+                                : ev.target.value,
+                          })),
+                      })}
+                    </label>
+                  );
+                })}
+              </div>
+              <div className="search-filter-actions">
+                <button
+                  type="button"
+                  className="secondary-button"
+                  onClick={() => {
+                    setOpened(false);
+                    setEditor(false);
+                  }}
+                >
+                  Vazgeç
+                </button>
+                <button
+                  type="button"
+                  className="secondary-button"
+                  onClick={() =>
+                    setDraft(
+                      Object.fromEntries(fields.map((f) => [f.key, f.empty])),
+                    )
+                  }
+                >
+                  Temizle
+                </button>
+                <button
+                  type="button"
+                  className="primary-button"
+                  onClick={applyFields}
+                >
+                  Uygula
+                </button>
+              </div>
+            </>
+          ) : (
+            <div id={id + "-list"} role="listbox" aria-label="Arama filtreleri">
+              {text && !text.includes(":") && (
+                <button
+                  type="button"
+                  className="search-text-option"
+                  onClick={() => submit()}
+                >
+                  Metinde “{text}” ara
+                </button>
+              )}
+              {suggested.map((s, i) => (
+                <button
+                  type="button"
+                  id={id + "-" + i}
+                  role="option"
+                  aria-selected={i === index}
+                  key={s.field.key + JSON.stringify(s.value)}
+                  onClick={() => choose(s.field, s.value)}
+                >
+                  {s.label}
+                </button>
+              ))}
+              {range && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditor(true);
+                    setDraft({});
+                  }}
+                >
+                  Tarih aralığı seç…
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => {
+                  setEditor(true);
+                  setDraft({});
+                }}
+              >
+                Tüm arama alanları…
+              </button>
+            </div>
+          )}
+          {error && (
+            <p className="cari-error" role="alert">
+              {error}
+            </p>
+          )}
+        </FloatingPanel>
+      )}
+      {(error || searchFeedback) && (
+        <p className="cari-error" role="alert">
+          {error || searchFeedback}
+        </p>
+      )}
+      {suggestions?.({ anchor: input.current, host, filters: false })}
+      <span className="sr-only" role="status" aria-live="polite">
+        {resultCount === undefined ? "" : resultCount + " sonuç"}
+      </span>
+    </div>
+  );
 }

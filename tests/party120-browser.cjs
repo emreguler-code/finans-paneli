@@ -1,7 +1,7 @@
 // Frontend acceptance against a deterministic synthetic API. No database or credentials.
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),http=require('node:http');
-const {chromium,webkit}=require('playwright');
-const root=path.resolve(__dirname,'../dist/client'),out=path.resolve(process.env.QA_OUTPUT_DIR||'.qa/party120');fs.mkdirSync(out,{recursive:true});
+const {chromium,webkit,firefox}=require('playwright');
+const root=path.resolve(__dirname,'../dist/client'),out=path.resolve(process.env.QA_OUTPUT_DIR||'.qa/party121');fs.mkdirSync(out,{recursive:true});
 const user={id:1,username:'test-admin',short_name:'Test',role:'admin'};
 const party={id:1,name:'Poyraz Gıda',title:'Poyraz Gıda',type:'Tedarikçi',active:true,version:1,phone:'',email:'',tax_no:'',tax_office:'',address:'',notes:'',pos_programs:[],profile:{}};
 let running=0;
@@ -16,8 +16,8 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
 (async()=>{
  await new Promise(resolve=>server.listen(Number(process.env.QA_PORT)||0,'127.0.0.1',resolve));const base='http://127.0.0.1:'+server.address().port;
  if(process.env.QA_SERVE){console.log('Synthetic UI fixture listening at '+base);await new Promise(()=>{});}
- for(const engine of (process.env.QA_BROWSER_ENGINES||'chromium,webkit').split(',')){
-  const browser=await {chromium,webkit}[engine].launch({headless:true,...(engine==='chromium'&&process.env.QA_BROWSER_BIN?{executablePath:process.env.QA_BROWSER_BIN,args:['--no-sandbox']}: {})});
+ for(const engine of (process.env.QA_BROWSER_ENGINES||'chromium,webkit,firefox').split(',')){
+  const browser=await {chromium,webkit,firefox}[engine].launch({headless:true,...(engine==='chromium'&&process.env.QA_BROWSER_BIN?{executablePath:process.env.QA_BROWSER_BIN,args:['--no-sandbox']}: {})});
   const context=await browser.newContext({locale:'tr-TR',timezoneId:'Europe/Istanbul',viewport:{width:1440,height:1000}}),p=await context.newPage(),errors=[],checks=[];
   await p.route('**/api/index.php?**',r=>{if(!p.url().includes('viewer=1'))return r.continue();const action=new URL(r.request().url()).searchParams.get('action'),viewer={...user,role:'viewer'};return r.fulfill({json:action==='session'?{csrf:'test-csrf',user:viewer}:action==='state'?{...data,user:viewer}:{}})});
   p.setDefaultTimeout(12000);p.on('pageerror',e=>errors.push(e.message));const ok=(name,value)=>{assert.ok(value,name);checks.push(name);console.log('PASS',engine,name)};
@@ -48,6 +48,8 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
     if(width<=430){ok('Touch action targets remain 44px '+width,await p.locator('.ledger-actions .icon-button').evaluateAll(es=>es.every(e=>e.getBoundingClientRect().height>=43.5&&parseFloat(getComputedStyle(e).minHeight)>=44)));await shot('mobile-'+width)}
    }
    await p.emulateMedia({reducedMotion:'reduce'});await p.setViewportSize({width:1440,height:1000});await local.getByRole('button',{name:'Sırala',exact:true}).click();ok('Sort stays anchored without blur',await p.getByRole('dialog',{name:'Sıralama'}).getAttribute('data-floating-panel')!==null&&await p.locator('.backdrop').count()===0);await p.keyboard.press('Escape');
+   await require('./layout121-browser.cjs')(p,ok,shot);
+   const scaled=await browser.newContext({locale:'tr-TR',timezoneId:'Europe/Istanbul',viewport:{width:1365,height:700},deviceScaleFactor:1.5,reducedMotion:'reduce'});const sp=await scaled.newPage();await sp.goto(base+'/#/cariler/1');await sp.locator('.persistent-composer').waitFor();await sp.locator('.inline-list-tools input').fill('ekleyen:Test');await sp.locator('.inline-list-tools input').press('Enter');await sp.screenshot({path:path.join(out,engine+'-scaled-desktop.png'),animations:'disabled'});ok('Scaled desktop filter label fits',await sp.locator('.search-token > span').evaluate(e=>e.getBoundingClientRect().height<24));await scaled.close();
    await p.goto(base+'/?viewer=1#/cariler/1');await p.locator('.party-heading-name').waitFor();ok('Viewer cannot create or edit financial rows',await p.locator('.persistent-composer').count()===0&&await p.getByRole('button',{name:'İşlemi düzenle',exact:true}).count()===0);
    ok('No runtime errors',errors.length===0);results.push({engine,checks,errors,browser:browser.version()});
   }catch(e){await shot('failure');fs.writeFileSync(path.join(out,engine+'-failure.txt'),String(e)+'\n'+await p.locator('body').innerText());throw e}finally{await browser.close()}

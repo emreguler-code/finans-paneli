@@ -1,9 +1,9 @@
 import {matchesChoice} from './search-query.mjs';
-import {ContentColumns,PageFooter} from './AppShell';
+import {ContentColumns} from './AppShell';
 import {PageHeading,SummaryBar} from './PageLayout';
 import {useScopedState} from './SearchState';
-import {useState,useEffect,useLayoutEffect} from 'react';
-import {X, CalendarDays, ChevronLeft, ChevronRight, Landmark, CreditCard, Users} from 'lucide-react';
+import {useState,useLayoutEffect} from 'react';
+import { CalendarDays, ChevronLeft, ChevronRight} from 'lucide-react';
 import {DatePicker} from './DatePicker';
 import {Sheet} from './ui';
 import {ListTools} from './ListTools';

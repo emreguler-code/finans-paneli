@@ -1,5 +1,5 @@
 import {Children,cloneElement,isValidElement,useEffect,useLayoutEffect,useRef,useState,useSyncExternalStore} from 'react';
-import {Menu,PanelLeftClose,PanelLeftOpen,EyeOff} from 'lucide-react';
+import {Menu,PanelLeftClose,EyeOff} from 'lucide-react';
 const preferenceKey='finans.sidebar.preference';
 export function useMediaQuery(query){return useSyncExternalStore(callback=>{const m=matchMedia(query);m.addEventListener('change',callback);return()=>m.removeEventListener('change',callback)},()=>matchMedia(query).matches,()=>false)}
 export function useShellLayout(){
@@ -10,7 +10,7 @@ export function useShellLayout(){
  useEffect(()=>{if(!animating)return;const timer=setTimeout(()=>setAnimating(false),220);return()=>clearTimeout(timer)},[animating,motionStep]);
  const mode=mobile?(open?'drawer':'hidden'):preference==='hidden'?'hidden':preference==='compact'||narrow?'compact':'full';
  useEffect(()=>setOpenState(false),[mobile]);
- function choose(value){if(!['full','compact','hidden'].includes(value))return;markMotion();setPreference(value);try{localStorage.setItem(preferenceKey,value)}catch{}if(mobile)setOpen(value!=='hidden')}
+ function choose(value){if(!['full','compact','hidden'].includes(value))return;markMotion();setPreference(value);try{localStorage.setItem(preferenceKey,value)}catch{/* Optional browser storage/response parsing may be unavailable. */}if(mobile)setOpen(value!=='hidden')}
  const cycle=()=>mobile?setOpen(!open):choose(mode==='full'?'compact':mode==='compact'?'hidden':'full');
  return {mobile,preference,mode,open,setOpen,choose,cycle,animating};
 }

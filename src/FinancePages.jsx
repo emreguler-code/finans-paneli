@@ -9,7 +9,7 @@ import {RecentActivity} from './ActivityPanels';
 import {useDelayedBusy} from './Motion';
 import {useScopedState} from './SearchState';
 import { useState, useEffect } from 'react';
-import { Plus, Pencil, Info, ChevronRight, ChevronDown, ArrowLeft, ArrowUpRight, ArrowDownLeft, Dot, LoaderCircle, Users, UserRound } from 'lucide-react';
+import { Plus, ChevronRight, ArrowUpRight, ArrowDownLeft, Dot, LoaderCircle, Users, UserRound } from 'lucide-react';
 import { api } from './api';
 import { can, fmt, tone } from './ui';
 import { ListTools } from './ListTools';

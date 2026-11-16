@@ -1,5 +1,5 @@
 import {matchesChoice} from './search-query.mjs';
-import {ContentColumns,PageFooter} from './AppShell';
+import {ContentColumns} from './AppShell';
 import {useNavigation,useRecordState,useRouteTab} from './Navigation';
 import {cardDisplayName} from './account-display.mjs';
 import {NotificationPreview,RecentActivity} from './ActivityPanels';

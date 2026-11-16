@@ -1,7 +1,7 @@
 name: Candidate QA
 on:
   push:
-    branches: ['codex/1.20.0']
+    branches: ['codex/1.21.0']
     paths-ignore: ['docs/**', 'README.md', 'AGENTS.md']
 permissions:
   contents: read
@@ -31,7 +31,7 @@ jobs:
             npx playwright install --with-deps chromium
           fi
       - name: Prepare WebKit for mobile checks
-        run: npx playwright install --with-deps webkit
+        run: npx playwright install --with-deps webkit firefox
       - run: npm run test:party-ui
       - name: Package and verify candidate
         run: |
@@ -81,7 +81,7 @@ jobs:
         run: echo "QA_BROWSER_BIN=$(command -v google-chrome)" >> "$GITHUB_ENV"
       - name: Prepare WebKit
         if: matrix.suite == 'mobile'
-        run: npx playwright install --with-deps webkit
+        run: npx playwright install --with-deps webkit firefox
       - name: Package installation fixture
         if: matrix.suite == 'package'
         run: python3 scripts/package-release.py

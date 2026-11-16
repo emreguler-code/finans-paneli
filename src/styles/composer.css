@@ -1,0 +1,223 @@
+/* The dock is a real shell row: body scrolls, collapsed host occupies zero height. */
+.layout-shell .persistent-composer {
+  position: relative;
+  overflow: visible;
+  min-height: 68px;
+  max-height: none;
+  padding: 0;
+}
+.layout-shell .persistent-composer .surface-body {
+  max-height: min(
+    420px,
+    44dvh,
+    calc(var(--visible-height, 100dvh) - var(--shell-header-height) - 140px)
+  );
+  padding: 12px 72px 12px 16px;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+.layout-shell .persistent-composer .surface-body[hidden] {
+  display: none;
+}
+.layout-shell .persistent-composer.is-collapsed {
+  width: 0;
+  height: 0;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: transparent !important;
+  box-shadow: none;
+  overflow: visible;
+  pointer-events: none;
+}
+.layout-shell #entry-dock-root.composer-folded {
+  height: 0;
+  min-height: 0;
+  padding: 0;
+  overflow: visible;
+  container-type: normal;
+}
+.party-compose-toggle {
+  position: absolute;
+  right: 16px;
+  bottom: 12px;
+  z-index: 90;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  background: var(--surface-raised);
+  pointer-events: auto;
+}
+.party-compose-toggle.primary-button {
+  background: var(--accent);
+  color: var(--text-on-accent);
+}
+.layout-shell .entry-dock .entry-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 12px;
+}
+.layout-shell .entry-dock .sheet-scroll {
+  display: contents;
+}
+.layout-shell .entry-dock .dock-primary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: end;
+  min-width: 0;
+}
+.layout-shell .entry-dock .dock-primary .cari-field {
+  flex: 1 1 140px;
+  min-width: min(100%, 120px);
+  margin: 0 !important;
+}
+.layout-shell
+  .entry-dock
+  .dock-primary
+  .cari-field:has(input[name="description"]) {
+  flex: 2 1 220px;
+}
+.layout-shell .entry-dock .dock-primary .compact-date,
+.layout-shell .entry-dock .dock-more-field {
+  flex: 0 0 44px;
+  min-width: 44px;
+}
+.layout-shell .entry-dock .dock-more {
+  margin: 0;
+}
+.layout-shell .entry-dock .sheet-footer {
+  position: static;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: var(--surface-raised);
+}
+.layout-shell .entry-dock .sheet-footer button {
+  flex: 0 0 auto;
+  min-height: 44px;
+}
+.layout-shell .persistent-composer .sheet-footer .secondary-button {
+  display: inline-flex;
+  align-items: center;
+}
+.layout-shell .entry-dock .dock-options {
+  grid-column: 1/-1;
+  margin: 0;
+  padding: 8px 0 0;
+}
+.layout-shell .entry-dock .dock-options > summary {
+  display: none;
+}
+.dock-option-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+  align-items: start;
+  gap: 12px;
+}
+.layout-shell .entry-dock .dock-option-fields > .entry-section {
+  display: contents;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.layout-shell .entry-dock .dock-option-fields > .entry-section > h3 {
+  display: none;
+}
+.layout-shell .entry-dock .dock-option-fields .entry-section-fields {
+  display: contents;
+}
+.layout-shell .entry-dock .dock-option-fields .cari-field {
+  min-width: 0;
+  margin: 0 !important;
+  gap: 4px;
+  font-size: 12px;
+}
+.layout-shell .entry-dock .dock-option-fields .cari-hint,
+.layout-shell .entry-dock .dock-option-fields > .entry-effect,
+.layout-shell .entry-dock .dock-option-fields > .entry-fold {
+  grid-column: 1/-1;
+  margin: 0;
+}
+.layout-shell .entry-dock .dock-option-fields .entry-effect {
+  padding: 8px 0;
+  border: 0;
+  background: transparent;
+}
+.layout-shell .entry-dock .dock-option-fields .entry-fold > summary {
+  min-height: 36px;
+}
+.layout-shell .entry-dock .entry-form:has(.dock-options[open]) > .sheet-footer {
+  grid-column: 1/-1;
+  position: sticky;
+  bottom: -12px;
+  padding: 8px 0;
+  z-index: 2;
+}
+.session-skeleton {
+  display: grid;
+  gap: 16px;
+  margin-top: 24px;
+}
+.session-skeleton span {
+  height: 44px;
+  border-radius: 8px;
+  background: var(--line);
+}
+.session-skeleton span:last-child {
+  width: 45%;
+}
+.cari-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+@container composer (width < 1100px) {
+  .layout-shell .entry-dock .entry-form {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 760px) {
+  .layout-shell .persistent-composer .surface-body {
+    padding: 8px 12px;
+  }
+  .layout-shell .entry-dock .dock-primary {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .layout-shell .entry-dock .dock-primary .cari-field {
+    width: auto;
+    min-width: 0;
+  }
+  .layout-shell
+    .entry-dock
+    .dock-primary
+    .cari-field:has(input[name="description"]) {
+    grid-column: 1/-1;
+  }
+  .layout-shell .persistent-composer .sheet-footer {
+    padding-right: 60px;
+  }
+  .layout-shell
+    .entry-dock
+    .entry-form:has(.dock-options[open])
+    > .sheet-footer {
+    padding-right: 60px;
+    bottom: -8px;
+  }
+  .party-compose-toggle {
+    right: 12px;
+    bottom: 8px;
+  }
+  .layout-shell .mobile-more {
+    z-index: 100;
+  }
+}

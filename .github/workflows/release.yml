@@ -60,7 +60,7 @@ jobs:
             npx playwright install --with-deps chromium
           fi
       - name: Prepare WebKit for mobile checks
-        run: npx playwright install --with-deps webkit
+        run: npx playwright install --with-deps webkit firefox
       - name: Check compact party UI against synthetic API
         run: npm run test:party-ui
       - name: Test desktop and mobile workflows
@@ -130,7 +130,7 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: party-ui-evidence
-          path: .qa/party120/
+          path: .qa/party121/
           if-no-files-found: ignore
       - name: Record release result for Git-only clients
         if: always() && github.event_name == 'push' && steps.validate.conclusion == 'success'

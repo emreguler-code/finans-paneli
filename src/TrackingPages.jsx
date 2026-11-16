@@ -1,12 +1,11 @@
 import {VehiclesPage} from './VehiclesPage';
-import {PageHeading} from './PageLayout';
 import {useState} from 'react';
-import {Plus,Pencil,Info,ArrowLeft,Car,ExternalLink,Link,ChevronDown} from 'lucide-react';
+import {Plus,Pencil,ExternalLink,Link,ChevronDown} from 'lucide-react';
 import {ListTools} from './ListTools';
-import {DatePicker,dateLabel} from './DatePicker';
+import {dateLabel} from './DatePicker';
 import {useScopedState} from './SearchState';
 import {can,fmt} from './ui';
-import {vehicleTypes,rewardTypes,vehiclePaid,vehicleReminders,cardPurchases,campaignMatches,campaignProgress,campaignStatus,addDays} from './tracking-utils.mjs';
+import {rewardTypes,cardPurchases,campaignMatches,campaignProgress,campaignStatus} from './tracking-utils.mjs';
 const benefit=(c,value)=>c.reward_type==='points'?value.toLocaleString('tr-TR',{maximumFractionDigits:2})+' puan':c.reward_type==='installments'?c.extra_installments+' ek taksit':c.reward_type==='deferment'?c.defer_days+' gün erteleme':fmt(Math.round(value*100))+' TL';
 export function TrackingPages(props){return props.page==='Kampanyalar'?<CampaignsPage {...props}/>:<VehiclesPage {...props}/>}
 function CampaignsPage({data,open}){

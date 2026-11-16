@@ -1,10 +1,10 @@
 // Current 1.20 UI acceptance against isolated real PHP/MariaDB; prior UI scripts remain historical receipts.
-const fs=require('fs'),path=require('path'),{chromium,webkit}=require('playwright');
+const fs=require('fs'),path=require('path'),{chromium,webkit,firefox}=require('playwright');
 const out=path.resolve(process.env.QA_OUTPUT_DIR||'.qa/browser120');fs.mkdirSync(out,{recursive:true});
 (async()=>{
  const results=[];
  for(const engine of (process.env.QA_BROWSER_ENGINES||'chromium').split(',')){
-  const browser=await {chromium,webkit}[engine].launch({headless:true,...(engine==='chromium'&&process.env.QA_BROWSER_BIN?{executablePath:process.env.QA_BROWSER_BIN,args:['--no-sandbox']}: {})});
+  const browser=await {chromium,webkit,firefox}[engine].launch({headless:true,...(engine==='chromium'&&process.env.QA_BROWSER_BIN?{executablePath:process.env.QA_BROWSER_BIN,args:['--no-sandbox']}: {})});
   const context=await browser.newContext({viewport:{width:1440,height:1000},locale:'tr-TR',timezoneId:'Europe/Istanbul',reducedMotion:'reduce'}),p=await context.newPage(),errors=[],checks=[];
   p.setDefaultTimeout(15000);p.on('pageerror',e=>errors.push(e.message));const ok=(name,value)=>{if(!value)throw Error(name);checks.push(name);console.log('PASS',engine,name)};
   const shot=async name=>p.screenshot({path:path.join(out,engine+'-'+name+'.png'),animations:'disabled'});
