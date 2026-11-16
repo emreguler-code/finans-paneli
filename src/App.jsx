@@ -19,7 +19,7 @@ import { globalEventAmount } from './list-utils.mjs';
 import { DatePicker } from './DatePicker';
 import { presetRange } from './date-utils.mjs';
 import { useState, useEffect, useRef } from "react";
-import { Users, LayoutDashboard, ArrowLeftRight, Landmark, CreditCard, ChartNoAxesCombined, Search, Bell, Plus, ChevronRight, ChevronDown, PanelLeftClose, PanelLeftOpen, ArrowDownLeft, ArrowUpRight, ArrowRight, CircleAlert, Check, X, Wallet, CalendarDays, MoreHorizontal, Settings, Settings2, Car, Gift, UserRoundCog } from "lucide-react";
+import { Users, LayoutDashboard, ArrowLeftRight, Landmark, CreditCard, ChartNoAxesCombined, Search, Bell, Plus, ChevronRight, ChevronDown, PanelLeftClose, EyeOff, ArrowDownLeft, ArrowUpRight, ArrowRight, CircleAlert, Check, X, Wallet, CalendarDays, MoreHorizontal, Settings, Settings2, Car, Gift, UserRoundCog } from "lucide-react";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 import { money, day } from "./data";
 import { FinanceHub, FinanceDialog } from "./Finance";
@@ -484,7 +484,7 @@ export function App({
             <span>Görünüm ve bilgiler</span>
           </button>
           <button className="sidebar-layout-toggle" aria-label={compact ? "Menüyü gizle" : "Menüyü daralt"} onClick={shell.cycle}>
-            {compact ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}
+            {compact ? <EyeOff size={18} /> : <PanelLeftClose size={18} />}
             <span>{compact?"Menüyü gizle":"Menüyü daralt"}</span>
           </button>
           <div className="demo-note">
