@@ -48,3 +48,7 @@ Ham kabul kayıtları: [odaklı arayüz](evidence/1.20.0/frontend-checks.json), 
 ## Sınırlar
 
 Satırlar aşamalı olarak DOM'a eklenir; mevcut state API tüm veriyi yüklemeye devam eder. Sunucu tarafında ağ bazlı sayfalama bu sürümün kapsamı değildir. WebKit testi fiziksel iPhone/iOS Firefox testi sayılmaz. Önceden mevcut büyük JavaScript paketi uyarısı sürer; derlemeyi engellemez. Testler izole demo verisi üzerinde yapılmıştır; canlı hosting kurulumu ve gerçek veri değişikliği yapılmamıştır.
+
+## Yayın doğrulaması
+
+1.20.0, ana dala PR #12 ile birleştirildi ve GitHub Release olarak yayımlandı. [Yayın koşusunun tüm adımları başarılı](https://github.com/emreguler-code/finans-paneli/actions/runs/43918156586). İki ZIP ve iki SHA-256 dosyası Release üzerinde mevcut; yayımlanan ZIP özetleri yukarıdaki kabul koşusunda doğrulanan paketlerle birebir aynıdır. [Yayın ve paket makbuzu](evidence/1.20.0/release-receipt.json). Hosting'e canlı kurulum yapılmadı.

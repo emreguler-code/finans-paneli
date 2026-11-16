@@ -1,0 +1,37 @@
+{
+  "version": "1.20.0",
+  "release": "https://github.com/emreguler-code/finans-paneli/releases/tag/v1.20.0",
+  "published": true,
+  "sourceCommit": "c6f338ebba0e5494b3214bd9c7b93598ed527b0e",
+  "testedApplicationCommit": "d009e30665d4a311922ae663eb57f9a7455c73e3",
+  "candidateQA": "https://github.com/emreguler-code/finans-paneli/actions/runs/43916737190",
+  "releaseQA": "https://github.com/emreguler-code/finans-paneli/actions/runs/43918156586",
+  "releaseQAConclusion": "success",
+  "assets": [
+    {
+      "name": "finans-paneli-1.20.0-hosting.zip",
+      "sha256": "fb9b2306b8af608d8d112d67510a0a47f2df4fb1bc36a383cd3ab7b9cd640f0c",
+      "size": 818652,
+      "url": "https://github.com/emreguler-code/finans-paneli/releases/download/v1.20.0/finans-paneli-1.20.0-hosting.zip"
+    },
+    {
+      "name": "finans-paneli-1.20.0-hosting.zip.sha256",
+      "sha256": "4803c60b0af67b4d27a88df762d8a7c5106ed2a2ee107e55951554cca59cb2f1",
+      "size": 99,
+      "url": "https://github.com/emreguler-code/finans-paneli/releases/download/v1.20.0/finans-paneli-1.20.0-hosting.zip.sha256"
+    },
+    {
+      "name": "finans-paneli-1.20.0.zip",
+      "sha256": "f82bae7d37cccf456825395621f946463fd340d26470c523ef3d64d69244869c",
+      "size": 829757,
+      "url": "https://github.com/emreguler-code/finans-paneli/releases/download/v1.20.0/finans-paneli-1.20.0.zip"
+    },
+    {
+      "name": "finans-paneli-1.20.0.zip.sha256",
+      "sha256": "cf2183643e96d929da03c0765e6ee168484a53f0061d0debba7d43d6e35bd67b",
+      "size": 91,
+      "url": "https://github.com/emreguler-code/finans-paneli/releases/download/v1.20.0/finans-paneli-1.20.0.zip.sha256"
+    }
+  ],
+  "hostingInstalled": false
+}
