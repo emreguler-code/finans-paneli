@@ -42,10 +42,10 @@
  .party-heading-row { grid-template-columns: auto minmax(0,1fr); gap: var(--space-3); }
  .party-heading-name h1 { font-size: var(--text-page-mobile); }
  .party-heading-row > .page-back { align-self: start; }
- .party-balance-and-actions { display: flex; grid-column: 1/-1; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: var(--space-3); min-width: 0; }
- .party-current-balance { flex: 1 1 160px; min-width: min-content; text-align: right; }
+ .party-balance-and-actions { display: flex; grid-column: 1/-1; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: var(--space-2); min-width: 0; }
+ .party-current-balance { flex: 1 1 150px; min-width: min-content; text-align: right; }
  .party-identity-summary .summary-value { font-size: var(--text-value-mobile); }
- .party-heading-actions { flex: 0 0 auto; margin-left: auto; justify-content: flex-end; }
+ .party-heading-actions { flex: 0 0 auto; margin-left: auto; justify-content: flex-end; gap: var(--space-1); }
  .inline-list-tools .page-search-row .search-submit { display: none; }
  .inline-list-tools .page-search-row input { font-size: var(--text-input-mobile); }
  .party-ledger-view .ledger-section-heading { padding: var(--space-3); }

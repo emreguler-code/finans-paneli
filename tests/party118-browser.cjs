@@ -59,7 +59,7 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
     await local.getByRole('button',{name:'Filtrele',exact:true}).click();ok('Local filter fits viewport '+width,await p.getByRole('dialog',{name:'Filtreler',exact:true}).evaluate(e=>{const r=e.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth&&r.bottom<=innerHeight}));await p.keyboard.press('Escape');
    }
    ok('No browser runtime errors',errors.length===0);results.push({engine,browser:browser.version(),checks,errors});
-  }catch(e){await p.screenshot({path:path.join(out,engine+'-failure.png')});throw e}finally{await browser.close()}
+  }catch(e){await p.screenshot({path:path.join(out,engine+'-failure.png')});fs.writeFileSync(path.join(out,engine+'-failure-layout.json'),JSON.stringify(await p.locator('.party-heading-row,.party-balance-and-actions,.party-current-balance,.party-heading-actions').evaluateAll(es=>es.map(e=>({className:e.className,rect:e.getBoundingClientRect().toJSON(),display:getComputedStyle(e).display,gap:getComputedStyle(e).gap,minWidth:getComputedStyle(e).minWidth}))),null,2));throw e}finally{await browser.close()}
  }
  fs.writeFileSync(path.join(out,'checks.json'),JSON.stringify(results,null,2));console.log('PASS party UI checks',results.map(r=>r.engine+': '+r.checks.length).join(', '));
 })().catch(e=>{console.error(e);process.exitCode=1}).finally(()=>server.close());
