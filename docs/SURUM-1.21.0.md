@@ -17,6 +17,6 @@ ESLint 10, React Hooks, kullanılmayan import/değişken ve Stylelint kontroller
 
 ## Kabul kapsamı
 
-Gerçek PHP/MariaDB tarayıcı akışları Chromium/WebKit/Firefox; sentetik 75 hareketli arayüzde üç sidebar durumu, 1024–2048 arası kritik genişlikler, 320–1920 önceki kabulü, kısa pencere/zoom eşdeğeri viewportlar ve 1,5 ölçekli 1365x700 ekran görüntüsü. Son ay satırına erişim, ikon merkezi, etiket metin ölçüsü, form genişliği ve küçük eylem düğmeleri sayısal olarak doğrulanır. Kapsamlı demo 624 hareket/715 mutabakat; API/migrasyon/yedek ve ZIP kurulum kabulü sürer.
+Windows Firefox/Chromium sentetik arayüz kontrolü ayrıca zorunludur. Gerçek PHP/MariaDB tarayıcı akışları Chromium/WebKit/Firefox; sentetik 75 hareketli arayüzde üç sidebar durumu, 1024–2048 arası kritik genişlikler, 320–1920 önceki kabulü, kısa pencere/zoom eşdeğeri viewportlar ve 1,5 ölçekli 1365x700 ekran görüntüsü. Son ay satırına erişim, ikon merkezi, etiket metin ölçüsü, form genişliği ve küçük eylem düğmeleri sayısal olarak doğrulanır. Kapsamlı demo 624 hareket/715 mutabakat; API/migrasyon/yedek ve ZIP kurulum kabulü sürer.
 
 Hiçbir test tüm olası cihaz/tarayıcılarda sonsuz kusursuzluğu kanıtlamaz. Fiziksel iOS ve gerçek browser-chrome yakınlaştırma testi yapılmış sayılmaz. Ağ tabanlı sayfalama ve finansal model değişikliği kapsam dışıdır. Hosting'e canlı kurulum yapılmaz.

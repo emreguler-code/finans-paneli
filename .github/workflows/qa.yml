@@ -107,3 +107,26 @@ jobs:
           name: candidate-ui-evidence-${{ matrix.suite }}
           path: qa-evidence/
           if-no-files-found: ignore
+
+  windows-layout:
+    name: Windows Firefox and Chromium layout
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npx playwright install firefox chromium
+      - run: npm run test:party-ui
+        env:
+          QA_BROWSER_ENGINES: firefox,chromium
+      - name: Save Windows layout evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: windows-layout-evidence
+          path: .qa/party121/
+          if-no-files-found: ignore

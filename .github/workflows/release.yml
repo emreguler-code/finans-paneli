@@ -13,6 +13,7 @@ permissions:
   contents: read
 jobs:
   package:
+    needs: windows-layout
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -161,3 +162,26 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git tag -fa "release-status/$RELEASE_TAG" -F /tmp/finans-release-result.json
           git push --force origin "refs/tags/release-status/$RELEASE_TAG"
+
+  windows-layout:
+    name: Windows Firefox and Chromium layout
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npx playwright install firefox chromium
+      - run: npm run test:party-ui
+        env:
+          QA_BROWSER_ENGINES: firefox,chromium
+      - name: Save Windows layout evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: windows-layout-evidence
+          path: .qa/party121/
+          if-no-files-found: ignore
