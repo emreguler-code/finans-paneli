@@ -133,7 +133,7 @@ jobs:
           path: .qa/party118/
           if-no-files-found: ignore
       - name: Record release result for Git-only clients
-        if: always() && github.event_name == 'push'
+        if: always() && github.event_name == 'push' && steps.validate.conclusion == 'success'
         env:
           RELEASE_RESULT: ${{ job.status }}
           STEP_RESULTS: ${{ toJSON(steps) }}
