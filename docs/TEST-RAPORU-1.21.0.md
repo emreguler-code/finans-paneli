@@ -49,3 +49,7 @@ ESLint/Stylelint/biçim denetimleri npm test içindedir; GitHub yayınında npm 
 ## Sınırlar
 
 Bu kabul tüm olası ekranları sonsuza kadar hatasız kılma garantisi değildir. Windows testleri kullanıcının kendi Firefox profili değil otomasyon tarayıcılarıdır. Daraltılmış etkin viewport ve deviceScaleFactor testi gerçek browser-chrome zoom kontrolü değildir. Fiziksel iOS cihazında test yapılmadı. Eski CSS'in bütünü kullanılmayan koddan arındırılmış sayılmaz; bu sürüm sorunlu ortak bileşen sahiplerini ve denetlenebilir kaynak tekrarlarını temizler. Üretim JS paketindeki mevcut büyük chunk uyarısı sürer; derleme başarılıdır. Ağ tabanlı sayfalama/şema değişmedi. Canlı hosting'e kurulum ve gerçek veri işlemi yapılmadı.
+
+## Yayın doğrulaması
+
+PR #13 ana dala birleştirildi. [1.21.0 GitHub Release](https://github.com/emreguler-code/finans-paneli/releases/tag/v1.21.0) taslak değildir; iki ZIP ve iki SHA-256 dosyası mevcuttur. [Yayın koşusu](https://github.com/emreguler-code/finans-paneli/actions/runs/43947649464) Windows kapısı ve tüm Linux kabul adımlarıyla başarılıdır. Yayımlanan ZIP özetleri test edilen paketlerle birebir aynıdır. [Yayın makbuzu](evidence/1.21.0/release-receipt.json). Canlı hosting kurulumu yapılmadı.
