@@ -1,6 +1,6 @@
 # Finans Paneli 1.20.0
 
-Akıllı arama/filtre çipleri, satır içinde işlem türü ve tutar düzenleme, son 30 hareketten kademeli yükleme, gerçek ay sonu bakiye özeti ve boşluk bırakmayan hızlı giriş. Şema 12 korunur. [Bölüm bazında analiz ve sürüm kapsamı](docs/SURUM-1.20.0.md) · [Tasarım ilkeleri](docs/TASARIM-ILKELERI.md).
+Akıllı arama/filtre çipleri, satır içinde işlem türü ve tutar düzenleme, son 30 hareketten kademeli yükleme, gerçek ay sonu bakiye özeti ve boşluk bırakmayan hızlı giriş. Şema 12 korunur. [Bölüm bazında analiz ve sürüm kapsamı](docs/SURUM-1.20.0.md) · [Test raporu ve canlı ekranlar](docs/TEST-RAPORU-1.20.0.md) · [Tasarım ilkeleri](docs/TASARIM-ILKELERI.md).
 
 Sade Netlik tasarımında cari hesaplar, banka/kasa, kredi kartları, ödeme planı ve raporlar. React/Vite arayüz; PHP/MySQL API. Banka bağlantısı yoktur.
 
