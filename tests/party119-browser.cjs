@@ -10,7 +10,7 @@ const events=Array.from({length:30},(_,i)=>{
  if(!e.cancelled)running+=e.party_effect;e.party_balance=running;return e;
 });party.balance_cents=running;
 const scheduled={...events[0],id:31,event_date:'2026-11-01',scheduled:true,description:'Planlanan alış',party_effect:0,party_balance:running};
-const data={today:'2026-10-16',demo:true,schemaVersion:12,user,users:[user],parties:[party],events:[...events,scheduled],accounts:[],cards:[],claims:[],allocations:[],advances:[],tx:[],vehicles:[],vehicle_records:[],vehicle_payments:[],campaigns:[],campaign_entries:[]};
+const data={today:'2026-10-16',demo:true,schemaVersion:12,user,users:[user],parties:[party,{...party,id:2,name:'Ada Tasarım',type:'Müşteri',balance_cents:1200000},{...party,id:3,name:'Dengeli hesap',balance_cents:0}],events:[...events,scheduled],accounts:[],cards:[],claims:[],allocations:[],advances:[],tx:[],vehicles:[],vehicle_records:[],vehicle_payments:[],campaigns:[],campaign_entries:[]};
 const results=[];
 const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://localhost');if(url.pathname==='/api/index.php'){const a=url.searchParams.get('action');res.setHeader('Content-Type','application/json');res.end(JSON.stringify(a==='session'?{csrf:'synthetic-csrf',user}:a==='state'?data:a==='parties'?{parties:data.parties}:a==='audit'?{logs:[]}:{}));return}const file=path.join(root,decodeURIComponent(url.pathname));if(!file.startsWith(root+path.sep)&&file!==root+path.sep){res.writeHead(403);res.end();return}const f=fs.existsSync(file)&&fs.statSync(file).isFile()?file:path.join(root,'index.html');res.setHeader('Content-Type',f.endsWith('.js')?'application/javascript':f.endsWith('.css')?'text/css':f.endsWith('.ttf')?'font/ttf':'text/html');res.end(fs.readFileSync(f))});
 (async()=>{
@@ -60,6 +60,8 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
     await p.setViewportSize({width,height:width===320?568:900});await p.locator('.main-content').evaluate(e=>e.scrollTop=0);
     ok('Page and balance fit '+width,await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)&&await p.locator('.party-current-balance .summary-value').evaluate(e=>e.scrollWidth<=e.clientWidth+1&&e.getBoundingClientRect().right<=innerWidth));
     if(width===390)ok('Mobile identity stays compact with normal amounts',await p.locator('.party-identity-summary').evaluate(e=>e.getBoundingClientRect().height<210));
+    if(width<=760)ok('Auto composer never forces the mobile keyboard '+width,await composer.locator('input,select').evaluateAll(es=>es.every(e=>e!==document.activeElement)));
+    const beforeToggle=await toggle.boundingBox();await toggle.click();const afterToggle=await toggle.boundingBox();ok('Close and plus share coordinates '+width,Math.abs(beforeToggle.x-afterToggle.x)<1&&Math.abs(beforeToggle.y-afterToggle.y)<1);await toggle.click();
     await shot('header-'+width);
     const row=p.locator('[data-ledger-id="1"]');await row.click();
     ok('Expanded row and actions share width '+width,await p.locator('.ledger-action-row').evaluate(e=>Math.abs(e.getBoundingClientRect().width-e.previousElementSibling.getBoundingClientRect().width)<2));
@@ -67,6 +69,12 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
     await shot('expanded-'+width);await row.click();
     await local.getByRole('button',{name:'Filtrele',exact:true}).click();ok('Local filter fits viewport '+width,await p.getByRole('dialog',{name:'Filtreler',exact:true}).evaluate(e=>{const r=e.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth&&r.bottom<=innerHeight}));await p.keyboard.press('Escape');await p.getByRole('dialog',{name:'Filtreler',exact:true}).waitFor({state:'hidden'});
    }
+   await p.setViewportSize({width:1385,height:900});await p.goto(base+'/#/cariler');await p.locator('.party-row').first().waitFor();
+   ok('Directory has separate local and global tools',await p.locator('#party-search').count()===1&&await p.locator('.topbar #search').count()===1);
+   ok('Balance arrows and zero dot use Lucide and accessible direction',await p.locator('.party-list-balance[aria-label^=Alacak] svg.lucide-arrow-up-right').count()===1&&await p.locator('.party-list-balance[aria-label^=Borç] svg.lucide-arrow-down-left').count()===1&&await p.locator('.party-list-balance[aria-label^=Dengede] svg.lucide-dot').count()===1);
+   ok('Directory rows have single-line compact balances',await p.locator('.party-row').evaluateAll(es=>es.every(e=>e.getBoundingClientRect().height<=70&&!e.querySelector('.party-list-balance small'))));
+   ok('Stacked auxiliary panel stretches full width',await p.locator('.context-aside').evaluate(e=>Math.abs(e.getBoundingClientRect().width-e.firstElementChild.getBoundingClientRect().width)<2));await shot('directory');
+   await p.goto(base+'/#/cariler/1');await composer.waitFor();
    await p.emulateMedia({reducedMotion:'reduce'});await sortButton.click();ok('Reduced motion disables popup animation',await p.getByRole('dialog',{name:'Sıralama'}).evaluate(e=>getComputedStyle(e).animationName==='none'));await p.keyboard.press('Escape');
    ok('No browser runtime errors',errors.length===0);results.push({engine,browser:browser.version(),checks,errors});
   }catch(e){await p.screenshot({path:path.join(out,engine+'-failure.png')});fs.writeFileSync(path.join(out,engine+'-failure-layout.json'),JSON.stringify(await p.locator('.party-heading-row,.party-balance-and-actions,.party-current-balance,.party-heading-actions').evaluateAll(es=>es.map(e=>({className:e.className,rect:e.getBoundingClientRect().toJSON(),display:getComputedStyle(e).display,gap:getComputedStyle(e).gap,minWidth:getComputedStyle(e).minWidth}))),null,2));throw e}finally{await browser.close()}

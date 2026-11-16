@@ -1,7 +1,6 @@
 /* 1.19: Sade Netlik. Display-only changes; financial projections come from API. */
 .layout-shell .ledger-view td[data-label="Tutar"],.layout-shell .ledger-view .mobile-txn-top>strong {color:var(--ink)}
 .amount-sign {font-weight:500}
-.party-running-value.positive-text {color:var(--positive)}
 .ledger-expanded-bar {display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px;padding:0 4px}
 .ledger-expanded-bar .party-effect-details {display:flex;flex:1;flex-wrap:wrap;align-items:center;gap:6px 20px;padding:4px 0;color:var(--muted);font-size:12px;min-width:0}
 .party-effect-details strong {font-weight:500;font-variant-numeric:tabular-nums}
@@ -10,7 +9,7 @@
 .ledger-expanded-bar .icon-button svg {width:16px;height:16px}
 .layout-shell .ledger-action-row>td {padding-top:0!important;padding-bottom:4px!important;border-top:0}
 .mobile-running-balance {display:none}
-.layout-shell .ledger-view .ledger-month-summary td {background:var(--surface);padding:10px 12px!important;font-size:12px;border-top:1px solid var(--line);box-shadow:none}
+.layout-shell .ledger-view .ledger-month-summary td {background:var(--surface-page);padding:10px 12px!important;font-size:12px;border-top:1px solid var(--line);box-shadow:none}
 .ledger-month-summary td>div {display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:6px 20px;color:var(--muted)}
 .ledger-month-summary strong {font-weight:500}.ledger-month-summary div>strong {margin-right:auto}
 .layout-shell .ledger-view th:nth-child(1){width:13%}.layout-shell .ledger-view th:nth-child(2){width:25%}.layout-shell .ledger-view th:nth-child(3){width:15%}.layout-shell .ledger-view th:nth-child(4){width:12%}.layout-shell .ledger-view th:nth-child(5){width:15%}.layout-shell .ledger-view th:nth-child(6){width:20%}
@@ -60,5 +59,6 @@
  .party-list-balance {gap:4px}
 }
 .layout-shell .persistent-composer .sheet-footer .secondary-button {display:inline-flex;min-height:44px;align-items:center}
-.layout-shell .ledger-month-summary td {background:var(--surface-muted)}
+.layout-shell .ledger-month-summary td {background:var(--surface-page)}
 @media(max-width:760px){.layout-shell .persistent-composer .sheet-footer {gap:8px}.layout-shell .persistent-composer .sheet-footer .secondary-button {padding:8px}.layout-shell .persistent-composer .sheet-footer .primary-button {min-width:0}}
+@media(max-width:760px){.layout-shell .mobile-more {z-index:100}}

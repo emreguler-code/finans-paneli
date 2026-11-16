@@ -23,3 +23,5 @@ uploads/
 *.bak
 .DS_Store
 .finans-private-*/
+
+qa-evidence/

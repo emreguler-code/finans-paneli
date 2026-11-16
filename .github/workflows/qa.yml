@@ -69,10 +69,22 @@ jobs:
         with:
           name: hosting-package
           path: dist/releases/*
+      - name: Collect browser screenshots and check results
+        if: always()
+        run: |
+          python3 - <<'PYCODE'
+          import shutil
+          from pathlib import Path
+          for p in Path('.qa').rglob('*'):
+              if p.is_file() and (p.suffix == '.png' or p.name in ['checks.json','failure.txt','failure-layout.json']):
+                  target = Path('qa-evidence') / p.relative_to('.qa')
+                  target.parent.mkdir(parents=True, exist_ok=True)
+                  shutil.copyfile(p, target)
+          PYCODE
       - name: Save browser evidence
         if: always()
         uses: actions/upload-artifact@v6
         with:
           name: candidate-ui-evidence
-          path: .qa/
+          path: qa-evidence/
           if-no-files-found: ignore

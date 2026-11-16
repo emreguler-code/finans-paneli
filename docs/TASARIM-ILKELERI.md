@@ -6,7 +6,7 @@ Finans Paneli'nin kendi tasarım dili korunur; başka projelerin görsel tercihl
 - Porselen #F5F7F8, beyaz, metin #202C39, ikincil #596879, vurgu #087F8C, yeşil #147D59, kırmızı #B54343, uyarı #955F12, çizgi #DDE3E8.
 - İşlem pencereleri merkezde, arka plan bulanık. Sağdan açılan işlem paneli yok. Satır içi detaylar ve log baloncukları bu kurala özel istisnadır. Bildirimler, ortak filtreler ve tek gün dahil tüm tarih seçimleri tıklanan alana bağlı kompakt pencere olarak açılır; arka plan bulanmaz ve içerik aşağı itilmez. Esc/dışarı tıklama taslağı iptal eder.
 - Benzer listelerde arama, filtre, sıfırla, sırala ve CSV ikonları ortak düzendedir; altlarında yazı yoktur, erişilebilir adları bulunur.
-- Cari sütunları: Tarih / Açıklama / Etiket / İşlem–Oluşturan / Tutar / Bakiye. Onaysız yer değişikliği yapılmaz. Açıklamada yalnızca kullanıcının metni görünür; cari adı otomatik eklenmez.
+- Cari sütunları: Tarih / Açıklama / Etiket / İşlem / Ekleyen / Tutar / Bakiye. Onaysız yer değişikliği yapılmaz. Açıklamada yalnızca kullanıcının metni görünür; cari adı otomatik eklenmez.
 - Cari başlığındaki aşağı ok mevcut beyaz kutuyu genişletir. Bilgiler yeni pencerede açılmaz.
 - Aktif hareket ve alt eylemler tek satır yüzeyi gibi görünür: arada çizgi yok, sol koyu işaret genişleyen alanın tamamını kaplar. Kompakt düzenle/log/sil ikonları; tutar sağa hizalı.
 - İşlem etiketinin yeşil/kırmızı yönü ilgili hesabın işaretine uyar; rakamların mevcut renk davranışı ayrıca değiştirilmez. Tutar ile net etki/bakiye birbirine karıştırılmaz.
@@ -189,3 +189,7 @@ Mobil filtre başlık/alanlar/eylemler olarak bölünür; yalnız alan gövdesi 
 ## 16 Kasım 2026 — 1.18.0 onaylı cari detay istisnası
 
 Cari detayında ad/tür/güncel bakiye kompakt tek yüzeydedir; önceki ayrı başlık ve dört metrikli özet yerine kullanılır. Aşağı ok bilgileri kendi yüzeyinde genişletir; rol izinli geri/düzenle/yeni işlem korunur. Cari hareket araması, filtre, sıfırla, sırala ve CSV bu listede birliktedir; header araması açıkça genel arama kapsamındadır. Ortak kabuk ve diğer modüllerin arama yerleşimi korunur. Cari hareket rakamları nötr, yön etiketleri işarete göre renkli; üst net bakiye renkli kalır. Brüt tutar/peşin ödeme/net etki/tarihsel bakiye açılan satırda ayrı anlam taşır. Filtre toplamı güncel bakiye yerine geçmez. Masaüstü sütun sırası ve mobil blok sunumu korunur. Bu değişiklik için kullanıcı uygulama ve yeni sürüm yayını onayı verdi.
+
+## 1.19.0 ile güncellenen kararlar
+
+Önceki nötr cari rakam kuralı tutarın rakamları için sürer; işaret yön renginde, satır bakiyesinin tamamı kendi işaretine göre renklidir. Cari bakiyesinde alacak/borç metni yerine çapraz ok, sıfırda nokta vardır; anlam erişilebilir adlarda korunur. Sıralama da ikona bağlı, blur olmayan bir penceredir. Cari işlem formu varsayılan açıktır; X taslağı gizler ve aynı noktada + olur. Formdan gerçekten ayrılma koruması sürer. Menü görünümü her tıklamada tam/dar/gizli/tam döner. Animasyonlar kısa, rakamlar sabittir; prefers-reduced-motion ile kapanır. Ayrıntılı kapsam: SURUM-1.19.0.md.
