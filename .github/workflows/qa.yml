@@ -1,0 +1,78 @@
+name: Candidate QA
+on:
+  push:
+    branches: ['codex/1.19.0']
+permissions:
+  contents: read
+jobs:
+  candidate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: npm
+      - id: dependencies
+        run: npm ci
+      - id: tests
+        run: npm test
+      - name: Check PHP syntax
+        id: php
+        run: |
+          while IFS= read -r -d '' file; do
+            php -l "$file"
+          done < <(find public -name '*.php' ! -name 'config.php' -print0)
+      - name: Prepare browser for checks
+        id: chromium
+        timeout-minutes: 5
+        run: |
+          browser_path="$(command -v google-chrome || command -v chromium || true)"
+          if [ -n "$browser_path" ]; then
+            "$browser_path" --version
+            echo "QA_BROWSER_BIN=$browser_path" >> "$GITHUB_ENV"
+          else
+            npx playwright install --with-deps chromium
+          fi
+      - name: Prepare WebKit for mobile checks
+        run: npx playwright install --with-deps webkit
+      - name: Check compact party UI against synthetic API
+        run: npm run test:party-ui
+      - name: Test financial API and migration recovery
+        id: api
+        run: |
+          npm run test:api
+          npm run test:migrations
+          npm run test:backups
+      - name: Test desktop and mobile workflows
+        id: browser
+        run: npm run test:browser
+      - name: Test mobile layouts across Chromium and WebKit
+        id: mobile
+        run: npm run test:mobile
+      - name: Reconcile comprehensive demo and reports
+        id: demo
+        run: npm run test:demo
+      - name: Package hosting files
+        id: package
+        run: python3 scripts/package-release.py
+      - name: Test packaged hosting installation
+        id: installcheck
+        run: npm run test:package
+      - name: Verify archive
+        id: archive
+        run: |
+          cd dist/releases
+          sha256sum -c *.sha256
+          for archive in *.zip; do python3 -m zipfile -t "$archive"; done
+      - uses: actions/upload-artifact@v6
+        with:
+          name: hosting-package
+          path: dist/releases/*
+      - name: Save browser evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: candidate-ui-evidence
+          path: .qa/
+          if-no-files-found: ignore

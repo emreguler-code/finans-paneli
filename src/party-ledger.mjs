@@ -9,3 +9,24 @@ export function partyBalanceLabel(party) {
 export function listedPartyEffect(events) {
   return events.filter(e => !e.cancelled && !e.scheduled).reduce((sum, e) => sum + (Number(e.party_effect) || 0), 0);
 }
+
+// Pure display helpers: dates are business dates, amounts remain integer cents.
+const monthNames=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+function parts(value){const match=/^(\d{4})-(\d{2})-(\d{2})$/.exec(value||'');if(!match)return null;const [year,month,day]=match.slice(1).map(Number),date=new Date(Date.UTC(year,month-1,day));return date.getUTCFullYear()===year&&date.getUTCMonth()===month-1&&date.getUTCDate()===day?{year,month,day,stamp:date.getTime()}:null;}
+export function movementDate(date,time,today,{full=false,planned=false}={}){
+ const value=parts(date),reference=parts(today);if(!value)return 'Tarih yok';
+ const clock=(time||'').slice(0,5),suffix=clock?', '+clock:'';
+ const absolute=value.day+' '+monthNames[value.month-1];
+ if(full)return absolute+' '+value.year+suffix;
+ const distance=reference?(value.stamp-reference.stamp)/86400000:Infinity;
+ if(distance===0)return 'Bugün'+suffix;
+ if(distance===-1)return 'Dün'+suffix;
+ if(distance===1&&planned)return 'Yarın'+suffix;
+ if(Math.abs(distance)<=7)return absolute+(value.year!==reference?.year?' '+value.year:'')+suffix;
+ return absolute+(value.year!==reference?.year?' '+value.year:'');
+}
+export function monthlyEffects(events){
+ const months=new Map();
+ for(const e of events){if(!parts(e.event_date)||e.cancelled||e.scheduled)continue;const key=e.event_date.slice(0,7),m=months.get(key)||{key,label:monthNames[Number(key.slice(5))-1]+' '+key.slice(0,4),positive:0,negative:0,net:0,count:0};const effect=Number(e.party_effect)||0;if(effect>0)m.positive+=effect;else m.negative+=effect;m.net+=effect;m.count++;months.set(key,m);}
+ return months;
+}

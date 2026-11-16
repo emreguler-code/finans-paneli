@@ -1,6 +1,6 @@
 {
   "name": "finans-v1",
-  "version": "1.18.1",
+  "version": "1.19.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -20,7 +20,7 @@
     "test:package": "python3 scripts/test-integration.py package",
     "test:backups": "python3 scripts/test-integration.py backups",
     "test:mobile": "python3 scripts/test-integration.py mobile",
-    "test:party-ui": "node tests/party118-browser.cjs"
+    "test:party-ui": "node tests/party119-browser.cjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "5.0.4",

@@ -61,6 +61,12 @@ export function App({
   function closeFinance(){setFinanceContext(null);if(entryPage){nav.clearBlocker();nav.navigate(returnRoute.current||(editingParty?{...nav.route,entry:''}:{page:nav.route.page}),{replace:true})}}
   useEffect(()=>{if(nav.route.record==='yeni'&&!financeContext){const entity=Object.keys(createPages).find(key=>createPages[key]===nav.route.page);if(entity&&can(fullData.user,'create')){contextRoute.current=routeHash(nav.route);setFinanceContext({entity});setContextKey(k=>k+1)}else nav.navigate({page:nav.route.page},{replace:true})}},[nav.route.page,nav.route.record]);
   useEffect(()=>{if(editingParty&&!financeContext){const item=fullData.parties.find(p=>p.id===Number(nav.route.record));if(item&&can(fullData.user,'edit')){contextRoute.current=routeHash(nav.route);setFinanceContext({entity:'party',item});setContextKey(k=>k+1)}else nav.navigate({...nav.route,entry:''},{replace:true})}},[editingParty,nav.route.record]);
+  useEffect(()=>{
+    if(financeContext||entryPage||nav.route.page!=='Cari hesaplar'||!can(fullData.user,'create'))return;
+    const party=fullData.parties.find(p=>p.id===Number(nav.route.record));if(!party)return;
+    contextRoute.current=routeHash(nav.route);setContextKey(k=>k+1);
+    setFinanceContext({entity:'event',lockedPartyId:party.id,persistent:true});
+  },[financeContext,entryPage,nav.route.page,nav.route.record,fullData.user]);
   function openFinance(c,bypass=false) {
     if(!bypass){nav.guard(()=>openFinance(c,true));return;}
     contextRoute.current=routeHash(nav.route);
@@ -475,9 +481,9 @@ export function App({
             <Settings size={18} />
             <span>Görünüm ve bilgiler</span>
           </button>
-          <button className="sidebar-layout-toggle" aria-label={compact ? "Menüyü genişlet" : "Menüyü daralt"} onClick={() => setCompact(!compact)}>
+          <button className="sidebar-layout-toggle" aria-label={compact ? "Menüyü gizle" : "Menüyü daralt"} onClick={shell.cycle}>
             {compact ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}
-            <span>Menüyü daralt</span>
+            <span>{compact?"Menüyü gizle":"Menüyü daralt"}</span>
           </button>
           <div className="demo-note">
             <i />

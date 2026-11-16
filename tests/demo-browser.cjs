@@ -6,7 +6,7 @@ const ok=(name,value)=>{if(!value)throw Error(name);checks.push(name);console.lo
 const fmt=n=>new Intl.NumberFormat('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n/100);
 (async()=>{
  const browser=await chromium.launch({executablePath:process.env.QA_BROWSER_BIN||undefined,args:['--no-sandbox','--disable-dev-shm-usage']});
- const context=await browser.newContext({viewport:{width:1920,height:1080},locale:'tr-TR',timezoneId:'Europe/Istanbul'});page=await context.newPage();const p=page;p.setDefaultTimeout(10000);p.on('pageerror',e=>errors.push(String(e)));
+ const context=await browser.newContext({reducedMotion:'reduce',viewport:{width:1920,height:1080},locale:'tr-TR',timezoneId:'Europe/Istanbul'});page=await context.newPage();const p=page;p.setDefaultTimeout(10000);p.on('pageerror',e=>errors.push(String(e)));
  await p.goto(process.env.QA_BASE_URL);await p.locator('input[name=username]').fill(process.env.QA_USERNAME);await p.locator('input[name=password]').fill(process.env.QA_PASSWORD);await p.getByRole('button',{name:'Giriş yap',exact:true}).click();await p.locator('.app').waitFor();
  const nav=async name=>{await p.locator('.sidebar').getByRole('button',{name,exact:true}).click();await p.locator('#search').waitFor()};
  const close=async()=>{await p.getByRole('button',{name:'Paneli kapat',exact:true}).last().click()};

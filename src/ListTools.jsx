@@ -3,7 +3,7 @@ import {Children,cloneElement,isValidElement,useEffect,useLayoutEffect,useRef,us
 import {createPortal} from 'react-dom';
 import {Search, SlidersHorizontal, ArrowDownUp, Download, RotateCcw, X} from 'lucide-react';
 import {FloatingPanel} from './FloatingPanel';
-import {Sheet} from './ui';
+import {usePresence} from './Motion';
 
 // Stage controlled filter fields without running their page setters until Apply.
 function fieldsIn(node,fields=[],path='f',label=''){
@@ -38,6 +38,7 @@ export function ListTools({query,setQuery,placeholder='Hareketlerde ara',filters
  const querySetter=useRef(setQuery);querySetter.current=setQuery;
  const [composing,setComposing]=useState(false);
  const filterButton=useRef(null);
+ const filterPresence=usePresence(filters);
  const input=useRef(null),fields=fieldsIn(children),applied=fields.filter(active);
  useLayoutEffect(()=>{setHost(document.getElementById('page-search-host'));setChipHost(document.getElementById('page-filter-host'))},[]);
  useLayoutEffect(()=>setText(query),[query]);
@@ -58,7 +59,7 @@ export function ListTools({query,setQuery,placeholder='Hareketlerde ara',filters
    <button className="primary-button search-submit icon-only" type="submit" aria-label="Ara" title="Ara"><Search size={18}/></button>
   </form>
   {chips&&(!inline&&chipHost?createPortal(chips,chipHost):chips)}
-  {filters&&<FloatingPanel id="page-search-filters" anchor={filterButton.current} alignTo={inline?input.current?.closest('.inline-list-tools'):host} title="Filtreler" className="search-filter-panel" mobileFit width={(inline?input.current?.closest('.inline-list-tools')?.clientWidth:host?.clientWidth)||600} onClose={()=>{setText(query);close()}}><div className="finance-filters shared-filters" onKeyDown={e=>{if(e.key==='Enter'&&e.target.matches('input'))apply(e)}}>{scopeControl}{renderFields(children,fields,draft,setDraft)}</div>{error&&<p role="alert" className="cari-error">{error}</p>}<div className="search-filter-actions" onKeyDown={e=>{if(e.key==='Enter')apply(e)}}><button type="button" className="secondary-button" onClick={()=>{setText(query);close()}}>Vazgeç</button><button type="button" className="secondary-button" onClick={clearDraft}>Temizle</button><button type="button" className="primary-button" onClick={apply} aria-label="Ara">Uygula</button></div></FloatingPanel>}
+  {filterPresence.mounted&&<FloatingPanel exiting={!filters} id="page-search-filters" anchor={filterButton.current} alignTo={inline?input.current?.closest('.inline-list-tools'):host} title="Filtreler" className="search-filter-panel" mobileFit width={(inline?input.current?.closest('.inline-list-tools')?.clientWidth:host?.clientWidth)||600} onClose={()=>{setText(query);close()}}><div className="finance-filters shared-filters" onKeyDown={e=>{if(e.key==='Enter'&&e.target.matches('input'))apply(e)}}>{scopeControl}{renderFields(children,fields,draft,setDraft)}</div>{error&&<p role="alert" className="cari-error">{error}</p>}<div className="search-filter-actions" onKeyDown={e=>{if(e.key==='Enter')apply(e)}}><button type="button" className="secondary-button" onClick={()=>{setText(query);close()}}>Vazgeç</button><button type="button" className="secondary-button" onClick={clearDraft}>Temizle</button><button type="button" className="primary-button" onClick={apply} aria-label="Ara">Uygula</button></div></FloatingPanel>}
   {searchFeedback&&<p className="cari-error" role="status">{searchFeedback}</p>}
   {suggestions?.({anchor:input.current,host,filters})}
   <span className="sr-only" role="status" aria-live="polite">{resultCount===undefined?'':resultCount+' sonuç'}</span>
@@ -69,7 +70,8 @@ export function ListTools({query,setQuery,placeholder='Hareketlerde ara',filters
 
 // Content actions remain independent of the global search scope.
 export function ListActions({sort,setSort,sortOptions=[],csv,label='Liste araçları',className=''}){
- const [sorting,setSorting]=useState(false);
+ const [sorting,setSorting]=useState(false),anchor=useRef(null);
+ const presence=usePresence(sorting);
  if(!sortOptions.length&&!csv)return null;
- return <div className={'common-toolbar content-tools '+className} role="group" aria-label={label}><div className="cari-toolbar-actions">{sortOptions.length>0&&<div className="sort-container"><button className={'list-icon '+(sorting?'active':'')} aria-label="Sırala" title="Sırala" aria-expanded={sorting} onClick={()=>setSorting(!sorting)}><ArrowDownUp size={18}/></button>{sorting&&<Sheet title="Sıralama" onClose={()=>setSorting(false)}><div className="sheet-scroll sort-options">{sortOptions.map(([value,label])=><button key={value} aria-pressed={sort===value} onClick={()=>{setSort(value);setSorting(false)}}>{label}</button>)}</div></Sheet>}</div>}{csv&&<button className="list-icon" aria-label="CSV indir" title="CSV indir" onClick={csv}><Download size={18}/></button>}</div></div>;
+ return <div className={'common-toolbar content-tools '+className} role="group" aria-label={label}><div className="cari-toolbar-actions">{sortOptions.length>0&&<div className="sort-container"><button ref={anchor} className={'list-icon '+(sorting?'active':'')} aria-label="Sırala" title="Sırala" aria-expanded={sorting} onClick={()=>setSorting(!sorting)}><ArrowDownUp size={18}/></button>{presence.mounted&&<FloatingPanel anchor={anchor.current} title="Sıralama" width={280} exiting={!sorting} onClose={()=>setSorting(false)}><div className="sheet-scroll sort-options">{sortOptions.map(([value,label])=><button key={value} aria-pressed={sort===value} onClick={()=>{setSort(value);setSorting(false)}}>{label}</button>)}</div></FloatingPanel>}</div>}{csv&&<button className="list-icon" aria-label="CSV indir" title="CSV indir" onClick={csv}><Download size={18}/></button>}</div></div>;
 }
