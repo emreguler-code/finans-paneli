@@ -1,5 +1,5 @@
 import {useId, useState} from 'react';
-import {ArrowLeft, ChevronDown, Pencil, Plus} from 'lucide-react';
+import {ArrowLeft, ChevronDown, Pencil} from 'lucide-react';
 import {can, fmt, tone} from './ui';
 import {dateLabel} from './DatePicker';
 import {partyBalanceLabel} from './party-ledger.mjs';
@@ -16,7 +16,6 @@ export function PartyHeader({party, data, latest, count, back, create, edit}) {
       <div className="party-heading-actions" role="group" aria-label="Cari hesap işlemleri">
         <button className={'list-icon '+(expanded ? 'active' : '')} aria-label="Cari bilgileri" title={expanded ? 'Cari bilgilerini kapat' : 'Cari bilgilerini göster'} aria-expanded={expanded} aria-controls={detailsId} onClick={() => setExpanded(!expanded)}><ChevronDown size={18} className={expanded ? 'is-open' : ''}/></button>
         {can(data.user, 'edit') && <button className="list-icon" aria-label="Düzenle" title="Cari hesabı düzenle" onClick={edit}><Pencil size={18}/></button>}
-        {can(data.user, 'create') && <button className="primary-button icon-only" aria-label="Yeni kayıt ekle" title="İşlem ekle" onClick={create}><Plus size={18}/></button>}
       </div></div>
     </div>
     {expanded && <div className="party-inline-info" id={detailsId}>

@@ -1,6 +1,6 @@
-# Finans Paneli 1.18.1
+# Finans Paneli 1.20.0
 
-1.18.1: cari detayında kimlik ve güncel bakiye tek kompakt yüzeyde; aşağı okla satır içi bilgiler; hareketlerin yanında ortak arama/filtre/sıfırla/sırala/CSV; nötr tutarlar, renkli yön etiketleri ve açılan satırda hesap etkisi açıklaması. Mobil tekrarlı bakiye ve genel bilgi satırı boşlukları temizlendi. Şema 12 değişmedi. [Sürüm kapsamı](docs/SURUM-1.18.0.md) · [Son düzeltmeler](docs/SURUM-1.18.1.md) · [Test raporu](docs/TEST-RAPORU-1.18.1.md) · [Yerleşim sözleşmesi](docs/GLOBAL-YERLESIM-SOZLESMESI.md).
+Akıllı arama/filtre çipleri, satır içinde işlem türü ve tutar düzenleme, son 30 hareketten kademeli yükleme, gerçek ay sonu bakiye özeti ve boşluk bırakmayan hızlı giriş. Şema 12 korunur. [Bölüm bazında analiz ve sürüm kapsamı](docs/SURUM-1.20.0.md) · [Test raporu ve canlı ekranlar](docs/TEST-RAPORU-1.20.0.md) · [Tasarım ilkeleri](docs/TASARIM-ILKELERI.md).
 
 Sade Netlik tasarımında cari hesaplar, banka/kasa, kredi kartları, ödeme planı ve raporlar. React/Vite arayüz; PHP/MySQL API. Banka bağlantısı yoktur.
 

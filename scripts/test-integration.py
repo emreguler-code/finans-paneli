@@ -93,7 +93,7 @@ def main():
     payload=json.dumps({'requestId':str(uuid.uuid4()),'profile':'compact'}).encode()
     json.load(opener.open(urllib.request.Request(env['API_TEST_URL']+'?action=demo_seed',data=payload,headers={'Content-Type':'application/json','X-CSRF-Token':session['csrf']})))
     env.update(QA_BASE_URL=f'http://127.0.0.1:{api_port}',QA_USERNAME=env['API_TEST_USERNAME'],QA_PASSWORD=admin,QA_OUTPUT_DIR=str(runtime/'browser'))
-    run(['node',str(ROOT/('tests/mobile117-browser.cjs' if args.suite=='mobile' else 'tests/browser.cjs'))],env=env)
+    run(['node',str(ROOT/('tests/mobile120-browser.cjs' if args.suite=='mobile' else 'tests/browser120.cjs'))],env=env)
     # Comparison uses the same API data for the prior packaged frontend.
     baseline=ROOT/'.qa/baseline-1.6/hosting'
     if args.suite=='browser' and baseline.exists() and os.environ.get('QA_COMPARE_RELEASE')=='1':

@@ -1,10 +1,7 @@
-# Finans Paneli 1.18.1
+# Finans Paneli 1.20.0
 
-1.18.0 kapsamındaki onaylı cari detay düzeni ve tüm test kapıları korunur. Ekran görüntüsü incelemesi sonrası ek düzeltmeler:
+Onaylanan son notlar ve uygun ortak davranışlar cari dışındaki bölümlere uygulandı. Arama/filtre aynı çubukta öneriler ve kaldırılabilir etiketlerle çalışır. Finansal hareketler işlem türü dahil kendi satırında düzenlenir. Son 30 hareket gösterilir, önceki kayıtlar sayfa numarası olmadan konum korunarak yüklenir. Aktif satırda iki satırlı tek ayrıntılı tarih vardır.
 
-- Genel dl satırlarının kenarlık/padding/display kuralları cari bilgi ve işlem etki açıklamasından yalıtıldı. Açık hareket tek yüzeyde, daha kısa ve çizgisizdir.
-- Mobilde işlem sonrası bakiye yalnız hesap etkisi ayrıntısında bir kez gösterilir.
-- Cari başlığında bakiye ve ikonlar yer olduğunda aynı satırda; büyük tutar veya çok dar ekranda değer küçültülmeden ayrı satırlardadır.
-- Yeni görsel kabul testleri gereksiz bilgi satırı çizgileri/boşluklarını ve 390 px başlık yoğunluğunu denetler.
+Cari ve banka ay satırları devreden/artış/azalış/Net bakiyeyi gösterir; filtreler gerçek ay sonunu değiştirmez. Gizli işlem girişi içerikte boşluk bırakmaz. Banka/kart/ödeme girişleri aynı varsayılan form ve yüzer + davranışını paylaşır. Ekstre, rapor, araç ve takvim kendi finansal anlamlarını korur.
 
-Finansal model, şema 12, rol izinleri ve mevcut veriler korunur. Önceki tasarım incelemesinin onaylı kapsamı docs/SURUM-1.18.0.md içindedir. GitHub yayını cPanel'e canlı kurulum yapmaz.
+Şema 12; gerçek veri/hesaplama modeli değişmez. [Bölüm bazında analiz ve kapsam](SURUM-1.20.0.md). GitHub yayını hosting kurulumu değildir.

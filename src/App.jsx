@@ -1,4 +1,7 @@
+import {matchesChoice} from './search-query.mjs';
+import {LedgerEditingContext} from './LedgerEditing';
 import {AppShell,MainShell,HeaderRegion,ShellContent,ComposerHost,ContentColumns,PageFooter,SidebarControls,useShellLayout} from './AppShell';
+import {usePresence} from './Motion';
 import {routeHash} from './routes.mjs';
 import {SettingsPage} from './SettingsPage';
 import {api} from './api';
@@ -18,7 +21,7 @@ import { globalEventAmount } from './list-utils.mjs';
 import { DatePicker } from './DatePicker';
 import { presetRange } from './date-utils.mjs';
 import { useState, useEffect, useRef } from "react";
-import { Users, LayoutDashboard, ArrowLeftRight, Landmark, CreditCard, ChartNoAxesCombined, Search, Bell, Plus, ChevronRight, ChevronDown, PanelLeftClose, PanelLeftOpen, ArrowDownLeft, ArrowUpRight, ArrowRight, CircleAlert, Check, X, Wallet, CalendarDays, MoreHorizontal, Settings, Settings2, Car, Gift, UserRoundCog } from "lucide-react";
+import { Users, LayoutDashboard, ArrowLeftRight, Landmark, CreditCard, ChartNoAxesCombined, Search, Bell, Plus, ChevronRight, ChevronDown, PanelLeftClose, EyeOff, ArrowDownLeft, ArrowUpRight, ArrowRight, CircleAlert, Check, X, Wallet, CalendarDays, MoreHorizontal, Settings, Settings2, Car, Gift, UserRoundCog } from "lucide-react";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 import { money, day } from "./data";
 import { FinanceHub, FinanceDialog } from "./Finance";
@@ -52,6 +55,7 @@ export function App({
   const nav=useNavigation();
   const [fullData, setFullData] = useState(initialData);
   const [financeContext, setFinanceContext] = useState(null);
+  const [inlineActive,setInlineActive]=useState(false);
   const [contextKey, setContextKey] = useState(0);
   const returnRoute=useRef(null),contextRoute=useRef(null);
   const createPages={party:'Cari hesaplar',account:'Hesaplar',card:'Kredi kartları',vehicle:'Araçlarım'};
@@ -61,6 +65,15 @@ export function App({
   function closeFinance(){setFinanceContext(null);if(entryPage){nav.clearBlocker();nav.navigate(returnRoute.current||(editingParty?{...nav.route,entry:''}:{page:nav.route.page}),{replace:true})}}
   useEffect(()=>{if(nav.route.record==='yeni'&&!financeContext){const entity=Object.keys(createPages).find(key=>createPages[key]===nav.route.page);if(entity&&can(fullData.user,'create')){contextRoute.current=routeHash(nav.route);setFinanceContext({entity});setContextKey(k=>k+1)}else nav.navigate({page:nav.route.page},{replace:true})}},[nav.route.page,nav.route.record]);
   useEffect(()=>{if(editingParty&&!financeContext){const item=fullData.parties.find(p=>p.id===Number(nav.route.record));if(item&&can(fullData.user,'edit')){contextRoute.current=routeHash(nav.route);setFinanceContext({entity:'party',item});setContextKey(k=>k+1)}else nav.navigate({...nav.route,entry:''},{replace:true})}},[editingParty,nav.route.record]);
+  useEffect(()=>{
+    if(financeContext||inlineActive||entryPage||!can(fullData.user,'create'))return;
+    let context;
+    if(nav.route.page==='Cari hesaplar'){const party=fullData.parties.find(p=>p.id===Number(nav.route.record));if(party?.active)context={entity:'event',lockedPartyId:party.id,persistent:true}}
+    if(['Hesaplar','Kredi kartları'].includes(nav.route.page)){const card=nav.route.page==='Kredi kartları',item=(card?fullData.cards:fullData.accounts).find(a=>String(a.id)===nav.route.record);if(item?.active)context={entity:'event',persistent:true,lockedCardId:card?item.id:undefined,initial:{account:card?'':item.id,cardId:card?item.id:'',operation:'expense',scheduled:!card&&nav.route.tab==='Gelecek dönem hareketleri'}}}
+    if(nav.route.page==='Tahsilat & Ödeme')context={entity:'event',persistent:true,initial:{operation:'expense'}};
+    if(!context)return;contextRoute.current=routeHash(nav.route);setContextKey(k=>k+1);setFinanceContext(context);
+  },[financeContext,inlineActive,entryPage,nav.route.page,nav.route.record,nav.route.tab,fullData.user]);
+  useEffect(()=>setInlineActive(false),[nav.route.page,nav.route.record,nav.route.tab]);
   function openFinance(c,bypass=false) {
     if(!bypass){nav.guard(()=>openFinance(c,true));return;}
     contextRoute.current=routeHash(nav.route);
@@ -110,6 +123,7 @@ export function App({
     [toast, setToast] = useState(null);
   const bellButton=useRef(null);
   const [cardsMenu,setCardsMenu]=useState(false);
+  const cardPresence=usePresence(cardsMenu),morePresence=usePresence(mobileMore);
   const navigateMenu=name=>{shell.setOpen(false);setCardsMenu(['Kredi kartları','Kampanyalar'].includes(name));go(name,true)};
   useEffect(()=>setCardsMenu(['Kredi kartları','Kampanyalar'].includes(page)),[page]);
   const [notificationTarget,setNotificationTarget]=useState(null),[routeKey,setRouteKey]=useState(0);
@@ -170,10 +184,10 @@ export function App({
     upcoming = soon.reduce((s, c) => s + c.amount, 0);
   const [overviewRange, setOverviewRange] = useState(() => presetRange('Bu Ay', TODAY));
   const inPeriod = t => t.date >= overviewRange.from && t.date <= overviewRange.to;
-  const periodTx = tx.filter(t => inPeriod(t) && (scope === "all" || t.account === scope) && t.kind !== "Transfer"),
+  const periodTx = tx.filter(t => inPeriod(t) && (matchesChoice(scope,t.account)) && t.kind !== "Transfer"),
     incoming = periodTx.filter(t => t.amount > 0).reduce((s, t) => s + t.amount, 0),
     outgoing = Math.max(0, -periodTx.filter(t => t.amount < 0).reduce((s, t) => s + t.amount, 0));
-  const visible = tx.filter(t => inPeriod(t) && (scope === "all" || t.account === scope) && (kind === "all" || t.kind === kind) && `${t.name} ${t.desc} ${t.category}`.toLocaleLowerCase("tr").includes(search.toLocaleLowerCase("tr"))).sort((a, b) => (b.date + b.time).localeCompare(a.date + a.time));
+  const visible = tx.filter(t => inPeriod(t) && (matchesChoice(scope,t.account)) && (matchesChoice(kind,t.kind)) && `${t.name} ${t.desc} ${t.category}`.toLocaleLowerCase("tr").includes(search.toLocaleLowerCase("tr"))).sort((a, b) => (b.date + b.time).localeCompare(a.date + a.time));
   const dates = [];
   for (let d = new Date(overviewRange.from + "T12:00:00"); iso(d) <= overviewRange.to; d.setDate(d.getDate() + 1)) dates.push(iso(d));
   const nextIncomeDate = claims.filter(c => c.type === 'alacak' && c.due >= TODAY).map(c => c.due).sort()[0];
@@ -212,7 +226,7 @@ export function App({
     </div>;
   const recentEvents = fullData.events.filter(e => !e.cancelled && !e.scheduled && e.event_date<=TODAY && inPeriod({
     date: e.event_date
-  }) && (kind==='all'||e.kind===kind) && (scope === 'all' || e.account_id === scope || e.target_id === scope) && `${e.description} ${e.party_name || ''} ${e.card_name || ''}`.toLocaleLowerCase('tr').includes(search.toLocaleLowerCase('tr'))).sort((a, b) => (b.event_date + b.event_time).localeCompare(a.event_date + a.event_time) || b.id - a.id).map(e => ({
+  }) && (matchesChoice(kind,e.kind)) && (matchesChoice(scope,e.account_id)||matchesChoice(scope,e.target_id)) && `${e.description} ${e.party_name || ''} ${e.card_name || ''}`.toLocaleLowerCase('tr').includes(search.toLocaleLowerCase('tr'))).sort((a, b) => (b.event_date + b.event_time).localeCompare(a.event_date + a.event_time) || b.id - a.id).map(e => ({
     id: e.id,
     date: e.event_date,
     time: e.event_time.slice(0, 5),
@@ -449,7 +463,7 @@ export function App({
         </button>
       </div>
     </section>;
-  return <AppShell layout={shell}>
+  return <LedgerEditingContext.Provider value={{start:callback=>nav.guard(()=>{setFinanceContext(null);setInlineActive(true);callback()}),end:()=>setInlineActive(false),onState:applyState,notify}}><AppShell layout={shell}>
       <aside className="sidebar" data-region="1" inert={!!drawer||shell.mode==='hidden'} aria-label="Sol gezinme" role={shell.mode==='drawer'?'dialog':undefined} aria-modal={shell.mode==='drawer'?true:undefined}>
         <div className="brand">
           <span className="brand-mark">
@@ -462,7 +476,7 @@ export function App({
         {shell.mobile&&<button type="button" className="list-icon sidebar-close" aria-label="Menüyü kapat" onClick={()=>shell.setOpen(false)}><X size={18}/></button>}
         <div className="workspace-label">KİŞİSEL ÇALIŞMA ALANI</div>
         <nav aria-label="Ana navigasyon">
-          {navigation.filter(([name]) => name!=='Ayarlar'&&(name !== 'Kullanıcılar' || can(fullData.user, 'admin'))&&(name!=='Kampanyalar'||cardsMenu)).map(([name, Icon]) => <button key={name} className={(page === name ? "active " : "")+(name==='Kampanyalar'?'navigation-submenu':'')} aria-current={page === name ? "page" : undefined} aria-label={name} title={name} aria-expanded={name==='Kredi kartları'?cardsMenu:undefined} onClick={() => navigateMenu(name)}>
+          {navigation.filter(([name]) => name!=='Ayarlar'&&(name !== 'Kullanıcılar' || can(fullData.user, 'admin'))&&(name!=='Kampanyalar'||cardPresence.mounted)).map(([name, Icon]) => <button key={name} data-exiting={name==='Kampanyalar'&&!cardsMenu||undefined} inert={name==='Kampanyalar'&&!cardsMenu||undefined} aria-hidden={name==='Kampanyalar'&&!cardsMenu||undefined} className={(page === name ? "active " : "")+(name==='Kampanyalar'?'navigation-submenu':'')} aria-current={page === name ? "page" : undefined} aria-label={name} title={name} aria-expanded={name==='Kredi kartları'?cardsMenu:undefined} onClick={() => navigateMenu(name)}>
               <Icon size={20} />
               <span>{name}</span>{name==='Kredi kartları'&&<ChevronDown size={16} className={cardsMenu?'submenu-chevron rotate-open':'submenu-chevron'}/>}
               {name === "Ödeme Planı" && late.length > 0 && !compact && <em>{late.length}</em>}
@@ -475,9 +489,9 @@ export function App({
             <Settings size={18} />
             <span>Görünüm ve bilgiler</span>
           </button>
-          <button className="sidebar-layout-toggle" aria-label={compact ? "Menüyü genişlet" : "Menüyü daralt"} onClick={() => setCompact(!compact)}>
-            {compact ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}
-            <span>Menüyü daralt</span>
+          <button className="sidebar-layout-toggle" aria-label={compact ? "Menüyü gizle" : "Menüyü daralt"} onClick={shell.cycle}>
+            {compact ? <EyeOff size={18} /> : <PanelLeftClose size={18} />}
+            <span>{compact?"Menüyü gizle":"Menüyü daralt"}</span>
           </button>
           <div className="demo-note">
             <i />
@@ -504,7 +518,7 @@ export function App({
             </span>
           </div>
         </HeaderRegion>
-        <ShellContent><div id="entry-page-root"/>{entryPage&&<GlobalSearchTools data={fullData} showFilters={false}/>}
+        <ShellContent motionKey={routeHash(nav.route)+nav.revision}><div id="entry-page-root"/>{entryPage&&<GlobalSearchTools data={fullData} showFilters={false}/>}
           {page === "Genel bakış" && <GlobalSearchTools data={fullData} placeholder="Genel bakış hareketlerinde ara" filters={overviewFilters} setFilters={setOverviewFilters} resultCount={visible.length} reset={()=>{setSearch('');setScope('all');setKind('all');setOverviewRange(presetRange('Bu Ay',TODAY))}}><label>Hesap<select value={scope} onChange={e=>setScope(e.target.value)}><option value="all">Tüm hesaplar</option>{accounts.map(a=><option key={a.id} value={a.id}>{a.name}</option>)}</select></label><label>Tarih aralığı<DatePicker range defaultRange={presetRange('Bu Ay',TODAY)} from={overviewRange.from} to={overviewRange.to} today={TODAY} clearable={false} onChange={range=>setOverviewRange(range.from&&range.to?range:presetRange('Bu Ay',TODAY))}/></label><label>İşlem<select value={kind} onChange={e=>setKind(e.target.value)}><option value="all">Tümü</option>{[...new Set(tx.map(t=>t.kind))].map(k=><option key={k}>{k}</option>)}</select></label></GlobalSearchTools>}
           {page === "Genel bakış" && <div className="page-title" data-region="4">
             <div>
@@ -585,7 +599,7 @@ export function App({
           Diğer
         </button>
       </nav></MainShell>
-      {mobileMore && <div className="mobile-more">
+      {morePresence.mounted && <div className="mobile-more" data-exiting={!mobileMore||undefined} inert={!mobileMore||undefined} aria-hidden={!mobileMore||undefined}>
           {navigation.filter(([name]) => !["Genel bakış", "Hareketler", "Raporlar", "Tahsilat & Ödeme"].includes(name) && (!['Kullanıcılar','Ayarlar'].includes(name) || can(fullData.user, "admin")) && (name!=="Kampanyalar"||cardsMenu)).map(([name, Icon]) => <button key={name} className={name==='Kampanyalar'?'navigation-submenu':''} aria-expanded={name==='Kredi kartları'?cardsMenu:undefined} onClick={() => navigateMenu(name)}>
               <Icon size={20} />
               {name}
@@ -737,5 +751,5 @@ export function App({
             <X size={18} />
           </button>
         </div>}
-    </AppShell>;
+    </AppShell></LedgerEditingContext.Provider>;
 }

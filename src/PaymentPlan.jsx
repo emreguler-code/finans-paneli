@@ -1,3 +1,4 @@
+import {matchesChoice} from './search-query.mjs';
 import {ContentColumns,PageFooter} from './AppShell';
 import {PageHeading,SummaryBar} from './PageLayout';
 import {useScopedState} from './SearchState';
@@ -20,9 +21,9 @@ export function PaymentPlan({data,open,exportCSV,initialDue='all',initialParty,i
  if(view==='Haftalık'){first=weekStart(anchor);last=dateAdd(first,6)}
  if(view==='Aylık'){first=anchor.slice(0,7)+'-01';const d=new Date(first+'T12:00:00Z');d.setUTCMonth(d.getUTCMonth()+1);last=dateAdd(d.toISOString().slice(0,10),-1)}
  const sources=planItems(data).map(item=>{const event=item.source==='scheduled'?data.events.find(e=>e.id===item.recordId):null;return {...item,scopeIds:item.source==='card'?['card:'+item.recordId]:item.source==='account'?['account:'+item.recordId]:event?[event.account_id&&'account:'+event.account_id,event.target_id&&'account:'+event.target_id,event.card_id&&'card:'+event.card_id].filter(Boolean):[]}});
- const all=sortPlanItems(sources.filter(x=>(type==='Tümü'||x.type===type)&&(party==='all'||Number(x.partyId)===Number(party))&&(scope==='Tümü'||x.scopeIds.includes(scope))&&`${x.name} ${x.description||''} ${x.type}`.toLocaleLowerCase('tr').includes(query.toLocaleLowerCase('tr'))),sort);
+ const all=sortPlanItems(sources.filter(x=>(matchesChoice(type,x.type))&&(matchesChoice(party,x.partyId))&&(scope==='Tümü'||x.scopeIds.includes(scope))&&`${x.name} ${x.description||''} ${x.type}`.toLocaleLowerCase('tr').includes(query.toLocaleLowerCase('tr'))),sort);
  const items=all.filter(x=>x.date>=first&&x.date<=last);
- const undated=data.claims.filter(c=>!c.due&&(party==='all'||Number(c.partyId)===Number(party))&&(type==='Tümü'||type===(c.type==='alacak'?'Tahsilat':'Cari ödeme'))&&scope==='Tümü'&&`${c.name} ${c.desc}`.toLocaleLowerCase('tr').includes(query.toLocaleLowerCase('tr'))).sort((a,b)=>a.name.localeCompare(b.name,'tr'));
+ const undated=data.claims.filter(c=>!c.due&&(matchesChoice(party,c.partyId))&&(matchesChoice(type,c.type==='alacak'?'Tahsilat':'Cari ödeme'))&&scope==='Tümü'&&`${c.name} ${c.desc}`.toLocaleLowerCase('tr').includes(query.toLocaleLowerCase('tr'))).sort((a,b)=>a.name.localeCompare(b.name,'tr'));
  const payment=items.filter(x=>x.direction<0).reduce((s,x)=>s+x.amount,0),income=items.filter(x=>x.direction>0).reduce((s,x)=>s+x.amount,0);
  const gridFirst=view==='Aylık'?weekStart(first):first,gridLast=view==='Aylık'?dateAdd(weekStart(last),6):last;
  for(let d=gridFirst;d<=gridLast;d=dateAdd(d,1))days.push(d);
