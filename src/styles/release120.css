@@ -47,3 +47,4 @@
 .layout-shell .entry-inline .inline-effect-preview small {margin:0}
 @container ledger (width < 880px){.layout-shell .entry-inline .sheet-scroll {grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:760px){.layout-shell .entry-inline .sheet-scroll {grid-template-columns:minmax(0,1fr)}}
+@media(max-width:760px){.layout-shell .ledger-expanded-bar .ledger-actions .icon-button {width:44px;height:44px;min-height:44px;flex:0 0 44px}}

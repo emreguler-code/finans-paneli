@@ -1,6 +1,6 @@
-# Finans Paneli 1.19.0 adayı
+# Finans Paneli 1.20.0
 
-Onaylı cari görünümü, kompakt hareket ayrıntıları, aylık ara toplamlar, ikona bağlı sıralama ve taslağı koruyan işlem girişi. Şema 12 değişmedi. [Sürüm kapsamı](docs/SURUM-1.19.0.md) · [Çalışan sürüm test raporu](docs/TEST-RAPORU-1.19.0.md) · [Tasarım ilkeleri](docs/TASARIM-ILKELERI.md) · [Yerleşim sözleşmesi](docs/GLOBAL-YERLESIM-SOZLESMESI.md).
+Akıllı arama/filtre çipleri, satır içinde işlem türü ve tutar düzenleme, son 30 hareketten kademeli yükleme, gerçek ay sonu bakiye özeti ve boşluk bırakmayan hızlı giriş. Şema 12 korunur. [Bölüm bazında analiz ve sürüm kapsamı](docs/SURUM-1.20.0.md) · [Tasarım ilkeleri](docs/TASARIM-ILKELERI.md).
 
 Sade Netlik tasarımında cari hesaplar, banka/kasa, kredi kartları, ödeme planı ve raporlar. React/Vite arayüz; PHP/MySQL API. Banka bağlantısı yoktur.
 

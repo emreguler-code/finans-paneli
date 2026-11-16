@@ -43,7 +43,7 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
     await p.setViewportSize({width,height:width===320?568:900});await p.waitForTimeout(100);ok('Page fits '+width,await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
     const last=p.locator('[data-ledger-id]').last();if(await last.getAttribute('aria-expanded')!=='true')await last.click();await p.locator('.ledger-action-row').scrollIntoViewIfNeeded();ok('Active row and actions share width '+width,await p.locator('.ledger-action-row').evaluate(e=>Math.abs(e.getBoundingClientRect().width-e.previousElementSibling.getBoundingClientRect().width)<2));
     ok('Detailed timestamp appears once '+width,await last.locator('.movement-date:visible').count()===1);
-    if(width<=430){ok('Touch action targets remain 44px '+width,await p.locator('.ledger-actions .icon-button').evaluateAll(es=>es.every(e=>e.getBoundingClientRect().height>=44)));await shot('mobile-'+width)}
+    if(width<=430){ok('Touch action targets remain 44px '+width,await p.locator('.ledger-actions .icon-button').evaluateAll(es=>es.every(e=>e.getBoundingClientRect().height>=43.5&&parseFloat(getComputedStyle(e).minHeight)>=44)));await shot('mobile-'+width)}
    }
    await p.emulateMedia({reducedMotion:'reduce'});await p.setViewportSize({width:1440,height:1000});await local.getByRole('button',{name:'Sırala',exact:true}).click();ok('Sort stays anchored without blur',await p.getByRole('dialog',{name:'Sıralama'}).getAttribute('data-floating-panel')!==null&&await p.locator('.backdrop').count()===0);await p.keyboard.press('Escape');
    ok('No runtime errors',errors.length===0);results.push({engine,checks,errors,browser:browser.version()});

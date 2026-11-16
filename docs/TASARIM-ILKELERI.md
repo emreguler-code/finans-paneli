@@ -193,3 +193,7 @@ Cari detayında ad/tür/güncel bakiye kompakt tek yüzeydedir; önceki ayrı ba
 ## 1.19.0 ile güncellenen kararlar
 
 Önceki nötr cari rakam kuralı tutarın rakamları için sürer; işaret yön renginde, satır bakiyesinin tamamı kendi işaretine göre renklidir. Cari bakiyesinde alacak/borç metni yerine çapraz ok, sıfırda nokta vardır; anlam erişilebilir adlarda korunur. Sıralama da ikona bağlı, blur olmayan bir penceredir. Cari işlem formu varsayılan açıktır; X taslağı gizler ve aynı noktada + olur. Formdan gerçekten ayrılma koruması sürer. Menü görünümü her tıklamada tam/dar/gizli/tam döner. Animasyonlar kısa, rakamlar sabittir; prefers-reduced-motion ile kapanır. Ayrıntılı kapsam: SURUM-1.19.0.md.
+
+## 1.20.0 — Son notların yürürlüğü
+
+Ayrıntılı bölüm bazlı analiz SURUM-1.20.0.md içindedir. Arama/filtre aynı çubukta kaldırılabilir çiplerdir; eski harici ara/filtre/sıfırla düğmeleri kalkar. Aktif tarih aynı sütunda iki satır (12 px/500 tarih, 12 px/400 gün-saat-saniye), tekrarsızdır. Finansal düzenleme işlem türü dahil kendi satırında; ilgili alanlar aynı satırda genişler. Görünüm son 30 hareketten başlar, önceki kayıtlar konumu bozmadan eklenir. Gerçek ay sonu bakiyesi filtrelenen toplamla karıştırılmaz. Gizli giriş formu grid'de yer bırakmaz, + aynı konumda yüzer. Ortak davranışlar cari/banka/kart/ödeme/rapor hareketlerinde paylaşılır; araç, takvim, ekstre ve ayarların farklı veri anlamları korunur.

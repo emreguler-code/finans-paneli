@@ -24,7 +24,7 @@ const fmt=n=>new Intl.NumberFormat('tr-TR',{minimumFractionDigits:2,maximumFract
  await alerts.filter({hasText:'Demo planlanan cash 14'}).click();await p.waitForFunction(()=>document.querySelector('h1')?.textContent==='Nakit kasa');
  ok('Warning selects target account',await p.locator('h1').innerText()==='Nakit kasa');
  ok('Warning opens scheduled tab',await p.getByRole('button',{name:'Gelecek dönem hareketleri',exact:true}).getAttribute('aria-pressed')==='true');
- ok('Warning activates the exact movement',await p.locator('tr.expanded').filter({hasText:'Demo planlanan cash 14'}).count()===1);
+ await p.locator('tr.expanded').filter({hasText:'Demo planlanan cash 14'}).waitFor();ok('Warning activates the exact movement',await p.locator('tr.expanded').filter({hasText:'Demo planlanan cash 14'}).count()===1);
  await p.locator('.summary-band').getByRole('button',{name:'Hesap bilgileri',exact:true}).click();await p.getByRole('dialog').waitFor();ok('Account warning destination retains read-only account details',await p.getByRole('dialog').getByRole('button',{name:/^(Kaydet|Cariyi ekle|Kartı ekle|İşlemi kaydet)$/,exact:true}).count()===0);await close();
  // Account inventory and movement tools are independently usable.
  await p.locator('.page-back').click();

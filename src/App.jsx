@@ -1,3 +1,4 @@
+import {matchesChoice} from './search-query.mjs';
 import {LedgerEditingContext} from './LedgerEditing';
 import {AppShell,MainShell,HeaderRegion,ShellContent,ComposerHost,ContentColumns,PageFooter,SidebarControls,useShellLayout} from './AppShell';
 import {usePresence} from './Motion';
@@ -183,10 +184,10 @@ export function App({
     upcoming = soon.reduce((s, c) => s + c.amount, 0);
   const [overviewRange, setOverviewRange] = useState(() => presetRange('Bu Ay', TODAY));
   const inPeriod = t => t.date >= overviewRange.from && t.date <= overviewRange.to;
-  const periodTx = tx.filter(t => inPeriod(t) && (scope === "all" || t.account === scope) && t.kind !== "Transfer"),
+  const periodTx = tx.filter(t => inPeriod(t) && (matchesChoice(scope,t.account)) && t.kind !== "Transfer"),
     incoming = periodTx.filter(t => t.amount > 0).reduce((s, t) => s + t.amount, 0),
     outgoing = Math.max(0, -periodTx.filter(t => t.amount < 0).reduce((s, t) => s + t.amount, 0));
-  const visible = tx.filter(t => inPeriod(t) && (scope === "all" || t.account === scope) && (kind === "all" || t.kind === kind) && `${t.name} ${t.desc} ${t.category}`.toLocaleLowerCase("tr").includes(search.toLocaleLowerCase("tr"))).sort((a, b) => (b.date + b.time).localeCompare(a.date + a.time));
+  const visible = tx.filter(t => inPeriod(t) && (matchesChoice(scope,t.account)) && (matchesChoice(kind,t.kind)) && `${t.name} ${t.desc} ${t.category}`.toLocaleLowerCase("tr").includes(search.toLocaleLowerCase("tr"))).sort((a, b) => (b.date + b.time).localeCompare(a.date + a.time));
   const dates = [];
   for (let d = new Date(overviewRange.from + "T12:00:00"); iso(d) <= overviewRange.to; d.setDate(d.getDate() + 1)) dates.push(iso(d));
   const nextIncomeDate = claims.filter(c => c.type === 'alacak' && c.due >= TODAY).map(c => c.due).sort()[0];
@@ -225,7 +226,7 @@ export function App({
     </div>;
   const recentEvents = fullData.events.filter(e => !e.cancelled && !e.scheduled && e.event_date<=TODAY && inPeriod({
     date: e.event_date
-  }) && (kind==='all'||e.kind===kind) && (scope === 'all' || e.account_id === scope || e.target_id === scope) && `${e.description} ${e.party_name || ''} ${e.card_name || ''}`.toLocaleLowerCase('tr').includes(search.toLocaleLowerCase('tr'))).sort((a, b) => (b.event_date + b.event_time).localeCompare(a.event_date + a.event_time) || b.id - a.id).map(e => ({
+  }) && (matchesChoice(kind,e.kind)) && (matchesChoice(scope,e.account_id)||matchesChoice(scope,e.target_id)) && `${e.description} ${e.party_name || ''} ${e.card_name || ''}`.toLocaleLowerCase('tr').includes(search.toLocaleLowerCase('tr'))).sort((a, b) => (b.event_date + b.event_time).localeCompare(a.event_date + a.event_time) || b.id - a.id).map(e => ({
     id: e.id,
     date: e.event_date,
     time: e.event_time.slice(0, 5),
