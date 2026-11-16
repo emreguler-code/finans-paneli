@@ -141,7 +141,7 @@ let activePage;const checks=[],errors=[];const ok=(name,test)=>{if(!test)throw E
  const selectedLabel=await p.locator('.selected-day-panel h2').innerText();await p.getByRole('button',{name:'Haftalık',exact:true}).click();ok('View switch preserves selected date',await p.locator('.selected-day-panel h2').innerText()===selectedLabel);await p.getByRole('button',{name:'Aylık',exact:true}).click();
  await p.screenshot({path:out+'/calendar-selected-desktop.png',fullPage:true});
  await p.getByRole('button',{name:'Yaklaşanlara dön',exact:true}).click();ok('Upcoming agenda replaces account balances',await p.locator('.plan-aside').getByText('Hesaplarım',{exact:true}).count()===0);
- await p.locator('#party-search').fill('Ada');await p.locator('#search').press('Enter');ok('Calendar search filters agenda and summaries',await p.locator('.plan-agenda-item').evaluateAll(els=>els.every(el=>el.textContent.includes('Ada'))));
+ await p.locator('#search').fill('Ada');await p.locator('#search').press('Enter');ok('Calendar search filters agenda and summaries',await p.locator('.plan-agenda-item').evaluateAll(els=>els.every(el=>el.textContent.includes('Ada'))));
  await p.locator('.search-chips').getByRole('button',{name:'Temizle',exact:true}).click();await p.getByRole('button',{name:'Sonraki dönem',exact:true}).click();
  const monthDate=p.getByRole('button',{name:'Takvim tarihi',exact:true});await monthDate.click();await p.getByRole('dialog').getByRole('combobox',{name:'Ay',exact:true}).selectOption('7');await p.getByRole('dialog').getByRole('combobox',{name:'Yıl',exact:true}).selectOption('2026');await p.getByRole('dialog').locator('[data-day="2026-08-15"]').click();
  ok('Six-week month retains readable rows',await p.locator('.plan-day').count()===42&&await p.locator('.plan-day').first().evaluate(el=>el.getBoundingClientRect().height>=140));
@@ -192,6 +192,7 @@ let activePage;const checks=[],errors=[];const ok=(name,test)=>{if(!test)throw E
  await p.locator('.topbar').getByRole('button',{name:'Filtrele',exact:true}).click();await p.getByRole('combobox',{name:'Arama kapsamı',exact:true}).selectOption('accounts');await p.locator('#search').fill('KMH');await p.locator('.search-filter-panel').getByRole('button',{name:'Ara',exact:true}).click();await p.locator('h1').filter({hasText:'KMH Deneme Hesabı'}).waitFor();ok('Detail inventory scope selects matching account',await p.locator('.summary-band').innerText().then(t=>t.includes('KMH')));
  await p.locator('#search').fill('bulunamayacak-hesap');await p.locator('#search').press('Enter');await p.getByText('Bu kapsamda hesap veya kart bulunamadı.',{exact:true}).waitFor();ok('Empty detail inventory search preserves return navigation',await p.locator('.page-back').isVisible()&&await p.locator('.account-alerts').isVisible());await p.locator('.page-back').click();await p.locator('.account-grid').waitFor();
  // The updater distinguishes uploading application files from a schema migration.
+ await require('./version119-browser.cjs')({p,go,ok,out});
  await require('./pos-browser.cjs')({p,go,ok,out});
  await require('./tracking-browser.cjs')({p,go,ok,out});
  await require('./design110-browser.cjs')({p,go,ok,out});

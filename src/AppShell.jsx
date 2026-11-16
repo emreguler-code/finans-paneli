@@ -25,7 +25,11 @@ export function MainShell({children,blocked}){
  return <div ref={ref} className="main-shell" inert={blocked||undefined}>{children}</div>;
 }
 export const HeaderRegion=({children})=><header className="topbar" data-region="2"><div className="topbar-inner">{children}</div></header>;
-export const ShellContent=({children})=><main className="main-content" data-region="3" tabIndex={-1} id="main-content"><div className="content-frame"><div id="page-filter-host"/>{children}</div></main>;
+export function ShellContent({children,motionKey}){
+ const ref=useRef(null);
+ useEffect(()=>{if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;const animation=ref.current?.animate?.([{opacity:.65},{opacity:1}],{duration:160,easing:'ease-out'});return()=>animation?.cancel()},[motionKey]);
+ return <main ref={ref} className="main-content" data-region="3" tabIndex={-1} id="main-content"><div className="content-frame"><div id="page-filter-host"/>{children}</div></main>;
+}
 export const ComposerHost=()=> <div id="entry-dock-root" data-region="9"/>;
 export function ContentColumns({children,className=''}){return <div className={'workspace-columns '+className}>{Children.map(children,(child,i)=>isValidElement(child)?cloneElement(child,{'data-region':i===0?'6':'7'}):child)}</div>}
 export const PageFooter=({children})=><footer data-region="8" className="page-footer">{children}</footer>;

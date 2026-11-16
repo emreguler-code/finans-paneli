@@ -512,7 +512,7 @@ export function App({
             </span>
           </div>
         </HeaderRegion>
-        <ShellContent><div id="entry-page-root"/>{entryPage&&<GlobalSearchTools data={fullData} showFilters={false}/>}
+        <ShellContent motionKey={routeHash(nav.route)+nav.revision}><div id="entry-page-root"/>{entryPage&&<GlobalSearchTools data={fullData} showFilters={false}/>}
           {page === "Genel bakış" && <GlobalSearchTools data={fullData} placeholder="Genel bakış hareketlerinde ara" filters={overviewFilters} setFilters={setOverviewFilters} resultCount={visible.length} reset={()=>{setSearch('');setScope('all');setKind('all');setOverviewRange(presetRange('Bu Ay',TODAY))}}><label>Hesap<select value={scope} onChange={e=>setScope(e.target.value)}><option value="all">Tüm hesaplar</option>{accounts.map(a=><option key={a.id} value={a.id}>{a.name}</option>)}</select></label><label>Tarih aralığı<DatePicker range defaultRange={presetRange('Bu Ay',TODAY)} from={overviewRange.from} to={overviewRange.to} today={TODAY} clearable={false} onChange={range=>setOverviewRange(range.from&&range.to?range:presetRange('Bu Ay',TODAY))}/></label><label>İşlem<select value={kind} onChange={e=>setKind(e.target.value)}><option value="all">Tümü</option>{[...new Set(tx.map(t=>t.kind))].map(k=><option key={k}>{k}</option>)}</select></label></GlobalSearchTools>}
           {page === "Genel bakış" && <div className="page-title" data-region="4">
             <div>

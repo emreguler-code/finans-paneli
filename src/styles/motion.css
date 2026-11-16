@@ -10,7 +10,8 @@
 .layout-shell[data-layout-motion=true],.layout-shell[data-layout-motion=true]>.sidebar {transition:grid-template-columns 200ms ease,width 200ms ease}
 .party-heading-actions svg,.party-compose-toggle svg {transition:transform 160ms ease}
 .party-heading-actions svg.is-open {transform:rotate(180deg)}
-.party-compose-toggle[aria-expanded=false] svg {transform:rotate(90deg)}
+.party-compose-toggle[aria-expanded=true] svg {transform:rotate(45deg)}
+.party-compose-toggle[aria-expanded=false] svg {transform:rotate(0deg)}
 .loading-spinner {animation:busy-turn 900ms linear infinite;flex-shrink:0}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 .navigation-submenu,.mobile-more {animation:panel-enter 160ms ease-out}
