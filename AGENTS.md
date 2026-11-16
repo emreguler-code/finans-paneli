@@ -1,6 +1,6 @@
 # Finans Paneli — Codex çalışma kuralları
 
-Sürüm Finans 1.18.0, şema 12’dir. Onaylı kapsam docs/SONRAKI-SURUM-NOTLARI.md içindedir. Bildirimler, filtreler ve tüm takvimler tıklanan alana bağlı, bulanıklık ve sayfa kayması olmadan açılır. Kayda ait eylemler ilgili kayıt kapsamında kalır. Hesap/kredi kartı yatay liste özetlerinde info/düzenle ikonları yoktur; işlevler detay ekranındadır. Kampanya puanları TL bakiyesine eklenmez; araç ödemeleri mevcut hareketlere bağlanır ve ikinci finansal işlem üretmez. Ürün dili Türkçe, tasarım dili Sade Netlik'tir.
+Sürüm Finans 1.18.1, şema 12’dir. Onaylı kapsam docs/SONRAKI-SURUM-NOTLARI.md içindedir. Bildirimler, filtreler ve tüm takvimler tıklanan alana bağlı, bulanıklık ve sayfa kayması olmadan açılır. Kayda ait eylemler ilgili kayıt kapsamında kalır. Hesap/kredi kartı yatay liste özetlerinde info/düzenle ikonları yoktur; işlevler detay ekranındadır. Kampanya puanları TL bakiyesine eklenmez; araç ödemeleri mevcut hareketlere bağlanır ve ikinci finansal işlem üretmez. Ürün dili Türkçe, tasarım dili Sade Netlik'tir.
 Önce README.md, docs/TASARIM-ILKELERI.md ve docs/CODEX-BASLANGIC.md dosyalarını okuyun.
 
 26 Ekim 2026 için onaylı ve 1.9.0 kapsamında uygulanan tasarım kapsamı sonraki sürüm notlarında ve tasarım incelemesindedir. Takvim kuralı artık hem tek gün hem tarih aralığını kapsar: tıklanan alana bağlı açılmalı, ek blur/karartma veya sayfa kayması oluşturmamalıdır; önceki tek gün modal istisnası kaldırılmıştır. Not alma aşaması ile kodlama/yayın aşamasını karıştırmayın.
@@ -48,3 +48,5 @@ Hesap/kart carousel kaldırılmıştır; yatay liste → detay akışı kullanı
 
 
 1.18.0: 16 Kasım cari ekranı incelemesi kullanıcı tarafından uygulama/yayın için onaylandı. Cari kimliği+bakiye aynı kompakt yüzeydedir; bu kapsamda önceki ayrı başlık/özet kuralının yerini alır. Aşağı ok kutu içinde detay açar. Cari liste araçları ilgili hareket panelindedir; header bu detayda genel aramadır. Cari tutar/satır bakiye nötr, yön etiketleri renkli; üst güncel bakiye renklidir. Saat ve kısmi ödeme açıklaması açılan satırda. Filtreli net etki toplamı güncel cari bakiyeden ayrıdır, sadece aktif gerçekleşmiş party_effect toplamıdır. Şema/API aynı; tasarım ve kapsam docs/SURUM-1.18.0.md içindedir. npm run test:party-ui derlenmiş ekranı sentetik API ile Chromium/WebKit'te test eder; gerçek API/mobil kabul testlerinin yerini almaz. Kullanıcı yeni sürüm yayınını istedi; GitHub sürüm paketini yayımlamak yetkilidir, mevcut hosting'e canlı veri/kurulum işlemi yapılmaz.
+
+1.18.1: görsel kontrolde tespit edilen genel dl stilleri cari detay alanından yalıtıldı; mobil bakiye tekrarı kaldırıldı, kimlikte bakiye+ikonlar gerçek genişlik yettiğinde aynı satırda, büyük tutarda kontrollü alt satırdadır. Finansal model değişmedi.

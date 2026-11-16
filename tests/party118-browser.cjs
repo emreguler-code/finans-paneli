@@ -34,7 +34,8 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
    await p.getByRole('button',{name:'Cari bilgileri',exact:true}).click();ok('Chevron expands the identity surface inline',await p.locator('.party-inline-info').isVisible()&&await p.getByRole('dialog').count()===0);await p.keyboard.press('Space');
    if(await p.locator('.party-inline-info').count())await p.getByRole('button',{name:'Cari bilgileri',exact:true}).click();
    const first=p.locator('[data-ledger-id="1"]');await first.click();
-   const detail=p.locator('.party-effect-details');ok('Gross amount and partial payment explain net effect',(await detail.innerText()).includes('913,00 TL')&&(await detail.innerText()).includes('200,00 TL')&&(await detail.innerText()).includes('-713,00 TL'));
+   const detail=p.locator('.party-effect-details');ok('Effect explanation has no inherited row padding or dividers',await detail.locator('dl>div').evaluateAll(es=>es.every(e=>getComputedStyle(e).paddingTop==='0px'&&getComputedStyle(e).borderBottomWidth==='0px')));
+   ok('Gross amount and partial payment explain net effect',(await detail.innerText()).includes('913,00 TL')&&(await detail.innerText()).includes('200,00 TL')&&(await detail.innerText()).includes('-713,00 TL'));
    ok('Expanded stripe continues into action row',await p.locator('.ledger-action-row>td').evaluate(e=>getComputedStyle(e).boxShadow.includes('3px')&&getComputedStyle(e).borderTopWidth==='0px'));
    ok('Ledger amounts are neutral while direction badge remains red',await first.locator('[data-label="Tutar"]').evaluate(e=>getComputedStyle(e).color===getComputedStyle(document.documentElement).getPropertyValue('--ink').trim()||getComputedStyle(e).color==='rgb(32, 44, 57)')&&await first.locator('.effect-negative').count()>0);
    await shot('desktop-expanded');await first.click();
@@ -49,6 +50,8 @@ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://loc
    for(const width of [320,390,430,768,960,1385,1920]){
     await p.setViewportSize({width,height:width===320?568:900});await p.locator('.main-content').evaluate(e=>e.scrollTop=0);
     ok('Page and balance fit '+width,await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)&&await p.locator('.party-current-balance .summary-value').evaluate(e=>e.scrollWidth<=e.clientWidth+1&&e.getBoundingClientRect().right<=innerWidth));
+    if(width===390)ok('Mobile identity stays compact with normal amounts',await p.locator('.party-identity-summary').evaluate(e=>e.getBoundingClientRect().height<210));
+    await shot('header-'+width);
     const row=p.locator('[data-ledger-id="1"]');await row.click();
     ok('Expanded row and actions share width '+width,await p.locator('.ledger-action-row').evaluate(e=>Math.abs(e.getBoundingClientRect().width-e.previousElementSibling.getBoundingClientRect().width)<2));
     ok('No clipped financial values '+width,await p.locator('.party-effect-details dd').evaluateAll(es=>es.every(e=>e.scrollWidth<=e.clientWidth+1&&e.getBoundingClientRect().right<=innerWidth)));
