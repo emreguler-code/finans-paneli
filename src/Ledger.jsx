@@ -8,7 +8,6 @@ import {operationLabel} from './operations.mjs';
 import {EventForm} from './EventForm';
 import {useLedgerEditing} from './LedgerEditing';
 import {useNavigation} from './Navigation';
-const chronological=(a,b)=>(a.event_date+(a.event_time||'')).localeCompare(b.event_date+(b.event_time||''))||Number(a.id)-Number(b.id);
 export function Ledger({events,data,open,toolbar,amount,accountLabel,party=false,card=false,global=false,focusEvent=null,title,scope,sort='date-asc',monthEvents,balanceMode,currentBalance,lockedCardId}){
  const [expanded,setExpanded]=useState(null),[bubble,setBubble]=useState(null),[limit,setLimit]=useState(30),[editing,setEditing]=useState(null),[editBusy,setEditBusy]=useState(false);
  const editor=useLedgerEditing(),nav=useNavigation(),root=useRef(null),anchor=useRef(null),editingRef=useRef(null),prefix=useId();editingRef.current=editing;

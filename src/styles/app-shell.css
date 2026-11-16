@@ -439,50 +439,6 @@ html:has(.layout-shell),body:has(.layout-shell) {
   display: none;
 }
 
-.layout-shell .ledger-view th:nth-child(1) {
-  width: 14%;
-}
-
-.layout-shell .ledger-view th:nth-child(2) {
-  width: 30%;
-}
-
-.layout-shell .ledger-view th:nth-child(3) {
-  width: 18%;
-}
-
-.layout-shell .ledger-view th:nth-child(4) {
-  width: 16%;
-}
-
-.layout-shell .ledger-view th:nth-child(5) {
-  width: 22%;
-}
-
-.layout-shell .ledger-view .party-ledger th:nth-child(1) {
-  width: 13%;
-}
-
-.layout-shell .ledger-view .party-ledger th:nth-child(2) {
-  width: 27%;
-}
-
-.layout-shell .ledger-view .party-ledger th:nth-child(3) {
-  width: 8%;
-}
-
-.layout-shell .ledger-view .party-ledger th:nth-child(4) {
-  width: 16%;
-}
-
-.layout-shell .ledger-view .party-ledger th:nth-child(5) {
-  width: 18%;
-}
-
-.layout-shell .ledger-view .party-ledger th:nth-child(6) {
-  width: 18%;
-}
-
 .layout-shell .ledger-view .cari-badge {
   height: auto;
   min-height: 24px;
@@ -515,13 +471,14 @@ html:has(.layout-shell),body:has(.layout-shell) {
   overflow-wrap: normal;
 }
 
-@container workspace (width < 1240px) {
+@container workspace (width < 1400px) {
   .layout-shell .workspace-columns,.layout-shell .entry-columns {
     grid-template-columns: minmax(0,1fr);
   }
   .layout-shell .context-aside {
-    display: grid;
-    grid-template-columns: repeat(2,minmax(0,1fr));
+    display: flex;
+    flex-direction: column;
+    width: 100%;
   }
   .layout-shell .context-aside>.party-context {
     grid-column: 1/-1;

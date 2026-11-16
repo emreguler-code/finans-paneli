@@ -9,7 +9,7 @@ import {RecentActivity} from './ActivityPanels';
 import {useDelayedBusy} from './Motion';
 import {useScopedState} from './SearchState';
 import { useState, useEffect } from 'react';
-import { Plus, Pencil, Info, ChevronRight, ChevronDown, ArrowLeft, ArrowUpRight, ArrowDownLeft, Dot, LoaderCircle, Users, UserRound } from 'lucide-react';
+import { Plus, ChevronRight, ArrowUpRight, ArrowDownLeft, Dot, LoaderCircle, Users, UserRound } from 'lucide-react';
 import { api } from './api';
 import { can, fmt, tone } from './ui';
 import { ListTools } from './ListTools';
@@ -35,7 +35,6 @@ export function FinancePages({
   data,
   open,
   search = '',
-  onLabel,
   initialAccount = 'all',
   initialParty,
   initialDate,
@@ -70,12 +69,7 @@ export function FinancePages({
     plan = page === 'Ödeme Planı',
     isUsers = page === 'Kullanıcılar';
   const party = cari ? data.parties.find(p => p.id === selected) : null;
-  const detail = party,
-    canCreate = can(data.user, 'create');
-  useEffect(() => {
-    onLabel(detail?.name || '');
-    return () => onLabel('');
-  }, [detail?.name]);
+  const canCreate = can(data.user, 'create');
   useEffect(() => {
     if (!cari || party) return;
     const c = new AbortController();

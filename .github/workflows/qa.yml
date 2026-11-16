@@ -1,7 +1,7 @@
 name: Candidate QA
 on:
   push:
-    branches: ['codex/1.20.0']
+    branches: ['codex/1.21.0']
     paths-ignore: ['docs/**', 'README.md', 'AGENTS.md']
 permissions:
   contents: read
@@ -16,6 +16,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
+      - run: npm audit --audit-level=moderate
       - name: Check PHP syntax
         run: |
           while IFS= read -r -d '' file; do php -l "$file"; done < <(find public -name '*.php' ! -name 'config.php' -print0)
@@ -31,7 +32,7 @@ jobs:
             npx playwright install --with-deps chromium
           fi
       - name: Prepare WebKit for mobile checks
-        run: npx playwright install --with-deps webkit
+        run: npx playwright install --with-deps webkit firefox
       - run: npm run test:party-ui
       - name: Package and verify candidate
         run: |
@@ -81,7 +82,7 @@ jobs:
         run: echo "QA_BROWSER_BIN=$(command -v google-chrome)" >> "$GITHUB_ENV"
       - name: Prepare WebKit
         if: matrix.suite == 'mobile'
-        run: npx playwright install --with-deps webkit
+        run: npx playwright install --with-deps webkit firefox
       - name: Package installation fixture
         if: matrix.suite == 'package'
         run: python3 scripts/package-release.py
@@ -105,4 +106,27 @@ jobs:
         with:
           name: candidate-ui-evidence-${{ matrix.suite }}
           path: qa-evidence/
+          if-no-files-found: ignore
+
+  windows-layout:
+    name: Windows Firefox and Chromium layout
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npx playwright install firefox chromium
+      - run: npm run test:party-ui
+        env:
+          QA_BROWSER_ENGINES: firefox,chromium
+      - name: Save Windows layout evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: windows-layout-evidence
+          path: .qa/party121/
           if-no-files-found: ignore

@@ -26,6 +26,10 @@
 @import "./mobile-components.css";
 
 @import "./party-detail.css";
-@import './release119.css';
+
 @import './motion.css';
-@import './release120.css';
+@import './smart-search.css';
+@import './ledger-interactions.css';
+@import './directory-interactions.css';
+@import './composer.css';
+@import './inline-editor.css';

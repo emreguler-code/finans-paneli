@@ -13,7 +13,6 @@
 .party-history-meta { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); color: var(--muted); font-size: var(--text-small); margin-bottom: var(--space-4); }
 .party-inline-info dl { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,240px),1fr)); gap: var(--space-4) var(--space-6); }
 .party-inline-info dl > div { display: block; min-width: 0; padding: 0; border: 0; }
-.party-inline-info dt { width: auto; }
 .party-inline-info dt { font-size: var(--text-small); color: var(--muted); margin-bottom: var(--space-1); }
 .party-inline-info dd { font-size: var(--text-body); margin: 0; overflow-wrap: anywhere; white-space: pre-wrap; }
 .party-ledger-view .ledger-section-heading { flex-wrap: wrap; gap: var(--space-3); }

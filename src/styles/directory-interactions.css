@@ -1,0 +1,69 @@
+.party-list-balance {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  white-space: nowrap;
+}
+.party-list-balance svg {
+  flex: 0 0 16px;
+}
+.sort-options {
+  display: grid;
+  gap: 4px;
+  padding: 8px;
+}
+.sort-options button {
+  width: 100%;
+  text-align: left;
+  min-height: 44px;
+  padding: 10px 12px;
+  border-radius: 8px;
+}
+.sort-options button[aria-pressed="true"] {
+  background: var(--palette-eef7f8);
+  color: var(--accent);
+}
+@media (min-width: 761px) {
+  .layout-shell .party-list-summary .summary-fields {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .layout-shell .party-list-summary .summary-field {
+    border-left: 1px solid var(--line);
+    border-bottom: 0;
+  }
+  .layout-shell .party-list-summary .summary-field:first-child {
+    border-left: 0;
+  }
+  .layout-shell .party-list-summary .summary-field:last-child {
+    text-align: right;
+  }
+  .party-directory .party-row {
+    grid-template-columns: 32px minmax(0, 1fr) 130px minmax(160px, 200px) 16px;
+    gap: 16px;
+    padding: 12px 22px;
+    min-height: 56px;
+  }
+  .party-directory .cari-avatar {
+    width: 32px;
+    height: 32px;
+  }
+  .party-directory .party-column-head {
+    display: grid;
+    grid-template-columns: 32px minmax(0, 1fr) 130px minmax(160px, 200px) 16px;
+    gap: 16px;
+    padding-left: 22px;
+    padding-right: 22px;
+  }
+  .party-directory .party-column-head > span:first-child {
+    grid-column: 1/3;
+  }
+  .party-directory .party-type {
+    justify-self: start;
+  }
+}
+@media (max-width: 760px) {
+  .party-list-balance {
+    gap: 4px;
+  }
+}

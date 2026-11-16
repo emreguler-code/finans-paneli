@@ -1,0 +1,154 @@
+/* Same-row controls, independent from modal footer and dock layout. */
+.ledger-editor-slot {
+  min-width: 0;
+}
+.layout-shell .ledger-view tr.is-editing td {
+  vertical-align: middle;
+}
+.ledger-editor-slot .cari-field {
+  margin: 0;
+  font-size: 0;
+  min-width: 0;
+}
+.ledger-editor-slot input,
+.ledger-editor-slot select {
+  width: 100%;
+  min-width: 0;
+  min-height: 36px;
+  padding: 6px;
+  border: 1px solid var(--control-border);
+  border-radius: 8px;
+  background: var(--surface-raised);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 14px;
+}
+.ledger-editor-slot .compact-date {
+  width: auto;
+}
+.ledger-editor-slot .date-trigger {
+  width: 100%;
+  min-width: 36px;
+  min-height: 36px;
+  padding: 6px;
+}
+.layout-shell .entry-inline {
+  width: 100%;
+  min-width: 0;
+  padding: 8px 4px;
+  text-align: left;
+}
+.layout-shell .entry-inline .entry-form {
+  display: block;
+  overflow: visible;
+}
+.layout-shell .entry-inline .sheet-scroll {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  min-height: 0;
+  max-height: none;
+  overflow: visible;
+  padding: 0;
+  flex: none;
+}
+.layout-shell .entry-inline .entry-section,
+.layout-shell .entry-inline .entry-section-fields {
+  display: contents;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.layout-shell .entry-inline .entry-section > h3,
+.layout-shell .entry-inline .entry-effect {
+  display: none;
+}
+.layout-shell .entry-inline .cari-field {
+  gap: 4px;
+  margin: 0 !important;
+  font-size: 12px;
+  text-align: left;
+}
+.layout-shell .entry-inline .inline-effect-preview,
+.layout-shell .entry-inline .cari-error,
+.layout-shell .entry-inline .entry-errors,
+.layout-shell .entry-inline label:has(input[name="reason"]) {
+  grid-column: 1/-1;
+  margin: 0;
+}
+.inline-effect-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  padding: 4px 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+.inline-effect-preview strong {
+  font-weight: 500;
+}
+.inline-effect-preview small {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: 12px;
+}
+.layout-shell .entry-inline .sheet-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 8px 0 0;
+  border: 0;
+  background: transparent;
+}
+.layout-shell .entry-inline .sheet-footer button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 36px;
+  width: 36px;
+  min-width: 36px;
+  max-width: 36px;
+  min-height: 36px;
+  padding: 6px;
+}
+@container ledger (width < 880px) {
+  .layout-shell .ledger-view tr.is-editing .mobile-ledger-cell {
+    display: none;
+  }
+  .layout-shell .ledger-view tr.is-editing > td[data-label] {
+    display: block;
+    width: 100%;
+    padding: 4px 16px !important;
+  }
+  .layout-shell .ledger-view tr.is-editing > td[data-label="Tarih"] {
+    padding-top: 12px !important;
+  }
+  .layout-shell .ledger-view tr.is-editing > td[data-label="Ekleyen"],
+  .layout-shell .ledger-view tr.is-editing > td[data-label="Bakiye"] {
+    display: none;
+  }
+  .ledger-editor-slot .cari-field {
+    font-size: 12px;
+    gap: 4px;
+  }
+  .ledger-editor-slot input,
+  .ledger-editor-slot select {
+    min-height: 44px;
+    font-size: 16px;
+  }
+  .layout-shell .entry-inline .sheet-scroll {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .layout-shell .entry-inline .sheet-footer button {
+    flex-basis: 44px;
+    width: 44px;
+    min-width: 44px;
+    max-width: 44px;
+    min-height: 44px;
+  }
+}
+@media (max-width: 760px) {
+  .layout-shell .entry-inline .sheet-scroll {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

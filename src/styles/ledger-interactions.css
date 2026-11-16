@@ -1,0 +1,204 @@
+.layout-shell .ledger-view td[data-label="Tutar"],
+.layout-shell .ledger-view .mobile-txn-top > strong {
+  color: var(--ink);
+}
+.amount-sign {
+  font-weight: 500;
+}
+.ledger-expanded-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 44px;
+  padding: 0 4px;
+}
+.ledger-expanded-bar .party-effect-details {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 20px;
+  padding: 4px 0;
+  color: var(--muted);
+  font-size: 12px;
+  min-width: 0;
+}
+.party-effect-details strong {
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.ledger-expanded-bar .ledger-actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  min-height: 40px;
+}
+.ledger-expanded-bar .icon-button {
+  width: 32px;
+  height: 32px;
+  min-height: 32px;
+  padding: 6px;
+}
+.ledger-expanded-bar .icon-button svg {
+  width: 16px;
+  height: 16px;
+}
+.layout-shell .ledger-action-row > td {
+  padding-top: 0 !important;
+  padding-bottom: 4px !important;
+  border-top: 0;
+}
+.mobile-running-balance {
+  display: none;
+}
+.layout-shell .ledger-view .ledger-month-summary td {
+  background: var(--surface-page);
+  padding: 10px 12px !important;
+  font-size: 12px;
+  border-top: 1px solid var(--line);
+  box-shadow: none;
+}
+.ledger-month-summary td > div {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  color: var(--muted);
+}
+.ledger-month-summary strong {
+  font-weight: 500;
+}
+.ledger-month-summary div > strong {
+  margin-right: auto;
+}
+.layout-shell .ledger-view th:nth-child(1) {
+  width: 13%;
+}
+.layout-shell .ledger-view th:nth-child(2) {
+  width: 25%;
+}
+.layout-shell .ledger-view th:nth-child(3) {
+  width: 15%;
+}
+.layout-shell .ledger-view th:nth-child(4) {
+  width: 12%;
+}
+.layout-shell .ledger-view th:nth-child(5) {
+  width: 15%;
+}
+.layout-shell .ledger-view th:nth-child(6) {
+  width: 20%;
+}
+.layout-shell .ledger-view .party-ledger th:nth-child(1) {
+  width: 12%;
+}
+.layout-shell .ledger-view .party-ledger th:nth-child(2) {
+  width: 22%;
+}
+.layout-shell .ledger-view .party-ledger th:nth-child(3) {
+  width: 9%;
+}
+.layout-shell .ledger-view .party-ledger th:nth-child(4) {
+  width: 12%;
+}
+.layout-shell .ledger-view .party-ledger th:nth-child(5) {
+  width: 11%;
+}
+.layout-shell .ledger-view .party-ledger th:nth-child(6) {
+  width: 17%;
+}
+.layout-shell .ledger-view .party-ledger th:nth-child(7) {
+  width: 17%;
+}
+@container ledger (width < 880px) {
+  .layout-shell .ledger-view .ledger-month-summary td {
+    display: block;
+    width: 100%;
+  }
+  .ledger-month-summary div > strong {
+    flex-basis: 100%;
+  }
+  .ledger-expanded-bar {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .ledger-expanded-bar .party-effect-details {
+    flex: 1 1 220px;
+    gap: 6px 12px;
+  }
+  .party-effect-details .mobile-running-balance {
+    display: inline;
+  }
+  .ledger-expanded-bar .ledger-actions {
+    margin-left: auto;
+  }
+  .ledger-expanded-bar .icon-button {
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
+  }
+  .layout-shell .ledger-view .ledger-action-row > td {
+    padding-top: 0 !important;
+  }
+}
+.movement-date.detailed {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  line-height: 1.45;
+  white-space: nowrap;
+  font-size: 12px;
+}
+.movement-date.detailed > strong {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.movement-date.detailed > small {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.ledger-month-summary .month-signed {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+.ledger-month-summary td > div > strong:last-child {
+  margin-right: 0;
+}
+.ledger-load-row {
+  display: flex;
+  justify-content: center;
+  padding: 12px;
+}
+.ledger-load-row button {
+  min-height: 36px;
+  font-size: 12px;
+}
+@media (max-width: 760px) {
+  .ledger-load-row button {
+    min-height: 44px;
+  }
+}
+.vehicle-record-row {
+  min-height: 56px;
+}
+.vehicle-record-actions .list-icon svg {
+  width: 16px;
+  height: 16px;
+}
+@media (max-width: 760px) {
+  .layout-shell .ledger-expanded-bar .ledger-actions .icon-button {
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
+    flex: 0 0 44px;
+  }
+}

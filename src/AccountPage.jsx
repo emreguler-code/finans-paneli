@@ -1,5 +1,5 @@
 import {matchesChoice} from './search-query.mjs';
-import {ContentColumns,PageFooter} from './AppShell';
+import {ContentColumns} from './AppShell';
 import {useNavigation,useRecordState,useRouteTab} from './Navigation';
 import {cardDisplayName} from './account-display.mjs';
 import {NotificationPreview,RecentActivity} from './ActivityPanels';
@@ -21,13 +21,12 @@ export function AccountPage({page,data,open:openRecord,search='',initialAccount=
  const [selected,setSelected]=useState(source.find(x=>String(x.id)===String(record||initialAccount))?.id),[tab,setTab]=useRouteTab(isCard?'Dönem içi işlemler':'Hesap hareketleri'),[archived,setArchived]=useScopedState(page+':archived',false),[filters,setFilters]=useState(false),[sort,setSort]=useScopedState(page+':sort','date-asc'),[cancelled,setCancelled]=useScopedState(page+':cancelled',Boolean(initialEventId&&data.events.find(e=>e.id===initialEventId)?.cancelled)),[from,setFrom]=useScopedState(page+':from',''),[to,setTo]=useScopedState(page+':to',''),[statementId,setStatementId]=useScopedState(page+':statementId',nav.route.statement||'');
  const [inventorySort,setInventorySort]=useScopedState(page+':inventorySort','name-asc'),[kind,setKind]=useScopedState(page+':kind','Tümü'),[person,setPerson]=useScopedState(page+':person','Tümü');
  const [detail,setDetail]=useState(Boolean(record)||initialAccount!=='all');
- const [listScroll,setListScroll]=useScopedState(page+':listScroll',0);
  const [focusEvent,setFocusEvent]=useState(null);
  function open(context){openRecord(isCard&&detail&&context.entity==='event'?{...context,lockedCardId:selected}:context)}
  function openAlert(alert){const event=data.events.find(e=>e.id===alert.eventId);nav.navigate({page,record:String(alert.account),event:event?String(event.id):'',tab:event?.scheduled?'Gelecek dönem hareketleri':'Hesap hareketleri'},{fresh:true});if(!event){const account=source.find(a=>a.id===alert.account);if(account)open({entity:isCard?'card':'account',mode:'view',item:account})}}
  const [tag,setTag]=useScopedState(page+':tag','all'),[minAmount,setMinAmount]=useScopedState(page+':minAmount',''),[maxAmount,setMaxAmount]=useScopedState(page+':maxAmount','');
  const [searchQuery,setSearchQuery]=useScopedState(page+':searchQuery','');
- const [listQuery,setListQuery]=useScopedState(page+':listQuery','');
+ const [listQuery]=useScopedState(page+':listQuery','');
  const [queryScope,setQueryScope]=useScopedState(page+':queryScope',record?'movements':'accounts');
  useLayoutEffect(()=>{if(initialAccount==='all'&&!record){setQueryScope('accounts');setSearchQuery(listQuery)}},[]);
  const scopeControl=<label>Arama kapsamı<select data-filter-default={detail?'movements':'accounts'} value={queryScope} onChange={e=>setQueryScope(e.target.value)}><option value="accounts">{isCard?'Kartlar':'Hesaplar'}</option><option value="movements">Seçili kaydın hareketleri</option></select></label>;

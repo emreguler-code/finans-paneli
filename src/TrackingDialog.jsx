@@ -3,7 +3,7 @@ import {EntryForm,FormSection} from './EntryForm';
 import {vehicleKinds,bodyStyles,maintenanceKinds} from './vehicle-display.mjs';
 import {useState} from 'react';
 import {api,requestId} from './api';
-import {Sheet,can,fmt} from './ui';
+import {can,fmt} from './ui';
 import {DatePicker,dateLabel} from './DatePicker';
 import {MoneyInput} from './MoneyInput';
 import {normalizeMoney} from './list-utils.mjs';
