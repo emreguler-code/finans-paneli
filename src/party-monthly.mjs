@@ -153,6 +153,10 @@ export function partyMonthly(party, data, month) {
     const payment =
       a.operation === paymentOp ? a : b.operation === paymentOp ? b : null;
     const bill = payment === a ? b : a;
+    if (payment?.event_date.startsWith(month) && bill.operation === "opening") {
+      old += m.amount;
+      continue;
+    }
     if (
       !payment?.event_date.startsWith(month) ||
       !ops.includes(bill.operation)

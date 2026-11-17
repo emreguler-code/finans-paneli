@@ -13,7 +13,7 @@
 
 ## Güncel sürüm ve kaynak durumu — 17 Kasım 2026
 
-- Çalışma ve yayın adayı **1.25.0**, veritabanı şeması **12**'dir. Son doğrulanan GitHub yayını 1.24.0'dır; 1.25.0 yayın kabulünden sonra sonuç bu belgeye işlenir.
+- Çalışma ve yayın adayı **1.25.1**, veritabanı şeması **12**'dir. Son doğrulanan GitHub yayını 1.25.0'dır; 1.25.1 yayın kabulünden sonra sonuç bu belgeye işlenir.
 - Bu belge güncel GitHub `AGENTS.md` kararlarıyla eşleştirilmiştir. Kullanıcının bağımlılık güncelleme talimatıyla yerel kaynaklar GitHub `main` commit `069a2c1` (1.22.0) ile eşleştirildi. Bağımlılık güncellemeleri bu kaynak üzerinde hazırlanır. Son kullanıcı talimatına göre kodlama onayı GitHub yayınını kapsar; hosting yükleme/inceleme kullanıcıya aittir.
 - Yeni talepler `docs/SONRAKI-SURUM-NOTLARI.md` içinde taslak olarak tutulur; bu dosyadaki geçmiş onaylar yeni talepleri kendiliğinden yetkilendirmez.
 - Aşağıdaki sürüm paragrafları karar geçmişidir. Daha yeni sürümün aynı konuda açıkça değiştirdiği kural geçerlidir; eski sürüm numaraları güncel sürüm bildirimi değildir. Kullanıcının yukarıdaki çalışma talimatı tüm yeni işler için geçerlidir.
@@ -21,7 +21,7 @@
 
 ## Ortak kurallar ve sürüm geçmişi
 
-Çalışma sürümü Finans 1.25.0, şema 12’dir. Güncel kapsam `docs/SURUM-1.25.0.md`, yeni taleplerin taslağı `docs/SONRAKI-SURUM-NOTLARI.md` içindedir. Bildirimler, filtreler ve tüm takvimler tıklanan alana bağlı, bulanıklık ve sayfa kayması olmadan açılır. Kayda ait eylemler ilgili kayıt kapsamında kalır. Hesap/kredi kartı yatay liste özetlerinde info/düzenle ikonları yoktur; işlevler detay ekranındadır. Kampanya puanları TL bakiyesine eklenmez; araç ödemeleri mevcut hareketlere bağlanır ve ikinci finansal işlem üretmez. Ürün dili Türkçe, tasarım dili Sade Netlik'tir.
+Çalışma sürümü Finans 1.25.1, şema 12’dir. Güncel kapsam `docs/SURUM-1.25.0.md`, yeni taleplerin taslağı `docs/SONRAKI-SURUM-NOTLARI.md` içindedir. Bildirimler, filtreler ve tüm takvimler tıklanan alana bağlı, bulanıklık ve sayfa kayması olmadan açılır. Kayda ait eylemler ilgili kayıt kapsamında kalır. Hesap/kredi kartı yatay liste özetlerinde info/düzenle ikonları yoktur; işlevler detay ekranındadır. Kampanya puanları TL bakiyesine eklenmez; araç ödemeleri mevcut hareketlere bağlanır ve ikinci finansal işlem üretmez. Ürün dili Türkçe, tasarım dili Sade Netlik'tir.
 Önce README.md, docs/TASARIM-ILKELERI.md ve docs/CODEX-BASLANGIC.md dosyalarını okuyun.
 
 26 Ekim 2026 için onaylı ve 1.9.0 kapsamında uygulanan tasarım kapsamı sonraki sürüm notlarında ve tasarım incelemesindedir. Takvim kuralı artık hem tek gün hem tarih aralığını kapsar: tıklanan alana bağlı açılmalı, ek blur/karartma veya sayfa kayması oluşturmamalıdır; önceki tek gün modal istisnası kaldırılmıştır. Not alma aşaması ile kodlama/yayın aşamasını karıştırmayın.
@@ -93,3 +93,5 @@ Hesap/kart carousel kaldırılmıştır; yatay liste → detay akışı kullanı
 1.24.0 yayın sonucu: Windows ve Linux tam kabulü başarılı (koşu 44070786379). Proje genelindeki 232 desteklenen dosya için biçim kontrolü ve PHP eklentisi iki platformda doğrulandı. Hostinge hazır ZIP + SHA-256 repo içinde ve GitHub Release varlıklarında; indirilen hosting ZIP repo dosyasıyla birebir eşleşti. Hosting yükleme/inceleme kullanıcıda kalır.
 
 1.25.0 uygulama talimatı — 17 Kasım 2026: Kullanıcı son modern satır içi tasarımı, düzenleme ekranına yayılımını, biriken son notların kodlanmasını ve GitHub yayınını açıkça istedi. Kapsam `docs/SURUM-1.25.0.md` içindedir. Cari giriş liste sonunda açılır; ek bilgiler kapalıdır, ana sütun ölçüleri korunur; sağ bakiye alanında X/kaydet vardır. Düzenleme gerekçesi ve taslak koruması sürer. Cari türüne göre haftalık takvim/bilgiler ve masaüstünde sağ altta, mobilde sekmeli Aylık Özet kullanılır. Personel planı profil JSON içinde tarih bazlıdır, tekrarlanmaz ve finansal hareket üretmez. Grafikler Recharts ile yalnız seçili ayın kayıtlarına dayanır; eski dönem ödemesi, iade ve bağlantı eksikliğinde oran uydurulmaz. Şema 12 korunur. Not/tasarım aşamasının kodlama izni sayılmaması kuralı sonraki yeni taleplerde değişmeden sürer. Hosting kurulumu kullanıcıya aittir.
+
+1.25.1: Aynı yetkilendirilmiş aylık özet kapsamının son kontrolünde, açılış bakiyesine yapılan ödeme/tahsilatın devreden borç satırında sayılması düzeltildi. Ana grafik ve finansal bakiyeler değişmez. Kapsam `docs/SURUM-1.25.1.md`.

@@ -213,3 +213,27 @@ test("earlier advances or opening credits are never relabeled as current cash or
   assert.deepEqual(s.inner, []);
   assert.match(s.notice, /dönem dışı/);
 });
+test("opening balances paid this month are classified as carried debt, for suppliers and customers", () => {
+  for (const supplier of [true, false]) {
+    const p = { id: 1, type: supplier ? "Tedarikçi" : "Müşteri" },
+      sign = supplier ? -1 : 1;
+    const rows = [
+      event(1, "opening", 8000, {
+        party_effect: sign * 8000,
+        event_date: "2026-10-01",
+      }),
+      event(2, supplier ? "purchase_invoice" : "sale", 10000, {
+        party_effect: sign * 10000,
+      }),
+      event(3, supplier ? "payment" : "collection", 10000, {
+        party_effect: -sign * 10000,
+        kind: supplier ? "Ödeme" : "Tahsilat",
+      }),
+    ];
+    const s = partyMonthly(p, data(rows), "2026-11");
+    assert.equal(s.old, 8000);
+    assert.equal(s.periodTotal, 10000);
+    assert.equal(s.inner[0].value, 2000);
+    assert.equal(s.inner.at(-1).value, 8000);
+  }
+});

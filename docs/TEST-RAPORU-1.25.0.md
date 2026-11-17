@@ -11,4 +11,4 @@
 - Demo mutabakatı ve tarayıcı kontrolleri geçti. Paket kurulum testi hosting ZIP ile tam paket dosyalarının birebir eşliğini, config/şifre içermediğini, temiz kurulum ve demo mutabakatını doğruladı.
 - 12 PHP dosyası sözdizimi kontrolünden geçti. `npm audit --audit-level=moderate`: 0 güvenlik açığı.
 
-[Tasarım karşılaştırması](../design-qa.md) ve [kapsam](SURUM-1.25.0.md). Fiziksel iPhone/Safari ve canlı hosting testi yapılmadı. Windows/Linux GitHub yayın sonucu, koşu tamamlandıktan sonra bu rapora eklenir.
+[Tasarım karşılaştırması](../design-qa.md) ve [kapsam](SURUM-1.25.0.md). Fiziksel iPhone/Safari ve canlı hosting testi yapılmadı. Windows/Linux GitHub yayın kabulü başarılı: [44119212287](https://github.com/emreguler-code/finans-paneli/actions/runs/44119212287). Kaynak: `e7545728c3e705f89b595277ad3ed0e5c95f4d82`; Release dört ZIP/checksum varlığını içerir.

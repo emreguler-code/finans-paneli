@@ -1,3 +1,11 @@
+# 1.25.1 — Devreden bakiye ödemelerinin aylık ayrımı
+
+1.25.0 kapsamındaki satır içi işlem ekleme/düzenleme, cari takvimleri ve aylık özetler korunur. Seçili ayda açılış bakiyesine karşı yapılan ödeme/tahsilat, “Devreden / önceki dönem borcuna ait” satırına dahil edilir. Ana grafik, finansal kayıtlar ve bakiyeler değişmez. Tedarikçi ve müşteri senaryoları ayrı doğrulandı.
+
+Hostinge hazır ZIP + SHA-256 `releases/1.25.1/` altında ve Release varlıklarındadır. Şema 12; hosting yükleme/inceleme kullanıcıya aittir. [Ana kapsam](SURUM-1.25.0.md) · [Düzeltme](SURUM-1.25.1.md).
+
+---
+
 # 1.25.0 — Cari çalışma ekranları ve satır içi işlemler
 
 - Yeni işlem listenin sonunda taslak satırı açar; düzenleme aynı modern alan ve açılır menü dilini paylaşır. Ek bilgiler kapalı başlar, ana sütunlar sabit kalır; kaydet/iptal bakiye sütunundadır.

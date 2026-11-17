@@ -828,3 +828,7 @@ Kullanıcı son satır içi tasarımı onayladı ve “düzenleme ekranını da 
 ### 1.25.0 son etiket menüsü kontrolü
 
 Varsayılan Genel etiketi diğer seçenekleri gizlememelidir. Okla açıldığında tüm etiketler, yazarken eşleşenler gösterilir; aynı oka ikinci tıklama kapatır. Etiket ve işlem türü menüleri klavyeyle de seçilir. Bu, yetkilendirilen modern satır içi formun doğrulama düzeltmesidir.
+
+### 1.25.1 son aylık özet doğrulaması
+
+Seçili ayda açılış bakiyesine karşı yapılan ödeme/tahsilat, devreden / önceki dönem borcuna ait satıra dahil edilir. Bu, mevcut yetkilendirilmiş aylık rapor kapsamının doğruluk düzeltmesidir. Yeni hareket veya bakiye değişikliği oluşturmaz.

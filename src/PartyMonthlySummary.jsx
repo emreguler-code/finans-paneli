@@ -212,7 +212,7 @@ export function PartyMonthlySummary({ party, data }) {
             <b>{fmt(summary.periodTotal)} TL</b>
           </span>
           <span>
-            Önceki dönem borcuna ait<b>{fmt(summary.old)} TL</b>
+            Devreden / önceki dönem borcuna ait<b>{fmt(summary.old)} TL</b>
           </span>
         </div>
       )}

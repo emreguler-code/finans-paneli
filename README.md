@@ -1,4 +1,6 @@
-# Finans Paneli 1.25.0
+# Finans Paneli 1.25.1
+
+1.25.1: Aylık özette açılış bakiyesine yapılan ödemeler devreden borç ayrımına dahil edildi. [Düzeltme kapsamı](docs/SURUM-1.25.1.md).
 
 1.25.0: Cari işlemler liste sonunda modern satır içi eklenir ve düzenlenir; ek bilgiler kapalı başlar. Tedarikçi/müşteri/personel takvimleri, kompakt bilgiler ve aylık çalışma grafikleri eklendi. Arama ve takvim kapanışları düzeltildi. Şema 12. [Sürüm kapsamı](docs/SURUM-1.25.0.md).
 
