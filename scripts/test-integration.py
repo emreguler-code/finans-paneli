@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """Own disposable Docker services. Never target a user's existing database/config."""
 from pathlib import Path
-import argparse,json,os,secrets,shutil,socket,subprocess,time,urllib.request,urllib.error,uuid,zipfile
+import argparse,hashlib,json,os,secrets,shutil,socket,subprocess,time,urllib.request,urllib.error,uuid,zipfile
 ROOT=Path(__file__).resolve().parents[1]
-PHP_BASE='php:8.3-cli@sha256:aafe21201943a8a6e497ddfb471e2ce68ada76adede38c7d61fede8918b24319'
-DB_IMAGE='mariadb:11.4@sha256:1292844148b311e4ed4300022a996d39083f415a963e970cf47cad1b3b18e3a6'
+PHP_BASE='php:8.5-cli@sha256:50956f094e90a716d43bea28087d447555ad80510e386ab8c9c10d8c70d781a9'
+DB_IMAGE='mariadb:12.3.3@sha256:4ebbcf100a3ba320766dfa0e1af008df12261301db6ef72798c7650f70794aed'
+# Include the base digest so an older cached PHP image cannot bypass an upgrade.
+PHP_IMAGE='finans-php-test:'+hashlib.sha256(PHP_BASE.encode()).hexdigest()[:16]
 def run(args,**kwargs):return subprocess.run(args,check=True,**kwargs)
 def free_port():
  with socket.socket() as sock:
@@ -26,10 +28,10 @@ def main():
    if subprocess.run(['docker','exec',db_name,'healthcheck.sh','--connect','--innodb_initialized'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL).returncode==0:break
    time.sleep(1)
   else:raise RuntimeError('Disposable database did not become ready')
-  if subprocess.run(['docker','image','inspect','finans-php-test'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL).returncode:
+  if subprocess.run(['docker','image','inspect',PHP_IMAGE],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL).returncode:
    build=runtime/'build';build.mkdir();(build/'Dockerfile').write_text(f'FROM {PHP_BASE}\nRUN docker-php-ext-install -j2 pdo_mysql\n')
    docker_config=ROOT/'.qa/docker';docker_config.mkdir(exist_ok=True)
-   run(['docker','--config',str(docker_config),'build','-t','finans-php-test',str(build)],stdout=subprocess.DEVNULL)
+   run(['docker','--config',str(docker_config),'build','-t',PHP_IMAGE,str(build)],stdout=subprocess.DEVNULL)
   web=runtime/'web'
   if args.suite=='package':
    version=json.loads((ROOT/'package.json').read_text())['version']
@@ -51,7 +53,7 @@ def main():
    for source in (ROOT/'dist/client').iterdir():
     if source.is_dir():shutil.copytree(source,web/source.name,dirs_exist_ok=True)
     else:shutil.copyfile(source,web/source.name)
-  run(['docker','run','-d','--name',api_name,'--network','host','-e','PHP_CLI_SERVER_WORKERS=4','-v',f'{ROOT}:{ROOT}','-w',str(ROOT),'finans-php-test','-S',f'127.0.0.1:{api_port}','-t',str(web)],stdout=subprocess.DEVNULL);names.append(api_name)
+  run(['docker','run','-d','--name',api_name,'--network','host','-e','PHP_CLI_SERVER_WORKERS=4','-v',f'{ROOT}:{ROOT}','-w',str(ROOT),PHP_IMAGE,'-S',f'127.0.0.1:{api_port}','-t',str(web)],stdout=subprocess.DEVNULL);names.append(api_name)
   if args.suite in ['migrations','package']:
    # Tables are intentionally absent; a JSON 503 proves PHP is responding before fixture import.
    for _ in range(100):

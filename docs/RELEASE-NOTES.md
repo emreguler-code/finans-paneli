@@ -1,3 +1,16 @@
+# 1.23.0 — Bağımlılıklar ve geliştirme ortamı güncellendi
+
+- React ve React DOM 19.3.1, Lucide React 1.74.0, Vite 8.3.8 / React eklentisi 6.3.0 ve Playwright 1.65.1 kullanılır.
+- Node.js 26.13.1 LTS, npm 12.2.2 ve Python 3.15.2 sürümleri geliştirme ve CI ortamlarında eşleştirildi. GitHub Actions bileşenleri güncellendi.
+- İzole test ortamı PHP 8.5.12 ve MariaDB 12.3.3 LTS'ye, yerel Inter fontları 4.1 dağıtımına taşındı. Eski PHP test imajının önbellekten kullanılması engellendi.
+- 14 doğrudan npm paketi güncel kararlı sürümlerde; uyumlu dolaylı bağımlılıklar yenilendi. Yerel güvenlik taramasında bilinen açık bulunmadı.
+
+Hostinge hazır ZIP ve SHA-256 ayrıca `releases/1.23.0/` klasöründe repoya eklendi. Hosting yükleme ve canlı incelemeyi kullanıcı yürütür.
+
+Şema 12 ve mali model korunur. Hosting ZIP'i mevcut `api/config.php` ve özel yedekler korunarak yüklenir; demo oluşturma veya veri sıfırlama yapılmaz. Hostingde Node.js gerekmez, PHP 8.3+ desteği korunur. Ayrıntılar `docs/SURUM-1.23.0.md` ve `docs/TEST-RAPORU-1.23.0.md`.
+
+---
+
 # 1.22.0 — Aramadan filtreleme, başlıktan sıralama
 
 - Ayrı filtre formu ve açma oku kaldırıldı. Tüm filtreler arama komutları, öneriler ve kaldırılabilir çiplerle yönetilir; tarih, TL aralığı, vade, arşiv ve iptal dahil.

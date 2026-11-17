@@ -1,6 +1,6 @@
-# Finans Paneli 1.22.0
+# Finans Paneli 1.23.0
 
-1.22.0: ayrı filtre ve sıralama pencereleri kaldırıldı. Arama komutları ve sütun başlıklarından sıralama; ortak panel/araç hizaları. [Güncel kapsam](docs/SURUM-1.22.0.md) · [Test raporu ve çalışan ekranlar](docs/TEST-RAPORU-1.22.0.md).
+1.23.0: React/React DOM, Vite, ikonlar ve tarayıcı test araçları güncellendi; Node.js 26 LTS, npm 12 ve Python 3.15 ile tekrarlanabilir geliştirme ortamı eşleştirildi. Test ortamı PHP 8.5.12 / MariaDB 12.3.3 LTS, fontlar Inter 4.1. Şema 12. [Sürüm kapsamı](docs/SURUM-1.23.0.md) · [Test raporu](docs/TEST-RAPORU-1.23.0.md).
 
 1.21.0: içerik genişliğine bağlı tutarlı yerleşim, yalıtılmış arama/form stilleri ve Firefox dahil otomatik geometri kabulü. [Güncel kapsam](docs/SURUM-1.21.0.md) · [1.21.0 test raporu ve ekranlar](docs/TEST-RAPORU-1.21.0.md) · [Kod kalite politikası](docs/KOD-KALITESI.md).
 
@@ -12,7 +12,7 @@ Bu depo kullanıcı/işlem veritabanı, yönetici şifresi veya hosting erişim 
 
 ## Geliştirme
 
-Node.js 24, PHP 8.3+ (pdo_mysql), MySQL/MariaDB gerekir.
+Node.js 26.13.1 LTS, npm 12.2.2, PHP 8.3+ (pdo_mysql), MySQL/MariaDB gerekir. `.node-version` / `.nvmrc` geliştirme sürümünü sabitler. Paketleme/test otomasyonu Python 3.15.2 kullanır (`.python-version`). Güncel izole kabul ortamı PHP 8.5.12 ve MariaDB 12.3.3 LTS kullanır; mevcut hosting için PHP 8.3+ desteği korunur.
 
 ```sh
 npm ci
@@ -40,6 +40,8 @@ npm test derleme, birim ve Sites worker testlerini çalıştırır. API testleri
 Codex değişiklik yapmadan AGENTS.md dosyasını okumalıdır. Geçmiş sürüm belgeleri KAPSAM-*.md; son sürüm ayrıntıları KAPSAM-1.6.md ve TEST-RAPORU-1.6.md içindedir.
 
 ## Kuruluma hazır sürüm paketi
+
+Hostinge hazır ZIP + SHA-256 dosyası ayrıca `releases/<sürüm>/` altında depoda bulunur. Kodlama onayı aynı kapsamın GitHub yayınına da izin verir. Hosting yükleme ve canlı incelemeyi kullanıcı yürütür; hosting bağlantısı/otomatik dağıtım kapsam dışıdır.
 
 `npm run release:package` derlenmiş arayüz, PHP API, boş şema ve Türkçe kurulum belgesini `dist/releases/finans-paneli-<sürüm>.zip` dosyasında toplar; yanında SHA-256 dosyası üretir. Gerçek `api/config.php` ve çalışma zamanı verileri pakete alınmaz. ZIP içindeki `hosting/` içeriği web dizinine yüklenir; diğer dosyalar web dizini dışında tutulur. Ayrıntılar [hosting kurulum belgesinde](docs/HOSTING-KURULUM.md).
 

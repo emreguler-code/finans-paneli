@@ -1,12 +1,32 @@
 # Finans Paneli — Codex çalışma kuralları
 
-Sürüm Finans 1.22.0, şema 12’dir. Onaylı kapsam docs/SONRAKI-SURUM-NOTLARI.md içindedir. Bildirimler, filtreler ve tüm takvimler tıklanan alana bağlı, bulanıklık ve sayfa kayması olmadan açılır. Kayda ait eylemler ilgili kayıt kapsamında kalır. Hesap/kredi kartı yatay liste özetlerinde info/düzenle ikonları yoktur; işlevler detay ekranındadır. Kampanya puanları TL bakiyesine eklenmez; araç ödemeleri mevcut hareketlere bağlanır ve ikinci finansal işlem üretmez. Ürün dili Türkçe, tasarım dili Sade Netlik'tir.
+## 17 Kasım 2026 — Kullanıcının geçerli çalışma talimatı
+
+- Kullanıcının paylaştığı her değişiklik talebi, veri ve düzeltme önce `docs/SONRAKI-SURUM-NOTLARI.md` içinde yeni sürüm notları taslağı olarak düzenlenir. Not alma, görüşme, analiz veya tasarım onayı kodlama ya da yayın talimatı sayılmaz.
+- Kullanıcı açık ve kesin uygulama talimatı vermeden kodlamaya veya notlardaki değişiklikleri uygulamaya başlanmaz. Yalnızca açıkça istenen belge düzenlemeleri kendi kapsamlarında yapılabilir; bu izin uygulama kodunu değiştirme yetkisi vermez.
+- Kullanıcının açık kodlama/uygulama onayı, biriken notların yetkilendirilen kapsamını uygulama, doğrulama, GitHub deposunu güncelleme ve yeni GitHub Release yayımlama yetkisini birlikte verir. Bu kapsam için ayrıca GitHub yayın onayı istenmez. Not alma, analiz veya tasarım onayı bu yetkiyi vermez.
+- Önceki sürümlere ait toplu kodlama, paketleme veya yayın onayları yalnız o sürümlerin kapsamına aittir; yeni taleplere otomatik olarak taşınmaz. Bu çalışma talimatı, aşağıdaki tarihsel onayların yeni işler için sürekli yetki olarak yorumlanmasını engeller.
+- Her yayında hostinge doğrudan yüklenmeye hazır ZIP ve SHA-256 dosyası `releases/<sürüm>/` altında depoya commit edilir ve GitHub Release varlıklarına da eklenir. Gerçek yapılandırma, şifre, veri veya yedek paketlenmez.
+- Hosting bağlantısı, canlıya yükleme ve canlı hosting incelemesi çalışma kapsamı dışındadır; bunları kullanıcı yürütür. Hosting erişimi istemeyin, bağlantı/dağıtım otomasyonu eklemeyin ve canlı kurulum başlatmayın. Veri silme veya sıfırlama yetkisi verilmiş sayılmaz.
+- Bu kural sonraki oturumlarda da uygulanır; kullanıcı açıkça değiştirmedikçe geçerlidir.
+
+## Güncel sürüm ve kaynak durumu — 17 Kasım 2026
+
+- GitHub'da doğrulanan son yayımlanmış sürüm **1.22.0** (`v1.22.0`), veritabanı şeması **12**'dir. GitHub `main/package.json` da 1.22.0'dır.
+- Bu belge güncel GitHub `AGENTS.md` kararlarıyla eşleştirilmiştir. Kullanıcının bağımlılık güncelleme talimatıyla yerel kaynaklar GitHub `main` commit `069a2c1` (1.22.0) ile eşleştirildi. Bağımlılık güncellemeleri bu kaynak üzerinde hazırlanır. Son kullanıcı talimatına göre kodlama onayı GitHub yayınını kapsar; hosting yükleme/inceleme kullanıcıya aittir.
+- Yeni talepler `docs/SONRAKI-SURUM-NOTLARI.md` içinde taslak olarak tutulur; bu dosyadaki geçmiş onaylar yeni talepleri kendiliğinden yetkilendirmez.
+- Aşağıdaki sürüm paragrafları karar geçmişidir. Daha yeni sürümün aynı konuda açıkça değiştirdiği kural geçerlidir; eski sürüm numaraları güncel sürüm bildirimi değildir. Kullanıcının yukarıdaki çalışma talimatı tüm yeni işler için geçerlidir.
+- 1.22.0'da ayrı filtre formu ve sıralama penceresi kaldırılmıştır: filtreler arama komutları/önerileri/çiplerle, sıralama sütun başlıklarıyla yönetilir. Eski filtre penceresi ifadeleri bunları yeniden ekleme talimatı değildir. Tarih seçicilerin alana bağlı, bulanıklık ve sayfa kayması olmadan açılması kuralı korunur.
+
+## Ortak kurallar ve sürüm geçmişi
+
+Yayımlanmış sürüm Finans 1.22.0, şema 12’dir. Yayımlanan kapsam `docs/SURUM-1.22.0.md`, yeni taleplerin taslağı `docs/SONRAKI-SURUM-NOTLARI.md` içindedir. Bildirimler, filtreler ve tüm takvimler tıklanan alana bağlı, bulanıklık ve sayfa kayması olmadan açılır. Kayda ait eylemler ilgili kayıt kapsamında kalır. Hesap/kredi kartı yatay liste özetlerinde info/düzenle ikonları yoktur; işlevler detay ekranındadır. Kampanya puanları TL bakiyesine eklenmez; araç ödemeleri mevcut hareketlere bağlanır ve ikinci finansal işlem üretmez. Ürün dili Türkçe, tasarım dili Sade Netlik'tir.
 Önce README.md, docs/TASARIM-ILKELERI.md ve docs/CODEX-BASLANGIC.md dosyalarını okuyun.
 
 26 Ekim 2026 için onaylı ve 1.9.0 kapsamında uygulanan tasarım kapsamı sonraki sürüm notlarında ve tasarım incelemesindedir. Takvim kuralı artık hem tek gün hem tarih aralığını kapsar: tıklanan alana bağlı açılmalı, ek blur/karartma veya sayfa kayması oluşturmamalıdır; önceki tek gün modal istisnası kaldırılmıştır. Not alma aşaması ile kodlama/yayın aşamasını karıştırmayın.
 
 ## Değişiklik kapsamı
-- Kullanıcı yalnızca not veya analiz istiyorsa kod değiştirmeyin. Uygulama onayı verildiyse işi tamamlayın ve uygun testleri çalıştırın.
+- Kullanıcı açık uygulama talimatı vermeden kod değiştirmeyin; talepleri önce sürüm notlarına alın. Uygulama talimatı verildiyse yetkilendirilen kapsamı tamamlayın ve uygun testleri çalıştırın. Kodlama onayında yukarıdaki GitHub yayın/ZIP akışını tamamlayın; hosting yükleme ve incelemeyi kullanıcıya bırakın.
 - İstenmeyen sütun sırası, yön, renk, tipografi veya yerleşim değişikliği yapmayın. Önceki sürümle diff üzerinden karşılaştırın.
 - Başka projelerdeki tasarım dilini taşımayın; safir mavisi bu projeye ait değildir.
 - Para işaretleri, cari etkisi, nakit hareketi ve kredi kartı borcu farklı bağlamlardır. Birini diğerine göre kestirerek değiştirmeyin; mevcut hesap modelini ve testleri inceleyin.
@@ -37,7 +57,7 @@ Hesap/kart carousel kaldırılmıştır; yatay liste → detay akışı kullanı
 
 1.15.0: Cari kartı düzenleme alt panel istisnasından çıkarıldı; ekleme/düzenleme aynı tam sayfada Cari Ekle / Değiştir başlığıyla açılır. İşlem alt alanında ayrı başlık yok, X Kaydet yanında; tarih ikondur, takvim yedi eşit sütundur. İşlem etkisi ve ikincil alanlar Diğer içinde. Kart detayında hedef kart sabittir; ödeme kaynağı yalnız kasa/banka, yeni karttan karta aktarım API'de reddedilir (eski kayıtlar silinmez). Aynı gün tekrarlanan elle yedek onay ister; istek anahtarı yinelenmeyi önler. Fabrika sıfırlaması yalnız mevcut yöneticiyi korur; zorunlu güvenlik yedeği, yeniden parola doğrulama ve yazılı onay gerektirir; gerçek veri modunda da açıkça uygulanabilir. Özellik eklemek canlıda sıfırlama yetkisi değildir. Şema 12 değişmedi.
 
-9 Kasım 2026 sonraki sürüm kriterleri: Onaylı dokuz bölgeli global kabuk ve yerleşim/tema/bileşen/davranış ayrımı `docs/GLOBAL-YERLESIM-SOZLESMESI.md` içindedir. Gelecek arayüz çalışmasında bu sözleşmeyi okuyun. Mimari onay yalnız tasarım kriteridir; bölgelerin detayları görüşülürken kendiliğinden kodlama/yayın veya tema üretimi başlatmayın. Güncel çalışma sürümü hâlâ 1.15.0'dır.
+9 Kasım 2026 sonraki sürüm kriterleri: Onaylı dokuz bölgeli global kabuk ve yerleşim/tema/bileşen/davranış ayrımı `docs/GLOBAL-YERLESIM-SOZLESMESI.md` içindedir. Gelecek arayüz çalışmasında bu sözleşmeyi okuyun. Mimari onay yalnız tasarım kriteridir; bölgelerin detayları görüşülürken kendiliğinden kodlama/yayın veya tema üretimi başlatmayın. Bu tarihsel not yazıldığında çalışma sürümü 1.15.0 idi; güncel sürüm yukarıda belirtilmiştir.
 
 
 1.16.0: Kullanıcının “evet, başla bakalım o zaman kodlamaya” talimatı yukarıdaki not/tasarım aşamasını uygulamaya geçirdi. Yayın/canlı dağıtım veya yeni tema onayı değildir. Ortak AppShell ve dokuz bölge; native scrollbar payıyla ortak kenarlar; tek ana kaydırma sahibi .main-content; yeterli gerçek içerik genişliğinde 1,9:1, aksi halde yardımcı bölge altta. Hızlı işlem grid içinde ayrı alt satırdır, içerik üstüne sabitlenmez. Menü full/compact/hidden tercihi localStorage'da; daralma tercihi silmez. Merkezi taslak onayı body portalında, referans sayımlı inert/odak korumasıyla çalışır. Renkler theme.css, geometri layout-tokens.css/app-shell.css içinde; yeni tema seçici eklenmedi. Finansal anlamlar, API ve şema 12 korunur. Geçerli uygulama eşikleri ve kabul kapsamı global yerleşim sözleşmesinin 1.16.0 bölümündedir.
@@ -52,7 +72,7 @@ Hesap/kart carousel kaldırılmıştır; yatay liste → detay akışı kullanı
 1.18.1: görsel kontrolde tespit edilen genel dl stilleri cari detay alanından yalıtıldı; mobil bakiye tekrarı kaldırıldı, kimlikte bakiye+ikonlar gerçek genişlik yettiğinde aynı satırda, büyük tutarda kontrollü alt satırdadır. Finansal model değişmedi.
 
 
-1.19.0 adayı: Kullanıcı notları bitirdi ve kodlama + çalışan sürümde test istedi. Güncel kapsam docs/SURUM-1.19.0.md. Cari sütunları İşlem/Ekleyen ayrı; tutarda yalnız işaret, bakiyede tüm değer renkli; aylık net etki filtrelenmiş tüm ay, iptal/plan hariç. Cari varsayılan açık işlem formunda X gizler ve taslağı korur, aynı konumda + açar; navigation/replace/reload koruması ve Vazgeç sürer. Başarılı kayıt yeni requestId ile boş form bırakır. Sıralama anchored, blur yok. Menü full/compact/hidden döner. Şema/API/veriler değişmez. Bu tur açıkça GitHub Release/hosting dağıtımı istemedi; codex/1.19.0 aday dalı ve QA, main/canlı değişmeden hazırlanır.
+1.19.0 tarihsel aday aşaması: Kullanıcı notları bitirdi ve kodlama + çalışan sürümde test istedi. Güncel kapsam docs/SURUM-1.19.0.md. Cari sütunları İşlem/Ekleyen ayrı; tutarda yalnız işaret, bakiyede tüm değer renkli; aylık net etki filtrelenmiş tüm ay, iptal/plan hariç. Cari varsayılan açık işlem formunda X gizler ve taslağı korur, aynı konumda + açar; navigation/replace/reload koruması ve Vazgeç sürer. Başarılı kayıt yeni requestId ile boş form bırakır. Sıralama anchored, blur yok. Menü full/compact/hidden döner. Şema/API/veriler değişmez. Bu tur açıkça GitHub Release/hosting dağıtımı istemedi; codex/1.19.0 aday dalı ve QA, main/canlı değişmeden hazırlanır.
 
 
 1.20.0: Kullanıcı son notları ve cari dışındaki uygun bölümlere yayılımı birlikte uygulama/yeni sürüm/GitHub yükleme için onayladı. Geçerli analiz ve istisnalar docs/SURUM-1.20.0.md. ListTools akıllı arama+çip, Ledger 30 satırlık kademeli sunum, tek tam tarih ve yerinde tür/tutar düzenlemesi paylaşır. Eski sayfa numarası ve ayrı Filtrele/Ara/Sıfırla yoktur. Gizlenen işlem alanı sıfır yüksekliklidir; + aynı noktada yüzer, taslak korunur. Ay satırı gerçek filtrelenmemiş devreden+ay etkisi=Net'tir; rapor/karışık hesap/kart ekstre bağlamına sahte bakiye eklenmez. Düzenleme mevcut atomik API/id/version/reason yolunu kullanır. Banka/kart/ödeme varsayılan giriş paylaşır; rapor/takvim/metadata formları kendi amaçlarını korur. Şema 12/gerçek veriler değişmez. Güncel UI koşucuları party120/browser120/mobile120; eski UI betikleri tarihsel kayıttır, güncel testler mevcut davranışı doğrular. GitHub kaynak/sürüm/paket yayını yetkilidir; hosting canlı kurulum yetkisi değildir.
@@ -63,3 +83,12 @@ Hesap/kart carousel kaldırılmıştır; yatay liste → detay akışı kullanı
 
 
 1.22.0: Kullanıcı son notlardan yeni sürüm kodlamasını onayladı. Ayrı filtre formu/sağ ok ve sıralama ikonu/penceresi kaldırılır. Tüm mevcut filtreler aynı arama çubuğunda komut/öneri/çip olarak kullanılır; tarih, TL aralığı, vade, arşiv ve iptal dahil. Ledger başlıkları tıklanır/klavyeyle kullanılır, sadece etkin başlıkta yön oku vardır. Dar ledger'da aynı başlıklar ayrı kompakt satırda erişilebilir. Tüm sonuçlar sıralanır, kayıtlı işlem sonrası bakiye değişmez. Cari dizin ve hareket sıralama tercihleri ayrıdır. Tablosuz listelerde menü yerine doğrudan alan adları vardır. Ana sayfa bölüm aralığı, tek satır TL ve cari dizin arama/CSV hizası bu kapsamda düzeltilir. Şema 12/mali model ve Sade Netlik korunur; canlı hosting kurulumu yoktur.
+
+
+17 Kasım 2026 bağımlılık güncellemesi: Kullanıcı tüm güncellemelerin uygulanmasını onayladı. 1.22.0 kaynakları üzerinde React/React DOM 19.3.1, Lucide 1.74.0, Vite 8.3.8 / React eklentisi 6.3.0, Playwright 1.65.1; Node.js 26.13.1 LTS ve npm 12.2.2 kullanılır. `.node-version`, `.nvmrc`, `.python-version` ve iş akışları eşleştirilmiştir; Python 3.15.2, izole PHP 8.5.12 / MariaDB 12.3.3 LTS, Inter 4.1. Test PHP imajı taban digestine bağlı ayrı etiket kullanır; eski `finans-php-test:latest` imajını güncel taban yerine kullanmayın. Bu çalışma GitHub yayını/canlı kurulum onayı değildir; rapor `docs/BAGIMLILIK-GUNCELLEME-2026-11-17.md` içindedir.
+
+
+1.23.0 yayın talimatı — 17 Kasım 2026: Kullanıcı GitHub yayını ve canlı hosting uygulama güncellemesini açıkça istedi. Yukarıdaki “yayın/canlı kurulum onayı değildir” ifadesi önceki bağımlılık uygulama aşamasını anlatır. Yayın adayı 1.23.0, şema 12. Mevcut kurulumda yapılandırma/özel yedekler ve veriler korunur; dağıtım öncesi yedek alınır. Hosting adresi ve erişim yöntemi henüz verilmediyse GitHub yayını tamamlanır, canlı dağıtım tamamlanmış gibi bildirilmez.
+
+
+17 Kasım 2026 son yayın akışı düzeltmesi: Kullanıcı hosting bağlantısı ve canlıya yükleme/inceleme işlerini kendisi devraldı. Önceki canlı hosting talimatı iptal edildi. Kodlama onayı aynı kapsamın GitHub yayınına da izin verir; ayrıca onay istenmez. Hostinge hazır ZIP + SHA-256 depo içinde `releases/<sürüm>/` altında ve Release varlıklarında tutulur. Bu son talimat, yukarıdaki tarihsel ayrı yayın/onay ve hosting erişimi bekleniyor ifadelerinin yerini alır.

@@ -2,6 +2,10 @@
 
 PHP 8.3+, pdo_mysql, MySQL/MariaDB ve HTTPS gerekir. Yeni kurulumlar için MySQL 8.4 LTS veya MariaDB 11.4 LTS önerilir. Hostingde Node.js gerekmez.
 
+## Yayın ve yükleme sorumluluğu
+
+1.23.0 itibarıyla kodlama onayı GitHub kaynak/sürüm yayınını da kapsar. Hostinge hazır ZIP ve SHA-256 dosyası deponun `releases/<sürüm>/` klasörüne ve GitHub Release varlıklarına eklenir. Hosting bağlantısı, yükleme ve canlı inceleme kullanıcı tarafından yapılır; depodan otomatik canlı dağıtım yoktur.
+
 ## Hangi ZIP?
 
 - `finans-paneli-<sürüm>-hosting.zip`: doğrudan web dizinine açılacak dosyalar. Üstte `hosting/` klasörü yoktur. Kurulum belgeleri ve bağımsız SQL dosyaları dahil değildir; çalışmak için gereken API migrasyonları ve font lisansı dahildir. Mevcut siteyi güncellemek için bu paketi kullanabilirsiniz.

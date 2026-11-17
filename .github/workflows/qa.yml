@@ -1,7 +1,7 @@
 name: Candidate QA
 on:
   push:
-    branches: ['codex/1.22.0']
+    branches: ['codex/1.23.0']
     paths-ignore: ['docs/**', 'README.md', 'AGENTS.md']
 permissions:
   contents: read
@@ -9,11 +9,15 @@ jobs:
   frontend:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.1.0
         with:
-          node-version: '24'
+          python-version-file: '.python-version'
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version-file: '.node-version'
           cache: npm
+      - run: npm install --global npm@12.2.2
       - run: npm ci
       - run: npm test
       - run: npm audit --audit-level=moderate
@@ -40,7 +44,7 @@ jobs:
           cd dist/releases
           sha256sum -c *.sha256
           for archive in *.zip; do python3 -m zipfile -t "$archive"; done
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7.0.2
         with:
           name: hosting-package
           path: dist/releases/*
@@ -58,7 +62,7 @@ jobs:
           PYCODE
       - name: Save browser evidence
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: candidate-ui-evidence-frontend
           path: qa-evidence/
@@ -71,11 +75,15 @@ jobs:
       matrix:
         suite: [api, migrations, backups, browser, mobile, demo, package]
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.1.0
         with:
-          node-version: '24'
+          python-version-file: '.python-version'
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version-file: '.node-version'
           cache: npm
+      - run: npm install --global npm@12.2.2
       - run: npm ci
       - run: npm run build
       - name: Prepare Chrome
@@ -102,7 +110,7 @@ jobs:
           PYCODE
       - name: Save browser evidence
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: candidate-ui-evidence-${{ matrix.suite }}
           path: qa-evidence/
@@ -112,11 +120,15 @@ jobs:
     name: Windows Firefox and Chromium layout
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.1.0
         with:
-          node-version: '24'
+          python-version-file: '.python-version'
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version-file: '.node-version'
           cache: npm
+      - run: npm install --global npm@12.2.2
       - run: npm ci
       - run: npm test
       - run: npx playwright install firefox chromium
@@ -125,7 +137,7 @@ jobs:
           QA_BROWSER_ENGINES: firefox,chromium
       - name: Save Windows layout evidence
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: windows-layout-evidence
           path: .qa/party121/

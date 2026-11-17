@@ -18,10 +18,13 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.1.0
         with:
-          node-version: '24'
+          python-version-file: '.python-version'
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version-file: '.node-version'
           cache: npm
       - name: Validate release ref
         id: validate
@@ -33,6 +36,8 @@ jobs:
           elif [[ "$GITHUB_EVENT_NAME" == push ]]; then
             test "$GITHUB_REF_NAME" = "release/$RELEASE_TAG"
           fi
+      - name: Use project npm version
+        run: npm install --global npm@12.2.2
       - id: dependencies
         run: npm ci
       - id: tests
@@ -86,7 +91,20 @@ jobs:
           cd dist/releases
           sha256sum -c *.sha256
           for archive in *.zip; do python3 -m zipfile -t "$archive"; done
-      - uses: actions/upload-artifact@v6
+      - name: Verify repository hosting package
+        run: |
+          python3 - <<'PYCODE'
+          import hashlib, json
+          from pathlib import Path
+          version = json.loads(Path('package.json').read_text())['version']
+          name = f'finans-paneli-{version}-hosting.zip'
+          committed = Path('releases') / version / name
+          generated = Path('dist/releases') / name
+          assert committed.read_bytes() == generated.read_bytes(), 'Repository hosting ZIP differs from the tested release package'
+          checksum = committed.with_suffix('.zip.sha256').read_text().split()[0]
+          assert hashlib.sha256(committed.read_bytes()).hexdigest() == checksum, 'Repository ZIP checksum is invalid'
+          PYCODE
+      - uses: actions/upload-artifact@v7.0.2
         with:
           name: hosting-package
           path: dist/releases/*
@@ -129,7 +147,7 @@ jobs:
           PYCODE
       - name: Save browser evidence
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: party-ui-evidence
           path: .qa/party121/
@@ -167,11 +185,15 @@ jobs:
     name: Windows Firefox and Chromium layout
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.1.0
         with:
-          node-version: '24'
+          python-version-file: '.python-version'
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version-file: '.node-version'
           cache: npm
+      - run: npm install --global npm@12.2.2
       - run: npm ci
       - run: npm test
       - run: npx playwright install firefox chromium
@@ -180,7 +202,7 @@ jobs:
           QA_BROWSER_ENGINES: firefox,chromium
       - name: Save Windows layout evidence
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: windows-layout-evidence
           path: .qa/party121/

@@ -1,6 +1,6 @@
 {
   "name": "finans-v1",
-  "version": "1.22.0",
+  "version": "1.23.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -26,27 +26,29 @@
     "format:check": "prettier --check src/SmartSearch.jsx src/ListTools.jsx src/styles/smart-search.css src/styles/composer.css src/styles/inline-editor.css src/styles/ledger-interactions.css src/styles/directory-interactions.css eslint.config.mjs stylelint.config.mjs tests/layout121-browser.cjs src/SortHeader.jsx src/sorting.mjs src/search-query.mjs src/styles/sorting.css"
   },
   "dependencies": {
-    "@vitejs/plugin-react": "5.0.4",
-    "lucide-react": "1.57.0",
-    "react": "19.2.9",
-    "react-dom": "19.2.9",
-    "recharts": "^3.10.1",
-    "vite": "6.4.6"
+    "@vitejs/plugin-react": "6.3.0",
+    "lucide-react": "1.74.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "recharts": "3.10.1",
+    "vite": "8.3.8"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
-    "eslint": "^10.15.0",
-    "eslint-plugin-react-hooks": "^7.1.1",
-    "eslint-plugin-unused-imports": "^4.4.1",
-    "globals": "^17.14.0",
-    "playwright": "1.64.1",
-    "prettier": "^3.10.1",
-    "stylelint": "^18.0.0"
+    "@eslint/js": "10.0.1",
+    "eslint": "10.15.0",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "eslint-plugin-unused-imports": "4.4.1",
+    "globals": "17.14.0",
+    "playwright": "1.65.1",
+    "prettier": "3.10.1",
+    "stylelint": "18.0.0"
   },
   "engines": {
-    "node": ">=24 <25"
+    "node": ">=26.13.1 <27",
+    "npm": ">=12.2.2 <13"
   },
   "browserslist": [
     "baseline widely available"
-  ]
+  ],
+  "packageManager": "npm@12.2.2"
 }

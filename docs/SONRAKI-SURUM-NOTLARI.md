@@ -573,3 +573,37 @@ Kullanıcı “evet, başla bakalım o zaman kodlamaya” dedi. Yukarıdaki glob
 ## 9 Kasım 2026 — 1.17.0 mobil düzeltme ve yayın onayı
 
 Kullanıcı mobil ekran görüntülerindeki incelemeye katıldı ve “Sana katılıyorum, değişiklikleri hazırla ve githuba yükle” dedi. Açılan cari satırının dar şeride sıkışması, mobil menüde adların kaybolması, özet ayraç/girintileri, hesap listesi boşlukları, uzun filtre paneli, header arama alanı, ödeme planı yoğunluğu ve bildirim zeminleri kapsam içindedir. Yeni tema veya finansal anlam değişikliği istenmedi. Kaynaklar, testler ve hosting paketleri 1.17.0 etiketiyle GitHub'a yayımlanır; canlı hosting kurulumu yapılmaz. Ayrıntılar SURUM-1.17.0.md ve TEST-RAPORU-1.17.0.md içindedir.
+
+
+## 17 Kasım 2026 — 1.22.0 bağımlılık analizi (uygulama onayı yok)
+
+- Kullanıcı son yayımlanmış sürümde kullanılan kütüphane, paket ve çalışma ortamlarının listesini ve güncellik analizini istedi. Bu talep paket yükseltme, kodlama veya yayın talimatı değildir.
+- İnceleme yerel 1.17.0 yerine GitHub `v1.22.0` etiketi ve onun `package-lock.json` dosyasında yapıldı. 14 doğrudan npm bağımlılığının 8'i npm latest sürümüyle aynı; React/React DOM 19.2.9 → 19.3.1, lucide-react 1.57.0 → 1.74.0, Vite 6.4.6 → 8.3.8, @vitejs/plugin-react 5.0.4 → 6.3.0 ve Playwright 1.64.1 → 1.65.1 geride. Bunlar 17 Kasım 2026 anlık karşılaştırmasıdır, onaylanmış yükseltme hedefi değildir.
+- Kilit dosyasında 263 bağımlılık kaydı var; `npm audit --package-lock-only --json` bilinen açık bildirmedi. Dolaylı paketlerin tamamı için ayrı güncellik karşılaştırması yapılmadı.
+- Node gereksinimi >=24 <25; CI Node 24 kullanıyor. Güncel 24 dalı 24.22.3, en yeni kararlı/LTS 26.13.1. Stylelint 18'in Node 24 dalında en az 24.15.0 istemesi nedeniyle projenin genel alt sınırı ayrıca değerlendirilmelidir.
+- GitHub Actions checkout v5 / setup-node v5 / upload-artifact v6 kullanıyor; son yayımlanan sürümleri sırasıyla v7.0.1 / v7.1.0 / v7.0.2. Test ortamı PHP 8.3 ve MariaDB 11.4 imajlarını digest ile sabitliyor; canlı hosting sürümleri bu analizde doğrulanmadı.
+- Karar bekleniyor: kullanıcı açık uygulama talimatı vermeden hiçbir bağımlılık veya çalışma ortamı yükseltilmeyecek.
+
+1.9.1 bakım eki: detay ekranındaki liste kapsamlı arama eşleşen kaydı seçer; boş sonuçta geri dönüş ve tüm hesap uyarıları korunur. Şema 10 değişmez.
+
+
+## 17 Kasım 2026 — Bağımlılık güncellemeleri uygulama onayı
+
+Kullanıcı “güncellemelerin tamamını gerçekleştir” talimatıyla bağımlılık ve araç güncellemelerini uygulamayı onayladı. Kapsam: son 1.22.0 kaynakları üzerinde güncel kararlı npm paketleri, Node.js LTS, test ortamı imajları ve GitHub Actions güncellemeleri; gerekli uyumluluk düzenlemeleri ve doğrulamalar. Finansal model ve şema 12 korunur. Bu talimat GitHub Release yayımlama veya canlı hosting kurulumu içermez.
+
+### Uygulanan bağımlılık kapsamı
+
+- Güncel kararlı 14 doğrudan npm paketi kesin sürümlerle sabitlendi; uyumlu dolaylı bağımlılıklar yenilendi ve kilit dosyası yeniden doğrulandı.
+- Node 26.13.1 LTS / npm 12.2.2, Python 3.15.2 ve güncel GitHub Actions sürümleri iş akışlarına işlendi.
+- Test imajları PHP 8.5.12 ve MariaDB 12.3.3 LTS; Inter fontları 4.1. Eski PHP imajı önbelleğinin güncellemeyi atlaması engellendi.
+- Finansal model, şema 12 ve canlı veri korunur. Doğrulama ayrıntıları `BAGIMLILIK-GUNCELLEME-2026-11-17.md` içindedir. Yeni uygulama sürüm numarası ve GitHub Release yayın talimatında hazırlanacak; bu çalışma mevcut 1.22.0 tabanı üzerindeki yayımlanmamış değişikliklerdir.
+
+
+## 17 Kasım 2026 — 1.23.0 GitHub yayını ve canlı hosting talimatı
+
+Kullanıcı “githubta yayınla ve canlı hosting güncellemesini yap” diyerek bağımlılık güncellemelerinin yeni GitHub sürümü olarak yayımlanmasını ve mevcut canlı kurulumun güncellenmesini açıkça yetkilendirdi. Hedef sürüm 1.23.0, şema 12. Önceki yalnız yerel uygulama/yayın bekleniyor ifadeleri önceki aşamaya aittir. Canlı uygulama güncellemesi dosya/veritabanı yedeği ve mevcut api/config.php korunarak yapılır; veri sıfırlama veya demo yükleme kapsamında değildir. Hosting hedefi ve erişim bilgisi bu ortamda henüz tanımlı değildir; kullanıcıdan bağlantı yöntemi istenmiştir.
+
+
+## 17 Kasım 2026 — Geçerli yayın akışı: kodlama onayı GitHub yayınını kapsar
+
+Kullanıcı hosting bağlantısı/dağıtımı işini kapsamdan çıkardı; hosting yükleme ve canlı incelemeyi kendisi devraldı. Bundan sonra açık kodlama/uygulama onayı aynı kapsamın GitHub deposuna gönderilmesini ve yeni GitHub Release yayımlanmasını da yetkilendirir; ayrıca yayın onayı istenmez. Hostinge doğrudan yüklenmeye hazır ZIP ve SHA-256 dosyası hem depo içine hem GitHub Release varlıklarına eklenir. Önceki ayrı GitHub yayın onayı ve bu oturumdaki canlı hosting bağlantısı talebi bu son talimatla değiştirilmiştir.
