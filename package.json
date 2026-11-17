@@ -1,6 +1,6 @@
 {
   "name": "finans-v1",
-  "version": "1.21.0",
+  "version": "1.22.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,7 +8,7 @@
     "build": "vite build && node scripts/prepare-sites-build.mjs",
     "preview": "vite preview",
     "test:sites": "node --test tests/sites-worker.test.mjs",
-    "test:unit": "node --test tests/money-calendar.test.mjs tests/dates-plan.test.mjs tests/operations-cards.test.mjs tests/accounts-directions.test.mjs tests/shared.test.mjs tests/tracking.test.mjs tests/notifications.test.mjs tests/refinements.test.mjs tests/navigation-search.test.mjs tests/bank-directory.test.mjs tests/party-ledger.test.mjs tests/search-query.test.mjs",
+    "test:unit": "node --test tests/money-calendar.test.mjs tests/dates-plan.test.mjs tests/operations-cards.test.mjs tests/accounts-directions.test.mjs tests/shared.test.mjs tests/tracking.test.mjs tests/notifications.test.mjs tests/refinements.test.mjs tests/navigation-search.test.mjs tests/bank-directory.test.mjs tests/party-ledger.test.mjs tests/search-query.test.mjs tests/sorting.test.mjs",
     "test": "npm run lint && npm run format:check && npm run build && npm run test:unit && npm run test:sites",
     "release:package": "npm run build && python3 scripts/package-release.py",
     "test:api": "python3 scripts/test-integration.py api",
@@ -23,7 +23,7 @@
     "test:party-ui": "node tests/party120-browser.cjs",
     "lint": "eslint src && stylelint \"src/styles/**/*.css\"",
     "test:layout": "node tests/layout121-browser.cjs",
-    "format:check": "prettier --check src/SmartSearch.jsx src/ListTools.jsx src/styles/smart-search.css src/styles/composer.css src/styles/inline-editor.css src/styles/ledger-interactions.css src/styles/directory-interactions.css eslint.config.mjs stylelint.config.mjs tests/layout121-browser.cjs"
+    "format:check": "prettier --check src/SmartSearch.jsx src/ListTools.jsx src/styles/smart-search.css src/styles/composer.css src/styles/inline-editor.css src/styles/ledger-interactions.css src/styles/directory-interactions.css eslint.config.mjs stylelint.config.mjs tests/layout121-browser.cjs src/SortHeader.jsx src/sorting.mjs src/search-query.mjs src/styles/sorting.css"
   },
   "dependencies": {
     "@vitejs/plugin-react": "5.0.4",

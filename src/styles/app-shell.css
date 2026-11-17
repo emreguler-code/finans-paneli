@@ -809,3 +809,10 @@ html:has(.layout-shell),body:has(.layout-shell) {
   .layout-shell .mobile-txn-top > strong { white-space: nowrap; flex-shrink: 0; }
   .layout-shell .mobile-txn-top > strong small { display: inline; }
 }
+
+
+/* Adjacent dashboard sections share the shell's vertical rhythm. */
+.layout-shell .dashboard-grid + .dashboard-grid {margin-top:var(--shell-section-gap);}
+.layout-shell .attention-panel .due-value {display:inline-flex;align-items:baseline;gap:4px;white-space:nowrap;}
+.layout-shell .attention-panel .due-value small {display:inline;margin:0;}
+.layout-shell .attention-row:not(.late) {padding-top:10px;padding-bottom:10px;}

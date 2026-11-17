@@ -1,17 +1,10 @@
 import { SmartSearch } from "./SmartSearch";
-import {
-  Children,
-  isValidElement,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { Children, isValidElement, useLayoutEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { ArrowDownUp, Download } from "lucide-react";
-import { FloatingPanel } from "./FloatingPanel";
-import { usePresence } from "./Motion";
+import { Download } from "lucide-react";
+import { SortFields } from "./SortHeader";
 
-// Stage controlled filter fields without running their page setters until Apply.
+// Filter descriptors are the single source for search commands and suggestions.
 function fieldsIn(node, fields = [], path = "f", label = "") {
   Children.forEach(node, (child, index) => {
     if (!isValidElement(child)) return;
@@ -82,6 +75,7 @@ export function ListTools(props) {
     setSort,
     sortOptions = [],
     csv,
+    columnSorting = false,
     children,
     resultCount,
     searchEnabled = true,
@@ -125,7 +119,7 @@ export function ListTools(props) {
     />
   );
   const actions = showActions && (
-    <ListActions {...{ sort, setSort, sortOptions, csv }} />
+    <ListActions {...{ sort, setSort, sortOptions, csv, columnSorting }} />
   );
   return inline ? (
     <div className="inline-list-tools">
@@ -140,66 +134,30 @@ export function ListTools(props) {
   );
 }
 
-// Content actions remain independent of the global search scope.
+// CSV stays beside search; headerless lists use direct field labels.
 export function ListActions({
   sort,
   setSort,
   sortOptions = [],
   csv,
+  columnSorting = false,
   label = "Liste araçları",
   className = "",
 }) {
-  const [sorting, setSorting] = useState(false),
-    anchor = useRef(null);
-  const presence = usePresence(sorting);
-  if (!sortOptions.length && !csv) return null;
+  if (!csv && (columnSorting || !sortOptions.length)) return null;
   return (
     <div
       className={"common-toolbar content-tools " + className}
       role="group"
       aria-label={label}
     >
+      {!columnSorting && (
+        <SortFields {...{ sort, options: sortOptions }} onSort={setSort} />
+      )}
       <div className="cari-toolbar-actions">
-        {sortOptions.length > 0 && (
-          <div className="sort-container">
-            <button
-              ref={anchor}
-              className={"list-icon " + (sorting ? "active" : "")}
-              aria-label="Sırala"
-              title="Sırala"
-              aria-expanded={sorting}
-              onClick={() => setSorting(!sorting)}
-            >
-              <ArrowDownUp size={18} />
-            </button>
-            {presence.mounted && (
-              <FloatingPanel
-                anchor={anchor.current}
-                title="Sıralama"
-                width={280}
-                exiting={!sorting}
-                onClose={() => setSorting(false)}
-              >
-                <div className="sheet-scroll sort-options">
-                  {sortOptions.map(([value, label]) => (
-                    <button
-                      key={value}
-                      aria-pressed={sort === value}
-                      onClick={() => {
-                        setSort(value);
-                        setSorting(false);
-                      }}
-                    >
-                      {label}
-                    </button>
-                  ))}
-                </div>
-              </FloatingPanel>
-            )}
-          </div>
-        )}
         {csv && (
           <button
+            type="button"
             className="list-icon"
             aria-label="CSV indir"
             title="CSV indir"

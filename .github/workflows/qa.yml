@@ -1,7 +1,7 @@
 name: Candidate QA
 on:
   push:
-    branches: ['codex/1.21.0']
+    branches: ['codex/1.22.0']
     paths-ignore: ['docs/**', 'README.md', 'AGENTS.md']
 permissions:
   contents: read
@@ -130,3 +130,4 @@ jobs:
           name: windows-layout-evidence
           path: .qa/party121/
           if-no-files-found: ignore
+

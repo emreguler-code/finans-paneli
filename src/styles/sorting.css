@@ -1,0 +1,59 @@
+/* Field headers are the sort controls. Only the active field owns an arrow. */
+.sort-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: inherit;
+  gap: 5px;
+  min-height: 32px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  white-space: nowrap;
+}
+.sort-label svg {
+  flex: 0 0 14px;
+}
+.sort-label:hover {
+  color: var(--accent);
+}
+.sort-label:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+.sort-fields {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.ledger-mobile-sort {
+  display: none;
+}
+.content-tools:has(.sort-fields) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+@container ledger (width < 880px) {
+  .ledger-mobile-sort {
+    display: flex;
+    padding: 8px 16px;
+    border-top: 1px solid var(--line);
+  }
+  .ledger-mobile-sort .sort-label {
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 760px) {
+  .sort-label {
+    min-height: 44px;
+  }
+}

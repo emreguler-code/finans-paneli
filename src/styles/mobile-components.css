@@ -1,28 +1,4 @@
 /* Component presentation only. The AppShell remains responsible for regions. */
-.search-filter-panel.floating-panel {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  margin: 0;
-  padding: 0;
-}
-.search-filter-panel > .floating-heading,
-.search-filter-panel > .search-filter-actions,
-.search-filter-panel > .cari-error {
-  flex: 0 0 auto;
-}
-.search-filter-panel > .search-filter-actions {
-  margin: 0;
-  position: static;
-}
-.search-filter-panel .shared-filters {
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  align-content: start;
-  margin: 0;
-}
 @media (max-width: 760px) {
   .layout-shell[data-sidebar="drawer"] .sidebar .brand > span:last-child:not(.brand-mark),
   .layout-shell[data-sidebar="drawer"] .sidebar .workspace-label,
@@ -187,26 +163,6 @@
     text-align: left;
     padding: 4px 0;
     min-height: 44px;
-  }
-  .search-filter-panel .shared-filters {
-    padding: 12px;
-    gap: 12px;
-  }
-  .search-filter-panel input,
-  .search-filter-panel select,
-  .search-filter-panel .date-trigger {
-    font-size: 16px;
-    min-height: 44px;
-  }
-  .search-filter-panel.floating-panel .search-filter-actions {
-    padding: 12px;
-    gap: 8px;
-  }
-  .search-filter-panel .search-filter-actions button {
-    flex: 1 1 0;
-    min-width: 0;
-    min-height: 44px;
-    padding: 8px;
   }
   .notification-panel .notification-compact {
     padding: 0 12px 8px;
