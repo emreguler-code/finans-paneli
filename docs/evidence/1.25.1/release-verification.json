@@ -1,0 +1,32 @@
+{
+  "version": "1.25.1",
+  "release_url": "https://github.com/emreguler-code/finans-paneli/releases/tag/v1.25.1",
+  "run_url": "https://github.com/emreguler-code/finans-paneli/actions/runs/44121388243",
+  "source_commit": "d8a6c4c4a9c6ff1ad8dc19e4f5fd327554fb57d9",
+  "jobs": [
+    {
+      "name": "Windows Firefox and Chromium layout",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "package",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "assets": [
+    "finans-paneli-1.25.1-hosting.zip",
+    "finans-paneli-1.25.1-hosting.zip.sha256",
+    "finans-paneli-1.25.1.zip",
+    "finans-paneli-1.25.1.zip.sha256"
+  ],
+  "hosting_sha256": "0f07abfebd5bceb7f06ac7f9b4895021ac1d9bb4643912cd4c9501b1a9cf7a21",
+  "verified": [
+    "both ZIP SHA-256 checksums",
+    "hosting ZIP equals repository package",
+    "full ZIP equals locally tested package",
+    "Release tag equals tested source",
+    "private config excluded"
+  ]
+}

@@ -832,3 +832,7 @@ Varsayılan Genel etiketi diğer seçenekleri gizlememelidir. Okla açıldığı
 ### 1.25.1 son aylık özet doğrulaması
 
 Seçili ayda açılış bakiyesine karşı yapılan ödeme/tahsilat, devreden / önceki dönem borcuna ait satıra dahil edilir. Bu, mevcut yetkilendirilmiş aylık rapor kapsamının doğruluk düzeltmesidir. Yeni hareket veya bakiye değişikliği oluşturmaz.
+
+### Yayın tamamlandı — 1.25.1
+
+Son onaylı tasarım/not kapsamı 1.25.0 ve doğruluk düzeltmesi 1.25.1 olarak GitHub'da yayımlandı. Son sürüm 1.25.1'dir. Windows/Linux yayın kabulü ve indirilen ZIP/checksum eşliği doğrulandı; hosting paketi `releases/1.25.1/` içindedir. Hosting yüklemesini kullanıcı yapar. Bundan sonraki talepler yeni not olarak toplanır; açık uygulama talimatı olmadan kodlama/yayın başlatılmaz.

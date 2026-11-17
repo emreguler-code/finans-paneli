@@ -1,4 +1,4 @@
-# 1.25.0 tasarım karşılaştırması
+# 1.25.1 tasarım karşılaştırması · 1.25.0 kapsamı
 
 final result: passed
 
@@ -34,3 +34,7 @@ Bu düzeltmelerden sonraki yakalamalar yeniden açılıp referanslarla birlikte 
 Üç tarayıcıda ekleme, düzenleme, gerekçe, taslak koruması, modern menü/klavye, arama X/Escape/yeniden açma, takvim ikinci tıklama, mobil sekmeler, tek satır lejant ve görüntü taşması test edildi. Gerçek API ile yeni satır tek finansal kayıt oluşturdu; düzenleme aynı kimliğin sürümünü artırdı. Son sentetik tarayıcı koşusunda çalışma zamanı hatası yoktur; özet `docs/evidence/1.25.0/checks.json` içindedir.
 
 Küçük görsel farklılıklar: mevcut global kabuk, aylık mutabakat satırı ve dokunma hedefleri korunur; örnek görseldeki maskeli bilgiler gerçek alanlara zorunlu maskeleme getirmez. Bunlar bilinçli ürün kurallarıdır. Canlı hosting incelemesi ve fiziksel cihaz testi yapılmadı.
+
+## 1.25.1 son kontrol
+
+Devreden borç satırı açılış bakiyelerine karşı yapılan ödemeleri de kapsar; ana grafik ve alan yerleşimi korunur. Son çalışan tedarikçi aylık ekranı `docs/evidence/1.25.1/tedarikci-aylik.png`, mobil personel ekranı `docs/evidence/1.25.1/personel-mobil.png` içindedir. Chromium/WebKit/Firefox'ta 152'şer kontrol ve sıfır çalışma zamanı hatası tekrar doğrulandı; `docs/evidence/1.25.1/checks.json`. Kaynak görsel karşılaştırması ve önceki P2 düzeltmeleri yukarıdaki kayıtlarla aynıdır.
