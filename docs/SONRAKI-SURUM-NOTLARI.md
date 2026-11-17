@@ -824,3 +824,7 @@ Kullanıcı son satır içi tasarımı onayladı ve “düzenleme ekranını da 
 - Aylık oranlar yalnız seçilen ayın gerçekleşmiş kayıtlarına ve mevcut açık kalem eşleştirme kuralına dayanır. Ay dışında oluşmuş borç tahsilatı/ödemesi ayrıca gösterilir; halka toplamına zorla eklenmez. Orana sığmayan iade/mahsup açıkça ayrı gösterilir.
 - Şema 12 korunur; profil JSON alanı doğrulanarak genişletilir. Gerçek veriler ve yapılandırma değiştirilmez.
 - Kaynak ve yeni GitHub Release yayımlanır; hostinge hazır ZIP + SHA-256 depoya eklenir. Hosting yüklemesi/incelemesi kullanıcıya aittir.
+
+### 1.25.0 son etiket menüsü kontrolü
+
+Varsayılan Genel etiketi diğer seçenekleri gizlememelidir. Okla açıldığında tüm etiketler, yazarken eşleşenler gösterilir; aynı oka ikinci tıklama kapatır. Etiket ve işlem türü menüleri klavyeyle de seçilir. Bu, yetkilendirilen modern satır içi formun doğrulama düzeltmesidir.

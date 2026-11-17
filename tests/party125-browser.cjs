@@ -209,6 +209,35 @@ module.exports = async function party125Acceptance(
         .getByRole("dialog", { name: "İşlem tarihi", exact: true })
         .count()) === 0 && (await draft.isVisible()),
     );
+    const tagArrow = draft.getByRole("button", {
+      name: "Etiket seçenekleri",
+      exact: true,
+    });
+    await tagArrow.click();
+    ok(
+      "Default tag dropdown shows other existing labels",
+      await p
+        .getByRole("option", { name: "Kırtasiye", exact: true })
+        .isVisible(),
+    );
+    await tagArrow.click();
+    ok(
+      "Second tag-arrow click closes its own menu",
+      (await p
+        .getByRole("listbox", { name: "Etiketler", exact: true })
+        .count()) === 0,
+    );
+    const tagInput = draft.getByRole("combobox", {
+      name: "Etiket (isteğe bağlı)",
+      exact: true,
+    });
+    await tagInput.press("ArrowDown");
+    await tagInput.press("ArrowDown");
+    await tagInput.press("Enter");
+    ok(
+      "Tag list supports keyboard selection",
+      (await tagInput.inputValue()) === "Gıda",
+    );
     await draft.getByRole("combobox", { name: "İşlem", exact: true }).click();
     await p
       .getByRole("option", { name: "Faturalı Alış", exact: true })
@@ -220,7 +249,17 @@ module.exports = async function party125Acceptance(
         "ledger125-menu-" + p.context().browser().browserType().name() + ".png",
       ),
     });
-    await p.getByRole("option", { name: "Faturalı Alış", exact: true }).click();
+    await draft
+      .getByRole("combobox", { name: "İşlem", exact: true })
+      .press("ArrowDown");
+    await draft
+      .getByRole("combobox", { name: "İşlem", exact: true })
+      .press("Enter");
+    ok(
+      "Operation menu supports keyboard selection",
+      (await draft.locator('select[aria-label="İşlem"]').inputValue()) ===
+        "purchase_invoice",
+    );
     await draft.locator("input[name=amount]").fill("12500");
     await p.locator(".inline-extra > summary").click();
     await shot("125-inline-expanded");

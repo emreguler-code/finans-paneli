@@ -17,6 +17,8 @@ final result: passed
 3. İlk halka renkleri onaylanan kategori anlamlarından sapıyordu (P2). Dış halka turkuaz/açık turkuaz; nakit/ödenen yeşil, kart nötr, borç/kalan uyarı rengine döndürüldü. Son kanıt: `personel-aylik-ozet.png` ve tedarikçi aylık ekranları.
 4. POS çizimleri yerine resmî kaynak görüntüleri yerel varlık olarak kullanıldı; kaynaklar `src/assets/pos/SOURCES.md` içindedir. Son kanıt: `tedarikci-masaustu.png`.
 
+5. Son etkileşim incelemesinde varsayılan “Genel” etiketinin açılır listede diğer etiketleri gizlediği görüldü (P2). Ok tüm seçenekleri, yazma yalnız eşleşenleri gösterir; ikinci ok tıklaması menüyü kapatır. Etiket ve işlem menülerinde aşağı ok/Enter seçimi üç tarayıcıda ayrıca doğrulandı. Son tarayıcı kanıtı 152 kontrol/tarayıcı içerir.
+
 Bu düzeltmelerden sonraki yakalamalar yeniden açılıp referanslarla birlikte incelendi. Açık P0/P1/P2 bulgusu yoktur.
 
 ## Beş zorunlu yüzey

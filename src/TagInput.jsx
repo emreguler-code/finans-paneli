@@ -4,12 +4,17 @@ import { FloatingPanel } from "./FloatingPanel";
 export function TagInput({ value, onChange, options }) {
   const [open, setOpen] = useState(false),
     [index, setIndex] = useState(-1),
+    [filtering, setFiltering] = useState(false),
     anchor = useRef(null),
     id = useId();
-  const filtered = options.filter((v) =>
-    v.toLocaleLowerCase("tr").includes(value.toLocaleLowerCase("tr")),
-  );
+  const filtered = filtering
+    ? options.filter((v) =>
+        v.toLocaleLowerCase("tr").includes(value.toLocaleLowerCase("tr")),
+      )
+    : options;
   const choose = (tag) => {
+    if (!tag) return;
+    setFiltering(false);
     onChange(tag);
     setOpen(false);
     anchor.current?.focus({ preventScroll: true });
@@ -31,12 +36,14 @@ export function TagInput({ value, onChange, options }) {
         placeholder="Genel"
         onChange={(e) => {
           onChange(e.target.value);
+          setFiltering(true);
           setOpen(true);
           setIndex(-1);
         }}
         onKeyDown={(e) => {
           if (e.key === "ArrowDown" || e.key === "ArrowUp") {
             e.preventDefault();
+            if (!open) setFiltering(false);
             setOpen(true);
             setIndex((i) =>
               Math.max(
@@ -57,16 +64,23 @@ export function TagInput({ value, onChange, options }) {
         type="button"
         aria-label="Etiket seçenekleri"
         aria-expanded={open}
-        onClick={() => setOpen(!open)}
+        onClick={() => {
+          setFiltering(false);
+          setIndex(-1);
+          setOpen(!open);
+        }}
       >
         <ChevronDown size={14} />
       </button>
       {open && (
         <FloatingPanel
-          anchor={anchor.current}
+          anchor={anchor.current?.parentElement}
           title="Etiket"
           autoFocus={false}
-          onClose={() => setOpen(false)}
+          onClose={() => {
+            setOpen(false);
+            setFiltering(false);
+          }}
           width={240}
           maxPanelHeight={280}
           className="choice-panel"

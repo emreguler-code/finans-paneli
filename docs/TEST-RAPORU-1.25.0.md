@@ -7,7 +7,7 @@
 - Finansal API: 138 senaryo. Tarih bazlı vardiya/izin gidiş-dönüşü, geçersiz gün/tür/listenin reddi ve finansal kayıtlara etki etmemesi dahil.
 - Migrasyon: 34 senaryo; mevcut şema 12 ve kullanıcı/veri koruması. Yedekleme/geri yükleme/sıfırlama korumaları: 77 kontrol.
 - Gerçek PHP/MariaDB tarayıcı akışı: satır içi yeni işlem yalnız bir kayıt üretir; düzenleme aynı id/version/gerekçeyle çalışır. Mobil koşucu aynı akışı Chromium, WebKit ve Firefox'ta doğruladı.
-- Sentetik arayüz: Chromium/WebKit/Firefox, 320–2048 px, üç sidebar durumu, dar/kısa ve ölçekli viewport; yeni takvim, grafik, form, menü, arama ve kapanış durumları. Son koşuda çalışma zamanı hatası yoktur. [Kontrol listesi](evidence/1.25.0/checks.json).
+- Sentetik arayüz: Chromium/WebKit/Firefox, her birinde 152 kontrol; 320–2048 px, üç sidebar durumu, dar/kısa ve ölçekli viewport; yeni takvim, grafik, form, menü, arama ve kapanış durumları. Son koşuda çalışma zamanı hatası yoktur. [Kontrol listesi](evidence/1.25.0/checks.json).
 - Demo mutabakatı ve tarayıcı kontrolleri geçti. Paket kurulum testi hosting ZIP ile tam paket dosyalarının birebir eşliğini, config/şifre içermediğini, temiz kurulum ve demo mutabakatını doğruladı.
 - 12 PHP dosyası sözdizimi kontrolünden geçti. `npm audit --audit-level=moderate`: 0 güvenlik açığı.
 
