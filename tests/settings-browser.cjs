@@ -1,33 +1,377 @@
-module.exports=async({p,go,ok,out})=>{
- const fs=require('fs'),path=require('path');await p.setViewportSize({width:1440,height:1000});const blocked='**/api/index.php?action=backup_status*';
- await p.route(blocked,route=>route.fulfill({status:422,contentType:'application/json',body:JSON.stringify({error:'Yedekler web kökü içinde saklanamaz. backup_dir yolunu web kökü dışına alın.'})}));
- await go('Ayarlar');await p.getByRole('alert').waitFor();
- ok('Backup failure stops loading and explains private hosting configuration',await p.locator('.settings-page').innerText().then(t=>t.includes('Yedeklemeye erişilemiyor')&&t.includes('Yedek listesi alınamadı')&&t.includes('/home/hosting-kullanicisi/finans-private-backups')&&!t.includes('Yükleniyor')));
- for(const width of [1440,390,320]){await p.setViewportSize({width,height:1000});ok('Storage error guidance fits viewport '+width,await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await p.screenshot({path:out+'/settings-storage-error-'+width+'.png',fullPage:true})}
- await p.unroute(blocked);await p.getByRole('button',{name:'Yeniden dene',exact:true}).click();await p.setViewportSize({width:1440,height:1000});await p.locator('.backup-import button').waitFor();
- await p.waitForFunction(()=>document.querySelector('.settings-page .page-title .primary-button')?.disabled===false);
- ok('Settings sits immediately above appearance and information',await p.locator('.sidebar-bottom').evaluate(el=>el.querySelectorAll('button')[0].textContent==='Ayarlar'&&el.querySelectorAll('button')[1].textContent.includes('Görünüm ve bilgiler')));
- ok('Settings uses the shared full-width summary and content proportions',await p.locator('.settings-page .summary-field').count()===4&&await p.locator('.settings-workspace').evaluate(el=>{const a=el.children[0].getBoundingClientRect(),b=el.children[1].getBoundingClientRect();return b.top>=a.bottom-1?Math.abs(a.width-b.width)<2:Math.abs(a.width/b.width-1.9)<.02}));
- const baseline=await(await p.request.get(new URL('api/index.php?action=state',p.url().split('#')[0]).href)).json();
- await p.getByRole('button',{name:'Yedek al',exact:true}).click();if(await p.getByRole('dialog',{name:'Yeniden yedek oluştur',exact:true}).count())await p.getByRole('button',{name:'Yeniden yedek al',exact:true}).click();await p.locator('.backup-row').first().waitFor();const row=p.locator('.backup-row').filter({hasText:'Elle alınan'}).first(),id=await row.getAttribute('data-backup-id');
- ok('Manual backup appears with schema and kind',await row.innerText().then(t=>t.includes('Şema 12')&&t.includes('Elle alınan')));
- const priorIds=await p.locator('.backup-row').evaluateAll(es=>es.map(e=>e.dataset.backupId));await p.getByRole('button',{name:'Yedek al',exact:true}).click();await p.getByRole('dialog',{name:'Yeniden yedek oluştur',exact:true}).waitFor();await p.getByRole('dialog',{name:'Yeniden yedek oluştur',exact:true}).getByRole('button',{name:'Vazgeç',exact:true}).click();ok('Cancelling repeated manual backup leaves all snapshots intact',JSON.stringify(priorIds)===JSON.stringify(await p.locator('.backup-row').evaluateAll(es=>es.map(e=>e.dataset.backupId))));await p.getByText('Hosting cron kurulumu',{exact:true}).click();ok('Hosting cron command and both timezone schedules are visible',await p.locator('.cron-setup').innerText().then(t=>t.includes('backup-cron.php')&&t.includes('0 3 * * *')&&t.includes('0 0 * * *')));
- const download=p.waitForEvent('download');await row.getByRole('button',{name:'Yedeği indir',exact:true}).click();const saved=path.join(out,'settings-backup.jsonl');await(await download).saveAs(saved);ok('Backup downloads as a nonempty Finans file',fs.statSync(saved).size>1000);
- const before=await p.locator('.backup-row').count();await p.getByLabel('Yedek dosyası seç',{exact:true}).setInputFiles(saved);await p.waitForFunction(count=>document.querySelectorAll('.backup-row').length===count+1,before);ok('Uploaded backup is validated and listed without restoring',await p.locator('.backup-row').filter({hasText:'Yüklenen'}).count()===1);
- const autoRequests=[];const watchAuto=request=>{if(request.url().includes('action=backup_auto_tick'))autoRequests.push(request.url())};p.on('request',watchAuto);
- await p.getByRole('checkbox',{name:'Otomatik yedek al',exact:true}).check();await p.getByRole('button',{name:'Ayarları kaydet',exact:true}).click();await p.waitForFunction(()=>document.querySelector('.settings-page .summary-band')?.textContent.includes('Her gün 03.00'));
- ok('Enabling daily 03:00 schedule does not create an immediate snapshot',await p.locator('.backup-row').count()===before+1);
- for(let i=0;i<2;i++){await go('Hesaplar');await go('Ayarlar');await p.waitForFunction(()=>document.querySelector('.settings-page .summary-band')?.textContent.includes('Her gün 03.00'))}
- ok('Reopening Settings neither creates backups nor sends browser automatic ticks',await p.locator('.backup-row').count()===before+1&&autoRequests.length===0);p.off('request',watchAuto);
- ok('Settings explains cron, Istanbul 03:00 and total five snapshot retention',await p.locator('.settings-page').innerText().then(t=>t.includes('Her gün 03.00')&&t.includes('Cron kurulmadan otomatik yedek alınmaz')&&t.includes('en fazla 5 yedek')));
- await p.getByRole('checkbox',{name:'Otomatik yedek al',exact:true}).uncheck();await p.getByRole('button',{name:'Ayarları kaydet',exact:true}).click();await p.waitForFunction(()=>document.querySelector('.settings-page .summary-band')?.textContent.includes('Kapalı'));
- await p.screenshot({path:out+'/settings-backups-desktop.png',fullPage:true});
- for(const width of [768,390,320]){await p.setViewportSize({width,height:900});ok('Settings has no horizontal overflow '+width,await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));ok('Backup actions remain touch-sized '+width,await p.locator('.backup-row-actions button').evaluateAll(es=>es.every(e=>e.getBoundingClientRect().height>=44)));await p.screenshot({path:out+'/settings-backups-'+width+'.png',fullPage:true})}
- await p.setViewportSize({width:1440,height:1000});await p.getByRole('button',{name:'Demo verilerini temizle',exact:true}).click();const dialog=p.getByRole('dialog',{name:'Demo verilerini temizle',exact:true});ok('Clear explains the required safety backup',await dialog.innerText().then(t=>t.includes('Yedek alınamazsa işlem yapılmaz.')));await dialog.locator('input[name=password]').fill(process.env.QA_PASSWORD);await dialog.locator('input[name=confirmation]').fill('DEMO VERİLERİNİ SİL');await dialog.getByRole('button',{name:'Demo verilerini temizle',exact:true}).click();await p.locator('.flow-panel').waitFor();let state=await(await p.request.get(new URL('api/index.php?action=state',p.url().split('#')[0]).href)).json();ok('UI clear starts with empty real-data modules and preserves admin',state.demo===false&&state.events.length===0&&state.accounts.length===0&&state.parties.length===0&&state.user.role==='admin');
- await go('Ayarlar');await p.waitForFunction(()=>document.querySelector('.settings-page .summary-band')?.textContent.includes('Gerçek veriler'));ok('Demo clear is disabled for real-data workspace',await p.getByRole('button',{name:'Demo verilerini temizle',exact:true}).isDisabled());await p.screenshot({path:out+'/settings-clean-workspace.png',fullPage:true});
- await p.locator('[data-backup-id="'+id+'"]').getByRole('button',{name:'Geri yükle',exact:true}).click();const restore=p.getByRole('dialog',{name:'Veritabanı yedeğini geri yükle',exact:true});await restore.locator('input[name=password]').fill(process.env.QA_PASSWORD);await restore.locator('input[name=confirmation]').fill('GERİ YÜKLE');await restore.getByRole('button',{name:'Geri yüklemeyi uygula',exact:true}).click();await p.locator('.flow-panel').waitFor();state=await(await p.request.get(new URL('api/index.php?action=state',p.url().split('#')[0]).href)).json();
- ok('UI restore recovers original records and balances',state.demo===baseline.demo&&['accounts','cards','events','parties','claims','vehicles','vehicle_records','campaigns','campaign_entries'].every(key=>JSON.stringify(state[key])===JSON.stringify(baseline[key])));
- await go('Ayarlar');await p.getByRole('button',{name:'Fabrika ayarlarına sıfırla',exact:true}).click();let reset=p.getByRole('dialog',{name:'Fabrika ayarlarına sıfırla',exact:true});ok('Factory reset explicitly warns about real data and other users',await reset.innerText().then(t=>t.includes('Gerçek veriler dahil')&&t.includes('diğer kullanıcılar')));await reset.getByRole('button',{name:'Vazgeç',exact:true}).click();
- await p.getByRole('button',{name:'Fabrika ayarlarına sıfırla',exact:true}).click();reset=p.getByRole('dialog',{name:'Fabrika ayarlarına sıfırla',exact:true});await reset.locator('input[name=password]').fill(process.env.QA_PASSWORD);await reset.locator('input[name=confirmation]').fill('FABRİKA AYARLARINA SIFIRLA');await reset.getByRole('button',{name:'Fabrika ayarlarına sıfırla',exact:true}).click();await p.locator('.flow-panel').waitFor();state=await(await p.request.get(new URL('api/index.php?action=state',p.url().split('#')[0]).href)).json();ok('Factory reset UI starts empty with original admin',!state.demo&&!state.events.length&&!state.accounts.length&&state.user.role==='admin');await go('Ayarlar');await p.locator('.backup-row').filter({hasText:'Sıfırlama öncesi'}).first().waitFor();ok('Factory reset retains its safety backup and works outside demo mode',await p.getByRole('button',{name:'Fabrika ayarlarına sıfırla',exact:true}).isEnabled());
-
+module.exports = async ({ p, go, ok, out }) => {
+  const fs = require("fs"),
+    path = require("path");
+  await p.setViewportSize({ width: 1440, height: 1000 });
+  const blocked = "**/api/index.php?action=backup_status*";
+  await p.route(blocked, (route) =>
+    route.fulfill({
+      status: 422,
+      contentType: "application/json",
+      body: JSON.stringify({
+        error:
+          "Yedekler web kökü içinde saklanamaz. backup_dir yolunu web kökü dışına alın.",
+      }),
+    }),
+  );
+  await go("Ayarlar");
+  await p.getByRole("alert").waitFor();
+  ok(
+    "Backup failure stops loading and explains private hosting configuration",
+    await p
+      .locator(".settings-page")
+      .innerText()
+      .then(
+        (t) =>
+          t.includes("Yedeklemeye erişilemiyor") &&
+          t.includes("Yedek listesi alınamadı") &&
+          t.includes("/home/hosting-kullanicisi/finans-private-backups") &&
+          !t.includes("Yükleniyor"),
+      ),
+  );
+  for (const width of [1440, 390, 320]) {
+    await p.setViewportSize({ width, height: 1000 });
+    ok(
+      "Storage error guidance fits viewport " + width,
+      await p.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    );
+    await p.screenshot({
+      path: out + "/settings-storage-error-" + width + ".png",
+      fullPage: true,
+    });
+  }
+  await p.unroute(blocked);
+  await p.getByRole("button", { name: "Yeniden dene", exact: true }).click();
+  await p.setViewportSize({ width: 1440, height: 1000 });
+  await p.locator(".backup-import button").waitFor();
+  await p.waitForFunction(
+    () =>
+      document.querySelector(".settings-page .page-title .primary-button")
+        ?.disabled === false,
+  );
+  ok(
+    "Settings sits immediately above appearance and information",
+    await p
+      .locator(".sidebar-bottom")
+      .evaluate(
+        (el) =>
+          el.querySelectorAll("button")[0].textContent === "Ayarlar" &&
+          el
+            .querySelectorAll("button")[1]
+            .textContent.includes("Görünüm ve bilgiler"),
+      ),
+  );
+  ok(
+    "Settings uses the shared full-width summary and content proportions",
+    (await p.locator(".settings-page .summary-field").count()) === 4 &&
+      (await p.locator(".settings-workspace").evaluate((el) => {
+        const a = el.children[0].getBoundingClientRect(),
+          b = el.children[1].getBoundingClientRect();
+        return b.top >= a.bottom - 1
+          ? Math.abs(a.width - b.width) < 2
+          : Math.abs(a.width / b.width - 1.9) < 0.02;
+      })),
+  );
+  const baseline = await (
+    await p.request.get(
+      new URL("api/index.php?action=state", p.url().split("#")[0]).href,
+    )
+  ).json();
+  await p.getByRole("button", { name: "Yedek al", exact: true }).click();
+  if (
+    await p
+      .getByRole("dialog", { name: "Yeniden yedek oluştur", exact: true })
+      .count()
+  )
+    await p
+      .getByRole("button", { name: "Yeniden yedek al", exact: true })
+      .click();
+  await p.locator(".backup-row").first().waitFor();
+  const row = p
+      .locator(".backup-row")
+      .filter({ hasText: "Elle alınan" })
+      .first(),
+    id = await row.getAttribute("data-backup-id");
+  ok(
+    "Manual backup appears with schema and kind",
+    await row
+      .innerText()
+      .then((t) => t.includes("Şema 12") && t.includes("Elle alınan")),
+  );
+  const priorIds = await p
+    .locator(".backup-row")
+    .evaluateAll((es) => es.map((e) => e.dataset.backupId));
+  await p.getByRole("button", { name: "Yedek al", exact: true }).click();
+  await p
+    .getByRole("dialog", { name: "Yeniden yedek oluştur", exact: true })
+    .waitFor();
+  await p
+    .getByRole("dialog", { name: "Yeniden yedek oluştur", exact: true })
+    .getByRole("button", { name: "Vazgeç", exact: true })
+    .click();
+  ok(
+    "Cancelling repeated manual backup leaves all snapshots intact",
+    JSON.stringify(priorIds) ===
+      JSON.stringify(
+        await p
+          .locator(".backup-row")
+          .evaluateAll((es) => es.map((e) => e.dataset.backupId)),
+      ),
+  );
+  await p.getByText("Hosting cron kurulumu", { exact: true }).click();
+  ok(
+    "Hosting cron command and both timezone schedules are visible",
+    await p
+      .locator(".cron-setup")
+      .innerText()
+      .then(
+        (t) =>
+          t.includes("backup-cron.php") &&
+          t.includes("0 3 * * *") &&
+          t.includes("0 0 * * *"),
+      ),
+  );
+  const download = p.waitForEvent("download");
+  await row.getByRole("button", { name: "Yedeği indir", exact: true }).click();
+  const saved = path.join(out, "settings-backup.jsonl");
+  await (await download).saveAs(saved);
+  ok(
+    "Backup downloads as a nonempty Finans file",
+    fs.statSync(saved).size > 1000,
+  );
+  const before = await p.locator(".backup-row").count();
+  await p.getByLabel("Yedek dosyası seç", { exact: true }).setInputFiles(saved);
+  await p.waitForFunction(
+    (count) => document.querySelectorAll(".backup-row").length === count + 1,
+    before,
+  );
+  ok(
+    "Uploaded backup is validated and listed without restoring",
+    (await p.locator(".backup-row").filter({ hasText: "Yüklenen" }).count()) ===
+      1,
+  );
+  const autoRequests = [];
+  const watchAuto = (request) => {
+    if (request.url().includes("action=backup_auto_tick"))
+      autoRequests.push(request.url());
+  };
+  p.on("request", watchAuto);
+  await p
+    .getByRole("checkbox", { name: "Otomatik yedek al", exact: true })
+    .check();
+  await p.getByRole("button", { name: "Ayarları kaydet", exact: true }).click();
+  await p.waitForFunction(() =>
+    document
+      .querySelector(".settings-page .summary-band")
+      ?.textContent.includes("Her gün 03.00"),
+  );
+  ok(
+    "Enabling daily 03:00 schedule does not create an immediate snapshot",
+    (await p.locator(".backup-row").count()) === before + 1,
+  );
+  for (let i = 0; i < 2; i++) {
+    await go("Hesaplar");
+    await go("Ayarlar");
+    await p.waitForFunction(() =>
+      document
+        .querySelector(".settings-page .summary-band")
+        ?.textContent.includes("Her gün 03.00"),
+    );
+  }
+  ok(
+    "Reopening Settings neither creates backups nor sends browser automatic ticks",
+    (await p.locator(".backup-row").count()) === before + 1 &&
+      autoRequests.length === 0,
+  );
+  p.off("request", watchAuto);
+  ok(
+    "Settings explains cron, Istanbul 03:00 and total five snapshot retention",
+    await p
+      .locator(".settings-page")
+      .innerText()
+      .then(
+        (t) =>
+          t.includes("Her gün 03.00") &&
+          t.includes("Cron kurulmadan otomatik yedek alınmaz") &&
+          t.includes("en fazla 5 yedek"),
+      ),
+  );
+  await p
+    .getByRole("checkbox", { name: "Otomatik yedek al", exact: true })
+    .uncheck();
+  await p.getByRole("button", { name: "Ayarları kaydet", exact: true }).click();
+  await p.waitForFunction(() =>
+    document
+      .querySelector(".settings-page .summary-band")
+      ?.textContent.includes("Kapalı"),
+  );
+  await p.screenshot({
+    path: out + "/settings-backups-desktop.png",
+    fullPage: true,
+  });
+  for (const width of [768, 390, 320]) {
+    await p.setViewportSize({ width, height: 900 });
+    ok(
+      "Settings has no horizontal overflow " + width,
+      await p.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    );
+    ok(
+      "Backup actions remain touch-sized " + width,
+      await p
+        .locator(".backup-row-actions button")
+        .evaluateAll((es) =>
+          es.every((e) => e.getBoundingClientRect().height >= 44),
+        ),
+    );
+    await p.screenshot({
+      path: out + "/settings-backups-" + width + ".png",
+      fullPage: true,
+    });
+  }
+  await p.setViewportSize({ width: 1440, height: 1000 });
+  await p
+    .getByRole("button", { name: "Demo verilerini temizle", exact: true })
+    .click();
+  const dialog = p.getByRole("dialog", {
+    name: "Demo verilerini temizle",
+    exact: true,
+  });
+  ok(
+    "Clear explains the required safety backup",
+    await dialog
+      .innerText()
+      .then((t) => t.includes("Yedek alınamazsa işlem yapılmaz.")),
+  );
+  await dialog.locator("input[name=password]").fill(process.env.QA_PASSWORD);
+  await dialog.locator("input[name=confirmation]").fill("DEMO VERİLERİNİ SİL");
+  await dialog
+    .getByRole("button", { name: "Demo verilerini temizle", exact: true })
+    .click();
+  await p.locator(".flow-panel").waitFor();
+  let state = await (
+    await p.request.get(
+      new URL("api/index.php?action=state", p.url().split("#")[0]).href,
+    )
+  ).json();
+  ok(
+    "UI clear starts with empty real-data modules and preserves admin",
+    state.demo === false &&
+      state.events.length === 0 &&
+      state.accounts.length === 0 &&
+      state.parties.length === 0 &&
+      state.user.role === "admin",
+  );
+  await go("Ayarlar");
+  await p.waitForFunction(() =>
+    document
+      .querySelector(".settings-page .summary-band")
+      ?.textContent.includes("Gerçek veriler"),
+  );
+  ok(
+    "Demo clear is disabled for real-data workspace",
+    await p
+      .getByRole("button", { name: "Demo verilerini temizle", exact: true })
+      .isDisabled(),
+  );
+  await p.screenshot({
+    path: out + "/settings-clean-workspace.png",
+    fullPage: true,
+  });
+  await p
+    .locator('[data-backup-id="' + id + '"]')
+    .getByRole("button", { name: "Geri yükle", exact: true })
+    .click();
+  const restore = p.getByRole("dialog", {
+    name: "Veritabanı yedeğini geri yükle",
+    exact: true,
+  });
+  await restore.locator("input[name=password]").fill(process.env.QA_PASSWORD);
+  await restore.locator("input[name=confirmation]").fill("GERİ YÜKLE");
+  await restore
+    .getByRole("button", { name: "Geri yüklemeyi uygula", exact: true })
+    .click();
+  await p.locator(".flow-panel").waitFor();
+  state = await (
+    await p.request.get(
+      new URL("api/index.php?action=state", p.url().split("#")[0]).href,
+    )
+  ).json();
+  ok(
+    "UI restore recovers original records and balances",
+    state.demo === baseline.demo &&
+      [
+        "accounts",
+        "cards",
+        "events",
+        "parties",
+        "claims",
+        "vehicles",
+        "vehicle_records",
+        "campaigns",
+        "campaign_entries",
+      ].every(
+        (key) => JSON.stringify(state[key]) === JSON.stringify(baseline[key]),
+      ),
+  );
+  await go("Ayarlar");
+  await p
+    .getByRole("button", { name: "Fabrika ayarlarına sıfırla", exact: true })
+    .click();
+  let reset = p.getByRole("dialog", {
+    name: "Fabrika ayarlarına sıfırla",
+    exact: true,
+  });
+  ok(
+    "Factory reset explicitly warns about real data and other users",
+    await reset
+      .innerText()
+      .then(
+        (t) =>
+          t.includes("Gerçek veriler dahil") &&
+          t.includes("diğer kullanıcılar"),
+      ),
+  );
+  await reset.getByRole("button", { name: "Vazgeç", exact: true }).click();
+  await p
+    .getByRole("button", { name: "Fabrika ayarlarına sıfırla", exact: true })
+    .click();
+  reset = p.getByRole("dialog", {
+    name: "Fabrika ayarlarına sıfırla",
+    exact: true,
+  });
+  await reset.locator("input[name=password]").fill(process.env.QA_PASSWORD);
+  await reset
+    .locator("input[name=confirmation]")
+    .fill("FABRİKA AYARLARINA SIFIRLA");
+  await reset
+    .getByRole("button", { name: "Fabrika ayarlarına sıfırla", exact: true })
+    .click();
+  await p.locator(".flow-panel").waitFor();
+  state = await (
+    await p.request.get(
+      new URL("api/index.php?action=state", p.url().split("#")[0]).href,
+    )
+  ).json();
+  ok(
+    "Factory reset UI starts empty with original admin",
+    !state.demo &&
+      !state.events.length &&
+      !state.accounts.length &&
+      state.user.role === "admin",
+  );
+  await go("Ayarlar");
+  await p
+    .locator(".backup-row")
+    .filter({ hasText: "Sıfırlama öncesi" })
+    .first()
+    .waitFor();
+  ok(
+    "Factory reset retains its safety backup and works outside demo mode",
+    await p
+      .getByRole("button", { name: "Fabrika ayarlarına sıfırla", exact: true })
+      .isEnabled(),
+  );
 };

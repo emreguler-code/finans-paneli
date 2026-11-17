@@ -6,16 +6,16 @@
 - [Başarılı Candidate QA çalışması](https://github.com/emreguler-code/finans-paneli/actions/runs/43885705130): sekiz işin tamamı başarılı.
 - Bu rapor ve ekran görüntüleri testten sonra eklendi; uygulama, API, şema ve paket içeriği aynı commit'teki dosyalardır.
 
-| Kontrol | Sonuç |
-|---|---|
-| Üretim derlemesi | Başarılı |
-| Birim / statik sunum | 49 + 4 test başarılı |
-| Yeni cari görünümü, Chromium ve WebKit | Her motorda 73 kontrol başarılı |
-| Gerçek PHP/MariaDB genel akışları | 707 kontrol başarılı, tarayıcı çalışma zamanı hatası yok |
-| Mobil Chromium ve WebKit | Her motorda 71 kontrol başarılı |
-| Finansal API / migrasyon / yedekleme | Üç bağımsız iş başarılı |
-| Kapsamlı demo ve rapor mutabakatı | Başarılı |
-| ZIP'ten gerçek kurulum ve arşiv bütünlüğü | Başarılı |
+| Kontrol                                   | Sonuç                                                    |
+| ----------------------------------------- | -------------------------------------------------------- |
+| Üretim derlemesi                          | Başarılı                                                 |
+| Birim / statik sunum                      | 49 + 4 test başarılı                                     |
+| Yeni cari görünümü, Chromium ve WebKit    | Her motorda 73 kontrol başarılı                          |
+| Gerçek PHP/MariaDB genel akışları         | 707 kontrol başarılı, tarayıcı çalışma zamanı hatası yok |
+| Mobil Chromium ve WebKit                  | Her motorda 71 kontrol başarılı                          |
+| Finansal API / migrasyon / yedekleme      | Üç bağımsız iş başarılı                                  |
+| Kapsamlı demo ve rapor mutabakatı         | Başarılı                                                 |
+| ZIP'ten gerçek kurulum ve arşiv bütünlüğü | Başarılı                                                 |
 
 Yeni görünüm 320, 390, 430, 768, 960, 1385 ve 1920 px genişliklerde test edildi. Genel yerleşim akışları ayrıca 2540 px, kısa ekran ve büyük tutar/uzun unvan örneklerini kapsar. Temel görsel kontrollerde normal hareket, mevcut kabul testlerinde azaltılmış hareket ve özel azaltılmış hareket senaryosu kullanıldı.
 

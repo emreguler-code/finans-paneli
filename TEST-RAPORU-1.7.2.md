@@ -32,15 +32,15 @@ Kart borçları son ekstre − ödemeler + dönem/gelecek hareketleri ile; kulla
 
 ### Aylık nakit karşılaştırması (TL)
 
-| Ay | Gerçek kayıt | Giriş | Çıkış | Net |
-| --- | ---: | ---: | ---: | ---: |
-| 2026-04 | 82 | 28.308,00 | 40.656,00 | -12.348,00 |
-| 2026-05 | 82 | 28.742,00 | 40.806,00 | -12.064,00 |
-| 2026-06 | 82 | 29.176,00 | 40.956,00 | -11.780,00 |
-| 2026-07 | 82 | 29.610,00 | 41.106,00 | -11.496,00 |
-| 2026-08 | 82 | 30.044,00 | 41.256,00 | -11.212,00 |
-| 2026-09 | 82 | 30.478,00 | 41.406,00 | -10.928,00 |
-| 2026-10 | 70 | 21.413,00 | 52.239,00 | -30.826,00 |
+| Ay      | Gerçek kayıt |     Giriş |     Çıkış |        Net |
+| ------- | -----------: | --------: | --------: | ---------: |
+| 2026-04 |           82 | 28.308,00 | 40.656,00 | -12.348,00 |
+| 2026-05 |           82 | 28.742,00 | 40.806,00 | -12.064,00 |
+| 2026-06 |           82 | 29.176,00 | 40.956,00 | -11.780,00 |
+| 2026-07 |           82 | 29.610,00 | 41.106,00 | -11.496,00 |
+| 2026-08 |           82 | 30.044,00 | 41.256,00 | -11.212,00 |
+| 2026-09 |           82 | 30.478,00 | 41.406,00 | -10.928,00 |
+| 2026-10 |           70 | 21.413,00 | 52.239,00 | -30.826,00 |
 
 Tüm yedi ayın değerleri Raporlar ekranındaki kutularla tarayıcıda karşılaştırıldı. 29 haftanın toplamları aylık toplamlarla aynı; ayrıca 6 Nisan, 13 Temmuz ve 5 Ekim haftalarının tarih aralıkları arayüzde seçilerek karşılaştırıldı. Haftalık grafik gruplaması aylık toplamı değiştirmiyor. Tablo kayıt sayısı nakit etkisi olmayan cari/kart gerçeklerini de içerir; planlı ve iptal edilmiş kayıtlar yukarıdaki gerçek kayıt sayısına dahil değildir.
 
@@ -80,7 +80,6 @@ Doğrulama Chromium 154, PHP 8.3 ve MariaDB 11.4 ile yerelde yapıldı. Fiziksel
 ![Ekstre ve devreden borç](.qa/19a7322cdd9a/demo/statement-1.png)
 
 ![Telefon görünümü](.qa/19a7322cdd9a/demo/accounts-390.png)
-
 
 ## Paket üzerinden demo yenileme kabulü
 

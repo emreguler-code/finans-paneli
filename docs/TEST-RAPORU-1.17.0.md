@@ -2,16 +2,16 @@
 
 9 Kasım 2026 · Node 24, Chromium ve Playwright WebKit; izole PHP 8.3 / MariaDB 11.4 fixture'ları. Canlı veritabanı kullanılmadı.
 
-| Kontrol | Sonuç |
-| --- | --- |
-| `npm ci --cache /workspace/.npm-cache` | Başarılı |
-| `npm test` | Derleme, 45 birim ve 4 Sites worker testi geçti |
-| `QA_DB_TMPFS=1 QA_BROWSER_BIN=/usr/bin/chromium npm run test:browser` | 702 kontrol, 0 React çalışma zamanı hatası |
-| `npm run test:mobile` | Chromium 71 + WebKit 71 kontrol, iki motorda 0 React çalışma zamanı hatası |
-| `npm run test:demo` | 715 finansal uzlaştırma + 105 tarayıcı kontrolü geçti |
-| `npm run release:package` | İki ZIP ve SHA256 dosyaları üretildi |
-| `npm run test:package` | Paket eşliği, kurulu PHP/updater ve font kontrolleri geçti |
-| `git diff --check` | Temiz |
+| Kontrol                                                               | Sonuç                                                                      |
+| --------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `npm ci --cache /workspace/.npm-cache`                                | Başarılı                                                                   |
+| `npm test`                                                            | Derleme, 45 birim ve 4 Sites worker testi geçti                            |
+| `QA_DB_TMPFS=1 QA_BROWSER_BIN=/usr/bin/chromium npm run test:browser` | 702 kontrol, 0 React çalışma zamanı hatası                                 |
+| `npm run test:mobile`                                                 | Chromium 71 + WebKit 71 kontrol, iki motorda 0 React çalışma zamanı hatası |
+| `npm run test:demo`                                                   | 715 finansal uzlaştırma + 105 tarayıcı kontrolü geçti                      |
+| `npm run release:package`                                             | İki ZIP ve SHA256 dosyaları üretildi                                       |
+| `npm run test:package`                                                | Paket eşliği, kurulu PHP/updater ve font kontrolleri geçti                 |
+| `git diff --check`                                                    | Temiz                                                                      |
 
 ## Yeniden üretim ve regresyonlar
 

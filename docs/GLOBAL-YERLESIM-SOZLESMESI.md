@@ -6,17 +6,17 @@ Görsel referans: `/workspace/generated_images/exec-a1e64e49-6c7c-48df-afc6-1dcb
 
 ## Ortak bölgeler
 
-| No | Bölge | Sorumluluk |
-| --- | --- | --- |
-| 1 | Sidebar | Site genelindeki gezinme |
-| 2 | Header | Ortak üst çubuk ve araçları |
-| 3 | Content | Sayfa içeriğinin dış çerçevesi ve ortak kenarları |
-| 4 | Sayfa başlığı | Sayfanın kimliği, bağlamı ve ilgili ana eylemleri |
-| 5 | Özet alanı | İlişkili özet bilgilerin ortak yüzeyi |
-| 6 | Ana içerik | Sayfanın temel çalışma alanı |
-| 7 | Yardımcı içerik | Bağlamsal bilgi ve yardımcı modüller |
-| 8 | Footer | Sayfa alt bilgisi; hızlı işlem formundan ayrı |
-| 9 | Hızlı işlem alanı | Açıldığında kendi yüksekliğine yer ayrılan işlem giriş bölgesi |
+| No  | Bölge             | Sorumluluk                                                     |
+| --- | ----------------- | -------------------------------------------------------------- |
+| 1   | Sidebar           | Site genelindeki gezinme                                       |
+| 2   | Header            | Ortak üst çubuk ve araçları                                    |
+| 3   | Content           | Sayfa içeriğinin dış çerçevesi ve ortak kenarları              |
+| 4   | Sayfa başlığı     | Sayfanın kimliği, bağlamı ve ilgili ana eylemleri              |
+| 5   | Özet alanı        | İlişkili özet bilgilerin ortak yüzeyi                          |
+| 6   | Ana içerik        | Sayfanın temel çalışma alanı                                   |
+| 7   | Yardımcı içerik   | Bağlamsal bilgi ve yardımcı modüller                           |
+| 8   | Footer            | Sayfa alt bilgisi; hızlı işlem formundan ayrı                  |
+| 9   | Hızlı işlem alanı | Açıldığında kendi yüksekliğine yer ayrılan işlem giriş bölgesi |
 
 Tüm sayfalar bu ortak bölge sözleşmesini kullanır; kendi bağımsız header/sidebar/kenar ölçülerini kurmaz. Bir sayfanın ihtiyaç duymadığı yardımcı/özet/işlem bölgesi sırf şemayı doldurmak için boş kutu olarak gösterilmez. Sayfalar içeriklerini ilgili bölgelere verir; ortak kabuk yerleşimi yönetir.
 
@@ -67,7 +67,6 @@ Kullanıcı Header önerisine “ok, devam edelim” dedi. Tek satırlı ortak k
 Kullanıcı Content önerilerini uygun buldu. 3 numaralı çerçeve 4–8'i tek ortak akışta taşır; sayfalar ayrı dış kenar hesapları üretmez. Kalan alanı kullanır, çok genişte okunabilir ortak üst sınır uygulanır; yoğun raporlar için varsa geniş varyant merkezi ve açıkça tanımlı olur. Başlangıç kenar boşluğu önerileri genişte 24–32 px, dar/mobilde 12–16 px olup ölçümle kesinleşir.
 
 Ana/yardımcı alanın yan yana veya alt alta gelmesi cihaz adına değil gerçek kullanılabilir içerik genişliğine bağlıdır. Ana içerikte tek temel dikey kaydırma alanı önerilir; tablo ve yardımcı kutulara varsayılan ayrı dikey scrollbar eklenmez. Header erişilebilir kalır, uzun içerik footer'a kadar ulaşılabilir olmalıdır. 9 açıldığında gerçek yüksekliği için yer ayrılır; son satırlar ve footer örtülmez. Kaydırmanın teknik sahibinin body/main olması, mobil klavye davranışı ve istisnai büyük rapor tablosu kaydırması uygulama öncesi test edilerek kesinleşir. Pencere/menü genişliği değişiminde filtre, seçim ve taslak kaybolmamalıdır.
-
 
 ## Sayfa başlığı ve özet — onaylanan ayrım
 
@@ -137,7 +136,6 @@ Kesin ölçüler bu sürümün test edilmiş başlangıç değerleridir; gelecek
 Dokuz bölgeli kabuk ve ortak ölçüler korunur. Mobil bileşen sunumları mobile-components.css içinde merkezileştirildi. Önceki “tam tek satır/desktop ayıracı” kuralları mobil bileşenlere zorlanmaz. Drawer metinleri viewport bazlı eski CSS ile saklanamaz. Ledger 880 px altındaki kendi bölgesinde table/tbody/tr/hücre için tutarlı blok sunumunu kullanır; geniş görünüm native tablo olarak kalır.
 
 Mobil filtre genişliği görünür viewport eksi iki yanda 12 px'dir; header'ın altından açılır, görünür alt gezinmeye kadar sınırlandırılır. Başlık ve eylemler panel akışında kalır, alanlar kaydırılır. Ayrı sayfa karartması veya blur eklenmez. Mobil header submit ikonunu gizler ve klavye Ara/Enter kullanır; masaüstü submit korunur. Kullanıcı onaylı kompakt özet/listeler bölge yerleşimini değiştirmez. Yeni görünümün kabulü yalnız taşma yokluğu değil, açık/kapalı durumların ve kritik metin/tutarların gerçek genişlikleridir.
-
 
 ## 16 Kasım 2026 — 1.18.0 onaylı cari detay istisnası
 

@@ -1,29 +1,1049 @@
 /* 1.11: compact records use the existing Sade Netlik tokens. */
-.mobile-ledger-cell{display:none}.context-info-row{display:flex;gap:12px;padding:16px 0;border-bottom:1px solid var(--line);min-width:0}.context-info-row>svg{flex-shrink:0;color:var(--brand);margin-top:3px}.context-info-row>div{min-width:0}.context-info-row h3{font-size:14px;font-weight:500;margin:0 0 8px}.context-info-row strong{display:block;font-size:14px;font-weight:500;overflow-wrap:anywhere}.context-info-row small{display:block;font-size:12px;color:var(--muted);line-height:1.5;margin-top:6px}.context-info-row.warning>svg{color:var(--status-warning)}.context-info-row.danger>svg{color:var(--red)}.context-info-row.success>svg{color:var(--green)}.party-context{padding:var(--panel-padding);min-width:0}.party-context>header{display:flex;align-items:center;justify-content:space-between;gap:12px}.party-context h2{font-size:16px}.context-period{font-size:12px;color:var(--muted);margin:12px 0 0}.context-subtitle{font-size:14px;margin:20px 0 12px}.profile-fields{border:1px solid var(--line);border-radius:8px;padding:12px;margin:16px 0;min-width:0}.profile-fields legend{font-size:14px}.profile-fields .check-label{min-height:44px}.profile-fields .check-label span{min-width:0}.profile-fields .check-label small{display:block;color:var(--muted);font-size:12px}.profile-fields .muted{font-size:12px;line-height:1.5}.summary-band{position:relative}.summary-band-heading:has(.summary-identity:empty){position:absolute;right:24px;top:24px;margin:0}.summary-band:has(.summary-identity:empty) .summary-fields{padding-right:108px}.account-list-panel>.content-tools{padding:8px 16px}.account-grid .account-face{padding:20px 0}.account-grid .limit-legend>div:last-child strong{font-size:16px}.party-list-summary .summary-value{font-size:24px}.party-main>.summary-section{width:100%}.party-list-summary .summary-label{display:none}.vehicle-workspace .vehicle-grid{display:flex;flex-direction:column;gap:0;border:1px solid var(--line);border-radius:var(--radius-panel);background:var(--surface-raised);padding:0 24px}.vehicle-grid .vehicle-card{display:grid;grid-template-columns:44px minmax(0,1fr);gap:16px;align-items:center;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:20px 0}.vehicle-grid .vehicle-card:last-child{border:0}.vehicle-card>header{display:flex;justify-content:center;color:var(--brand)}.vehicle-card .card-local-actions{display:none}.vehicle-card-main{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 24px;width:100%;text-align:left;min-width:0}.vehicle-card-main h2{grid-column:1;font-size:16px}.vehicle-card-main p{grid-column:1;grid-row:2;font-size:12px;overflow-wrap:anywhere}.vehicle-card-main>strong{grid-column:2;grid-row:1;font-size:20px}.vehicle-card-main>small{grid-column:2;grid-row:2;font-size:12px;color:var(--muted)}.vehicle-overview-grid{display:flex;flex-direction:column;gap:16px}.vehicle-overview-section{width:100%;box-sizing:border-box}.vehicle-overview-record{display:grid;grid-template-columns:minmax(135px,.9fr) minmax(130px,1.1fr) minmax(130px,1fr);gap:12px 20px;align-items:start}.vehicle-overview-record>header{grid-column:1}.vehicle-summary-record-title{grid-column:1;grid-row:2;margin:0}.vehicle-overview-record>dl{grid-column:2;grid-row:1/span 3;margin:0;gap:12px}.vehicle-overview-record>.vehicle-payment{grid-column:3;grid-row:1}.vehicle-progress{grid-column:3;grid-row:2/span 2;min-width:0}.vehicle-progress progress{width:100%;height:6px;display:block;accent-color:var(--brand);margin:4px 0 8px}.vehicle-progress.warning progress{accent-color:var(--status-warning)}.vehicle-progress.danger progress{accent-color:var(--red)}.vehicle-progress small{display:block;font-size:12px;color:var(--muted);line-height:1.5}.vehicle-overview-note{margin-top:0}.vehicle-overview-record>.muted{grid-column:2/-1;font-size:12px}.vehicle-record-expanded dl>div{min-width:0}
-@media(max-width:1100px){.vehicle-overview-record{grid-template-columns:minmax(135px,.9fr) minmax(130px,1.1fr) minmax(130px,1fr)}.summary-band:has(.summary-identity:empty) .summary-fields{padding-right:108px}.party-workspace .context-aside:has(.party-context){display:block}}
-@media(max-width:760px){
- .finance-page .page-title,.finance-page.account-page .page-title{flex-direction:row;align-items:center;gap:12px}.finance-page .page-title>.cari-actions{width:auto;flex-shrink:0}.finance-page .page-title h1{font-size:24px}.page-heading-identity{gap:12px}.party-context{padding:16px}.party-main .cari-summary{padding:16px}.party-list-summary .summary-fields{grid-template-columns:repeat(3,minmax(0,1fr));gap:0}.party-list-summary .summary-field{padding:0 8px;border-left:1px solid var(--line)}.party-list-summary .summary-field:first-child{padding-left:0;border:0}.party-list-summary .summary-field:last-child{padding-right:0}.party-list-summary .summary-value{font-size:18px;overflow-wrap:normal;white-space:normal}.summary-band-heading:has(.summary-identity:empty){top:16px;right:16px}.summary-band:has(.summary-identity:empty) .summary-fields{padding-right:0;padding-top:44px}.party-row{grid-template-columns:minmax(0,1fr) auto 12px!important;gap:8px!important;padding:16px!important;min-height:64px}.party-row .cari-avatar,.party-row .party-type{display:none}.party-row .party-name{grid-column:1;min-width:0}.party-row .cari-number{grid-column:2;white-space:nowrap;font-size:16px}.party-row>svg{grid-column:3}.party-row .party-name strong{font-size:14px}.party-row .party-name small{font-size:12px}.mobile-txn-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.mobile-txn-top>div{min-width:0;display:flex;flex-wrap:wrap;gap:4px 8px}.mobile-txn-kind{font-size:12px;font-weight:500}.mobile-txn-top time{font-size:12px;line-height:1.5;color:var(--muted)}.mobile-txn-top>strong{font-size:16px;line-height:1.5;font-weight:500;flex-shrink:0}.mobile-txn-top strong small{display:inline;font-size:12px;font-weight:400;margin:0}.mobile-txn-description{font-size:14px;line-height:1.5;margin:8px 0 0;overflow-wrap:anywhere}.mobile-txn-details{display:flex;justify-content:space-between;gap:8px 12px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin-top:12px;line-height:1.5}.mobile-txn-details small{font-size:12px;margin:4px 0}.mobile-txn-details strong{font-weight:500}.mobile-running-balance{margin-left:auto;text-align:right}.ledger-view .ledger-action-row>td{display:block;width:100%;padding:0!important}.ledger-actions{padding:0 16px 12px;gap:8px}.ledger-actions .icon-button{width:44px;height:44px;min-height:44px}.ledger-action-row td:before{display:none}.ledger-view .cari-table-scroll{overflow-x:hidden}.ledger-section-heading{padding:12px 16px}.ledger-section-heading h2{font-size:16px}.account-grid .account-face>footer{padding-right:0}.account-grid .limit-legend{grid-template-columns:repeat(2,minmax(0,1fr))}.account-workspace .recent-activity-row{gap:8px}.recent-activity-row strong{font-size:14px}.vehicle-workspace .vehicle-grid{padding:0 16px}.vehicle-grid .vehicle-card{gap:12px;grid-template-columns:32px minmax(0,1fr)}.vehicle-card-main{grid-template-columns:1fr;gap:6px}.vehicle-card-main p{grid-column:1;grid-row:2}.vehicle-card-main>strong{grid-column:1;grid-row:3;font-size:18px}.vehicle-card-main>small{grid-column:1;grid-row:4}.vehicle-overview-record{grid-template-columns:1fr auto;gap:12px}.vehicle-overview-record>header{grid-column:1;grid-row:1}.vehicle-summary-record-title{grid-column:1;grid-row:2}.vehicle-overview-record>dl{grid-column:1/-1;grid-row:3;margin:0;grid-template-columns:repeat(2,minmax(0,1fr))}.vehicle-overview-record>.vehicle-payment{grid-column:2;grid-row:1/span 2;text-align:right;font-size:12px}.vehicle-progress{grid-column:1/-1;grid-row:4}.vehicle-overview-section>header{flex-wrap:wrap}.vehicle-overview-record>.muted{grid-column:1/-1}.vehicle-main .vehicle-record-row{gap:8px;grid-template-columns:minmax(0,1fr) minmax(85px,auto)}.vehicle-payment strong{font-size:14px}.vehicle-records-heading{flex-wrap:wrap}.profile-fields{padding:12px}
+.mobile-ledger-cell {
+  display: none;
 }
-@media(max-width:350px){.mobile-txn-top{gap:8px}.mobile-txn-top>strong{font-size:14px}.vehicle-overview-record{grid-template-columns:1fr}.vehicle-overview-record>.vehicle-payment{grid-column:1;grid-row:4;text-align:left}.vehicle-progress{grid-row:5}.vehicle-overview-record>dl{grid-template-columns:1fr}.party-list-summary .summary-value{font-size:16px}.account-grid .limit-legend strong{font-size:12px}}
-.vehicle-overview-record>dl{grid-template-columns:repeat(2,minmax(0,1fr))}.vehicle-overview-record>dl>div:only-child{grid-column:1/-1}
-@media(max-width:760px){.finance-page.cari-page .page-title{flex-wrap:nowrap}.finance-page.cari-page .page-title>.cari-actions{flex-basis:auto;width:auto}.finance-page.cari-page .page-heading-identity{flex:1;min-width:0}.party-detail-summary:not(.is-open) .summary-field:not(:first-child){display:none}.party-detail-summary:not(.is-open) .summary-fields{display:block;padding:0!important}.party-detail-summary:not(.is-open) .summary-field:first-child{padding:0;border:0}.party-detail-summary:not(.is-open) .summary-field:first-child>span{padding-right:104px}.party-detail-summary:not(.is-open) .summary-primary .summary-value{margin-top:28px;white-space:nowrap;font-size:27px}.party-detail-summary .summary-value{font-size:20px}}
-@media(max-width:760px){.party-list-summary .summary-field{border-top:0!important;margin-top:0!important}.party-list-summary .summary-field:nth-child(3){border-left:1px solid var(--line);padding:0 0 0 8px}.party-list-summary .summary-field>span{font-size:12px}.party-list-summary .summary-value{line-height:1.5}.party-detail-summary .summary-field>span{line-height:1.5}}
-.mobile-party-type{display:none!important}@media(max-width:760px){.party-row .mobile-party-type{display:block!important;color:var(--muted);font-size:12px;margin-top:4px}}
-@media(max-width:760px){.finance-page.cari-page .page-title.party-detail-header{display:flex;flex-direction:row;align-items:center;flex-wrap:nowrap}.finance-page.cari-page .page-title.party-detail-header>.cari-actions{flex:0 0 auto;align-self:center}.vehicle-overview-record>dl>div{min-width:0}}
-@media(max-width:760px){.vehicle-detail-summary .summary-fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 0}.vehicle-detail-summary .summary-field{padding:4px 12px;border-top:0;margin:0;border-left:1px solid var(--line)}.vehicle-detail-summary .summary-field:nth-child(odd){border-left:0;padding-left:0}.vehicle-detail-summary .summary-field:nth-child(even){padding-right:0}.vehicle-detail-summary .summary-value{font-size:18px;margin:8px 0}}
+.context-info-row {
+  display: flex;
+  gap: 12px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line);
+  min-width: 0;
+}
+.context-info-row > svg {
+  flex-shrink: 0;
+  color: var(--brand);
+  margin-top: 3px;
+}
+.context-info-row > div {
+  min-width: 0;
+}
+.context-info-row h3 {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0 0 8px;
+}
+.context-info-row strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+.context-info-row small {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-top: 6px;
+}
+.context-info-row.warning > svg {
+  color: var(--status-warning);
+}
+.context-info-row.danger > svg {
+  color: var(--red);
+}
+.context-info-row.success > svg {
+  color: var(--green);
+}
+.party-context {
+  padding: var(--panel-padding);
+  min-width: 0;
+}
+.party-context > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.party-context h2 {
+  font-size: 16px;
+}
+.context-period {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 12px 0 0;
+}
+.context-subtitle {
+  font-size: 14px;
+  margin: 20px 0 12px;
+}
+.profile-fields {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  margin: 16px 0;
+  min-width: 0;
+}
+.profile-fields legend {
+  font-size: 14px;
+}
+.profile-fields .check-label {
+  min-height: 44px;
+}
+.profile-fields .check-label span {
+  min-width: 0;
+}
+.profile-fields .check-label small {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+.profile-fields .muted {
+  font-size: 12px;
+  line-height: 1.5;
+}
+.summary-band {
+  position: relative;
+}
+.summary-band-heading:has(.summary-identity:empty) {
+  position: absolute;
+  right: 24px;
+  top: 24px;
+  margin: 0;
+}
+.summary-band:has(.summary-identity:empty) .summary-fields {
+  padding-right: 108px;
+}
+.account-list-panel > .content-tools {
+  padding: 8px 16px;
+}
+.account-grid .account-face {
+  padding: 20px 0;
+}
+.account-grid .limit-legend > div:last-child strong {
+  font-size: 16px;
+}
+.party-list-summary .summary-value {
+  font-size: 24px;
+}
+.party-main > .summary-section {
+  width: 100%;
+}
+.party-list-summary .summary-label {
+  display: none;
+}
+.vehicle-workspace .vehicle-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-panel);
+  background: var(--surface-raised);
+  padding: 0 24px;
+}
+.vehicle-grid .vehicle-card {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 16px;
+  align-items: center;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  padding: 20px 0;
+}
+.vehicle-grid .vehicle-card:last-child {
+  border: 0;
+}
+.vehicle-card > header {
+  display: flex;
+  justify-content: center;
+  color: var(--brand);
+}
+.vehicle-card .card-local-actions {
+  display: none;
+}
+.vehicle-card-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px 24px;
+  width: 100%;
+  text-align: left;
+  min-width: 0;
+}
+.vehicle-card-main h2 {
+  grid-column: 1;
+  font-size: 16px;
+}
+.vehicle-card-main p {
+  grid-column: 1;
+  grid-row: 2;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.vehicle-card-main > strong {
+  grid-column: 2;
+  grid-row: 1;
+  font-size: 20px;
+}
+.vehicle-card-main > small {
+  grid-column: 2;
+  grid-row: 2;
+  font-size: 12px;
+  color: var(--muted);
+}
+.vehicle-overview-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.vehicle-overview-section {
+  width: 100%;
+  box-sizing: border-box;
+}
+.vehicle-overview-record {
+  display: grid;
+  grid-template-columns: minmax(135px, 0.9fr) minmax(130px, 1.1fr) minmax(
+      130px,
+      1fr
+    );
+  gap: 12px 20px;
+  align-items: start;
+}
+.vehicle-overview-record > header {
+  grid-column: 1;
+}
+.vehicle-summary-record-title {
+  grid-column: 1;
+  grid-row: 2;
+  margin: 0;
+}
+.vehicle-overview-record > dl {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  margin: 0;
+  gap: 12px;
+}
+.vehicle-overview-record > .vehicle-payment {
+  grid-column: 3;
+  grid-row: 1;
+}
+.vehicle-progress {
+  grid-column: 3;
+  grid-row: 2 / span 2;
+  min-width: 0;
+}
+.vehicle-progress progress {
+  width: 100%;
+  height: 6px;
+  display: block;
+  accent-color: var(--brand);
+  margin: 4px 0 8px;
+}
+.vehicle-progress.warning progress {
+  accent-color: var(--status-warning);
+}
+.vehicle-progress.danger progress {
+  accent-color: var(--red);
+}
+.vehicle-progress small {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.vehicle-overview-note {
+  margin-top: 0;
+}
+.vehicle-overview-record > .muted {
+  grid-column: 2/-1;
+  font-size: 12px;
+}
+.vehicle-record-expanded dl > div {
+  min-width: 0;
+}
+@media (max-width: 1100px) {
+  .vehicle-overview-record {
+    grid-template-columns: minmax(135px, 0.9fr) minmax(130px, 1.1fr) minmax(
+        130px,
+        1fr
+      );
+  }
+  .summary-band:has(.summary-identity:empty) .summary-fields {
+    padding-right: 108px;
+  }
+  .party-workspace .context-aside:has(.party-context) {
+    display: block;
+  }
+}
+@media (max-width: 760px) {
+  .finance-page .page-title,
+  .finance-page.account-page .page-title {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+  }
+  .finance-page .page-title > .cari-actions {
+    width: auto;
+    flex-shrink: 0;
+  }
+  .finance-page .page-title h1 {
+    font-size: 24px;
+  }
+  .page-heading-identity {
+    gap: 12px;
+  }
+  .party-context {
+    padding: 16px;
+  }
+  .party-main .cari-summary {
+    padding: 16px;
+  }
+  .party-list-summary .summary-fields {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+  }
+  .party-list-summary .summary-field {
+    padding: 0 8px;
+    border-left: 1px solid var(--line);
+  }
+  .party-list-summary .summary-field:first-child {
+    padding-left: 0;
+    border: 0;
+  }
+  .party-list-summary .summary-field:last-child {
+    padding-right: 0;
+  }
+  .party-list-summary .summary-value {
+    font-size: 18px;
+    overflow-wrap: normal;
+    white-space: normal;
+  }
+  .summary-band-heading:has(.summary-identity:empty) {
+    top: 16px;
+    right: 16px;
+  }
+  .summary-band:has(.summary-identity:empty) .summary-fields {
+    padding-right: 0;
+    padding-top: 44px;
+  }
+  .party-row {
+    grid-template-columns: minmax(0, 1fr) auto 12px !important;
+    gap: 8px !important;
+    padding: 16px !important;
+    min-height: 64px;
+  }
+  .party-row .cari-avatar,
+  .party-row .party-type {
+    display: none;
+  }
+  .party-row .party-name {
+    grid-column: 1;
+    min-width: 0;
+  }
+  .party-row .cari-number {
+    grid-column: 2;
+    white-space: nowrap;
+    font-size: 16px;
+  }
+  .party-row > svg {
+    grid-column: 3;
+  }
+  .party-row .party-name strong {
+    font-size: 14px;
+  }
+  .party-row .party-name small {
+    font-size: 12px;
+  }
+  .mobile-txn-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .mobile-txn-top > div {
+    min-width: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 8px;
+  }
+  .mobile-txn-kind {
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .mobile-txn-top time {
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+  .mobile-txn-top > strong {
+    font-size: 16px;
+    line-height: 1.5;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+  .mobile-txn-top strong small {
+    display: inline;
+    font-size: 12px;
+    font-weight: 400;
+    margin: 0;
+  }
+  .mobile-txn-description {
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 8px 0 0;
+    overflow-wrap: anywhere;
+  }
+  .mobile-txn-details {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px 12px;
+    flex-wrap: wrap;
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 12px;
+    line-height: 1.5;
+  }
+  .mobile-txn-details small {
+    font-size: 12px;
+    margin: 4px 0;
+  }
+  .mobile-txn-details strong {
+    font-weight: 500;
+  }
+  .mobile-running-balance {
+    margin-left: auto;
+    text-align: right;
+  }
+  .ledger-view .ledger-action-row > td {
+    display: block;
+    width: 100%;
+    padding: 0 !important;
+  }
+  .ledger-actions {
+    padding: 0 16px 12px;
+    gap: 8px;
+  }
+  .ledger-actions .icon-button {
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
+  }
+  .ledger-action-row td:before {
+    display: none;
+  }
+  .ledger-view .cari-table-scroll {
+    overflow-x: hidden;
+  }
+  .ledger-section-heading {
+    padding: 12px 16px;
+  }
+  .ledger-section-heading h2 {
+    font-size: 16px;
+  }
+  .account-grid .account-face > footer {
+    padding-right: 0;
+  }
+  .account-grid .limit-legend {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .account-workspace .recent-activity-row {
+    gap: 8px;
+  }
+  .recent-activity-row strong {
+    font-size: 14px;
+  }
+  .vehicle-workspace .vehicle-grid {
+    padding: 0 16px;
+  }
+  .vehicle-grid .vehicle-card {
+    gap: 12px;
+    grid-template-columns: 32px minmax(0, 1fr);
+  }
+  .vehicle-card-main {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .vehicle-card-main p {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .vehicle-card-main > strong {
+    grid-column: 1;
+    grid-row: 3;
+    font-size: 18px;
+  }
+  .vehicle-card-main > small {
+    grid-column: 1;
+    grid-row: 4;
+  }
+  .vehicle-overview-record {
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+  }
+  .vehicle-overview-record > header {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .vehicle-summary-record-title {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .vehicle-overview-record > dl {
+    grid-column: 1/-1;
+    grid-row: 3;
+    margin: 0;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .vehicle-overview-record > .vehicle-payment {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    text-align: right;
+    font-size: 12px;
+  }
+  .vehicle-progress {
+    grid-column: 1/-1;
+    grid-row: 4;
+  }
+  .vehicle-overview-section > header {
+    flex-wrap: wrap;
+  }
+  .vehicle-overview-record > .muted {
+    grid-column: 1/-1;
+  }
+  .vehicle-main .vehicle-record-row {
+    gap: 8px;
+    grid-template-columns: minmax(0, 1fr) minmax(85px, auto);
+  }
+  .vehicle-payment strong {
+    font-size: 14px;
+  }
+  .vehicle-records-heading {
+    flex-wrap: wrap;
+  }
+  .profile-fields {
+    padding: 12px;
+  }
+}
+@media (max-width: 350px) {
+  .mobile-txn-top {
+    gap: 8px;
+  }
+  .mobile-txn-top > strong {
+    font-size: 14px;
+  }
+  .vehicle-overview-record {
+    grid-template-columns: 1fr;
+  }
+  .vehicle-overview-record > .vehicle-payment {
+    grid-column: 1;
+    grid-row: 4;
+    text-align: left;
+  }
+  .vehicle-progress {
+    grid-row: 5;
+  }
+  .vehicle-overview-record > dl {
+    grid-template-columns: 1fr;
+  }
+  .party-list-summary .summary-value {
+    font-size: 16px;
+  }
+  .account-grid .limit-legend strong {
+    font-size: 12px;
+  }
+}
+.vehicle-overview-record > dl {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.vehicle-overview-record > dl > div:only-child {
+  grid-column: 1/-1;
+}
+@media (max-width: 760px) {
+  .finance-page.cari-page .page-title {
+    flex-wrap: nowrap;
+  }
+  .finance-page.cari-page .page-title > .cari-actions {
+    flex-basis: auto;
+    width: auto;
+  }
+  .finance-page.cari-page .page-heading-identity {
+    flex: 1;
+    min-width: 0;
+  }
+  .party-detail-summary:not(.is-open) .summary-field:not(:first-child) {
+    display: none;
+  }
+  .party-detail-summary:not(.is-open) .summary-fields {
+    display: block;
+    padding: 0 !important;
+  }
+  .party-detail-summary:not(.is-open) .summary-field:first-child {
+    padding: 0;
+    border: 0;
+  }
+  .party-detail-summary:not(.is-open) .summary-field:first-child > span {
+    padding-right: 104px;
+  }
+  .party-detail-summary:not(.is-open) .summary-primary .summary-value {
+    margin-top: 28px;
+    white-space: nowrap;
+    font-size: 27px;
+  }
+  .party-detail-summary .summary-value {
+    font-size: 20px;
+  }
+}
+@media (max-width: 760px) {
+  .party-list-summary .summary-field {
+    border-top: 0 !important;
+    margin-top: 0 !important;
+  }
+  .party-list-summary .summary-field:nth-child(3) {
+    border-left: 1px solid var(--line);
+    padding: 0 0 0 8px;
+  }
+  .party-list-summary .summary-field > span {
+    font-size: 12px;
+  }
+  .party-list-summary .summary-value {
+    line-height: 1.5;
+  }
+  .party-detail-summary .summary-field > span {
+    line-height: 1.5;
+  }
+}
+.mobile-party-type {
+  display: none !important;
+}
+@media (max-width: 760px) {
+  .party-row .mobile-party-type {
+    display: block !important;
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 4px;
+  }
+}
+@media (max-width: 760px) {
+  .finance-page.cari-page .page-title.party-detail-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: nowrap;
+  }
+  .finance-page.cari-page .page-title.party-detail-header > .cari-actions {
+    flex: 0 0 auto;
+    align-self: center;
+  }
+  .vehicle-overview-record > dl > div {
+    min-width: 0;
+  }
+}
+@media (max-width: 760px) {
+  .vehicle-detail-summary .summary-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 0;
+  }
+  .vehicle-detail-summary .summary-field {
+    padding: 4px 12px;
+    border-top: 0;
+    margin: 0;
+    border-left: 1px solid var(--line);
+  }
+  .vehicle-detail-summary .summary-field:nth-child(odd) {
+    border-left: 0;
+    padding-left: 0;
+  }
+  .vehicle-detail-summary .summary-field:nth-child(even) {
+    padding-right: 0;
+  }
+  .vehicle-detail-summary .summary-value {
+    font-size: 18px;
+    margin: 8px 0;
+  }
+}
 
 /* 1.12: visible desktop cells own the continuous selected-record stripe. */
-@media(min-width:761px){.ledger-view .expanded td:first-child{box-shadow:none}.ledger-view .expanded td[data-label="Tarih"]{box-shadow:inset 3px 0 0 var(--brand)}}
-.flow-panel{display:flex;flex-direction:column}.flow-panel .chart{height:auto;min-height:240px;max-height:360px;flex:1 1 300px}.flow-panel .panel-foot{margin-top:auto}
-@media(max-width:1100px){.flow-panel .chart{height:260px;flex:none}}
-@media(max-width:760px){.flow-panel .chart{height:220px;min-height:220px}}
-.global-search-suggestions{padding:16px}.search-category{padding:12px 0;border-bottom:1px solid var(--line)}.search-category header{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:8px}.search-category h2,.search-category h3{font-size:var(--text-section);font-weight:600}.search-category header>span{color:var(--muted);font-size:var(--text-small)}.search-result{display:block;text-decoration:none;color:var(--ink);padding:12px 8px;min-height:44px;border-radius:var(--radius-control);overflow-wrap:anywhere}.search-result:hover,.search-result:focus,.search-result.is-selected{background:var(--palette-e9f4f5);outline:2px solid var(--brand);outline-offset:-2px}.search-result strong,.search-result small{display:block}.search-result strong{font-size:var(--text-body);font-weight:500}.search-result small{font-size:var(--text-small);color:var(--muted);margin-top:4px;line-height:1.5}.all-search-results{margin-top:16px;min-height:44px}.search-results-panel{padding:24px}.search-results-panel .search-category{padding:20px 0}
-.mobile-card-summary{display:none}
-@media(max-width:760px){.desktop-card-summary{display:none}.mobile-card-summary{display:block}.mobile-card-main{position:relative;padding-top:4px}.mobile-card-main>span{display:block;padding-right:108px;color:var(--muted);font-size:var(--text-small)}.mobile-card-main>.card-local-actions{position:absolute;right:0;top:0}.mobile-card-main>.card-local-actions button{width:44px;height:44px}.mobile-card-main>strong{display:block;font-size:var(--text-value);line-height:1.4;font-weight:600;margin:12px 0 4px;font-variant-numeric:tabular-nums}.mobile-card-main small{font-size:var(--text-small)}.mobile-card-main>small{color:var(--muted)}.mobile-card-main .limit-bar{margin:12px 0 16px}.mobile-card-metrics{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;padding-bottom:16px}.mobile-card-metrics>div+div{border-left:1px solid var(--line);padding-left:12px}.mobile-card-metrics span,.mobile-card-metrics small,.card-payment-line span{display:block;color:var(--muted);font-size:var(--text-small);line-height:1.5}.mobile-card-metrics strong{display:block;font-size:var(--text-section);font-weight:500;margin:6px 0;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}.mobile-card-metrics strong small{display:inline}.card-payment-line{padding:12px 0;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px}.card-payment-line strong{display:block;font-size:var(--text-body);margin-top:4px}.card-payment-line.danger-text span{color:inherit}.card-payment-line button{min-height:44px;white-space:nowrap}.card-more{border-top:1px solid var(--line);padding-top:4px}.card-more summary{min-height:44px;display:flex;align-items:center;justify-content:space-between;font-size:var(--text-body);cursor:pointer}.card-more summary:after{content:'+'}.card-more[open] summary:after{content:'−'}.card-more dl>div{display:flex;justify-content:space-between;gap:16px;padding:8px 0;font-size:var(--text-small)}.card-more dt{color:var(--muted)}.card-more dd{margin:0;text-align:right;overflow-wrap:anywhere}}
-.drawer.finance-sheet:has(.entry-form){width:600px}.entry-form .cari-field{margin-bottom:16px}.entry-form .entry-section{padding-bottom:16px;margin-bottom:16px}.entry-form .entry-fold{padding-bottom:12px;margin-bottom:12px}.entry-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
-@media(max-width:760px){.drawer.finance-sheet:has(.entry-form){width:100%}.entry-row{grid-template-columns:minmax(0,1fr);gap:0}}
-.global-search-suggestions .all-search-results{position:sticky;bottom:-16px;background:var(--surface-raised);width:100%;padding:12px 0;text-align:left;border-top:1px solid var(--line)}
-.settings-page>.summary-section{margin-bottom:24px}.backup-list,.settings-module{padding:24px;min-width:0}.backup-list>header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}.backup-list h2,.settings-module h2{font-size:var(--text-section);font-weight:600;margin:0 0 12px}.backup-list header p,.settings-module p,.backup-note{font-size:var(--text-small);line-height:1.5;color:var(--muted)}.backup-import{padding:20px 0;border-bottom:1px solid var(--line)}.backup-import small{display:block;font-size:var(--text-small);color:var(--muted);margin-top:12px;line-height:1.5}.backup-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 0;border-bottom:1px solid var(--line)}.backup-row>div:first-child{min-width:0}.backup-row strong{font-size:var(--text-body);font-weight:500}.backup-row small{display:block;font-size:var(--text-small);color:var(--muted);margin-top:6px;line-height:1.5}.backup-row-actions{display:flex;gap:8px;flex-shrink:0}.backup-row-actions button{min-height:44px}.backup-note{margin-top:20px}.settings-module form{padding:0}.settings-module form p{margin:12px 0}.settings-module>p{margin:12px 0}.settings-module .cari-field select{width:100%;min-height:44px}.sidebar-bottom button.active{background:var(--palette-dfeff1);color:var(--brand)}
-@media(max-width:760px){.backup-list,.settings-module{padding:16px}.backup-row{align-items:flex-start;flex-direction:column;gap:12px}.backup-row-actions{align-self:flex-end}.settings-page .page-title{flex-direction:row;align-items:center}.settings-page .page-title .cari-actions{width:auto}.settings-page .page-title .primary-button{white-space:nowrap}.backup-import .secondary-button{max-width:100%;flex-wrap:wrap}.settings-page>.summary-section{margin-bottom:16px}}
+@media (min-width: 761px) {
+  .ledger-view .expanded td:first-child {
+    box-shadow: none;
+  }
+  .ledger-view .expanded td[data-label="Tarih"] {
+    box-shadow: inset 3px 0 0 var(--brand);
+  }
+}
+.flow-panel {
+  display: flex;
+  flex-direction: column;
+}
+.flow-panel .chart {
+  height: auto;
+  min-height: 240px;
+  max-height: 360px;
+  flex: 1 1 300px;
+}
+.flow-panel .panel-foot {
+  margin-top: auto;
+}
+@media (max-width: 1100px) {
+  .flow-panel .chart {
+    height: 260px;
+    flex: none;
+  }
+}
+@media (max-width: 760px) {
+  .flow-panel .chart {
+    height: 220px;
+    min-height: 220px;
+  }
+}
+.global-search-suggestions {
+  padding: 16px;
+}
+.search-category {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.search-category header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.search-category h2,
+.search-category h3 {
+  font-size: var(--text-section);
+  font-weight: 600;
+}
+.search-category header > span {
+  color: var(--muted);
+  font-size: var(--text-small);
+}
+.search-result {
+  display: block;
+  text-decoration: none;
+  color: var(--ink);
+  padding: 12px 8px;
+  min-height: 44px;
+  border-radius: var(--radius-control);
+  overflow-wrap: anywhere;
+}
+.search-result:hover,
+.search-result:focus,
+.search-result.is-selected {
+  background: var(--palette-e9f4f5);
+  outline: 2px solid var(--brand);
+  outline-offset: -2px;
+}
+.search-result strong,
+.search-result small {
+  display: block;
+}
+.search-result strong {
+  font-size: var(--text-body);
+  font-weight: 500;
+}
+.search-result small {
+  font-size: var(--text-small);
+  color: var(--muted);
+  margin-top: 4px;
+  line-height: 1.5;
+}
+.all-search-results {
+  margin-top: 16px;
+  min-height: 44px;
+}
+.search-results-panel {
+  padding: 24px;
+}
+.search-results-panel .search-category {
+  padding: 20px 0;
+}
+.mobile-card-summary {
+  display: none;
+}
+@media (max-width: 760px) {
+  .desktop-card-summary {
+    display: none;
+  }
+  .mobile-card-summary {
+    display: block;
+  }
+  .mobile-card-main {
+    position: relative;
+    padding-top: 4px;
+  }
+  .mobile-card-main > span {
+    display: block;
+    padding-right: 108px;
+    color: var(--muted);
+    font-size: var(--text-small);
+  }
+  .mobile-card-main > .card-local-actions {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  .mobile-card-main > .card-local-actions button {
+    width: 44px;
+    height: 44px;
+  }
+  .mobile-card-main > strong {
+    display: block;
+    font-size: var(--text-value);
+    line-height: 1.4;
+    font-weight: 600;
+    margin: 12px 0 4px;
+    font-variant-numeric: tabular-nums;
+  }
+  .mobile-card-main small {
+    font-size: var(--text-small);
+  }
+  .mobile-card-main > small {
+    color: var(--muted);
+  }
+  .mobile-card-main .limit-bar {
+    margin: 12px 0 16px;
+  }
+  .mobile-card-metrics {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 12px;
+    padding-bottom: 16px;
+  }
+  .mobile-card-metrics > div + div {
+    border-left: 1px solid var(--line);
+    padding-left: 12px;
+  }
+  .mobile-card-metrics span,
+  .mobile-card-metrics small,
+  .card-payment-line span {
+    display: block;
+    color: var(--muted);
+    font-size: var(--text-small);
+    line-height: 1.5;
+  }
+  .mobile-card-metrics strong {
+    display: block;
+    font-size: var(--text-section);
+    font-weight: 500;
+    margin: 6px 0;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+  }
+  .mobile-card-metrics strong small {
+    display: inline;
+  }
+  .card-payment-line {
+    padding: 12px 0;
+    border-top: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .card-payment-line strong {
+    display: block;
+    font-size: var(--text-body);
+    margin-top: 4px;
+  }
+  .card-payment-line.danger-text span {
+    color: inherit;
+  }
+  .card-payment-line button {
+    min-height: 44px;
+    white-space: nowrap;
+  }
+  .card-more {
+    border-top: 1px solid var(--line);
+    padding-top: 4px;
+  }
+  .card-more summary {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: var(--text-body);
+    cursor: pointer;
+  }
+  .card-more summary:after {
+    content: "+";
+  }
+  .card-more[open] summary:after {
+    content: "−";
+  }
+  .card-more dl > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 8px 0;
+    font-size: var(--text-small);
+  }
+  .card-more dt {
+    color: var(--muted);
+  }
+  .card-more dd {
+    margin: 0;
+    text-align: right;
+    overflow-wrap: anywhere;
+  }
+}
+.drawer.finance-sheet:has(.entry-form) {
+  width: 600px;
+}
+.entry-form .cari-field {
+  margin-bottom: 16px;
+}
+.entry-form .entry-section {
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+}
+.entry-form .entry-fold {
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+}
+.entry-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+}
+@media (max-width: 760px) {
+  .drawer.finance-sheet:has(.entry-form) {
+    width: 100%;
+  }
+  .entry-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+}
+.global-search-suggestions .all-search-results {
+  position: sticky;
+  bottom: -16px;
+  background: var(--surface-raised);
+  width: 100%;
+  padding: 12px 0;
+  text-align: left;
+  border-top: 1px solid var(--line);
+}
+.settings-page > .summary-section {
+  margin-bottom: 24px;
+}
+.backup-list,
+.settings-module {
+  padding: 24px;
+  min-width: 0;
+}
+.backup-list > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.backup-list h2,
+.settings-module h2 {
+  font-size: var(--text-section);
+  font-weight: 600;
+  margin: 0 0 12px;
+}
+.backup-list header p,
+.settings-module p,
+.backup-note {
+  font-size: var(--text-small);
+  line-height: 1.5;
+  color: var(--muted);
+}
+.backup-import {
+  padding: 20px 0;
+  border-bottom: 1px solid var(--line);
+}
+.backup-import small {
+  display: block;
+  font-size: var(--text-small);
+  color: var(--muted);
+  margin-top: 12px;
+  line-height: 1.5;
+}
+.backup-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--line);
+}
+.backup-row > div:first-child {
+  min-width: 0;
+}
+.backup-row strong {
+  font-size: var(--text-body);
+  font-weight: 500;
+}
+.backup-row small {
+  display: block;
+  font-size: var(--text-small);
+  color: var(--muted);
+  margin-top: 6px;
+  line-height: 1.5;
+}
+.backup-row-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.backup-row-actions button {
+  min-height: 44px;
+}
+.backup-note {
+  margin-top: 20px;
+}
+.settings-module form {
+  padding: 0;
+}
+.settings-module form p {
+  margin: 12px 0;
+}
+.settings-module > p {
+  margin: 12px 0;
+}
+.settings-module .cari-field select {
+  width: 100%;
+  min-height: 44px;
+}
+.sidebar-bottom button.active {
+  background: var(--palette-dfeff1);
+  color: var(--brand);
+}
+@media (max-width: 760px) {
+  .backup-list,
+  .settings-module {
+    padding: 16px;
+  }
+  .backup-row {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .backup-row-actions {
+    align-self: flex-end;
+  }
+  .settings-page .page-title {
+    flex-direction: row;
+    align-items: center;
+  }
+  .settings-page .page-title .cari-actions {
+    width: auto;
+  }
+  .settings-page .page-title .primary-button {
+    white-space: nowrap;
+  }
+  .backup-import .secondary-button {
+    max-width: 100%;
+    flex-wrap: wrap;
+  }
+  .settings-page > .summary-section {
+    margin-bottom: 16px;
+  }
+}
 
-.backup-error p{margin:0 0 12px;line-height:1.5}.backup-error code{display:block;overflow-wrap:anywhere;white-space:normal;margin-bottom:12px}.backup-error .secondary-button{min-height:44px}
+.backup-error p {
+  margin: 0 0 12px;
+  line-height: 1.5;
+}
+.backup-error code {
+  display: block;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  margin-bottom: 12px;
+}
+.backup-error .secondary-button {
+  min-height: 44px;
+}

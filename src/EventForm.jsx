@@ -1,90 +1,975 @@
-import {EntrySurface} from './EntrySurface';
-import {EntryForm,FormSection} from './EntryForm';
-import {MoneyInput} from './MoneyInput';
-import {Check,X,LoaderCircle} from 'lucide-react';
-import {useState,useEffect,useLayoutEffect,useId} from 'react';
-import {createPortal} from 'react-dom';
-import {api, requestId} from './api';
-import { fmt} from './ui';
-import {DatePicker} from './DatePicker';
-import {formatMoneyInput, normalizeMoney} from './list-utils.mjs';
-import {operations, partyOptions, isInvoice} from './operations.mjs';
-import {operationDirection} from './account-utils.mjs';
-const money=n=>formatMoneyInput(String((n||0)/100).replace('.',','));
-export function EventForm({context,data,onClose,onState,notify}){
- const formId=useId(),[ready,setReady]=useState(false);useLayoutEffect(()=>setReady(true),[]);
- const place=(name,node)=>context.inline&&ready&&document.getElementById(context.slotPrefix+'-'+name)?createPortal(node,document.getElementById(context.slotPrefix+'-'+name)):node;
- const e=context.item||{},init=context.initial||{},locked=context.lockedPartyId||e.party_id||null;
- const fixedCard=context.lockedCardId||init.cardId||null;
- const initialParty=locked||init.partyId||'';const p=data.parties.find(p=>p.id===Number(initialParty));
- const guessed=init.kind==='Kart ödemesi'?'card_payment':p&&!init.linkedId?partyOptions(p.type)[0]:p?init.kind==='Ödeme'?'payment':'collection':init.kind==='Tahsilat'?'income':init.kind==='Virman'?'transfer':init.kind==='Kart iadesi'?'refund':'expense';
- const initialForm=()=>({partyId:initialParty,operation:e.operation||init.operation||guessed,amount:e.id?money(e.amount_cents):formatMoneyInput(init.amount||''),settled:money(e.settled_cents),date:init.date||e.event_date||data.today,time:e.event_time||new Date().toLocaleTimeString('tr-TR',{hour12:false,timeZone:'Europe/Istanbul'}),due:e.due_date||'',description:e.description||init.description||'',tag:e.tag||'Genel',account:e.account_id||init.account||data.accounts.find(a=>a.active)?.id||'',cardId:e.card_id||init.cardId||'',target:e.target_id||data.accounts.find(a=>a.active&&a.id!==init.account)?.id||'',targetCardId:e.target_card_id||'',periodDate:e.period_date||init.periodDate||data.today,linkedId:e.linked_id||init.linkedId||'',returnMode:e.return_mode||'offset',paymentPurpose:e.payment_purpose||'Maaş',scheduled:init.scheduled!==undefined?Boolean(init.scheduled):Boolean(e.scheduled),direction:e.direction||'Alacak',document:e.document_no||'',reason:'',installments:1,requestId:requestId(),id:e.id,version:e.version,immediate:Boolean(e.settled_cents)});
- const [f,setF]=useState(initialForm);
- const [busy,setBusy]=useState(false),[error,setError]=useState(''),[paymentMode,setPaymentMode]=useState(e.settled_cents&&e.settled_cents<e.amount_cents?'partial':'full');
- useEffect(()=>{context.onBusy?.(busy)},[busy]);
- const change=(k,v)=>setF(s=>({...s,[k]:v}));const party=data.parties.find(p=>p.id===Number(f.partyId));
- let opts=party?partyOptions(party.type):['expense','income','refund','transfer'];
- if(fixedCard&&!party)opts=['expense','refund','card_payment','cash_advance'];
- if(e.operation==='employee_expense')opts=opts.map(x=>x==='employee_purchase'?'employee_expense':x);
- if(f.operation==='collection'&&party?.type==='Tedarikçi'&&f.linkedId)opts=['collection'];if(f.operation==='return_payment')opts=['return_payment'];
- if(f.operation==='opening')opts=context.inline&&party?['opening',...opts]:['opening'];
- if(context.inline&&e.operation!=='card_transfer'&&!opts.includes(e.operation))opts=[e.operation,...opts];
- const amountInput=(key,label,required=false)=>place(key,<label className="cari-field">{label}<MoneyInput name={key} required={required} value={f[key]} onValueChange={v=>change(key,v)}/></label>);
- const select=(key,label,options)=><label className="cari-field">{label}<select aria-label={label} value={String(f[key]??'')} onChange={ev=>{if(key==='partyId'){const p=data.parties.find(p=>p.id===Number(ev.target.value));setF(s=>({...s,partyId:ev.target.value,operation:p?partyOptions(p.type)[0]:'expense',immediate:Boolean(fixedCard&&p&&isInvoice(partyOptions(p.type)[0])),settled:'0',scheduled:false}))}else if(key==='operation'&&context.inline)choose(ev.target.value);else change(key,ev.target.value)}}>{options.map(([v,t])=><option key={v} value={v}>{t}</option>)}</select></label>;
- const accounts=data.accounts.filter(a=>a.active).map(a=>[a.id,a.name]);const cards=data.cards.filter(c=>c.active).map(c=>['card:'+c.id,c.name+' · Kart']);
- const accountValue=f.cardId?'card:'+f.cardId:f.account;
- const accountSelect=<label className="cari-field">İşlem hesabı *<select name="account" aria-label="İşlem hesabı *" required value={accountValue} onChange={ev=>{const v=ev.target.value;setF(s=>({...s,account:v.startsWith('card:')?'':v,cardId:v.startsWith('card:')?Number(v.slice(5)):''}))}}><option value="">Hesap seçin</option>{[...accounts,...cards].map(([v,t])=><option key={v} value={v}>{t}</option>)}</select></label>;
- const invoice=isInvoice(f.operation),borcland=['employee_purchase','employee_expense'].includes(f.operation),transfer=['transfer','card_payment','cash_advance','card_transfer'].includes(f.operation);
- const invoiceReturn=['supplier_return','customer_return'].includes(f.operation);
- const needsAccount=(!invoice&&!['salary','employee_purchase','opening'].includes(f.operation))||f.immediate;
- function choose(op){if(context.inline&&['purchase_invoice','purchase_no_invoice'].includes(op)&&['purchase_invoice','purchase_no_invoice'].includes(f.operation)){change('operation',op);return}if(!context.inline&&op!==f.operation&&(f.immediate||f.linkedId||Number(f.installments)>1)&&!window.confirm('İşlem türü değişince ödeme ve taksit seçimleri sıfırlanacak. Devam edilsin mi?'))return;setPaymentMode('full');setF(s=>({...s,operation:op,immediate:Boolean(fixedCard&&isInvoice(op)),settled:'0',scheduled:context.inline&&!party?s.scheduled:false,linkedId:'',installments:1,...(context.inline?{account:'',cardId:fixedCard||'',target:'',due:s.scheduled?s.due:''}:{})}));}
- async function save(ev){ev.preventDefault();if(busy)return;setBusy(true);setError('');try{
-  let b={...f,...(fixedCard?{cardId:fixedCard,lockedCardId:fixedCard}:{}),partyId:locked||f.partyId,lockedPartyId:locked,amount:normalizeMoney(f.amount),settled:invoice&&f.immediate?normalizeMoney(paymentMode==='full'?f.amount:f.settled):'0'};
-  if(transfer){b.partyId='';b.lockedPartyId=null;}
-  if(invoice&&f.immediate&&paymentMode==='partial'&&decimal(f.settled)>decimal(f.amount)){setError('Kısmi ödeme işlem tutarını aşamaz.');return;}const r=await api('event_save',b);onState(r.state);notify('İşlem kaydedildi',f.description||operations[f.operation]);if(context.persistent){setF(initialForm());setPaymentMode('full')}else onClose();
- }catch(err){setError(err.message)}finally{setBusy(false)}}
- const title=(e.id?'İşlemi düzenle':'İşlem ekle')+(locked?' · '+(party?.name||''):'');
- const decimal=value=>Number(normalizeMoney(value).replace(',','.'));
- const total=decimal(f.amount),paid=f.immediate?(paymentMode==='full'?total:decimal(f.settled)):0;
- const effect=()=>{if(!Number.isFinite(total)||total<=0)return 'Tutarı ve ilgili hesabı seçtiğinizde işlem etkisi burada gösterilir.';const text=fmt(Math.round(total*100))+' TL';const account=data.accounts.find(a=>String(a.id)===String(f.account))?.name;const card=data.cards.find(c=>String(c.id)===String(f.cardId))?.name;
- if(f.scheduled)return 'Plan kaydedilir; şimdi bakiye değişmez.';
- if(f.operation==='salary')return 'Personele '+text+' maaş hak edişi eklenir; banka/kasadan para çıkmaz.';
- if(f.operation==='employee_purchase')return 'Personelin borcu '+text+' artar; banka/kasadan para çıkmaz.';
- if(f.operation==='transfer')return account&&f.target?account+' hesabından '+text+' aktarılır; toplam nakit değişmez.':'Kaynak ve hedef hesabı seçin.';
- if(f.operation==='card_payment')return account&&card?account+' hesabından '+text+' çıkar; '+card+' borcuna ödeme uygulanır.':'Ödeme hesabı ve kartı seçin.';
- if(f.operation==='cash_advance')return account&&card?card+' borcu artar; '+account+' hesabına '+text+' girer.':'Kaynak kartı ve hedef hesabı seçin.';
- if(f.operation==='card_transfer')return 'Kartlar arasında '+text+' borç aktarılır; banka/kasada nakit hareketi olmaz.';
- if(invoice){const purchase=['purchase_invoice','purchase_no_invoice'].includes(f.operation),sale=f.operation==='sale';if(purchase||sale){const remainder=Math.max(0,total-(Number.isFinite(paid)?paid:0));return (purchase?'Bu alıştan ':'Bu satıştan ')+fmt(Math.round(remainder*100))+' TL açık '+(purchase?'borç':'alacak')+' kalır.'+(f.immediate?' '+(card?card+' kartında işlem oluşur.':account?account+' hesabında '+fmt(Math.round(paid*100))+' TL '+(purchase?'çıkış':'giriş')+' oluşur.':'İşlem hesabını seçin.'):' Şimdi banka/kasa hareketi oluşmaz.')}return f.immediate?'İade tutarı seçilen hesap/kartta işlenir ve cari etkisi uygulanır.':f.returnMode==='later'?'İade için sonradan ödeme/tahsilat takibi açılır; şimdi nakit hareketi oluşmaz.':'İade cari bakiyeye uygulanır; şimdi nakit hareketi oluşmaz.';}
- if(card)return f.operation==='refund'?card+' borcu '+text+' azalır; banka/kasadan para çıkmaz.':card+' borcu '+text+' artar; banka/kasadan para çıkmaz.';
- return account?account+' hesabında '+text+' '+(['income','refund','collection'].includes(f.operation)?'giriş':'çıkış')+' oluşur.'+(party?' Cari etkisi işlem türüne göre uygulanır.':''):'İşlem hesabını seçin.';};
- return <EntrySurface variant={context.inline?'inline':'dock'} externalFormId={formId} collapsible={Boolean(context.persistent)} autoFocus={!context.persistent&&!context.inline} resetKey={f.requestId+String(ready)} title={title} onClose={()=>!busy&&onClose()} busy={busy}><EntryForm id={formId} onSubmit={save}><div className="sheet-scroll"><FormSection title="İşlem bilgileri">
- {!locked&&select('partyId','Cari (isteğe bağlı)',[['','Bağımsız işlem'],...data.parties.filter(p=>p.active).map(p=>[p.id,p.name])])}
- {place('operation',<label className="cari-field">İşlem<select aria-label="İşlem" value={fixedCard||context.inline?f.operation:transfer?'transfer':f.operation} onChange={ev=>choose(ev.target.value)}>{opts.map(op=><option value={op} key={op}>{operations[op]}</option>)}</select></label>)}
-{place('description',<label className="cari-field">Açıklama (isteğe bağlı)<input name="description" value={f.description} maxLength={1000} onChange={ev=>change('description',ev.target.value)}/></label>)}
- {borcland&&select('operation','Borçlandırma şekli',[['employee_purchase','İşletmeden alışveriş'],['employee_expense','Personel adına ödeme']])}
- {amountInput('amount','Tutar (TL) *',true)}
- {place('date',<label className="cari-field compact-date"><span className="sr-only">İşlem tarihi *</span><DatePicker iconOnly={!context.inline} value={f.date} today={data.today} required max={f.scheduled?undefined:data.today} onChange={v=>setF(s=>({...s,date:v,periodDate:s.periodDate===s.date?v:s.periodDate}))} label="İşlem tarihi"/></label>)}{!fixedCard&&!transfer&&needsAccount&&accountSelect}{invoice&&f.immediate&&paymentMode==='partial'&&amountInput('settled',f.operation==='sale'||f.operation==='supplier_return'?'Şimdi tahsil edilen (TL) *':'Şimdi ödenen (TL) *',true)}</FormSection><FormSection title="Ödeme ve hesap bilgileri" optional={!transfer&&!context.inline} open>
- {invoice&&<label className="cari-field">{invoiceReturn?'İade bedeli':'Ödeme / tahsilat'}<select value={f.immediate?paymentMode:invoiceReturn&&f.returnMode==='later'?'later':'open'} onChange={ev=>{const value=ev.target.value;setPaymentMode(value==='partial'?'partial':'full');setF(s=>({...s,returnMode:value==='later'?'later':'offset',immediate:['full','partial'].includes(value),settled:value==='full'?s.amount:value==='partial'?'':'0'}))}}>{!fixedCard&&<option value="open">{invoiceReturn?(f.operation==='supplier_return'?'Borçtan düş / caride bırak':'Cari hesaptan düş'):'Açık hesaba ekle'}</option>}<option value="full">{invoiceReturn?(f.operation==='supplier_return'?'Bedelin tamamını tahsil et':'Bedelin tamamını geri öde'):f.operation==='sale'?'Tamamını tahsil et':'Tamamını öde'}</option><option value="partial">{f.operation==='sale'||f.operation==='supplier_return'?'Kısmen tahsil et':'Kısmen öde'}</option>{invoiceReturn&&!fixedCard&&<option value="later">{f.operation==='supplier_return'?'Sonra tahsil et':'Sonra geri öde'}</option>}</select></label>}
+import { EntrySurface } from "./EntrySurface";
+import { EntryForm, FormSection } from "./EntryForm";
+import { MoneyInput } from "./MoneyInput";
+import { Check, X, LoaderCircle } from "lucide-react";
+import { useState, useEffect, useLayoutEffect, useId } from "react";
+import { createPortal } from "react-dom";
+import { api, requestId } from "./api";
+import { fmt } from "./ui";
+import { DatePicker } from "./DatePicker";
+import { formatMoneyInput, normalizeMoney } from "./list-utils.mjs";
+import { operations, partyOptions, isInvoice } from "./operations.mjs";
+import { operationDirection } from "./account-utils.mjs";
+const money = (n) => formatMoneyInput(String((n || 0) / 100).replace(".", ","));
+export function EventForm({ context, data, onClose, onState, notify }) {
+  const formId = useId(),
+    [ready, setReady] = useState(false);
+  useLayoutEffect(() => setReady(true), []);
+  const place = (name, node) =>
+    context.inline &&
+    ready &&
+    document.getElementById(context.slotPrefix + "-" + name)
+      ? createPortal(
+          node,
+          document.getElementById(context.slotPrefix + "-" + name),
+        )
+      : node;
+  const e = context.item || {},
+    init = context.initial || {},
+    locked = context.lockedPartyId || e.party_id || null;
+  const fixedCard = context.lockedCardId || init.cardId || null;
+  const initialParty = locked || init.partyId || "";
+  const p = data.parties.find((p) => p.id === Number(initialParty));
+  const guessed =
+    init.kind === "Kart ödemesi"
+      ? "card_payment"
+      : p && !init.linkedId
+        ? partyOptions(p.type)[0]
+        : p
+          ? init.kind === "Ödeme"
+            ? "payment"
+            : "collection"
+          : init.kind === "Tahsilat"
+            ? "income"
+            : init.kind === "Virman"
+              ? "transfer"
+              : init.kind === "Kart iadesi"
+                ? "refund"
+                : "expense";
+  const initialForm = () => ({
+    partyId: initialParty,
+    operation: e.operation || init.operation || guessed,
+    amount: e.id ? money(e.amount_cents) : formatMoneyInput(init.amount || ""),
+    settled: money(e.settled_cents),
+    date: init.date || e.event_date || data.today,
+    time:
+      e.event_time ||
+      new Date().toLocaleTimeString("tr-TR", {
+        hour12: false,
+        timeZone: "Europe/Istanbul",
+      }),
+    due: e.due_date || "",
+    description: e.description || init.description || "",
+    tag: e.tag || "Genel",
+    account:
+      e.account_id ||
+      init.account ||
+      data.accounts.find((a) => a.active)?.id ||
+      "",
+    cardId: e.card_id || init.cardId || "",
+    target:
+      e.target_id ||
+      data.accounts.find((a) => a.active && a.id !== init.account)?.id ||
+      "",
+    targetCardId: e.target_card_id || "",
+    periodDate: e.period_date || init.periodDate || data.today,
+    linkedId: e.linked_id || init.linkedId || "",
+    returnMode: e.return_mode || "offset",
+    paymentPurpose: e.payment_purpose || "Maaş",
+    scheduled:
+      init.scheduled !== undefined
+        ? Boolean(init.scheduled)
+        : Boolean(e.scheduled),
+    direction: e.direction || "Alacak",
+    document: e.document_no || "",
+    reason: "",
+    installments: 1,
+    requestId: requestId(),
+    id: e.id,
+    version: e.version,
+    immediate: Boolean(e.settled_cents),
+  });
+  const [f, setF] = useState(initialForm);
+  const [busy, setBusy] = useState(false),
+    [error, setError] = useState(""),
+    [paymentMode, setPaymentMode] = useState(
+      e.settled_cents && e.settled_cents < e.amount_cents ? "partial" : "full",
+    );
+  useEffect(() => {
+    context.onBusy?.(busy);
+  }, [busy]);
+  const change = (k, v) => setF((s) => ({ ...s, [k]: v }));
+  const party = data.parties.find((p) => p.id === Number(f.partyId));
+  let opts = party
+    ? partyOptions(party.type)
+    : ["expense", "income", "refund", "transfer"];
+  if (fixedCard && !party)
+    opts = ["expense", "refund", "card_payment", "cash_advance"];
+  if (e.operation === "employee_expense")
+    opts = opts.map((x) =>
+      x === "employee_purchase" ? "employee_expense" : x,
+    );
+  if (f.operation === "collection" && party?.type === "Tedarikçi" && f.linkedId)
+    opts = ["collection"];
+  if (f.operation === "return_payment") opts = ["return_payment"];
+  if (f.operation === "opening")
+    opts = context.inline && party ? ["opening", ...opts] : ["opening"];
+  if (
+    context.inline &&
+    e.operation !== "card_transfer" &&
+    !opts.includes(e.operation)
+  )
+    opts = [e.operation, ...opts];
+  const amountInput = (key, label, required = false) =>
+    place(
+      key,
+      <label className="cari-field">
+        {label}
+        <MoneyInput
+          name={key}
+          required={required}
+          value={f[key]}
+          onValueChange={(v) => change(key, v)}
+        />
+      </label>,
+    );
+  const select = (key, label, options) => (
+    <label className="cari-field">
+      {label}
+      <select
+        aria-label={label}
+        value={String(f[key] ?? "")}
+        onChange={(ev) => {
+          if (key === "partyId") {
+            const p = data.parties.find(
+              (p) => p.id === Number(ev.target.value),
+            );
+            setF((s) => ({
+              ...s,
+              partyId: ev.target.value,
+              operation: p ? partyOptions(p.type)[0] : "expense",
+              immediate: Boolean(
+                fixedCard && p && isInvoice(partyOptions(p.type)[0]),
+              ),
+              settled: "0",
+              scheduled: false,
+            }));
+          } else if (key === "operation" && context.inline)
+            choose(ev.target.value);
+          else change(key, ev.target.value);
+        }}
+      >
+        {options.map(([v, t]) => (
+          <option key={v} value={v}>
+            {t}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+  const accounts = data.accounts
+    .filter((a) => a.active)
+    .map((a) => [a.id, a.name]);
+  const cards = data.cards
+    .filter((c) => c.active)
+    .map((c) => ["card:" + c.id, c.name + " · Kart"]);
+  const accountValue = f.cardId ? "card:" + f.cardId : f.account;
+  const accountSelect = (
+    <label className="cari-field">
+      İşlem hesabı *
+      <select
+        name="account"
+        aria-label="İşlem hesabı *"
+        required
+        value={accountValue}
+        onChange={(ev) => {
+          const v = ev.target.value;
+          setF((s) => ({
+            ...s,
+            account: v.startsWith("card:") ? "" : v,
+            cardId: v.startsWith("card:") ? Number(v.slice(5)) : "",
+          }));
+        }}
+      >
+        <option value="">Hesap seçin</option>
+        {[...accounts, ...cards].map(([v, t]) => (
+          <option key={v} value={v}>
+            {t}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+  const invoice = isInvoice(f.operation),
+    borcland = ["employee_purchase", "employee_expense"].includes(f.operation),
+    transfer = [
+      "transfer",
+      "card_payment",
+      "cash_advance",
+      "card_transfer",
+    ].includes(f.operation);
+  const invoiceReturn = ["supplier_return", "customer_return"].includes(
+    f.operation,
+  );
+  const needsAccount =
+    (!invoice &&
+      !["salary", "employee_purchase", "opening"].includes(f.operation)) ||
+    f.immediate;
+  function choose(op) {
+    if (
+      context.inline &&
+      ["purchase_invoice", "purchase_no_invoice"].includes(op) &&
+      ["purchase_invoice", "purchase_no_invoice"].includes(f.operation)
+    ) {
+      change("operation", op);
+      return;
+    }
+    if (
+      !context.inline &&
+      op !== f.operation &&
+      (f.immediate || f.linkedId || Number(f.installments) > 1) &&
+      !window.confirm(
+        "İşlem türü değişince ödeme ve taksit seçimleri sıfırlanacak. Devam edilsin mi?",
+      )
+    )
+      return;
+    setPaymentMode("full");
+    setF((s) => ({
+      ...s,
+      operation: op,
+      immediate: Boolean(fixedCard && isInvoice(op)),
+      settled: "0",
+      scheduled: context.inline && !party ? s.scheduled : false,
+      linkedId: "",
+      installments: 1,
+      ...(context.inline
+        ? {
+            account: "",
+            cardId: fixedCard || "",
+            target: "",
+            due: s.scheduled ? s.due : "",
+          }
+        : {}),
+    }));
+  }
+  async function save(ev) {
+    ev.preventDefault();
+    if (busy) return;
+    setBusy(true);
+    setError("");
+    try {
+      let b = {
+        ...f,
+        ...(fixedCard ? { cardId: fixedCard, lockedCardId: fixedCard } : {}),
+        partyId: locked || f.partyId,
+        lockedPartyId: locked,
+        amount: normalizeMoney(f.amount),
+        settled:
+          invoice && f.immediate
+            ? normalizeMoney(paymentMode === "full" ? f.amount : f.settled)
+            : "0",
+      };
+      if (transfer) {
+        b.partyId = "";
+        b.lockedPartyId = null;
+      }
+      if (
+        invoice &&
+        f.immediate &&
+        paymentMode === "partial" &&
+        decimal(f.settled) > decimal(f.amount)
+      ) {
+        setError("Kısmi ödeme işlem tutarını aşamaz.");
+        return;
+      }
+      const r = await api("event_save", b);
+      onState(r.state);
+      notify("İşlem kaydedildi", f.description || operations[f.operation]);
+      if (context.persistent) {
+        setF(initialForm());
+        setPaymentMode("full");
+      } else onClose();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+  const title =
+    (e.id ? "İşlemi düzenle" : "İşlem ekle") +
+    (locked ? " · " + (party?.name || "") : "");
+  const decimal = (value) => Number(normalizeMoney(value).replace(",", "."));
+  const total = decimal(f.amount),
+    paid = f.immediate
+      ? paymentMode === "full"
+        ? total
+        : decimal(f.settled)
+      : 0;
+  const effect = () => {
+    if (!Number.isFinite(total) || total <= 0)
+      return "Tutarı ve ilgili hesabı seçtiğinizde işlem etkisi burada gösterilir.";
+    const text = fmt(Math.round(total * 100)) + " TL";
+    const account = data.accounts.find(
+      (a) => String(a.id) === String(f.account),
+    )?.name;
+    const card = data.cards.find(
+      (c) => String(c.id) === String(f.cardId),
+    )?.name;
+    if (f.scheduled) return "Plan kaydedilir; şimdi bakiye değişmez.";
+    if (f.operation === "salary")
+      return (
+        "Personele " +
+        text +
+        " maaş hak edişi eklenir; banka/kasadan para çıkmaz."
+      );
+    if (f.operation === "employee_purchase")
+      return "Personelin borcu " + text + " artar; banka/kasadan para çıkmaz.";
+    if (f.operation === "transfer")
+      return account && f.target
+        ? account + " hesabından " + text + " aktarılır; toplam nakit değişmez."
+        : "Kaynak ve hedef hesabı seçin.";
+    if (f.operation === "card_payment")
+      return account && card
+        ? account +
+            " hesabından " +
+            text +
+            " çıkar; " +
+            card +
+            " borcuna ödeme uygulanır."
+        : "Ödeme hesabı ve kartı seçin.";
+    if (f.operation === "cash_advance")
+      return account && card
+        ? card + " borcu artar; " + account + " hesabına " + text + " girer."
+        : "Kaynak kartı ve hedef hesabı seçin.";
+    if (f.operation === "card_transfer")
+      return (
+        "Kartlar arasında " +
+        text +
+        " borç aktarılır; banka/kasada nakit hareketi olmaz."
+      );
+    if (invoice) {
+      const purchase = ["purchase_invoice", "purchase_no_invoice"].includes(
+          f.operation,
+        ),
+        sale = f.operation === "sale";
+      if (purchase || sale) {
+        const remainder = Math.max(
+          0,
+          total - (Number.isFinite(paid) ? paid : 0),
+        );
+        return (
+          (purchase ? "Bu alıştan " : "Bu satıştan ") +
+          fmt(Math.round(remainder * 100)) +
+          " TL açık " +
+          (purchase ? "borç" : "alacak") +
+          " kalır." +
+          (f.immediate
+            ? " " +
+              (card
+                ? card + " kartında işlem oluşur."
+                : account
+                  ? account +
+                    " hesabında " +
+                    fmt(Math.round(paid * 100)) +
+                    " TL " +
+                    (purchase ? "çıkış" : "giriş") +
+                    " oluşur."
+                  : "İşlem hesabını seçin.")
+            : " Şimdi banka/kasa hareketi oluşmaz.")
+        );
+      }
+      return f.immediate
+        ? "İade tutarı seçilen hesap/kartta işlenir ve cari etkisi uygulanır."
+        : f.returnMode === "later"
+          ? "İade için sonradan ödeme/tahsilat takibi açılır; şimdi nakit hareketi oluşmaz."
+          : "İade cari bakiyeye uygulanır; şimdi nakit hareketi oluşmaz.";
+    }
+    if (card)
+      return f.operation === "refund"
+        ? card + " borcu " + text + " azalır; banka/kasadan para çıkmaz."
+        : card + " borcu " + text + " artar; banka/kasadan para çıkmaz.";
+    return account
+      ? account +
+          " hesabında " +
+          text +
+          " " +
+          (["income", "refund", "collection"].includes(f.operation)
+            ? "giriş"
+            : "çıkış") +
+          " oluşur." +
+          (party ? " Cari etkisi işlem türüne göre uygulanır." : "")
+      : "İşlem hesabını seçin.";
+  };
+  return (
+    <EntrySurface
+      variant={context.inline ? "inline" : "dock"}
+      externalFormId={formId}
+      collapsible={Boolean(context.persistent)}
+      autoFocus={!context.persistent && !context.inline}
+      resetKey={f.requestId + String(ready)}
+      title={title}
+      onClose={() => !busy && onClose()}
+      busy={busy}
+    >
+      <EntryForm id={formId} onSubmit={save}>
+        <div className="sheet-scroll">
+          <FormSection title="İşlem bilgileri">
+            {!locked &&
+              select("partyId", "Cari (isteğe bağlı)", [
+                ["", "Bağımsız işlem"],
+                ...data.parties
+                  .filter((p) => p.active)
+                  .map((p) => [p.id, p.name]),
+              ])}
+            {place(
+              "operation",
+              <label className="cari-field">
+                İşlem
+                <select
+                  aria-label="İşlem"
+                  value={
+                    fixedCard || context.inline
+                      ? f.operation
+                      : transfer
+                        ? "transfer"
+                        : f.operation
+                  }
+                  onChange={(ev) => choose(ev.target.value)}
+                >
+                  {opts.map((op) => (
+                    <option value={op} key={op}>
+                      {operations[op]}
+                    </option>
+                  ))}
+                </select>
+              </label>,
+            )}
+            {place(
+              "description",
+              <label className="cari-field">
+                Açıklama (isteğe bağlı)
+                <input
+                  name="description"
+                  value={f.description}
+                  maxLength={1000}
+                  onChange={(ev) => change("description", ev.target.value)}
+                />
+              </label>,
+            )}
+            {borcland &&
+              select("operation", "Borçlandırma şekli", [
+                ["employee_purchase", "İşletmeden alışveriş"],
+                ["employee_expense", "Personel adına ödeme"],
+              ])}
+            {amountInput("amount", "Tutar (TL) *", true)}
+            {place(
+              "date",
+              <label className="cari-field compact-date">
+                <span className="sr-only">İşlem tarihi *</span>
+                <DatePicker
+                  iconOnly={!context.inline}
+                  value={f.date}
+                  today={data.today}
+                  required
+                  max={f.scheduled ? undefined : data.today}
+                  onChange={(v) =>
+                    setF((s) => ({
+                      ...s,
+                      date: v,
+                      periodDate: s.periodDate === s.date ? v : s.periodDate,
+                    }))
+                  }
+                  label="İşlem tarihi"
+                />
+              </label>,
+            )}
+            {!fixedCard && !transfer && needsAccount && accountSelect}
+            {invoice &&
+              f.immediate &&
+              paymentMode === "partial" &&
+              amountInput(
+                "settled",
+                f.operation === "sale" || f.operation === "supplier_return"
+                  ? "Şimdi tahsil edilen (TL) *"
+                  : "Şimdi ödenen (TL) *",
+                true,
+              )}
+          </FormSection>
+          <FormSection
+            title="Ödeme ve hesap bilgileri"
+            optional={!transfer && !context.inline}
+            open
+          >
+            {invoice && (
+              <label className="cari-field">
+                {invoiceReturn ? "İade bedeli" : "Ödeme / tahsilat"}
+                <select
+                  value={
+                    f.immediate
+                      ? paymentMode
+                      : invoiceReturn && f.returnMode === "later"
+                        ? "later"
+                        : "open"
+                  }
+                  onChange={(ev) => {
+                    const value = ev.target.value;
+                    setPaymentMode(value === "partial" ? "partial" : "full");
+                    setF((s) => ({
+                      ...s,
+                      returnMode: value === "later" ? "later" : "offset",
+                      immediate: ["full", "partial"].includes(value),
+                      settled:
+                        value === "full"
+                          ? s.amount
+                          : value === "partial"
+                            ? ""
+                            : "0",
+                    }));
+                  }}
+                >
+                  {!fixedCard && (
+                    <option value="open">
+                      {invoiceReturn
+                        ? f.operation === "supplier_return"
+                          ? "Borçtan düş / caride bırak"
+                          : "Cari hesaptan düş"
+                        : "Açık hesaba ekle"}
+                    </option>
+                  )}
+                  <option value="full">
+                    {invoiceReturn
+                      ? f.operation === "supplier_return"
+                        ? "Bedelin tamamını tahsil et"
+                        : "Bedelin tamamını geri öde"
+                      : f.operation === "sale"
+                        ? "Tamamını tahsil et"
+                        : "Tamamını öde"}
+                  </option>
+                  <option value="partial">
+                    {f.operation === "sale" || f.operation === "supplier_return"
+                      ? "Kısmen tahsil et"
+                      : "Kısmen öde"}
+                  </option>
+                  {invoiceReturn && !fixedCard && (
+                    <option value="later">
+                      {f.operation === "supplier_return"
+                        ? "Sonra tahsil et"
+                        : "Sonra geri öde"}
+                    </option>
+                  )}
+                </select>
+              </label>
+            )}
 
- {party?.type==='Personel'&&f.operation==='payment'&&select('paymentPurpose','Ödeme amacı',[['Maaş','Maaş'],['Avans','Avans'],['Diğer','Diğer']])}
- {!fixedCard&&!party&&transfer&&<label className="cari-field">Aktarım türü<select value={f.operation} onChange={ev=>change('operation',ev.target.value)}>{[['transfer','Kasa / banka arasında virman'],['card_payment','Kart borcu ödeme'],['cash_advance','Karttan nakit kullanımı']].map(([v,t])=><option key={v} value={v}>{t}</option>)}</select></label>}
- {transfer?f.operation==='transfer'?<>{select('account','Kaynak hesap *',accounts)}{select('target','Hedef hesap *',accounts.filter(a=>a[0]!==f.account))}</>:f.operation==='card_payment'?<>{select('account','Kaynak hesap *',accounts)}{!fixedCard&&select('cardId','Ödenecek kart *',data.cards.filter(c=>c.active).map(c=>[c.id,c.name]))}{select('linkedId','Ekstre (isteğe bağlı)',[['','Son ekstre'],...(data.cards.find(c=>c.id===Number(f.cardId))?.statements||[]).map(st=>[st.id,st.cut_date+' · '+fmt(st.remaining_cents)+' TL'])])}</>:<>{!fixedCard&&select('cardId','Kaynak kredi kartı *',data.cards.filter(c=>c.active).map(c=>[c.id,c.name]))}{f.operation==='cash_advance'?select('account','Paranın gireceği hesap *',accounts):select('targetCardId','Borcu kapatılacak kart *',data.cards.filter(c=>c.active&&c.id!==Number(f.cardId)).map(c=>[c.id,c.name]))}</>:null}
- {f.operation==='opening'&&select('direction','Bakiye yönü',[['Alacak','Alacak'],['Borç','Borç']])}
- {f.operation==='salary'&&<p className="cari-hint">Maaş hak edişi kaydedilir. Para çıkışı için Ödeme → Maaş kullanın.</p>}
- {borcland&&<p className="cari-hint">{f.operation==='employee_purchase'?'Alışveriş personelin borcuna eklenir; para hareketi oluşmaz.':'Şirket personel adına ödeme yapar; personelin borcu artar ve seçilen hesaptan para çıkar.'}</p>}
- {!party&&!f.cardId&&<label className="check-label"><input type="checkbox" checked={f.scheduled} onChange={ev=>change('scheduled',ev.target.checked)}/>Gelecek tarih için planla (şimdi bakiye değiştirmez)</label>}
- {(invoice||f.operation==='salary'||f.scheduled||f.linkedId)&&<label className="cari-field">Vade (isteğe bağlı)<DatePicker value={f.due} today={data.today} onChange={v=>change('due',v)} label="Vade"/></label>}
- {f.cardId&&!transfer&&<><label className="cari-field">Kartta işleneceği dönem tarihi<DatePicker value={f.periodDate} today={data.today} onChange={v=>change('periodDate',v)} label="Kart dönem tarihi"/></label>{!e.id&&!party&&select('installments','Taksit sayısı',Array.from({length:36},(_,i)=>[i+1,i===0?'Tek çekim':`${i+1} taksit`]))}</>}
-
-</FormSection><FormSection title="Ayrıntılar" optional={!context.inline} summary={[f.description&&'Açıklama',f.tag||'Genel',f.document&&'Belge'].filter(Boolean).join(' · ')}> {place('tag',<label className="cari-field">Etiket (isteğe bağlı)<input list="expense-tags" value={f.tag} maxLength={80} placeholder="Genel" onChange={ev=>change('tag',ev.target.value)}/><datalist id="expense-tags">{[...new Set(['Genel','Gıda','Kırtasiye','Otomotiv',...data.events.map(e=>e.tag||'Genel')])].map(t=><option key={t} value={t}/>)}</datalist></label>)}
-<label className="cari-field">İşlem saati<input name="time" type="time" step="1" value={f.time} onInput={ev=>change('time',ev.currentTarget.value)} onChange={ev=>change('time',ev.currentTarget.value)}/></label><label className="cari-field">Belge / fatura no<input name="document" maxLength={160} value={f.document} onChange={ev=>change('document',ev.target.value)}/></label></FormSection><div className="entry-effect" role="status" hidden={!Number.isFinite(total)||total<=0}><strong>İşlem etkisi</strong><p>{effect()}</p></div>
- {context.inline&&<div className="inline-effect-preview" role="status"><strong>Mevcut {party?'cari':e.card_id?'kart':'hesap'} etkisi: {fmt(Number(party?e.party_effect:e.card_id?-e.card_effect:e.cash_effect)||0)} TL</strong><span>Yeni etki: {party?fmt(Math.round(operationDirection(f.operation,true,f.direction)*(invoice?total-paid:total)*100))+' TL · ':''}{effect()}</span>{f.operation!==e.operation&&!(['purchase_invoice','purchase_no_invoice'].includes(f.operation)&&['purchase_invoice','purchase_no_invoice'].includes(e.operation))&&<small>İşlem türü değişti. Gerekli hesap ve ödeme bilgilerini yeniden seçin.</small>}</div>}
- {e.id&&<label className="cari-field">Değişiklik gerekçesi *<input name="reason" required maxLength={1000} value={f.reason} onChange={ev=>change('reason',ev.target.value)}/></label>}
- {error&&<p className="cari-error" role="alert">{error}</p>}
- </div><div className="sheet-footer"><button type="button" className="secondary-button" aria-label={context.inline?'Düzenlemeyi iptal et':undefined} title="Vazgeç" disabled={busy} onClick={onClose}>{context.inline?<X size={18}/>:<>Vazgeç</>}</button><button className="primary-button" aria-label={context.inline?'Değişiklikleri kaydet':undefined} title="Kaydet" disabled={busy}>{busy?<LoaderCircle className="loading-spinner" size={16}/>:context.inline?<Check size={18}/>:e.id?'Kaydet':'İşlemi kaydet'}</button></div></EntryForm></EntrySurface>;
+            {party?.type === "Personel" &&
+              f.operation === "payment" &&
+              select("paymentPurpose", "Ödeme amacı", [
+                ["Maaş", "Maaş"],
+                ["Avans", "Avans"],
+                ["Diğer", "Diğer"],
+              ])}
+            {!fixedCard && !party && transfer && (
+              <label className="cari-field">
+                Aktarım türü
+                <select
+                  value={f.operation}
+                  onChange={(ev) => change("operation", ev.target.value)}
+                >
+                  {[
+                    ["transfer", "Kasa / banka arasında virman"],
+                    ["card_payment", "Kart borcu ödeme"],
+                    ["cash_advance", "Karttan nakit kullanımı"],
+                  ].map(([v, t]) => (
+                    <option key={v} value={v}>
+                      {t}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            )}
+            {transfer ? (
+              f.operation === "transfer" ? (
+                <>
+                  {select("account", "Kaynak hesap *", accounts)}
+                  {select(
+                    "target",
+                    "Hedef hesap *",
+                    accounts.filter((a) => a[0] !== f.account),
+                  )}
+                </>
+              ) : f.operation === "card_payment" ? (
+                <>
+                  {select("account", "Kaynak hesap *", accounts)}
+                  {!fixedCard &&
+                    select(
+                      "cardId",
+                      "Ödenecek kart *",
+                      data.cards
+                        .filter((c) => c.active)
+                        .map((c) => [c.id, c.name]),
+                    )}
+                  {select("linkedId", "Ekstre (isteğe bağlı)", [
+                    ["", "Son ekstre"],
+                    ...(
+                      data.cards.find((c) => c.id === Number(f.cardId))
+                        ?.statements || []
+                    ).map((st) => [
+                      st.id,
+                      st.cut_date + " · " + fmt(st.remaining_cents) + " TL",
+                    ]),
+                  ])}
+                </>
+              ) : (
+                <>
+                  {!fixedCard &&
+                    select(
+                      "cardId",
+                      "Kaynak kredi kartı *",
+                      data.cards
+                        .filter((c) => c.active)
+                        .map((c) => [c.id, c.name]),
+                    )}
+                  {f.operation === "cash_advance"
+                    ? select("account", "Paranın gireceği hesap *", accounts)
+                    : select(
+                        "targetCardId",
+                        "Borcu kapatılacak kart *",
+                        data.cards
+                          .filter((c) => c.active && c.id !== Number(f.cardId))
+                          .map((c) => [c.id, c.name]),
+                      )}
+                </>
+              )
+            ) : null}
+            {f.operation === "opening" &&
+              select("direction", "Bakiye yönü", [
+                ["Alacak", "Alacak"],
+                ["Borç", "Borç"],
+              ])}
+            {f.operation === "salary" && (
+              <p className="cari-hint">
+                Maaş hak edişi kaydedilir. Para çıkışı için Ödeme → Maaş
+                kullanın.
+              </p>
+            )}
+            {borcland && (
+              <p className="cari-hint">
+                {f.operation === "employee_purchase"
+                  ? "Alışveriş personelin borcuna eklenir; para hareketi oluşmaz."
+                  : "Şirket personel adına ödeme yapar; personelin borcu artar ve seçilen hesaptan para çıkar."}
+              </p>
+            )}
+            {!party && !f.cardId && (
+              <label className="check-label">
+                <input
+                  type="checkbox"
+                  checked={f.scheduled}
+                  onChange={(ev) => change("scheduled", ev.target.checked)}
+                />
+                Gelecek tarih için planla (şimdi bakiye değiştirmez)
+              </label>
+            )}
+            {(invoice ||
+              f.operation === "salary" ||
+              f.scheduled ||
+              f.linkedId) && (
+              <label className="cari-field">
+                Vade (isteğe bağlı)
+                <DatePicker
+                  value={f.due}
+                  today={data.today}
+                  onChange={(v) => change("due", v)}
+                  label="Vade"
+                />
+              </label>
+            )}
+            {f.cardId && !transfer && (
+              <>
+                <label className="cari-field">
+                  Kartta işleneceği dönem tarihi
+                  <DatePicker
+                    value={f.periodDate}
+                    today={data.today}
+                    onChange={(v) => change("periodDate", v)}
+                    label="Kart dönem tarihi"
+                  />
+                </label>
+                {!e.id &&
+                  !party &&
+                  select(
+                    "installments",
+                    "Taksit sayısı",
+                    Array.from({ length: 36 }, (_, i) => [
+                      i + 1,
+                      i === 0 ? "Tek çekim" : `${i + 1} taksit`,
+                    ]),
+                  )}
+              </>
+            )}
+          </FormSection>
+          <FormSection
+            title="Ayrıntılar"
+            optional={!context.inline}
+            summary={[
+              f.description && "Açıklama",
+              f.tag || "Genel",
+              f.document && "Belge",
+            ]
+              .filter(Boolean)
+              .join(" · ")}
+          >
+            {" "}
+            {place(
+              "tag",
+              <label className="cari-field">
+                Etiket (isteğe bağlı)
+                <input
+                  list="expense-tags"
+                  value={f.tag}
+                  maxLength={80}
+                  placeholder="Genel"
+                  onChange={(ev) => change("tag", ev.target.value)}
+                />
+                <datalist id="expense-tags">
+                  {[
+                    ...new Set([
+                      "Genel",
+                      "Gıda",
+                      "Kırtasiye",
+                      "Otomotiv",
+                      ...data.events.map((e) => e.tag || "Genel"),
+                    ]),
+                  ].map((t) => (
+                    <option key={t} value={t} />
+                  ))}
+                </datalist>
+              </label>,
+            )}
+            <label className="cari-field">
+              İşlem saati
+              <input
+                name="time"
+                type="time"
+                step="1"
+                value={f.time}
+                onInput={(ev) => change("time", ev.currentTarget.value)}
+                onChange={(ev) => change("time", ev.currentTarget.value)}
+              />
+            </label>
+            <label className="cari-field">
+              Belge / fatura no
+              <input
+                name="document"
+                maxLength={160}
+                value={f.document}
+                onChange={(ev) => change("document", ev.target.value)}
+              />
+            </label>
+          </FormSection>
+          <div
+            className="entry-effect"
+            role="status"
+            hidden={!Number.isFinite(total) || total <= 0}
+          >
+            <strong>İşlem etkisi</strong>
+            <p>{effect()}</p>
+          </div>
+          {context.inline && (
+            <div className="inline-effect-preview" role="status">
+              <strong>
+                Mevcut {party ? "cari" : e.card_id ? "kart" : "hesap"} etkisi:{" "}
+                {fmt(
+                  Number(
+                    party
+                      ? e.party_effect
+                      : e.card_id
+                        ? -e.card_effect
+                        : e.cash_effect,
+                  ) || 0,
+                )}{" "}
+                TL
+              </strong>
+              <span>
+                Yeni etki:{" "}
+                {party
+                  ? fmt(
+                      Math.round(
+                        operationDirection(f.operation, true, f.direction) *
+                          (invoice ? total - paid : total) *
+                          100,
+                      ),
+                    ) + " TL · "
+                  : ""}
+                {effect()}
+              </span>
+              {f.operation !== e.operation &&
+                !(
+                  ["purchase_invoice", "purchase_no_invoice"].includes(
+                    f.operation,
+                  ) &&
+                  ["purchase_invoice", "purchase_no_invoice"].includes(
+                    e.operation,
+                  )
+                ) && (
+                  <small>
+                    İşlem türü değişti. Gerekli hesap ve ödeme bilgilerini
+                    yeniden seçin.
+                  </small>
+                )}
+            </div>
+          )}
+          {e.id && (
+            <label className="cari-field">
+              Değişiklik gerekçesi *
+              <input
+                name="reason"
+                required
+                maxLength={1000}
+                value={f.reason}
+                onChange={(ev) => change("reason", ev.target.value)}
+              />
+            </label>
+          )}
+          {error && (
+            <p className="cari-error" role="alert">
+              {error}
+            </p>
+          )}
+        </div>
+        <div className="sheet-footer">
+          <button
+            type="button"
+            className="secondary-button"
+            aria-label={context.inline ? "Düzenlemeyi iptal et" : undefined}
+            title="Vazgeç"
+            disabled={busy}
+            onClick={onClose}
+          >
+            {context.inline ? <X size={18} /> : <>Vazgeç</>}
+          </button>
+          <button
+            className="primary-button"
+            aria-label={context.inline ? "Değişiklikleri kaydet" : undefined}
+            title="Kaydet"
+            disabled={busy}
+          >
+            {busy ? (
+              <LoaderCircle className="loading-spinner" size={16} />
+            ) : context.inline ? (
+              <Check size={18} />
+            ) : e.id ? (
+              "Kaydet"
+            ) : (
+              "İşlemi kaydet"
+            )}
+          </button>
+        </div>
+      </EntryForm>
+    </EntrySurface>
+  );
 }
-export function StatementForm({context,data,onClose,onState,notify}){
- const card=context.item,old=context.statement;const [f,setF]=useState({requestId:requestId(),date:old?.cut_date||data.today,due:old?.due_date||card.due,total:old?money(old.total_cents):'',reason:''}),[error,setError]=useState(''),[busy,setBusy]=useState(false);
- async function save(e){e.preventDefault();setBusy(true);try{const r=await api('statement_save',{...f,total:normalizeMoney(f.total),cardId:card.id,id:old?.id,version:old?.version,requestId:f.requestId});onState(r.state);notify('Ekstre kaydedildi',card.name);onClose()}catch(e){setError(e.message)}finally{setBusy(false)}}
- return <EntrySurface title={card.name+' · '+(old?'Ekstreyi düzelt':'Ekstre ekle')} onClose={()=>!busy&&onClose()} busy={busy}><EntryForm onSubmit={save}><div className="sheet-scroll"><FormSection title="Ekstre bilgileri"><label className="cari-field">Hesap kesim tarihi<DatePicker required value={f.date} today={data.today} max={data.today} onChange={date=>setF({...f,date})}/></label><label className="cari-field">Son ödeme tarihi<DatePicker required value={f.due} today={data.today} onChange={due=>setF({...f,due})}/></label><label className="cari-field">Bankanın bildirdiği ekstre toplamı (TL) *<input required inputMode="decimal" value={f.total} onChange={e=>setF({...f,total:formatMoneyInput(e.target.value)})}/></label><p className="cari-hint">Mevcut harcamalarla eşleştirilir; aynı tutar ikinci bir borç veya ödeme oluşturmaz.</p>{old&&<label className="cari-field">Düzeltme gerekçesi *<input required value={f.reason} onChange={e=>setF({...f,reason:e.target.value})}/></label>}</FormSection>{error&&<p role="alert" className="cari-error">{error}</p>}</div><div className="sheet-footer"><button type="button" className="secondary-button" onClick={onClose}>Vazgeç</button><button className="primary-button" disabled={busy}>Kaydet</button></div></EntryForm></EntrySurface>;
+export function StatementForm({ context, data, onClose, onState, notify }) {
+  const card = context.item,
+    old = context.statement;
+  const [f, setF] = useState({
+      requestId: requestId(),
+      date: old?.cut_date || data.today,
+      due: old?.due_date || card.due,
+      total: old ? money(old.total_cents) : "",
+      reason: "",
+    }),
+    [error, setError] = useState(""),
+    [busy, setBusy] = useState(false);
+  async function save(e) {
+    e.preventDefault();
+    setBusy(true);
+    try {
+      const r = await api("statement_save", {
+        ...f,
+        total: normalizeMoney(f.total),
+        cardId: card.id,
+        id: old?.id,
+        version: old?.version,
+        requestId: f.requestId,
+      });
+      onState(r.state);
+      notify("Ekstre kaydedildi", card.name);
+      onClose();
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+  return (
+    <EntrySurface
+      title={card.name + " · " + (old ? "Ekstreyi düzelt" : "Ekstre ekle")}
+      onClose={() => !busy && onClose()}
+      busy={busy}
+    >
+      <EntryForm onSubmit={save}>
+        <div className="sheet-scroll">
+          <FormSection title="Ekstre bilgileri">
+            <label className="cari-field">
+              Hesap kesim tarihi
+              <DatePicker
+                required
+                value={f.date}
+                today={data.today}
+                max={data.today}
+                onChange={(date) => setF({ ...f, date })}
+              />
+            </label>
+            <label className="cari-field">
+              Son ödeme tarihi
+              <DatePicker
+                required
+                value={f.due}
+                today={data.today}
+                onChange={(due) => setF({ ...f, due })}
+              />
+            </label>
+            <label className="cari-field">
+              Bankanın bildirdiği ekstre toplamı (TL) *
+              <input
+                required
+                inputMode="decimal"
+                value={f.total}
+                onChange={(e) =>
+                  setF({ ...f, total: formatMoneyInput(e.target.value) })
+                }
+              />
+            </label>
+            <p className="cari-hint">
+              Mevcut harcamalarla eşleştirilir; aynı tutar ikinci bir borç veya
+              ödeme oluşturmaz.
+            </p>
+            {old && (
+              <label className="cari-field">
+                Düzeltme gerekçesi *
+                <input
+                  required
+                  value={f.reason}
+                  onChange={(e) => setF({ ...f, reason: e.target.value })}
+                />
+              </label>
+            )}
+          </FormSection>
+          {error && (
+            <p role="alert" className="cari-error">
+              {error}
+            </p>
+          )}
+        </div>
+        <div className="sheet-footer">
+          <button type="button" className="secondary-button" onClick={onClose}>
+            Vazgeç
+          </button>
+          <button className="primary-button" disabled={busy}>
+            Kaydet
+          </button>
+        </div>
+      </EntryForm>
+    </EntrySurface>
+  );
 }

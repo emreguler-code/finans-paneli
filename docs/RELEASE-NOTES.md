@@ -1,3 +1,14 @@
+# 1.24.0 — Prettier proje genelinde
+
+- Sabit dosya listesi kaldırıldı; desteklenen tüm kaynak, belge ve yapılandırmalar otomatik keşifle kontrol edilir.
+- `npm run format:check` denetler; `npm run format` otomatik biçimlendirir. Ortak ayarlar `.prettierrc.json` içinde sabitlendi.
+- PHP dosyaları resmi Prettier eklentisi ve PHP 8.3 hedefiyle kapsama alındı. Üretilmiş/özel dosyalar ve tarihsel test kanıtları hariç tutuldu.
+- Mevcut kaynaklar ortak biçime getirildi. Finansal davranış ve şema 12 korunur; Python/SQL mevcut test araçlarıyla doğrulanır.
+
+Hostinge hazır ZIP + SHA-256 `releases/1.24.0/` altında ve Release varlıklarındadır. Hosting yükleme/incelemeyi kullanıcı yürütür.
+
+---
+
 # 1.23.0 — Bağımlılıklar ve geliştirme ortamı güncellendi
 
 - React ve React DOM 19.3.1, Lucide React 1.74.0, Vite 8.3.8 / React eklentisi 6.3.0 ve Playwright 1.65.1 kullanılır.
@@ -42,4 +53,3 @@ Onaylanan son notlar ve uygun ortak davranışlar cari dışındaki bölümlere 
 Cari ve banka ay satırları devreden/artış/azalış/Net bakiyeyi gösterir; filtreler gerçek ay sonunu değiştirmez. Gizli işlem girişi içerikte boşluk bırakmaz. Banka/kart/ödeme girişleri aynı varsayılan form ve yüzer + davranışını paylaşır. Ekstre, rapor, araç ve takvim kendi finansal anlamlarını korur.
 
 Şema 12; gerçek veri/hesaplama modeli değişmez. [Bölüm bazında analiz ve kapsam](SURUM-1.20.0.md). GitHub yayını hosting kurulumu değildir.
-

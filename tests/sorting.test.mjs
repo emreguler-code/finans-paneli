@@ -1,12 +1,173 @@
-import test from 'node:test';import assert from 'node:assert/strict';
-import {sortLedgerEvents,nextSort} from '../src/sorting.mjs';
-import {parseSearch,searchSuggestions,fieldAlias,parseAmount} from '../src/search-query.mjs';
-const rows=[{id:1,event_date:'2026-05-01',creator:'Şule',description:'Zarf',tag:'Gıda',amount_cents:-10000,party_balance:-50000},{id:2,event_date:'2026-05-02',creator:'Çınar',description:'Çanta',tag:'Otomotiv',amount_cents:20000,party_balance:-30000},{id:3,event_date:'2026-05-03',creator:'İpek',description:'İade',tag:'Genel',amount_cents:-5000,party_balance:-35000}];
-test('Every ledger sort preserves original records, balances and input order',()=>{for(const field of ['date','description','tag','operation','creator','account','amount','balance'])for(const dir of ['asc','desc']){const result=sortLedgerEvents(rows,field+'-'+dir);assert.equal(result.length,rows.length);assert.ok(result.every(e=>rows.includes(e)));}assert.deepEqual(rows.map(e=>e.id),[1,2,3]);assert.deepEqual(rows.map(e=>e.party_balance),[-50000,-30000,-35000]);});
-test('Numeric sorting uses signed numbers and Turkish text sorting uses locale',()=>{assert.deepEqual(sortLedgerEvents(rows,'amount-asc').map(e=>e.id),[1,3,2]);assert.deepEqual(sortLedgerEvents(rows,'balance-desc').map(e=>e.id),[2,3,1]);assert.deepEqual(sortLedgerEvents(rows,'creator-asc').map(e=>e.creator),['Çınar','İpek','Şule']);assert.equal(nextSort('date-asc','date'),'date-desc');assert.equal(nextSort('creator-desc','creator'),'creator-asc');assert.equal(nextSort('date-desc','description'),'description-asc');});
-const fields=[{key:'min',label:'En az tutar (TL)',value:'',options:[]},{key:'max',label:'En fazla tutar (TL)',value:'',options:[]},{key:'date',label:'Tarih aralığı',range:true,value:{from:'',to:''},options:[]},{key:'cancel',label:'İptal edilenleri göster',check:true,value:true,empty:true,options:[]},{key:'due',label:'Vade durumu',value:'all',options:[{value:'all',label:'Tümü'},{value:'late',label:'Gecikmiş'}]},{key:'account',label:'Kart / hesap',options:[{value:'account:1',label:'Nakit kasa'}]}];
-test('Search replaces the entire old form: Turkish amounts, date ranges and booleans',()=>{const q=parseSearch('tutar:1.000,50..5.000 tarih:01.05.2026..31.05.2026 iptal:hayır vadedurumu:gecikmiş',fields);assert.deepEqual(q.errors,[]);assert.deepEqual(q.filters.map(f=>f.value),['1000.5','5000',{from:'2026-05-01',to:'2026-05-31'},false,'late']);assert.deepEqual(parseSearch('tarih:"bu ay"',fields,{today:'2026-11-17'}).filters[0].value,{from:'2026-11-01',to:'2026-11-30'});assert.equal(fieldAlias('Kart / hesap'),'hesap');});
-test('Numeric bounds and incomplete queries never partially apply',()=>{for(const q of ['tutar:500..100','tutar:-10','tutar:abc','tarih:2026-02-30','tarih:"bu ay'])assert.ok(parseSearch(q,fields).errors.length,q);assert.equal(parseAmount('1.234,50'),'1234.5');assert.equal(parseAmount('4.000'),'4000');assert.equal(parseAmount('12.50'),'12.5');assert.equal(parseAmount('1.2.3'),undefined);assert.deepEqual(parseSearch('tutar:>=1.000',fields).filters.map(f=>f.value),['1000','']);});
-test('Every field is discoverable by typing or focusing without a form',()=>{const hints=searchSuggestions('',fields,'2026-11-17');assert.ok(fields.every(f=>hints.some(h=>h.text===fieldAlias(f.label)+':')));assert.equal(searchSuggestions('hesap:nakit',fields,'2026-11-17')[0].value,'account:1');assert.equal(searchSuggestions('vadedurumu:gecik',fields,'2026-11-17')[0].value,'late');assert.equal(searchSuggestions('iptal:',fields,'2026-11-17').length,2);});
+import test from "node:test";
+import assert from "node:assert/strict";
+import { sortLedgerEvents, nextSort } from "../src/sorting.mjs";
+import {
+  parseSearch,
+  searchSuggestions,
+  fieldAlias,
+  parseAmount,
+} from "../src/search-query.mjs";
+const rows = [
+  {
+    id: 1,
+    event_date: "2026-05-01",
+    creator: "Şule",
+    description: "Zarf",
+    tag: "Gıda",
+    amount_cents: -10000,
+    party_balance: -50000,
+  },
+  {
+    id: 2,
+    event_date: "2026-05-02",
+    creator: "Çınar",
+    description: "Çanta",
+    tag: "Otomotiv",
+    amount_cents: 20000,
+    party_balance: -30000,
+  },
+  {
+    id: 3,
+    event_date: "2026-05-03",
+    creator: "İpek",
+    description: "İade",
+    tag: "Genel",
+    amount_cents: -5000,
+    party_balance: -35000,
+  },
+];
+test("Every ledger sort preserves original records, balances and input order", () => {
+  for (const field of [
+    "date",
+    "description",
+    "tag",
+    "operation",
+    "creator",
+    "account",
+    "amount",
+    "balance",
+  ])
+    for (const dir of ["asc", "desc"]) {
+      const result = sortLedgerEvents(rows, field + "-" + dir);
+      assert.equal(result.length, rows.length);
+      assert.ok(result.every((e) => rows.includes(e)));
+    }
+  assert.deepEqual(
+    rows.map((e) => e.id),
+    [1, 2, 3],
+  );
+  assert.deepEqual(
+    rows.map((e) => e.party_balance),
+    [-50000, -30000, -35000],
+  );
+});
+test("Numeric sorting uses signed numbers and Turkish text sorting uses locale", () => {
+  assert.deepEqual(
+    sortLedgerEvents(rows, "amount-asc").map((e) => e.id),
+    [1, 3, 2],
+  );
+  assert.deepEqual(
+    sortLedgerEvents(rows, "balance-desc").map((e) => e.id),
+    [2, 3, 1],
+  );
+  assert.deepEqual(
+    sortLedgerEvents(rows, "creator-asc").map((e) => e.creator),
+    ["Çınar", "İpek", "Şule"],
+  );
+  assert.equal(nextSort("date-asc", "date"), "date-desc");
+  assert.equal(nextSort("creator-desc", "creator"), "creator-asc");
+  assert.equal(nextSort("date-desc", "description"), "description-asc");
+});
+const fields = [
+  { key: "min", label: "En az tutar (TL)", value: "", options: [] },
+  { key: "max", label: "En fazla tutar (TL)", value: "", options: [] },
+  {
+    key: "date",
+    label: "Tarih aralığı",
+    range: true,
+    value: { from: "", to: "" },
+    options: [],
+  },
+  {
+    key: "cancel",
+    label: "İptal edilenleri göster",
+    check: true,
+    value: true,
+    empty: true,
+    options: [],
+  },
+  {
+    key: "due",
+    label: "Vade durumu",
+    value: "all",
+    options: [
+      { value: "all", label: "Tümü" },
+      { value: "late", label: "Gecikmiş" },
+    ],
+  },
+  {
+    key: "account",
+    label: "Kart / hesap",
+    options: [{ value: "account:1", label: "Nakit kasa" }],
+  },
+];
+test("Search replaces the entire old form: Turkish amounts, date ranges and booleans", () => {
+  const q = parseSearch(
+    "tutar:1.000,50..5.000 tarih:01.05.2026..31.05.2026 iptal:hayır vadedurumu:gecikmiş",
+    fields,
+  );
+  assert.deepEqual(q.errors, []);
+  assert.deepEqual(
+    q.filters.map((f) => f.value),
+    ["1000.5", "5000", { from: "2026-05-01", to: "2026-05-31" }, false, "late"],
+  );
+  assert.deepEqual(
+    parseSearch('tarih:"bu ay"', fields, { today: "2026-11-17" }).filters[0]
+      .value,
+    { from: "2026-11-01", to: "2026-11-30" },
+  );
+  assert.equal(fieldAlias("Kart / hesap"), "hesap");
+});
+test("Numeric bounds and incomplete queries never partially apply", () => {
+  for (const q of [
+    "tutar:500..100",
+    "tutar:-10",
+    "tutar:abc",
+    "tarih:2026-02-30",
+    'tarih:"bu ay',
+  ])
+    assert.ok(parseSearch(q, fields).errors.length, q);
+  assert.equal(parseAmount("1.234,50"), "1234.5");
+  assert.equal(parseAmount("4.000"), "4000");
+  assert.equal(parseAmount("12.50"), "12.5");
+  assert.equal(parseAmount("1.2.3"), undefined);
+  assert.deepEqual(
+    parseSearch("tutar:>=1.000", fields).filters.map((f) => f.value),
+    ["1000", ""],
+  );
+});
+test("Every field is discoverable by typing or focusing without a form", () => {
+  const hints = searchSuggestions("", fields, "2026-11-17");
+  assert.ok(
+    fields.every((f) =>
+      hints.some((h) => h.text === fieldAlias(f.label) + ":"),
+    ),
+  );
+  assert.equal(
+    searchSuggestions("hesap:nakit", fields, "2026-11-17")[0].value,
+    "account:1",
+  );
+  assert.equal(
+    searchSuggestions("vadedurumu:gecik", fields, "2026-11-17")[0].value,
+    "late",
+  );
+  assert.equal(searchSuggestions("iptal:", fields, "2026-11-17").length, 2);
+});
 
-test('Quoted literal colons remain free text rather than a command',()=>{assert.deepEqual(parseSearch('"Fatura: 123"',fields),{query:'Fatura: 123',filters:[],errors:[]})});
+test("Quoted literal colons remain free text rather than a command", () => {
+  assert.deepEqual(parseSearch('"Fatura: 123"', fields), {
+    query: "Fatura: 123",
+    filters: [],
+    errors: [],
+  });
+});

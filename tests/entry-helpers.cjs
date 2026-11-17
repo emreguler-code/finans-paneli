@@ -1,5 +1,61 @@
-exports.more=async p=>{const b=p.locator('.entry-dock').getByRole('button',{name:'Diğer seçenekler',exact:true});if(await b.count()&&await b.getAttribute('aria-expanded')==='false')await b.click()};
-exports.entry=p=>p.locator('[data-entry],.finance-sheet');
-exports.add=async p=>{const composer=p.locator('.persistent-composer');if(await composer.count()){if(await composer.getAttribute('class').then(c=>c.includes('is-collapsed')))await composer.getByRole('button',{name:'Yeni işlem ekle',exact:true}).click();return}await p.getByRole('button',{name:'Yeni kayıt ekle',exact:true}).click()};
-exports.saved=async p=>{await p.waitForFunction(()=>{const c=document.querySelector('.persistent-composer');return c?!c.querySelector('input[name=amount]')?.value&&!c.querySelector('button[type=submit]')?.disabled:!document.querySelector('.entry-dock,.finance-sheet')})};
-exports.close=async p=>{const persistent=p.locator('.persistent-composer');if(await persistent.count()){await exports.add(p);await persistent.getByRole('button',{name:'Vazgeç',exact:true}).click()}else if(await p.locator('.entry-page').count())await p.locator('.entry-page').getByRole('button',{name:'Vazgeç',exact:true}).click();else await p.getByRole('button',{name:'Paneli kapat',exact:true}).last().click();const d=p.getByRole('button',{name:'Değişikliklerden vazgeç',exact:true});if(await d.count())await d.click();if(await persistent.count()){await p.locator('.persistent-composer input[name=amount]').waitFor();await persistent.getByRole('button',{name:'Paneli kapat',exact:true}).click()}};
+exports.more = async (p) => {
+  const b = p
+    .locator(".entry-dock")
+    .getByRole("button", { name: "Diğer seçenekler", exact: true });
+  if ((await b.count()) && (await b.getAttribute("aria-expanded")) === "false")
+    await b.click();
+};
+exports.entry = (p) => p.locator("[data-entry],.finance-sheet");
+exports.add = async (p) => {
+  const composer = p.locator(".persistent-composer");
+  if (await composer.count()) {
+    if (
+      await composer
+        .getAttribute("class")
+        .then((c) => c.includes("is-collapsed"))
+    )
+      await composer
+        .getByRole("button", { name: "Yeni işlem ekle", exact: true })
+        .click();
+    return;
+  }
+  await p.getByRole("button", { name: "Yeni kayıt ekle", exact: true }).click();
+};
+exports.saved = async (p) => {
+  await p.waitForFunction(() => {
+    const c = document.querySelector(".persistent-composer");
+    return c
+      ? !c.querySelector("input[name=amount]")?.value &&
+          !c.querySelector("button[type=submit]")?.disabled
+      : !document.querySelector(".entry-dock,.finance-sheet");
+  });
+};
+exports.close = async (p) => {
+  const persistent = p.locator(".persistent-composer");
+  if (await persistent.count()) {
+    await exports.add(p);
+    await persistent
+      .getByRole("button", { name: "Vazgeç", exact: true })
+      .click();
+  } else if (await p.locator(".entry-page").count())
+    await p
+      .locator(".entry-page")
+      .getByRole("button", { name: "Vazgeç", exact: true })
+      .click();
+  else
+    await p
+      .getByRole("button", { name: "Paneli kapat", exact: true })
+      .last()
+      .click();
+  const d = p.getByRole("button", {
+    name: "Değişikliklerden vazgeç",
+    exact: true,
+  });
+  if (await d.count()) await d.click();
+  if (await persistent.count()) {
+    await p.locator(".persistent-composer input[name=amount]").waitFor();
+    await persistent
+      .getByRole("button", { name: "Paneli kapat", exact: true })
+      .click();
+  }
+};

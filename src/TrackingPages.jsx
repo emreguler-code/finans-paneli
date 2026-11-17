@@ -1,24 +1,426 @@
-import {VehiclesPage} from './VehiclesPage';
-import {useState} from 'react';
-import {Plus,Pencil,ExternalLink,Link,ChevronDown} from 'lucide-react';
-import {ListTools} from './ListTools';
-import {dateLabel} from './DatePicker';
-import {useScopedState} from './SearchState';
-import {can,fmt} from './ui';
-import {rewardTypes,cardPurchases,campaignMatches,campaignProgress,campaignStatus} from './tracking-utils.mjs';
-const benefit=(c,value)=>c.reward_type==='points'?value.toLocaleString('tr-TR',{maximumFractionDigits:2})+' puan':c.reward_type==='installments'?c.extra_installments+' ek taksit':c.reward_type==='deferment'?c.defer_days+' gün erteleme':fmt(Math.round(value*100))+' TL';
-export function TrackingPages(props){return props.page==='Kampanyalar'?<CampaignsPage {...props}/>:<VehiclesPage {...props}/>}
-function CampaignsPage({data,open}){
- const [query,setQuery]=useScopedState('campaigns:query',''),[status,setStatus]=useScopedState('campaigns:status','all'),[card,setCard]=useScopedState('campaigns:card','all'),[filters,setFilters]=useState(false),[selected,setSelected]=useState(null),[party,setParty]=useState(''),[spend,setSpend]=useState(''),[tag,setTag]=useState('Genel'),[showMore,setShowMore]=useState(false);
- const list=(data.campaigns||[]).filter(c=>(status==='all'||(status==='active'?['active','ending'].includes(campaignStatus(c,data.today)):campaignStatus(c,data.today)===status))&&(card==='all'||c.card_ids.includes(Number(card)))&&`${c.name} ${c.notes}`.toLocaleLowerCase('tr').includes(query.toLocaleLowerCase('tr'))).sort((a,b)=>a.end_date.localeCompare(b.end_date));
- const current=data.campaigns.find(c=>c.id===selected);const purchases=cardPurchases(data);const recommendations=Number(spend)>0&&party?(data.campaigns||[]).filter(c=>c.participation!=='required'&&c.card_ids.some(card_id=>campaignMatches(c,{card_id,party_id:Number(party),tag,event_date:data.today,amount_cents:Math.round(Number(spend)*100)},data))):[];
- return <div className="finance-page cari-page tracking-page"><div className="page-title"><div><h1>Kampanyalar</h1><p>Kart koşulları, katılım ve kazanç takibi.</p></div>{can(data.user,'create')&&<button className="primary-button icon-only" aria-label="Kampanya ekle" title="Kampanya ekle" onClick={()=>open({entity:'campaign'})}><Plus size={18}/></button>}</div>
- <ListTools query={query} setQuery={setQuery} filters={filters} setFilters={setFilters} resultCount={list.length} placeholder="Kampanyalarda ara" reset={()=>{setQuery('');setStatus('all');setCard('all')}}><label>Durum<select value={status} onChange={e=>setStatus(e.target.value)}>{[['all','Tümü'],['active','Aktif'],['ending','Yakında bitecek'],['participation','Katılım bekleyen'],['upcoming','Başlayacak'],['completed','Tamamlanan']].map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label><label>Kart<select value={card} onChange={e=>setCard(e.target.value)}><option value="all">Tüm kartlar</option>{data.cards.map(c=><option value={c.id} key={c.id}>{c.name}</option>)}</select></label></ListTools>
+import { VehiclesPage } from "./VehiclesPage";
+import { useState } from "react";
+import { Plus, Pencil, ExternalLink, Link, ChevronDown } from "lucide-react";
+import { ListTools } from "./ListTools";
+import { dateLabel } from "./DatePicker";
+import { useScopedState } from "./SearchState";
+import { can, fmt } from "./ui";
+import {
+  rewardTypes,
+  cardPurchases,
+  campaignMatches,
+  campaignProgress,
+  campaignStatus,
+} from "./tracking-utils.mjs";
+const benefit = (c, value) =>
+  c.reward_type === "points"
+    ? value.toLocaleString("tr-TR", { maximumFractionDigits: 2 }) + " puan"
+    : c.reward_type === "installments"
+      ? c.extra_installments + " ek taksit"
+      : c.reward_type === "deferment"
+        ? c.defer_days + " gün erteleme"
+        : fmt(Math.round(value * 100)) + " TL";
+export function TrackingPages(props) {
+  return props.page === "Kampanyalar" ? (
+    <CampaignsPage {...props} />
+  ) : (
+    <VehiclesPage {...props} />
+  );
+}
+function CampaignsPage({ data, open }) {
+  const [query, setQuery] = useScopedState("campaigns:query", ""),
+    [status, setStatus] = useScopedState("campaigns:status", "all"),
+    [card, setCard] = useScopedState("campaigns:card", "all"),
+    [filters, setFilters] = useState(false),
+    [selected, setSelected] = useState(null),
+    [party, setParty] = useState(""),
+    [spend, setSpend] = useState(""),
+    [tag, setTag] = useState("Genel"),
+    [showMore, setShowMore] = useState(false);
+  const list = (data.campaigns || [])
+    .filter(
+      (c) =>
+        (status === "all" ||
+          (status === "active"
+            ? ["active", "ending"].includes(campaignStatus(c, data.today))
+            : campaignStatus(c, data.today) === status)) &&
+        (card === "all" || c.card_ids.includes(Number(card))) &&
+        `${c.name} ${c.notes}`
+          .toLocaleLowerCase("tr")
+          .includes(query.toLocaleLowerCase("tr")),
+    )
+    .sort((a, b) => a.end_date.localeCompare(b.end_date));
+  const current = data.campaigns.find((c) => c.id === selected);
+  const purchases = cardPurchases(data);
+  const recommendations =
+    Number(spend) > 0 && party
+      ? (data.campaigns || []).filter(
+          (c) =>
+            c.participation !== "required" &&
+            c.card_ids.some((card_id) =>
+              campaignMatches(
+                c,
+                {
+                  card_id,
+                  party_id: Number(party),
+                  tag,
+                  event_date: data.today,
+                  amount_cents: Math.round(Number(spend) * 100),
+                },
+                data,
+              ),
+            ),
+        )
+      : [];
+  return (
+    <div className="finance-page cari-page tracking-page">
+      <div className="page-title">
+        <div>
+          <h1>Kampanyalar</h1>
+          <p>Kart koşulları, katılım ve kazanç takibi.</p>
+        </div>
+        {can(data.user, "create") && (
+          <button
+            className="primary-button icon-only"
+            aria-label="Kampanya ekle"
+            title="Kampanya ekle"
+            onClick={() => open({ entity: "campaign" })}
+          >
+            <Plus size={18} />
+          </button>
+        )}
+      </div>
+      <ListTools
+        query={query}
+        setQuery={setQuery}
+        filters={filters}
+        setFilters={setFilters}
+        resultCount={list.length}
+        placeholder="Kampanyalarda ara"
+        reset={() => {
+          setQuery("");
+          setStatus("all");
+          setCard("all");
+        }}
+      >
+        <label>
+          Durum
+          <select value={status} onChange={(e) => setStatus(e.target.value)}>
+            {[
+              ["all", "Tümü"],
+              ["active", "Aktif"],
+              ["ending", "Yakında bitecek"],
+              ["participation", "Katılım bekleyen"],
+              ["upcoming", "Başlayacak"],
+              ["completed", "Tamamlanan"],
+            ].map(([value, label]) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Kart
+          <select value={card} onChange={(e) => setCard(e.target.value)}>
+            <option value="all">Tüm kartlar</option>
+            {data.cards.map((c) => (
+              <option value={c.id} key={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+        </label>
+      </ListTools>
 
- <section className="panel campaign-list">{list.map(c=>{const progress=campaignProgress(c,data),state=campaignStatus(c,data.today);return <article className="campaign-row" key={c.id}><button className="campaign-summary" aria-expanded={selected===c.id} onClick={()=>{setSelected(selected===c.id?null:c.id);setShowMore(false)}}><span><strong>{c.name}</strong><small>{c.card_ids.map(id=>data.cards.find(card=>card.id===id)?.name).filter(Boolean).join(', ')}</small></span><span>{dateLabel(c.end_date)}<small>{{completed:'Tamamlanan',participation:'Katılım gerekiyor',upcoming:'Başlayacak',ending:'Yakında bitecek',active:'Aktif'}[state]}</small></span><span>{rewardTypes[c.reward_type]}<small>{benefit(c,progress.pending)} bekleyen</small></span><ChevronDown size={18}/></button><div className="card-local-actions">{can(data.user,'edit')&&<button className="list-icon" aria-label={c.name+' düzenle'} onClick={()=>open({entity:'campaign',item:c})}><Pencil size={18}/></button>}</div></article>})}{!list.length&&<p className="empty">Bu kapsamda kampanya yok.</p>}</section>
- {current&&(()=>{const c=current,progress=campaignProgress(c,data),entries=data.campaign_entries.filter(e=>e.active&&e.campaign_id===c.id),linked=new Set(entries.map(e=>e.event_id)),candidates=purchases.filter(e=>campaignMatches(c,e,data)&&!e.ids.some(id=>linked.has(id)));return <section className="panel campaign-details"><header><h2>{c.name}</h2><div className="card-local-actions">{can(data.user,'edit')&&<button className="list-icon" aria-label="Kampanyayı düzenle" onClick={()=>open({entity:'campaign',item:c})}><Pencil size={18}/></button>}</div></header><p>{dateLabel(c.start_date)} – {dateLabel(c.end_date)}{c.join_by?' · Katılım son günü: '+dateLabel(c.join_by):''}</p><p>{c.participation==='required'?'Katılım bekleniyor':c.participation==='joined'?'Katıldım':'Katılım gerekmiyor'}</p><p>Asgari harcama: {fmt(c.min_spend_cents)} TL · Gerekli işlem: {c.required_count} · Kazanç: {c.reward_mode==='percent'?'%'+c.reward_value:c.reward_value}{c.reward_mode==='percent'?'':c.reward_type==='points'?' puan':' TL'}</p><p>İlerleme: <strong>{progress.count} / {c.required_count}</strong> · Tahmini toplam: <strong>{benefit(c,progress.expected)}</strong> · Bekleyen: <strong>{benefit(c,progress.pending)}</strong>{['points','cashback'].includes(c.reward_type)&&<> · Alınan: <strong>{benefit(c,progress.received)}</strong></>}</p>{c.notes&&<p>{c.notes}</p>}{c.source_url&&<a href={c.source_url} target="_blank" rel="noreferrer">Kampanya koşulları <ExternalLink size={16}/></a>}
- <h3>İlişkilendirilen işlemler</h3>{entries.map(entry=>{const event=data.events.find(e=>e.id===entry.event_id);return <div className="tracking-linked" key={entry.id}><span>{event?.description||'Kart işlemi'}{event?.cancelled?' · İptal':''}<small>{entry.confirmed?'Kazanç alındı':'Kazanç bekleniyor'} · {benefit(c,entry.received)}</small></span>{can(data.user,'edit')&&<button className="list-icon" aria-label="Kampanya işlemini düzenle" onClick={()=>open({entity:'campaign_entry',item:entry})}><Pencil size={18}/></button>}</div>})}{!entries.length&&<p className="muted">Henüz işlem bağlanmadı.</p>}
- <h3>Uygun olabilecek kart harcamaları</h3>{(showMore?candidates:candidates.slice(0,10)).map(e=><div className="tracking-linked" key={e.id}><span>{dateLabel(e.event_date)} · {e.description||e.party_name}<small>{fmt(e.amount_cents)} TL{e.ids.length>1?' · Taksitler tek alışveriş olarak toplandı':''}</small></span>{can(data.user,'create')&&<button className="secondary-button" onClick={()=>open({entity:'campaign_entry',initial:{campaign_id:c.id,event_id:e.id}})}><Link size={16}/>İlişkilendir</button>}</div>)}{!candidates.length&&<p className="muted">Kayıtlı koşullarla eşleşen yeni harcama yok.</p>}{candidates.length>10&&!showMore&&<button className="text-button" onClick={()=>setShowMore(true)}>Tüm adayları göster ({candidates.length})</button>}</section>})()}
- <details className="panel tracking-recommendations"><summary>Tedarikçiye göre uygun kartları karşılaştır</summary><p className="cari-help">Beklenen kazanç tahmindir; banka koşullarını doğrulayın. Puanlar nakit bakiyesine eklenmez.</p><div className="tracking-recommendation-fields"><label>Tedarikçi<select value={party} onChange={e=>setParty(e.target.value)}><option value="">Seçin</option>{data.parties.filter(p=>p.type==='Tedarikçi').map(p=><option value={p.id} key={p.id}>{p.name}</option>)}</select></label><label>Harcama tutarı (TL)<input type="number" min="0" step="0.01" value={spend} onChange={e=>setSpend(e.target.value)}/></label><label>İşlem etiketi<select value={tag} onChange={e=>setTag(e.target.value)}>{[...new Set(['Genel',...data.events.map(e=>e.tag).filter(Boolean),...data.campaigns.flatMap(c=>c.tags)])].map(t=><option key={t}>{t}</option>)}</select></label></div><p className="muted">Kart, tarih, tutar, katılım ve kayıtlı POS koşulları karşılaştırılır. Seçili işlem etiketi ve mevcut katılım durumu dikkate alınır. Puan ve TL birbirine çevrilmez.</p>{recommendations.map(c=><div className="finance-due" key={c.id}><span><strong>{c.name}</strong><small>{c.card_ids.map(id=>data.cards.find(card=>card.id===id)?.name).join(', ')} · {rewardTypes[c.reward_type]}</small></span><span>{c.reward_mode==='percent'?'%'+c.reward_value:benefit(c,c.reward_value)} · Uygun olabilir</span></div>)}{party&&spend&&!recommendations.length&&<p className="empty">Kayıtlı koşullarla uygun öneri bulunamadı. Tedarikçinin POS bilgilerini de kontrol edin.</p>}</details>
- </div>;
+      <section className="panel campaign-list">
+        {list.map((c) => {
+          const progress = campaignProgress(c, data),
+            state = campaignStatus(c, data.today);
+          return (
+            <article className="campaign-row" key={c.id}>
+              <button
+                className="campaign-summary"
+                aria-expanded={selected === c.id}
+                onClick={() => {
+                  setSelected(selected === c.id ? null : c.id);
+                  setShowMore(false);
+                }}
+              >
+                <span>
+                  <strong>{c.name}</strong>
+                  <small>
+                    {c.card_ids
+                      .map(
+                        (id) => data.cards.find((card) => card.id === id)?.name,
+                      )
+                      .filter(Boolean)
+                      .join(", ")}
+                  </small>
+                </span>
+                <span>
+                  {dateLabel(c.end_date)}
+                  <small>
+                    {
+                      {
+                        completed: "Tamamlanan",
+                        participation: "Katılım gerekiyor",
+                        upcoming: "Başlayacak",
+                        ending: "Yakında bitecek",
+                        active: "Aktif",
+                      }[state]
+                    }
+                  </small>
+                </span>
+                <span>
+                  {rewardTypes[c.reward_type]}
+                  <small>{benefit(c, progress.pending)} bekleyen</small>
+                </span>
+                <ChevronDown size={18} />
+              </button>
+              <div className="card-local-actions">
+                {can(data.user, "edit") && (
+                  <button
+                    className="list-icon"
+                    aria-label={c.name + " düzenle"}
+                    onClick={() => open({ entity: "campaign", item: c })}
+                  >
+                    <Pencil size={18} />
+                  </button>
+                )}
+              </div>
+            </article>
+          );
+        })}
+        {!list.length && <p className="empty">Bu kapsamda kampanya yok.</p>}
+      </section>
+      {current &&
+        (() => {
+          const c = current,
+            progress = campaignProgress(c, data),
+            entries = data.campaign_entries.filter(
+              (e) => e.active && e.campaign_id === c.id,
+            ),
+            linked = new Set(entries.map((e) => e.event_id)),
+            candidates = purchases.filter(
+              (e) =>
+                campaignMatches(c, e, data) &&
+                !e.ids.some((id) => linked.has(id)),
+            );
+          return (
+            <section className="panel campaign-details">
+              <header>
+                <h2>{c.name}</h2>
+                <div className="card-local-actions">
+                  {can(data.user, "edit") && (
+                    <button
+                      className="list-icon"
+                      aria-label="Kampanyayı düzenle"
+                      onClick={() => open({ entity: "campaign", item: c })}
+                    >
+                      <Pencil size={18} />
+                    </button>
+                  )}
+                </div>
+              </header>
+              <p>
+                {dateLabel(c.start_date)} – {dateLabel(c.end_date)}
+                {c.join_by
+                  ? " · Katılım son günü: " + dateLabel(c.join_by)
+                  : ""}
+              </p>
+              <p>
+                {c.participation === "required"
+                  ? "Katılım bekleniyor"
+                  : c.participation === "joined"
+                    ? "Katıldım"
+                    : "Katılım gerekmiyor"}
+              </p>
+              <p>
+                Asgari harcama: {fmt(c.min_spend_cents)} TL · Gerekli işlem:{" "}
+                {c.required_count} · Kazanç:{" "}
+                {c.reward_mode === "percent"
+                  ? "%" + c.reward_value
+                  : c.reward_value}
+                {c.reward_mode === "percent"
+                  ? ""
+                  : c.reward_type === "points"
+                    ? " puan"
+                    : " TL"}
+              </p>
+              <p>
+                İlerleme:{" "}
+                <strong>
+                  {progress.count} / {c.required_count}
+                </strong>{" "}
+                · Tahmini toplam:{" "}
+                <strong>{benefit(c, progress.expected)}</strong> · Bekleyen:{" "}
+                <strong>{benefit(c, progress.pending)}</strong>
+                {["points", "cashback"].includes(c.reward_type) && (
+                  <>
+                    {" "}
+                    · Alınan: <strong>{benefit(c, progress.received)}</strong>
+                  </>
+                )}
+              </p>
+              {c.notes && <p>{c.notes}</p>}
+              {c.source_url && (
+                <a href={c.source_url} target="_blank" rel="noreferrer">
+                  Kampanya koşulları <ExternalLink size={16} />
+                </a>
+              )}
+              <h3>İlişkilendirilen işlemler</h3>
+              {entries.map((entry) => {
+                const event = data.events.find((e) => e.id === entry.event_id);
+                return (
+                  <div className="tracking-linked" key={entry.id}>
+                    <span>
+                      {event?.description || "Kart işlemi"}
+                      {event?.cancelled ? " · İptal" : ""}
+                      <small>
+                        {entry.confirmed
+                          ? "Kazanç alındı"
+                          : "Kazanç bekleniyor"}{" "}
+                        · {benefit(c, entry.received)}
+                      </small>
+                    </span>
+                    {can(data.user, "edit") && (
+                      <button
+                        className="list-icon"
+                        aria-label="Kampanya işlemini düzenle"
+                        onClick={() =>
+                          open({ entity: "campaign_entry", item: entry })
+                        }
+                      >
+                        <Pencil size={18} />
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+              {!entries.length && (
+                <p className="muted">Henüz işlem bağlanmadı.</p>
+              )}
+              <h3>Uygun olabilecek kart harcamaları</h3>
+              {(showMore ? candidates : candidates.slice(0, 10)).map((e) => (
+                <div className="tracking-linked" key={e.id}>
+                  <span>
+                    {dateLabel(e.event_date)} · {e.description || e.party_name}
+                    <small>
+                      {fmt(e.amount_cents)} TL
+                      {e.ids.length > 1
+                        ? " · Taksitler tek alışveriş olarak toplandı"
+                        : ""}
+                    </small>
+                  </span>
+                  {can(data.user, "create") && (
+                    <button
+                      className="secondary-button"
+                      onClick={() =>
+                        open({
+                          entity: "campaign_entry",
+                          initial: { campaign_id: c.id, event_id: e.id },
+                        })
+                      }
+                    >
+                      <Link size={16} />
+                      İlişkilendir
+                    </button>
+                  )}
+                </div>
+              ))}
+              {!candidates.length && (
+                <p className="muted">
+                  Kayıtlı koşullarla eşleşen yeni harcama yok.
+                </p>
+              )}
+              {candidates.length > 10 && !showMore && (
+                <button
+                  className="text-button"
+                  onClick={() => setShowMore(true)}
+                >
+                  Tüm adayları göster ({candidates.length})
+                </button>
+              )}
+            </section>
+          );
+        })()}
+      <details className="panel tracking-recommendations">
+        <summary>Tedarikçiye göre uygun kartları karşılaştır</summary>
+        <p className="cari-help">
+          Beklenen kazanç tahmindir; banka koşullarını doğrulayın. Puanlar nakit
+          bakiyesine eklenmez.
+        </p>
+        <div className="tracking-recommendation-fields">
+          <label>
+            Tedarikçi
+            <select value={party} onChange={(e) => setParty(e.target.value)}>
+              <option value="">Seçin</option>
+              {data.parties
+                .filter((p) => p.type === "Tedarikçi")
+                .map((p) => (
+                  <option value={p.id} key={p.id}>
+                    {p.name}
+                  </option>
+                ))}
+            </select>
+          </label>
+          <label>
+            Harcama tutarı (TL)
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              value={spend}
+              onChange={(e) => setSpend(e.target.value)}
+            />
+          </label>
+          <label>
+            İşlem etiketi
+            <select value={tag} onChange={(e) => setTag(e.target.value)}>
+              {[
+                ...new Set([
+                  "Genel",
+                  ...data.events.map((e) => e.tag).filter(Boolean),
+                  ...data.campaigns.flatMap((c) => c.tags),
+                ]),
+              ].map((t) => (
+                <option key={t}>{t}</option>
+              ))}
+            </select>
+          </label>
+        </div>
+        <p className="muted">
+          Kart, tarih, tutar, katılım ve kayıtlı POS koşulları karşılaştırılır.
+          Seçili işlem etiketi ve mevcut katılım durumu dikkate alınır. Puan ve
+          TL birbirine çevrilmez.
+        </p>
+        {recommendations.map((c) => (
+          <div className="finance-due" key={c.id}>
+            <span>
+              <strong>{c.name}</strong>
+              <small>
+                {c.card_ids
+                  .map((id) => data.cards.find((card) => card.id === id)?.name)
+                  .join(", ")}{" "}
+                · {rewardTypes[c.reward_type]}
+              </small>
+            </span>
+            <span>
+              {c.reward_mode === "percent"
+                ? "%" + c.reward_value
+                : benefit(c, c.reward_value)}{" "}
+              · Uygun olabilir
+            </span>
+          </div>
+        ))}
+        {party && spend && !recommendations.length && (
+          <p className="empty">
+            Kayıtlı koşullarla uygun öneri bulunamadı. Tedarikçinin POS
+            bilgilerini de kontrol edin.
+          </p>
+        )}
+      </details>
+    </div>
+  );
 }

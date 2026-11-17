@@ -16,18 +16,18 @@ Araç kartı → varsayılan Özet → istenirse İşlemler.
 
 Bu kısa taramada kaynakların kamuya açık HTML metinleri okundu; oturum içi uygulamalar veya bütün ürün akışları tarayıcıyla denetlenmedi. Bu bir kullanıcı testi veya yaygınlık araştırması değildir.
 
-| Kaynak | Doğrudan gözlenen | Bizim tasarım için çıkarım |
-|---|---|---|
-| [PistonHeads Readers’ Cars](https://www.pistonheads.com/gassing/forum.asp?h=0&f=47) | Marka/model etrafında açılmış, çok sayfaya uzanan araç sahibi konu başlıkları ve güncellenen tartışma listesi. | Araç merkezli bir dosya ve zaman içinde biriken kayıt günlüğü anlaşılır olabilir. Forumun sosyal alanlarını veya görsel dilini taşımak gerekmez. |
-| [Drivvo bakım takibi](https://www.drivvo.com/en/vehicle-maintenance/) | Yapılan bakımın tarih, kilometre ve tutarı; geçmiş ile yaklaşan bakımın birlikte takibi; tarih veya kilometreye bağlı hatırlatmalar açıkça açıklanıyor. | Güncel durum özeti ile kayıt geçmişini ayırmak; bakımda tarih/kilometre bilgisini korumak uygun. Tekrarlama/otomatik bakım tahmini gibi yeni işlevler kendiliğinden kapsamımıza eklenmez. |
-| [Fuelly](https://www.fuelly.com/) | Araç ekleme, tekrar eden yakıt kayıtları ve araç bazlı raporlarla zaman içindeki tüketim/giderleri takip etme yaklaşımı açıklanıyor. | Tek araca bağlı düzenli kayıt ve geçmiş görünümü yararlı. Yakıt modülü veya km başı maliyet mevcut veri olmadan eklenmez. |
+| Kaynak                                                                              | Doğrudan gözlenen                                                                                                                                       | Bizim tasarım için çıkarım                                                                                                                                                                |
+| ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [PistonHeads Readers’ Cars](https://www.pistonheads.com/gassing/forum.asp?h=0&f=47) | Marka/model etrafında açılmış, çok sayfaya uzanan araç sahibi konu başlıkları ve güncellenen tartışma listesi.                                          | Araç merkezli bir dosya ve zaman içinde biriken kayıt günlüğü anlaşılır olabilir. Forumun sosyal alanlarını veya görsel dilini taşımak gerekmez.                                          |
+| [Drivvo bakım takibi](https://www.drivvo.com/en/vehicle-maintenance/)               | Yapılan bakımın tarih, kilometre ve tutarı; geçmiş ile yaklaşan bakımın birlikte takibi; tarih veya kilometreye bağlı hatırlatmalar açıkça açıklanıyor. | Güncel durum özeti ile kayıt geçmişini ayırmak; bakımda tarih/kilometre bilgisini korumak uygun. Tekrarlama/otomatik bakım tahmini gibi yeni işlevler kendiliğinden kapsamımıza eklenmez. |
+| [Fuelly](https://www.fuelly.com/)                                                   | Araç ekleme, tekrar eden yakıt kayıtları ve araç bazlı raporlarla zaman içindeki tüketim/giderleri takip etme yaklaşımı açıklanıyor.                    | Tek araca bağlı düzenli kayıt ve geçmiş görünümü yararlı. Yakıt modülü veya km başı maliyet mevcut veri olmadan eklenmez.                                                                 |
 
 Spritmonitor ana sayfası HTTP 403 verdi; o kaynak üzerinden bulgu çıkarılmadı. Kaynaklar kullanıcı tarafından şart koşulmuş erişim gereksinimleri değildir; öneri erişilebilen üç kaynak ve mevcut uygulama üzerinden hazırlanmıştır.
 
 ## Görseller
 
-| 1 — Durum özeti | 2 — Poliçeler bir arada | 3 — Birleşik işlem günlüğü |
-|---|---|---|
+| 1 — Durum özeti                                                                              | 2 — Poliçeler bir arada                                                                                  | 3 — Birleşik işlem günlüğü                                                                         |
+| -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
 | [![Durum özeti](araclar-1-durum-ozeti-2026-10-26.png)](araclar-1-durum-ozeti-2026-10-26.png) | [![Poliçeler özeti](araclar-2-policeler-ozeti-2026-10-26.png)](araclar-2-policeler-ozeti-2026-10-26.png) | [![İşlem günlüğü](araclar-3-islem-gunlugu-2026-10-26.png)](araclar-3-islem-gunlugu-2026-10-26.png) |
 
 ### İlk özet yaklaşımı

@@ -1,28 +1,448 @@
-import React,{useState,useRef,useEffect,useLayoutEffect,useId} from 'react';
-import {createPortal} from 'react-dom';
-import {FloatingPanel} from './FloatingPanel';
-import {CalendarDays, ChevronLeft, ChevronRight, X} from 'lucide-react';
-import {dateAdd, weekStart} from './list-utils.mjs';
-import {presetRange, monthDays, shiftMonth} from './date-utils.mjs';
-export const dateLabel=d=>d?new Date(d+'T12:00:00Z').toLocaleDateString('tr-TR',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'}):'';
-export function Popover({anchor,onClose,children,label='Ayrıntılar',className=''}){
- const ref=useRef(null),[position,setPosition]=useState({left:8,top:8,visibility:'hidden'});
- useLayoutEffect(()=>{const update=()=>{if(!ref.current||!anchor?.isConnected)return onClose();const r=anchor.getBoundingClientRect(),p=ref.current.getBoundingClientRect(),v=window.visualViewport,w=v?.width||innerWidth,h=v?.height||innerHeight,x=v?.offsetLeft||0,y=v?.offsetTop||0;setPosition({left:Math.max(x+8,Math.min(r.left,x+w-p.width-8)),top:Math.max(y+8,Math.min(r.bottom+6,y+h-p.height-8)),visibility:'visible',maxHeight:h-16})};update();window.addEventListener('resize',update);window.addEventListener('scroll',update,true);window.visualViewport?.addEventListener('resize',update);const observer=new ResizeObserver(update);observer.observe(ref.current);return()=>{observer.disconnect();window.removeEventListener('resize',update);window.removeEventListener('scroll',update,true);window.visualViewport?.removeEventListener('resize',update)}},[anchor]);
- useEffect(()=>{const previous=document.activeElement;ref.current?.querySelector('button')?.focus({preventScroll:true});const pointer=e=>{if(!ref.current?.contains(e.target)&&!anchor?.contains(e.target))onClose()};const key=e=>{if(e.key==='Escape'){e.stopPropagation();onClose();anchor?.focus()}if(e.key==='Tab'){const focusable=[...ref.current.querySelectorAll('button:not(:disabled),select,input,[tabindex="0"]')];const first=focusable[0],last=focusable.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last?.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus()}}};document.addEventListener('pointerdown',pointer);document.addEventListener('keydown',key,true);return()=>{document.removeEventListener('pointerdown',pointer);document.removeEventListener('keydown',key,true);if(previous?.isConnected)previous.focus({preventScroll:true})}},[anchor,onClose]);
- return createPortal(<div ref={ref} role="dialog" aria-modal="true" aria-label={label} className={'date-popover '+className} style={position}>{children}</div>,document.body);
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useLayoutEffect,
+  useId,
+} from "react";
+import { createPortal } from "react-dom";
+import { FloatingPanel } from "./FloatingPanel";
+import { CalendarDays, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { dateAdd, weekStart } from "./list-utils.mjs";
+import { presetRange, monthDays, shiftMonth } from "./date-utils.mjs";
+export const dateLabel = (d) =>
+  d
+    ? new Date(d + "T12:00:00Z").toLocaleDateString("tr-TR", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        timeZone: "UTC",
+      })
+    : "";
+export function Popover({
+  anchor,
+  onClose,
+  children,
+  label = "Ayrıntılar",
+  className = "",
+}) {
+  const ref = useRef(null),
+    [position, setPosition] = useState({
+      left: 8,
+      top: 8,
+      visibility: "hidden",
+    });
+  useLayoutEffect(() => {
+    const update = () => {
+      if (!ref.current || !anchor?.isConnected) return onClose();
+      const r = anchor.getBoundingClientRect(),
+        p = ref.current.getBoundingClientRect(),
+        v = window.visualViewport,
+        w = v?.width || innerWidth,
+        h = v?.height || innerHeight,
+        x = v?.offsetLeft || 0,
+        y = v?.offsetTop || 0;
+      setPosition({
+        left: Math.max(x + 8, Math.min(r.left, x + w - p.width - 8)),
+        top: Math.max(y + 8, Math.min(r.bottom + 6, y + h - p.height - 8)),
+        visibility: "visible",
+        maxHeight: h - 16,
+      });
+    };
+    update();
+    window.addEventListener("resize", update);
+    window.addEventListener("scroll", update, true);
+    window.visualViewport?.addEventListener("resize", update);
+    const observer = new ResizeObserver(update);
+    observer.observe(ref.current);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", update);
+      window.removeEventListener("scroll", update, true);
+      window.visualViewport?.removeEventListener("resize", update);
+    };
+  }, [anchor]);
+  useEffect(() => {
+    const previous = document.activeElement;
+    ref.current?.querySelector("button")?.focus({ preventScroll: true });
+    const pointer = (e) => {
+      if (!ref.current?.contains(e.target) && !anchor?.contains(e.target))
+        onClose();
+    };
+    const key = (e) => {
+      if (e.key === "Escape") {
+        e.stopPropagation();
+        onClose();
+        anchor?.focus();
+      }
+      if (e.key === "Tab") {
+        const focusable = [
+          ...ref.current.querySelectorAll(
+            'button:not(:disabled),select,input,[tabindex="0"]',
+          ),
+        ];
+        const first = focusable[0],
+          last = focusable.at(-1);
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last?.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first?.focus();
+        }
+      }
+    };
+    document.addEventListener("pointerdown", pointer);
+    document.addEventListener("keydown", key, true);
+    return () => {
+      document.removeEventListener("pointerdown", pointer);
+      document.removeEventListener("keydown", key, true);
+      if (previous?.isConnected) previous.focus({ preventScroll: true });
+    };
+  }, [anchor, onClose]);
+  return createPortal(
+    <div
+      ref={ref}
+      role="dialog"
+      aria-modal="true"
+      aria-label={label}
+      className={"date-popover " + className}
+      style={position}
+    >
+      {children}
+    </div>,
+    document.body,
+  );
 }
-function Month({month,start,end,onPick,min,max,today,heading=false}){
- const ref=useRef(null),days=monthDays(month);
- function keyboard(e,d){const delta={ArrowLeft:-1,ArrowRight:1,ArrowUp:-7,ArrowDown:7}[e.key];let target;if(delta)target=dateAdd(d,delta);if(e.key==='Home')target=weekStart(d);if(e.key==='End')target=dateAdd(weekStart(d),6);if(target){e.preventDefault();ref.current?.querySelector(`[data-day="${target}"]`)?.focus()}}
- return <div className="date-month" ref={ref}>{heading&&<p className="date-month-title">{new Date(month+'-01T12:00:00Z').toLocaleDateString('tr-TR',{month:'long',year:'numeric',timeZone:'UTC'})}</p>}<div className="date-weekdays">{['Pt','Sa','Ça','Pe','Cu','Ct','Pa'].map(x=><span key={x}>{x}</span>)}</div><div className="date-days">{days.map(d=><button type="button" key={d} data-day={d} disabled={Boolean(min&&d<min||max&&d>max)} aria-label={dateLabel(d)} aria-pressed={d===start||d===end} aria-current={d===today?'date':undefined} className={(d.slice(0,7)!==month?'outside ':'')+(d===start||d===end?'selected ':start&&end&&d>start&&d<end?'in-range ':'')+(d===today?'today':'')} onKeyDown={e=>keyboard(e,d)} onClick={()=>onPick(d)}>{Number(d.slice(-2))}</button>)}</div></div>;
+function Month({
+  month,
+  start,
+  end,
+  onPick,
+  min,
+  max,
+  today,
+  heading = false,
+}) {
+  const ref = useRef(null),
+    days = monthDays(month);
+  function keyboard(e, d) {
+    const delta = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 }[
+      e.key
+    ];
+    let target;
+    if (delta) target = dateAdd(d, delta);
+    if (e.key === "Home") target = weekStart(d);
+    if (e.key === "End") target = dateAdd(weekStart(d), 6);
+    if (target) {
+      e.preventDefault();
+      ref.current?.querySelector(`[data-day="${target}"]`)?.focus();
+    }
+  }
+  return (
+    <div className="date-month" ref={ref}>
+      {heading && (
+        <p className="date-month-title">
+          {new Date(month + "-01T12:00:00Z").toLocaleDateString("tr-TR", {
+            month: "long",
+            year: "numeric",
+            timeZone: "UTC",
+          })}
+        </p>
+      )}
+      <div className="date-weekdays">
+        {["Pt", "Sa", "Ça", "Pe", "Cu", "Ct", "Pa"].map((x) => (
+          <span key={x}>{x}</span>
+        ))}
+      </div>
+      <div className="date-days">
+        {days.map((d) => (
+          <button
+            type="button"
+            key={d}
+            data-day={d}
+            disabled={Boolean((min && d < min) || (max && d > max))}
+            aria-label={dateLabel(d)}
+            aria-pressed={d === start || d === end}
+            aria-current={d === today ? "date" : undefined}
+            className={
+              (d.slice(0, 7) !== month ? "outside " : "") +
+              (d === start || d === end
+                ? "selected "
+                : start && end && d > start && d < end
+                  ? "in-range "
+                  : "") +
+              (d === today ? "today" : "")
+            }
+            onKeyDown={(e) => keyboard(e, d)}
+            onClick={() => onPick(d)}
+          >
+            {Number(d.slice(-2))}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
 }
-export function DatePicker({value='',onChange,range=false,from='',to='',today=new Date().toISOString().slice(0,10),min,max,required=false,name,label=range?'Tarih aralığı':'Tarih seç',placeholder,displayText,clearable=!required,iconOnly=false}){
- const id=useId(),[anchor,setAnchor]=useState(null),[month,setMonth]=useState((range?from:value)?.slice(0,7)||today.slice(0,7)),[draft,setDraft]=useState(''),[draftEnd,setDraftEnd]=useState('');
- const CalendarWindow=FloatingPanel;
- const close=React.useCallback(()=>setAnchor(null),[]);
- function show(e){setMonth((range?from:value)?.slice(0,7)||today.slice(0,7));setDraft('');setDraftEnd('');setAnchor(e.currentTarget)}
- function pick(d){if(!range){onChange(d);close()}else if(!draft||draftEnd){setDraft(d);setDraftEnd('')}else {setDraft(d<draft?d:draft);setDraftEnd(d<draft?draft:d)}}
- const text=range?(from&&to?`${dateLabel(from)} – ${dateLabel(to)}`:from?`${dateLabel(from)} – …`:'Tüm tarihler'):dateLabel(value)||placeholder||'Tarih seç';
- const year=Number(month.slice(0,4));
- return <div className={'date-control'+(iconOnly?' date-icon-only':'')}><button type="button" className="date-trigger" aria-label={label} aria-describedby={id+'-value'} title={displayText||text} aria-expanded={Boolean(anchor)} aria-haspopup="dialog" aria-required={required||undefined} onClick={show}><CalendarDays size={18}/><span className={iconOnly?'sr-only':undefined} id={id+'-value'}>{displayText||text}</span></button>{!range&&<input className="date-validation" aria-hidden="true" tabIndex={-1} aria-label={label} name={name} required={required} value={value} onChange={()=>{}} onInvalid={e=>{e.preventDefault();setAnchor(e.currentTarget.previousElementSibling)}}/>}{anchor&&<CalendarWindow title={label} anchor={anchor} width={range?620:340} className="date-floating" onClose={close}><div className={'sheet-scroll date-centered '+(range?'date-range':'')}><div className="date-pop-head"><strong>{label}</strong><button type="button" className="icon-button" aria-label="Takvimi kapat" onClick={close}><X size={18}/></button></div>{range&&<div className="date-presets">{['Bugün','Bu Hafta','Bu Ay','Son 3 Ay','Son 1 Yıl'].map(p=><button type="button" key={p} onClick={()=>{onChange(presetRange(p,today));close()}}>{p}</button>)}</div>}<div className="date-navigation"><button type="button" className="icon-button" aria-label="Önceki ay" onClick={()=>setMonth(shiftMonth(month,-1))}><ChevronLeft size={16}/></button><select aria-label="Ay" value={Number(month.slice(5))-1} onChange={e=>setMonth(year+'-'+String(Number(e.target.value)+1).padStart(2,'0'))}>{Array.from({length:12},(_,i)=><option key={i} value={i}>{new Date(Date.UTC(2020,i,1)).toLocaleDateString('tr-TR',{month:'long',timeZone:'UTC'})}</option>)}</select><select aria-label="Yıl" value={year} onChange={e=>setMonth(e.target.value+month.slice(4))}>{Array.from({length:201},(_,i)=>Number(today.slice(0,4))-100+i).concat(year<Number(today.slice(0,4))-100||year>Number(today.slice(0,4))+100?[year]:[]).sort((a,b)=>a-b).map(y=><option key={y}>{y}</option>)}</select><button type="button" className="icon-button" aria-label="Sonraki ay" onClick={()=>setMonth(shiftMonth(month,1))}><ChevronRight size={16}/></button></div><div className="date-months"><Month heading={range} month={month} start={range?draft||from:value} end={range?draftEnd||(!draft?to:''):value} onPick={pick} {...{min,max,today}}/>{range&&<div className="date-second"><Month heading month={shiftMonth(month,1)} start={draft||from} end={draftEnd||(!draft?to:'')} onPick={pick} {...{min,max,today}}/></div>}</div>{range&&<p className="date-hint" role="status">{draft?(draftEnd?`${dateLabel(draft)} – ${dateLabel(draftEnd)}`:'Bitiş tarihini seçin'):'Başlangıç ve bitiş tarihini seçin'}</p>}<div className="date-footer">{clearable&&<button type="button" className="text-button" onClick={()=>{onChange(range?{from:'',to:''}:'');close()}}>Temizle</button>}{!range&&<button type="button" className="text-button" disabled={Boolean(min&&today<min||max&&today>max)} onClick={()=>pick(today)}>Bugün</button>}{range&&<button type="button" className="primary-button" disabled={!draftEnd} onClick={()=>{onChange({from:draft,to:draftEnd});close()}}>Uygula</button>}</div></div></CalendarWindow>}</div>;
+export function DatePicker({
+  value = "",
+  onChange,
+  range = false,
+  from = "",
+  to = "",
+  today = new Date().toISOString().slice(0, 10),
+  min,
+  max,
+  required = false,
+  name,
+  label = range ? "Tarih aralığı" : "Tarih seç",
+  placeholder,
+  displayText,
+  clearable = !required,
+  iconOnly = false,
+}) {
+  const id = useId(),
+    [anchor, setAnchor] = useState(null),
+    [month, setMonth] = useState(
+      (range ? from : value)?.slice(0, 7) || today.slice(0, 7),
+    ),
+    [draft, setDraft] = useState(""),
+    [draftEnd, setDraftEnd] = useState("");
+  const CalendarWindow = FloatingPanel;
+  const close = React.useCallback(() => setAnchor(null), []);
+  function show(e) {
+    setMonth((range ? from : value)?.slice(0, 7) || today.slice(0, 7));
+    setDraft("");
+    setDraftEnd("");
+    setAnchor(e.currentTarget);
+  }
+  function pick(d) {
+    if (!range) {
+      onChange(d);
+      close();
+    } else if (!draft || draftEnd) {
+      setDraft(d);
+      setDraftEnd("");
+    } else {
+      setDraft(d < draft ? d : draft);
+      setDraftEnd(d < draft ? draft : d);
+    }
+  }
+  const text = range
+    ? from && to
+      ? `${dateLabel(from)} – ${dateLabel(to)}`
+      : from
+        ? `${dateLabel(from)} – …`
+        : "Tüm tarihler"
+    : dateLabel(value) || placeholder || "Tarih seç";
+  const year = Number(month.slice(0, 4));
+  return (
+    <div className={"date-control" + (iconOnly ? " date-icon-only" : "")}>
+      <button
+        type="button"
+        className="date-trigger"
+        aria-label={label}
+        aria-describedby={id + "-value"}
+        title={displayText || text}
+        aria-expanded={Boolean(anchor)}
+        aria-haspopup="dialog"
+        aria-required={required || undefined}
+        onClick={show}
+      >
+        <CalendarDays size={18} />
+        <span className={iconOnly ? "sr-only" : undefined} id={id + "-value"}>
+          {displayText || text}
+        </span>
+      </button>
+      {!range && (
+        <input
+          className="date-validation"
+          aria-hidden="true"
+          tabIndex={-1}
+          aria-label={label}
+          name={name}
+          required={required}
+          value={value}
+          onChange={() => {}}
+          onInvalid={(e) => {
+            e.preventDefault();
+            setAnchor(e.currentTarget.previousElementSibling);
+          }}
+        />
+      )}
+      {anchor && (
+        <CalendarWindow
+          title={label}
+          anchor={anchor}
+          width={range ? 620 : 340}
+          className="date-floating"
+          onClose={close}
+        >
+          <div
+            className={
+              "sheet-scroll date-centered " + (range ? "date-range" : "")
+            }
+          >
+            <div className="date-pop-head">
+              <strong>{label}</strong>
+              <button
+                type="button"
+                className="icon-button"
+                aria-label="Takvimi kapat"
+                onClick={close}
+              >
+                <X size={18} />
+              </button>
+            </div>
+            {range && (
+              <div className="date-presets">
+                {["Bugün", "Bu Hafta", "Bu Ay", "Son 3 Ay", "Son 1 Yıl"].map(
+                  (p) => (
+                    <button
+                      type="button"
+                      key={p}
+                      onClick={() => {
+                        onChange(presetRange(p, today));
+                        close();
+                      }}
+                    >
+                      {p}
+                    </button>
+                  ),
+                )}
+              </div>
+            )}
+            <div className="date-navigation">
+              <button
+                type="button"
+                className="icon-button"
+                aria-label="Önceki ay"
+                onClick={() => setMonth(shiftMonth(month, -1))}
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <select
+                aria-label="Ay"
+                value={Number(month.slice(5)) - 1}
+                onChange={(e) =>
+                  setMonth(
+                    year +
+                      "-" +
+                      String(Number(e.target.value) + 1).padStart(2, "0"),
+                  )
+                }
+              >
+                {Array.from({ length: 12 }, (_, i) => (
+                  <option key={i} value={i}>
+                    {new Date(Date.UTC(2020, i, 1)).toLocaleDateString(
+                      "tr-TR",
+                      { month: "long", timeZone: "UTC" },
+                    )}
+                  </option>
+                ))}
+              </select>
+              <select
+                aria-label="Yıl"
+                value={year}
+                onChange={(e) => setMonth(e.target.value + month.slice(4))}
+              >
+                {Array.from(
+                  { length: 201 },
+                  (_, i) => Number(today.slice(0, 4)) - 100 + i,
+                )
+                  .concat(
+                    year < Number(today.slice(0, 4)) - 100 ||
+                      year > Number(today.slice(0, 4)) + 100
+                      ? [year]
+                      : [],
+                  )
+                  .sort((a, b) => a - b)
+                  .map((y) => (
+                    <option key={y}>{y}</option>
+                  ))}
+              </select>
+              <button
+                type="button"
+                className="icon-button"
+                aria-label="Sonraki ay"
+                onClick={() => setMonth(shiftMonth(month, 1))}
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+            <div className="date-months">
+              <Month
+                heading={range}
+                month={month}
+                start={range ? draft || from : value}
+                end={range ? draftEnd || (!draft ? to : "") : value}
+                onPick={pick}
+                {...{ min, max, today }}
+              />
+              {range && (
+                <div className="date-second">
+                  <Month
+                    heading
+                    month={shiftMonth(month, 1)}
+                    start={draft || from}
+                    end={draftEnd || (!draft ? to : "")}
+                    onPick={pick}
+                    {...{ min, max, today }}
+                  />
+                </div>
+              )}
+            </div>
+            {range && (
+              <p className="date-hint" role="status">
+                {draft
+                  ? draftEnd
+                    ? `${dateLabel(draft)} – ${dateLabel(draftEnd)}`
+                    : "Bitiş tarihini seçin"
+                  : "Başlangıç ve bitiş tarihini seçin"}
+              </p>
+            )}
+            <div className="date-footer">
+              {clearable && (
+                <button
+                  type="button"
+                  className="text-button"
+                  onClick={() => {
+                    onChange(range ? { from: "", to: "" } : "");
+                    close();
+                  }}
+                >
+                  Temizle
+                </button>
+              )}
+              {!range && (
+                <button
+                  type="button"
+                  className="text-button"
+                  disabled={Boolean(
+                    (min && today < min) || (max && today > max),
+                  )}
+                  onClick={() => pick(today)}
+                >
+                  Bugün
+                </button>
+              )}
+              {range && (
+                <button
+                  type="button"
+                  className="primary-button"
+                  disabled={!draftEnd}
+                  onClick={() => {
+                    onChange({ from: draft, to: draftEnd });
+                    close();
+                  }}
+                >
+                  Uygula
+                </button>
+              )}
+            </div>
+          </div>
+        </CalendarWindow>
+      )}
+    </div>
+  );
 }

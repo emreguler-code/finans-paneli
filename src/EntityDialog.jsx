@@ -1,46 +1,701 @@
-import {EntrySurface} from './EntrySurface';
-import {BankSelect} from './BankSelect';
-import {EntryForm,FormSection} from './EntryForm';
-import {PartyProfileFields} from './PartyProfileFields';
-import { useState } from 'react';
-import { Landmark, History} from 'lucide-react';
-import {api, requestId} from './api';
-import { can, roleName} from './ui';
-import {DatePicker} from './DatePicker';
-import {BANKS, PROGRAMS, POS_PROGRAMS} from './BankCards';
-import {formatMoneyInput, normalizeMoney} from './list-utils.mjs';
-import {AuditHistory} from './AuditHistory';
-import {MoneyInput} from './MoneyInput';
-const TYPES=['Tedarikçi','Müşteri','Personel'];
-const inputMoney=n=>String((n||0)/100).replace('.',',');
-function Fold({title,children}){return <FormSection title={title} optional>{children}</FormSection>}
-function initialForm(ctx,data){const item=ctx.item||{},entity=ctx.entity;let f={name:'',title:'',type:entity==='account'?'Banka hesabı':'Müşteri',phone:'',email:'',tax_no:'',tax_office:'',address:'',notes:'',pos_programs:[],profile:{},opening:'0',direction:'Alacak',date:data.today,due:'',maturityDate:'',creditLimit:'',dailyInterestRate:'',bank:'',bank_code:'',program_code:'',network_code:'',linked_account_id:'',iban:'',holder:'',limit:'',statement:'0',statementDate:data.today,cutDay:new Date(data.today+'T12:00:00').getDate(),lastFour:'',username:'',shortName:'',password:'',role:'user',active:true,reason:'',...item};
- if(entity==='account'&&item.id)f={...f,maturityDate:item.maturity_date||'',creditLimit:inputMoney(item.credit_limit_cents),dailyInterestRate:item.daily_interest_rate??''};
- if(entity==='card'&&item.id)f={...f,limit:inputMoney(item.limit_cents),statementDate:item.statement_date||'',cutDay:Number(item.statement_needs_review)?'':item.cut_day,lastFour:item.last_four};if(entity==='user'&&item.id)f={...f,shortName:item.short_name};
- f={...f,...Object.fromEntries(Object.entries(ctx.initial||{}).filter(([,v])=>v!==undefined))};
- for(const key of ['opening','limit','statement','creditLimit'])f[key]=formatMoneyInput(f[key]);
- return {...f,active:item.id?Boolean(Number(item.active??1)):true,requestId:requestId()};}
-export function EntityDialog({context,data,onClose,onState,notify}){
- const {entity,mode,item}=context;const [form,setForm]=useState(()=>initialForm(context,data)),[error,setError]=useState(''),[busy,setBusy]=useState(false);const editing=Boolean(item?.id),isEvent=entity==='event';
- const change=(k,v)=>{if(k==='program_code'&&!editing){setForm(f=>({...f,[k]:v,name:!f.name||f.name===PROGRAMS[f.program_code]?PROGRAMS[v]||f.name:f.name}));return;}if(k==='type'&&v!==form.type&&(form.pos_programs.length||Object.keys(form.profile||{}).length)&&!window.confirm('Cari türü değişince türe özel bilgiler temizlenecek. Devam edilsin mi?'))return;setForm(f=>({...f,[k]:v,...(k==='type'&&v!==f.type?{pos_programs:[],profile:{}}: {})}));};
- const moneyKeys=['opening','limit','statement','creditLimit'];
- const field=(key,label,opts={})=>opts.type==='date'?<label className="cari-field">{label}<DatePicker name={key} value={form[key]||''} onChange={v=>change(key,v)} label={label} today={data.today} required={opts.required} min={opts.min} max={opts.max}/></label>:<label className="cari-field">{label}{moneyKeys.includes(key)?<MoneyInput name={key} value={form[key]??''} onValueChange={v=>change(key,v)} {...opts}/>:<input name={key} value={form[key]??''} onChange={e=>change(key,e.currentTarget.value)} {...opts}/>}</label>;
- const select=(key,label,options)=><label className="cari-field">{label}<select value={form[key]??''} onChange={e=>change(key,e.target.value)}>{options.map(o=>{const [value,text]=Array.isArray(o)?o:[o,o];return <option key={value} value={value}>{text}</option>})}</select></label>;
- const err=<>{error&&<p className="cari-error" role="alert">{error}</p>}</>;
- const close=()=>{if(!busy)onClose()};
- async function save(e){e.preventDefault();if(busy)return;if(entity==='card'&&!editing&&Number(normalizeMoney(form.statement).replace(',','.'))>Number(normalizeMoney(form.opening).replace(',','.'))){setError('Başlangıç ekstre borcu toplam borcu aşamaz.');return;}setBusy(true);setError('');try{let body=mode==='status'?{id:item.id,version:item.version,cancelled:!item.cancelled,reason:form.reason,requestId:form.requestId}:{...form};if(mode!=='status'){for(const key of moneyKeys)if(key in body)body[key]=normalizeMoney(body[key]);}const r=await api(mode==='status'?'event_status':entity+'_save',body);onState(r.state);notify(mode==='status'?(item.cancelled?'İşlem geri açıldı':'İşlem iptal edildi'):'Kayıt tamamlandı',isEvent?form.description:form.name||form.shortName);onClose()}catch(e){setError(e.message)}finally{setBusy(false)}}
- const title=mode==='status'?(item.cancelled?'İşlemi geri aç':'İşlemi iptal et'):({party:'Cari Ekle / Değiştir',account:editing?'Hesabı düzenle':'Hesap ekle',card:editing?'Kartı düzenle':'Kredi kartı ekle',user:editing?'Kullanıcıyı düzenle':'Kullanıcı ekle'}[entity]);
- return <EntrySurface title={title} onClose={close} busy={busy} variant={(entity==='party'||!editing&&['account','card'].includes(entity))&&mode!=='status'?'page':entity==='user'&&!editing?'modal':'dock'} preview={entity==='card'&&!editing?<><h2>Kart önizlemesi</h2><strong>{form.name||'Yeni kredi kartı'}</strong><small>•••• {form.lastFour||'----'}</small><p>Kart limiti <strong>{form.limit||'0,00'} TL</strong></p></>:undefined}><EntryForm onSubmit={save}><div className="sheet-scroll">{mode==='status'?<><p className="cari-hint">{item.cancelled?'Kayıt yeniden aktif olacak; bütün hesap etkileri tekrar uygulanacak.':'Kayıt silinmez; üstü çizili korunur. Yalnız bu işlemin hesap etkileri kaldırılır. Ayrı ödeme ve faturalar korunur.'}</p>{field('reason','Gerekçe *',{required:true,maxLength:1000})}</>:entity==='party'?<><FormSection title="Temel bilgiler">{select('type','Cari türü *',TYPES)}{field('name','Kısa ad *',{required:true,maxLength:160})}{field('title',form.type==='Personel'?'Ad soyad':'Ticari unvan',{maxLength:200})}</FormSection>
- <FormSection title="İletişim ve adres" optional summary={[form.phone&&'Telefon',form.email&&'E-posta',form.address&&'Adres'].filter(Boolean).join(' · ')||'İsteğe bağlı'}>{field('phone','Telefon numarası',{type:'tel',maxLength:50})}{field('email','E-posta adresi',{type:'email',maxLength:160})}{field('tax_no','Vergi / kimlik numarası',{maxLength:40})}{field('tax_office','Vergi dairesi',{maxLength:160})}{field('address','Adres',{maxLength:1000})}</FormSection>
- {!editing&&<FormSection title="Başlangıç bakiyesi" optional summary={form.opening&&normalizeMoney(form.opening)!=='0'?form.opening+' TL · '+form.direction:'Varsayılan 0 TL'}>{field('opening','Açılış tutarı (TL)',{inputMode:'decimal'})}{select('direction','Bakiye yönü',['Alacak','Borç'])}<p className="cari-hint">{form.direction==='Alacak'?'Bu cariden alacağınız olan tutar.':'Bu cariye borcunuz olan tutar.'}</p>{field('date','Açılış tarihi',{type:'date',max:data.today})}{field('due','Vade',{type:'date'})}</FormSection>}
- {form.type==='Tedarikçi'&&<FormSection title="Tedarikçi bilgileri" optional summary={(form.pos_programs.length?form.pos_programs.length+' POS · ':'')+((form.profile?.visit_days||[]).length+' ziyaret günü')}><fieldset className="pos-options"><legend>POS Cihazı</legend><p className="cari-hint">Birden fazla banka ve program seçebilirsiniz.</p>{POS_PROGRAMS.map(option=><label key={option.code} className="check-label"><input type="checkbox" checked={form.pos_programs.includes(option.code)} onChange={e=>change('pos_programs',e.target.checked?[...form.pos_programs,option.code]:form.pos_programs.filter(code=>code!==option.code))}/>{option.label}</label>)}</fieldset><PartyProfileFields region="aside" {...{form,change,data}}/></FormSection>}
- {form.type==='Personel'&&<PartyProfileFields region="aside" {...{form,change,data}}/>}<FormSection title="Notlar" optional summary={form.notes?'Not eklendi':'İsteğe bağlı'}>{field('notes','Notlar',{maxLength:1000})}</FormSection></>:
- entity==='account'?<><FormSection title="Hesap bilgileri">{field('name','Hesap adı *',{required:true,maxLength:160})}{select('type','Hesap türü',['Banka hesabı','Kasa','Birikim hesabı','Vadeli hesap','Kredili Mevduat Hesabı'])}{!editing&&field('opening','Başlangıç bakiyesi (TL)',{inputMode:'decimal'})}{form.type!=='Kasa'&&<BankSelect data={data} code={form.bank_code} name={form.bank} onChange={bank=>setForm(f=>({...f,bank_code:bank.code,bank:bank.name}))}/>}<Fold region="aside" title="Banka ve hesap bilgileri" Icon={Landmark}>{field('iban','IBAN',{maxLength:40,autoCapitalize:'characters'})}{field('holder','Hesap sahibi',{maxLength:160})}{['Birikim hesabı','Vadeli hesap'].includes(form.type)&&field('maturityDate','Hesap vade sonu (isteğe bağlı)',{type:'date'})}</Fold>{form.type==='Kredili Mevduat Hesabı'&&<>{field('creditLimit','KMH limiti (TL) *',{required:true,inputMode:'decimal'})}{field('dailyInterestRate','Günlük faiz oranı (%) · isteğe bağlı',{inputMode:'decimal',placeholder:'Bankanın bildirdiği günlük oran'})}<p className="cari-hint">Tahmin, kullanılan limit ve girilen günlük oran üzerinden bir gün için hesaplanır. Vergi ve valör etkisi dahil değildir; otomatik gider kaydı oluşturmaz.</p></>}{editing&&<p className="cari-hint">Bakiye hareketlerden hesaplanır. Gerçek para giriş/çıkışını işlem olarak kaydedin.</p>}</FormSection></>:
- entity==='card'?<><FormSection title="Kart bilgileri"><BankSelect data={data} code={form.bank_code} name={form.bank} onChange={bank=>setForm(f=>({...f,bank_code:bank.code,bank:bank.name,program_code:bank.code===f.bank_code?f.program_code:''}))}/>{field('name','Kart adı *',{required:true,maxLength:160,placeholder:PROGRAMS[form.program_code]||'Örn. İş kartım'})}{field('limit','Kart limiti (TL) *',{required:true,inputMode:'decimal'})}</FormSection>
- <FormSection title="Ekstre takvimi">{field('cutDay','Aylık hesap kesim günü *',{type:'number',min:1,max:31,required:true})}<div className="entry-row">{field('statementDate','Takip edilen ekstre kesim tarihi *',{type:'date',required:true,max:data.today})}{field('due','Bu ekstrenin son ödeme tarihi *',{type:'date',required:true})}</div><p className="cari-hint">Bankanın bildirdiği tarihleri girin. Sonraki tarihler tahmindir; yeni ekstre geldiğinde doğrulayın.</p></FormSection>
- {!editing&&<FormSection title="Mevcut borçla başlat" optional summary={form.opening+' TL toplam · '+form.statement+' TL ekstre'}>{field('opening','Başlangıç toplam borcu (TL)',{inputMode:'decimal'})}{field('statement','Başlangıç ekstre borcu (TL)',{inputMode:'decimal'})}<p className="cari-hint">Ekstre borcu toplam borcun içindedir; ayrıca üzerine eklenmez. Borçsuz kartta ikisini de 0 bırakın.</p></FormSection>}
- <FormSection title="Kart ayrıntıları" optional open={!editing} summary={[form.lastFour&&'•••• '+form.lastFour,form.holder].filter(Boolean).join(' · ')||'İsteğe bağlı'}>{select('program_code','Kart programı',[['','Yok'],...(BANKS.find(b=>b.code===form.bank_code)?.programs||[]).map(c=>[c,PROGRAMS[c]])])}<div className="entry-row">{field('holder','Kart sahibinin adı soyadı',{maxLength:160})}{field('lastFour','Son dört hane',{inputMode:'numeric',maxLength:4,pattern:'[0-9]{4}'})}</div>{select('network_code','Ödeme ağı',[['','Belirtilmedi'],['visa','Visa'],['mastercard','Mastercard'],['troy','Troy']])}{select('linked_account_id','Bağlı hesap',[['','Bağlı hesap seçilmedi'],...data.accounts.filter(a=>a.active||a.id===form.linked_account_id).map(a=>[a.id,a.name+(!a.active?' · Arşiv':'')])])}<p className="cari-hint">Bağlı hesap bilgi içindir; otomatik ödeme talimatı oluşturmaz.</p></FormSection></>:
- <>{field('username','Kullanıcı adı *',{required:true,maxLength:80,autoComplete:'off'})}{field('shortName','Görünen kısa ad *',{required:true,maxLength:80})}{select('role','Rol',Object.entries(roleName))}{field('password',editing?'Yeni parola (değiştirmek için)':'Parola *',{type:'password',required:!editing,minLength:12,maxLength:72,autoComplete:'new-password'})}<p className="cari-hint">Yönetici: tüm yetkiler. Düzenleyici: ekle/düzenle. Kullanıcı: yalnız ekle. Gözlemci: yalnız görüntüle.</p></>}
- {editing&&!isEvent&&mode!=='status'&&<Fold region="aside" title="Değişiklik geçmişi" Icon={History}><AuditHistory entity={entity} id={item.id} data={data}/></Fold>}{editing&&mode!=='status'&&<>{!['account','card'].includes(entity)&&(entity==='party'?<FormSection title="Düzenleme açıklaması" optional>{field('reason','Değişiklik gerekçesi (isteğe bağlı)',{maxLength:1000})}</FormSection>:field('reason','Değişiklik gerekçesi *',{required:true,maxLength:1000}))}{!isEvent&&can(data.user,'admin')&&<label className="check-label"><input type="checkbox" checked={form.active} onChange={e=>change('active',e.target.checked)}/>{entity==='user'?'Kullanıcı etkin':'Aktif (kaldırırsanız arşive alınır)'}</label>}</>}{err}
- </div><div className="sheet-footer"><button type="button" className="secondary-button" disabled={busy} onClick={close}>Vazgeç</button><button className="primary-button" disabled={busy}>{busy?'Kaydediliyor…':mode==='status'?(item.cancelled?'Geri aç':'İptali uygula'):editing?'Kaydet':entity==='party'?'Cariyi ekle':entity==='card'?'Kartı ekle':'Kaydet'}</button></div></EntryForm></EntrySurface>;
+import { EntrySurface } from "./EntrySurface";
+import { BankSelect } from "./BankSelect";
+import { EntryForm, FormSection } from "./EntryForm";
+import { PartyProfileFields } from "./PartyProfileFields";
+import { useState } from "react";
+import { Landmark, History } from "lucide-react";
+import { api, requestId } from "./api";
+import { can, roleName } from "./ui";
+import { DatePicker } from "./DatePicker";
+import { BANKS, PROGRAMS, POS_PROGRAMS } from "./BankCards";
+import { formatMoneyInput, normalizeMoney } from "./list-utils.mjs";
+import { AuditHistory } from "./AuditHistory";
+import { MoneyInput } from "./MoneyInput";
+const TYPES = ["Tedarikçi", "Müşteri", "Personel"];
+const inputMoney = (n) => String((n || 0) / 100).replace(".", ",");
+function Fold({ title, children }) {
+  return (
+    <FormSection title={title} optional>
+      {children}
+    </FormSection>
+  );
+}
+function initialForm(ctx, data) {
+  const item = ctx.item || {},
+    entity = ctx.entity;
+  let f = {
+    name: "",
+    title: "",
+    type: entity === "account" ? "Banka hesabı" : "Müşteri",
+    phone: "",
+    email: "",
+    tax_no: "",
+    tax_office: "",
+    address: "",
+    notes: "",
+    pos_programs: [],
+    profile: {},
+    opening: "0",
+    direction: "Alacak",
+    date: data.today,
+    due: "",
+    maturityDate: "",
+    creditLimit: "",
+    dailyInterestRate: "",
+    bank: "",
+    bank_code: "",
+    program_code: "",
+    network_code: "",
+    linked_account_id: "",
+    iban: "",
+    holder: "",
+    limit: "",
+    statement: "0",
+    statementDate: data.today,
+    cutDay: new Date(data.today + "T12:00:00").getDate(),
+    lastFour: "",
+    username: "",
+    shortName: "",
+    password: "",
+    role: "user",
+    active: true,
+    reason: "",
+    ...item,
+  };
+  if (entity === "account" && item.id)
+    f = {
+      ...f,
+      maturityDate: item.maturity_date || "",
+      creditLimit: inputMoney(item.credit_limit_cents),
+      dailyInterestRate: item.daily_interest_rate ?? "",
+    };
+  if (entity === "card" && item.id)
+    f = {
+      ...f,
+      limit: inputMoney(item.limit_cents),
+      statementDate: item.statement_date || "",
+      cutDay: Number(item.statement_needs_review) ? "" : item.cut_day,
+      lastFour: item.last_four,
+    };
+  if (entity === "user" && item.id) f = { ...f, shortName: item.short_name };
+  f = {
+    ...f,
+    ...Object.fromEntries(
+      Object.entries(ctx.initial || {}).filter(([, v]) => v !== undefined),
+    ),
+  };
+  for (const key of ["opening", "limit", "statement", "creditLimit"])
+    f[key] = formatMoneyInput(f[key]);
+  return {
+    ...f,
+    active: item.id ? Boolean(Number(item.active ?? 1)) : true,
+    requestId: requestId(),
+  };
+}
+export function EntityDialog({ context, data, onClose, onState, notify }) {
+  const { entity, mode, item } = context;
+  const [form, setForm] = useState(() => initialForm(context, data)),
+    [error, setError] = useState(""),
+    [busy, setBusy] = useState(false);
+  const editing = Boolean(item?.id),
+    isEvent = entity === "event";
+  const change = (k, v) => {
+    if (k === "program_code" && !editing) {
+      setForm((f) => ({
+        ...f,
+        [k]: v,
+        name:
+          !f.name || f.name === PROGRAMS[f.program_code]
+            ? PROGRAMS[v] || f.name
+            : f.name,
+      }));
+      return;
+    }
+    if (
+      k === "type" &&
+      v !== form.type &&
+      (form.pos_programs.length || Object.keys(form.profile || {}).length) &&
+      !window.confirm(
+        "Cari türü değişince türe özel bilgiler temizlenecek. Devam edilsin mi?",
+      )
+    )
+      return;
+    setForm((f) => ({
+      ...f,
+      [k]: v,
+      ...(k === "type" && v !== f.type
+        ? { pos_programs: [], profile: {} }
+        : {}),
+    }));
+  };
+  const moneyKeys = ["opening", "limit", "statement", "creditLimit"];
+  const field = (key, label, opts = {}) =>
+    opts.type === "date" ? (
+      <label className="cari-field">
+        {label}
+        <DatePicker
+          name={key}
+          value={form[key] || ""}
+          onChange={(v) => change(key, v)}
+          label={label}
+          today={data.today}
+          required={opts.required}
+          min={opts.min}
+          max={opts.max}
+        />
+      </label>
+    ) : (
+      <label className="cari-field">
+        {label}
+        {moneyKeys.includes(key) ? (
+          <MoneyInput
+            name={key}
+            value={form[key] ?? ""}
+            onValueChange={(v) => change(key, v)}
+            {...opts}
+          />
+        ) : (
+          <input
+            name={key}
+            value={form[key] ?? ""}
+            onChange={(e) => change(key, e.currentTarget.value)}
+            {...opts}
+          />
+        )}
+      </label>
+    );
+  const select = (key, label, options) => (
+    <label className="cari-field">
+      {label}
+      <select
+        value={form[key] ?? ""}
+        onChange={(e) => change(key, e.target.value)}
+      >
+        {options.map((o) => {
+          const [value, text] = Array.isArray(o) ? o : [o, o];
+          return (
+            <option key={value} value={value}>
+              {text}
+            </option>
+          );
+        })}
+      </select>
+    </label>
+  );
+  const err = (
+    <>
+      {error && (
+        <p className="cari-error" role="alert">
+          {error}
+        </p>
+      )}
+    </>
+  );
+  const close = () => {
+    if (!busy) onClose();
+  };
+  async function save(e) {
+    e.preventDefault();
+    if (busy) return;
+    if (
+      entity === "card" &&
+      !editing &&
+      Number(normalizeMoney(form.statement).replace(",", ".")) >
+        Number(normalizeMoney(form.opening).replace(",", "."))
+    ) {
+      setError("Başlangıç ekstre borcu toplam borcu aşamaz.");
+      return;
+    }
+    setBusy(true);
+    setError("");
+    try {
+      let body =
+        mode === "status"
+          ? {
+              id: item.id,
+              version: item.version,
+              cancelled: !item.cancelled,
+              reason: form.reason,
+              requestId: form.requestId,
+            }
+          : { ...form };
+      if (mode !== "status") {
+        for (const key of moneyKeys)
+          if (key in body) body[key] = normalizeMoney(body[key]);
+      }
+      const r = await api(
+        mode === "status" ? "event_status" : entity + "_save",
+        body,
+      );
+      onState(r.state);
+      notify(
+        mode === "status"
+          ? item.cancelled
+            ? "İşlem geri açıldı"
+            : "İşlem iptal edildi"
+          : "Kayıt tamamlandı",
+        isEvent ? form.description : form.name || form.shortName,
+      );
+      onClose();
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+  const title =
+    mode === "status"
+      ? item.cancelled
+        ? "İşlemi geri aç"
+        : "İşlemi iptal et"
+      : {
+          party: "Cari Ekle / Değiştir",
+          account: editing ? "Hesabı düzenle" : "Hesap ekle",
+          card: editing ? "Kartı düzenle" : "Kredi kartı ekle",
+          user: editing ? "Kullanıcıyı düzenle" : "Kullanıcı ekle",
+        }[entity];
+  return (
+    <EntrySurface
+      title={title}
+      onClose={close}
+      busy={busy}
+      variant={
+        (entity === "party" ||
+          (!editing && ["account", "card"].includes(entity))) &&
+        mode !== "status"
+          ? "page"
+          : entity === "user" && !editing
+            ? "modal"
+            : "dock"
+      }
+      preview={
+        entity === "card" && !editing ? (
+          <>
+            <h2>Kart önizlemesi</h2>
+            <strong>{form.name || "Yeni kredi kartı"}</strong>
+            <small>•••• {form.lastFour || "----"}</small>
+            <p>
+              Kart limiti <strong>{form.limit || "0,00"} TL</strong>
+            </p>
+          </>
+        ) : undefined
+      }
+    >
+      <EntryForm onSubmit={save}>
+        <div className="sheet-scroll">
+          {mode === "status" ? (
+            <>
+              <p className="cari-hint">
+                {item.cancelled
+                  ? "Kayıt yeniden aktif olacak; bütün hesap etkileri tekrar uygulanacak."
+                  : "Kayıt silinmez; üstü çizili korunur. Yalnız bu işlemin hesap etkileri kaldırılır. Ayrı ödeme ve faturalar korunur."}
+              </p>
+              {field("reason", "Gerekçe *", {
+                required: true,
+                maxLength: 1000,
+              })}
+            </>
+          ) : entity === "party" ? (
+            <>
+              <FormSection title="Temel bilgiler">
+                {select("type", "Cari türü *", TYPES)}
+                {field("name", "Kısa ad *", { required: true, maxLength: 160 })}
+                {field(
+                  "title",
+                  form.type === "Personel" ? "Ad soyad" : "Ticari unvan",
+                  { maxLength: 200 },
+                )}
+              </FormSection>
+              <FormSection
+                title="İletişim ve adres"
+                optional
+                summary={
+                  [
+                    form.phone && "Telefon",
+                    form.email && "E-posta",
+                    form.address && "Adres",
+                  ]
+                    .filter(Boolean)
+                    .join(" · ") || "İsteğe bağlı"
+                }
+              >
+                {field("phone", "Telefon numarası", {
+                  type: "tel",
+                  maxLength: 50,
+                })}
+                {field("email", "E-posta adresi", {
+                  type: "email",
+                  maxLength: 160,
+                })}
+                {field("tax_no", "Vergi / kimlik numarası", { maxLength: 40 })}
+                {field("tax_office", "Vergi dairesi", { maxLength: 160 })}
+                {field("address", "Adres", { maxLength: 1000 })}
+              </FormSection>
+              {!editing && (
+                <FormSection
+                  title="Başlangıç bakiyesi"
+                  optional
+                  summary={
+                    form.opening && normalizeMoney(form.opening) !== "0"
+                      ? form.opening + " TL · " + form.direction
+                      : "Varsayılan 0 TL"
+                  }
+                >
+                  {field("opening", "Açılış tutarı (TL)", {
+                    inputMode: "decimal",
+                  })}
+                  {select("direction", "Bakiye yönü", ["Alacak", "Borç"])}
+                  <p className="cari-hint">
+                    {form.direction === "Alacak"
+                      ? "Bu cariden alacağınız olan tutar."
+                      : "Bu cariye borcunuz olan tutar."}
+                  </p>
+                  {field("date", "Açılış tarihi", {
+                    type: "date",
+                    max: data.today,
+                  })}
+                  {field("due", "Vade", { type: "date" })}
+                </FormSection>
+              )}
+              {form.type === "Tedarikçi" && (
+                <FormSection
+                  title="Tedarikçi bilgileri"
+                  optional
+                  summary={
+                    (form.pos_programs.length
+                      ? form.pos_programs.length + " POS · "
+                      : "") +
+                    ((form.profile?.visit_days || []).length + " ziyaret günü")
+                  }
+                >
+                  <fieldset className="pos-options">
+                    <legend>POS Cihazı</legend>
+                    <p className="cari-hint">
+                      Birden fazla banka ve program seçebilirsiniz.
+                    </p>
+                    {POS_PROGRAMS.map((option) => (
+                      <label key={option.code} className="check-label">
+                        <input
+                          type="checkbox"
+                          checked={form.pos_programs.includes(option.code)}
+                          onChange={(e) =>
+                            change(
+                              "pos_programs",
+                              e.target.checked
+                                ? [...form.pos_programs, option.code]
+                                : form.pos_programs.filter(
+                                    (code) => code !== option.code,
+                                  ),
+                            )
+                          }
+                        />
+                        {option.label}
+                      </label>
+                    ))}
+                  </fieldset>
+                  <PartyProfileFields
+                    region="aside"
+                    {...{ form, change, data }}
+                  />
+                </FormSection>
+              )}
+              {form.type === "Personel" && (
+                <PartyProfileFields
+                  region="aside"
+                  {...{ form, change, data }}
+                />
+              )}
+              <FormSection
+                title="Notlar"
+                optional
+                summary={form.notes ? "Not eklendi" : "İsteğe bağlı"}
+              >
+                {field("notes", "Notlar", { maxLength: 1000 })}
+              </FormSection>
+            </>
+          ) : entity === "account" ? (
+            <>
+              <FormSection title="Hesap bilgileri">
+                {field("name", "Hesap adı *", {
+                  required: true,
+                  maxLength: 160,
+                })}
+                {select("type", "Hesap türü", [
+                  "Banka hesabı",
+                  "Kasa",
+                  "Birikim hesabı",
+                  "Vadeli hesap",
+                  "Kredili Mevduat Hesabı",
+                ])}
+                {!editing &&
+                  field("opening", "Başlangıç bakiyesi (TL)", {
+                    inputMode: "decimal",
+                  })}
+                {form.type !== "Kasa" && (
+                  <BankSelect
+                    data={data}
+                    code={form.bank_code}
+                    name={form.bank}
+                    onChange={(bank) =>
+                      setForm((f) => ({
+                        ...f,
+                        bank_code: bank.code,
+                        bank: bank.name,
+                      }))
+                    }
+                  />
+                )}
+                <Fold
+                  region="aside"
+                  title="Banka ve hesap bilgileri"
+                  Icon={Landmark}
+                >
+                  {field("iban", "IBAN", {
+                    maxLength: 40,
+                    autoCapitalize: "characters",
+                  })}
+                  {field("holder", "Hesap sahibi", { maxLength: 160 })}
+                  {["Birikim hesabı", "Vadeli hesap"].includes(form.type) &&
+                    field("maturityDate", "Hesap vade sonu (isteğe bağlı)", {
+                      type: "date",
+                    })}
+                </Fold>
+                {form.type === "Kredili Mevduat Hesabı" && (
+                  <>
+                    {field("creditLimit", "KMH limiti (TL) *", {
+                      required: true,
+                      inputMode: "decimal",
+                    })}
+                    {field(
+                      "dailyInterestRate",
+                      "Günlük faiz oranı (%) · isteğe bağlı",
+                      {
+                        inputMode: "decimal",
+                        placeholder: "Bankanın bildirdiği günlük oran",
+                      },
+                    )}
+                    <p className="cari-hint">
+                      Tahmin, kullanılan limit ve girilen günlük oran üzerinden
+                      bir gün için hesaplanır. Vergi ve valör etkisi dahil
+                      değildir; otomatik gider kaydı oluşturmaz.
+                    </p>
+                  </>
+                )}
+                {editing && (
+                  <p className="cari-hint">
+                    Bakiye hareketlerden hesaplanır. Gerçek para giriş/çıkışını
+                    işlem olarak kaydedin.
+                  </p>
+                )}
+              </FormSection>
+            </>
+          ) : entity === "card" ? (
+            <>
+              <FormSection title="Kart bilgileri">
+                <BankSelect
+                  data={data}
+                  code={form.bank_code}
+                  name={form.bank}
+                  onChange={(bank) =>
+                    setForm((f) => ({
+                      ...f,
+                      bank_code: bank.code,
+                      bank: bank.name,
+                      program_code:
+                        bank.code === f.bank_code ? f.program_code : "",
+                    }))
+                  }
+                />
+                {field("name", "Kart adı *", {
+                  required: true,
+                  maxLength: 160,
+                  placeholder: PROGRAMS[form.program_code] || "Örn. İş kartım",
+                })}
+                {field("limit", "Kart limiti (TL) *", {
+                  required: true,
+                  inputMode: "decimal",
+                })}
+              </FormSection>
+              <FormSection title="Ekstre takvimi">
+                {field("cutDay", "Aylık hesap kesim günü *", {
+                  type: "number",
+                  min: 1,
+                  max: 31,
+                  required: true,
+                })}
+                <div className="entry-row">
+                  {field(
+                    "statementDate",
+                    "Takip edilen ekstre kesim tarihi *",
+                    { type: "date", required: true, max: data.today },
+                  )}
+                  {field("due", "Bu ekstrenin son ödeme tarihi *", {
+                    type: "date",
+                    required: true,
+                  })}
+                </div>
+                <p className="cari-hint">
+                  Bankanın bildirdiği tarihleri girin. Sonraki tarihler
+                  tahmindir; yeni ekstre geldiğinde doğrulayın.
+                </p>
+              </FormSection>
+              {!editing && (
+                <FormSection
+                  title="Mevcut borçla başlat"
+                  optional
+                  summary={
+                    form.opening +
+                    " TL toplam · " +
+                    form.statement +
+                    " TL ekstre"
+                  }
+                >
+                  {field("opening", "Başlangıç toplam borcu (TL)", {
+                    inputMode: "decimal",
+                  })}
+                  {field("statement", "Başlangıç ekstre borcu (TL)", {
+                    inputMode: "decimal",
+                  })}
+                  <p className="cari-hint">
+                    Ekstre borcu toplam borcun içindedir; ayrıca üzerine
+                    eklenmez. Borçsuz kartta ikisini de 0 bırakın.
+                  </p>
+                </FormSection>
+              )}
+              <FormSection
+                title="Kart ayrıntıları"
+                optional
+                open={!editing}
+                summary={
+                  [form.lastFour && "•••• " + form.lastFour, form.holder]
+                    .filter(Boolean)
+                    .join(" · ") || "İsteğe bağlı"
+                }
+              >
+                {select("program_code", "Kart programı", [
+                  ["", "Yok"],
+                  ...(
+                    BANKS.find((b) => b.code === form.bank_code)?.programs || []
+                  ).map((c) => [c, PROGRAMS[c]]),
+                ])}
+                <div className="entry-row">
+                  {field("holder", "Kart sahibinin adı soyadı", {
+                    maxLength: 160,
+                  })}
+                  {field("lastFour", "Son dört hane", {
+                    inputMode: "numeric",
+                    maxLength: 4,
+                    pattern: "[0-9]{4}",
+                  })}
+                </div>
+                {select("network_code", "Ödeme ağı", [
+                  ["", "Belirtilmedi"],
+                  ["visa", "Visa"],
+                  ["mastercard", "Mastercard"],
+                  ["troy", "Troy"],
+                ])}
+                {select("linked_account_id", "Bağlı hesap", [
+                  ["", "Bağlı hesap seçilmedi"],
+                  ...data.accounts
+                    .filter((a) => a.active || a.id === form.linked_account_id)
+                    .map((a) => [a.id, a.name + (!a.active ? " · Arşiv" : "")]),
+                ])}
+                <p className="cari-hint">
+                  Bağlı hesap bilgi içindir; otomatik ödeme talimatı oluşturmaz.
+                </p>
+              </FormSection>
+            </>
+          ) : (
+            <>
+              {field("username", "Kullanıcı adı *", {
+                required: true,
+                maxLength: 80,
+                autoComplete: "off",
+              })}
+              {field("shortName", "Görünen kısa ad *", {
+                required: true,
+                maxLength: 80,
+              })}
+              {select("role", "Rol", Object.entries(roleName))}
+              {field(
+                "password",
+                editing ? "Yeni parola (değiştirmek için)" : "Parola *",
+                {
+                  type: "password",
+                  required: !editing,
+                  minLength: 12,
+                  maxLength: 72,
+                  autoComplete: "new-password",
+                },
+              )}
+              <p className="cari-hint">
+                Yönetici: tüm yetkiler. Düzenleyici: ekle/düzenle. Kullanıcı:
+                yalnız ekle. Gözlemci: yalnız görüntüle.
+              </p>
+            </>
+          )}
+          {editing && !isEvent && mode !== "status" && (
+            <Fold region="aside" title="Değişiklik geçmişi" Icon={History}>
+              <AuditHistory entity={entity} id={item.id} data={data} />
+            </Fold>
+          )}
+          {editing && mode !== "status" && (
+            <>
+              {!["account", "card"].includes(entity) &&
+                (entity === "party" ? (
+                  <FormSection title="Düzenleme açıklaması" optional>
+                    {field("reason", "Değişiklik gerekçesi (isteğe bağlı)", {
+                      maxLength: 1000,
+                    })}
+                  </FormSection>
+                ) : (
+                  field("reason", "Değişiklik gerekçesi *", {
+                    required: true,
+                    maxLength: 1000,
+                  })
+                ))}
+              {!isEvent && can(data.user, "admin") && (
+                <label className="check-label">
+                  <input
+                    type="checkbox"
+                    checked={form.active}
+                    onChange={(e) => change("active", e.target.checked)}
+                  />
+                  {entity === "user"
+                    ? "Kullanıcı etkin"
+                    : "Aktif (kaldırırsanız arşive alınır)"}
+                </label>
+              )}
+            </>
+          )}
+          {err}
+        </div>
+        <div className="sheet-footer">
+          <button
+            type="button"
+            className="secondary-button"
+            disabled={busy}
+            onClick={close}
+          >
+            Vazgeç
+          </button>
+          <button className="primary-button" disabled={busy}>
+            {busy
+              ? "Kaydediliyor…"
+              : mode === "status"
+                ? item.cancelled
+                  ? "Geri aç"
+                  : "İptali uygula"
+                : editing
+                  ? "Kaydet"
+                  : entity === "party"
+                    ? "Cariyi ekle"
+                    : entity === "card"
+                      ? "Kartı ekle"
+                      : "Kaydet"}
+          </button>
+        </div>
+      </EntryForm>
+    </EntrySurface>
+  );
 }

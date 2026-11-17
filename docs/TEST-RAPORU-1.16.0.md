@@ -2,17 +2,17 @@
 
 9 Kasım 2026 · Node 24, Chromium 154, PHP 8.3 ve MariaDB 11.4. Tüm veri/API kontrolleri izole sentetik test ortamında yapıldı. Canlı kurulum kullanılmadı; şema 12 ve PHP/API kaynakları değişmedi.
 
-| Kontrol | Sonuç |
-| --- | --- |
-| `npm ci --cache /workspace/.npm-cache` | Başarılı |
-| `npm test` | Derleme + 45 birim + 4 Sites worker testi geçti |
-| `QA_DB_TMPFS=1 QA_BROWSER_BIN=/usr/bin/chromium npm run test:browser` | 697 kontrol, 0 React çalışma zamanı hatası |
-| Son para birimi CSS düzeltmesinden sonra odaklı yerleşim paketi | 82 kontrol, 0 React çalışma zamanı hatası |
-| Kapsamlı demo finansal uzlaştırma | 715 kontrol geçti |
-| Güncel derleme ile kapsamlı demo tarayıcı kontrolü | 105 kontrol, 0 React çalışma zamanı hatası |
-| `npm run release:package` | Tam paket + doğrudan hosting ZIP ve SHA256 dosyaları üretildi |
-| `QA_DB_TMPFS=1 QA_BROWSER_BIN=/usr/bin/chromium npm run test:package` | Arşiv eşliği, PHP/updater ve yerel font doğrulaması geçti |
-| `git diff --check` | Temiz |
+| Kontrol                                                               | Sonuç                                                         |
+| --------------------------------------------------------------------- | ------------------------------------------------------------- |
+| `npm ci --cache /workspace/.npm-cache`                                | Başarılı                                                      |
+| `npm test`                                                            | Derleme + 45 birim + 4 Sites worker testi geçti               |
+| `QA_DB_TMPFS=1 QA_BROWSER_BIN=/usr/bin/chromium npm run test:browser` | 697 kontrol, 0 React çalışma zamanı hatası                    |
+| Son para birimi CSS düzeltmesinden sonra odaklı yerleşim paketi       | 82 kontrol, 0 React çalışma zamanı hatası                     |
+| Kapsamlı demo finansal uzlaştırma                                     | 715 kontrol geçti                                             |
+| Güncel derleme ile kapsamlı demo tarayıcı kontrolü                    | 105 kontrol, 0 React çalışma zamanı hatası                    |
+| `npm run release:package`                                             | Tam paket + doğrudan hosting ZIP ve SHA256 dosyaları üretildi |
+| `QA_DB_TMPFS=1 QA_BROWSER_BIN=/usr/bin/chromium npm run test:package` | Arşiv eşliği, PHP/updater ve yerel font doğrulaması geçti     |
+| `git diff --check`                                                    | Temiz                                                         |
 
 697 kontrol içindeki yeni yerleşim senaryoları sonrasında, kompakt para biriminin aynı satırda kalması için küçük bir CSS düzeltmesi yapıldı. Son derlemede odaklı paket 82 kontrole çıkarılarak ve kapsamlı demo tekrar çalıştırılarak doğrulandı; geniş paketin sayısı bu odaklı tekrarın sayısıyla toplanmış bir ölçüm değildir.
 

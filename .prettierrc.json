@@ -1,0 +1,14 @@
+{
+  "plugins": ["@prettier/plugin-php"],
+  "phpVersion": "8.3",
+  "endOfLine": "lf",
+  "tabWidth": 2,
+  "overrides": [
+    {
+      "files": "*.php",
+      "options": {
+        "tabWidth": 4
+      }
+    }
+  ]
+}

@@ -2,8 +2,8 @@
 
 26 Ekim 2026. Bu taslakların ikisi de kullanıcı tarafından onaylandı; 1.9.0 ortak detay tasarımının referanslarıdır. Görsellerdeki bilgiler örnek senaryodur.
 
-| Cari hesap detayı | Kredi kartı detayı |
-|---|---|
+| Cari hesap detayı                                                                                                   | Kredi kartı detayı                                                                                                                       |
+| ------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
 | [![Cari detay taslağı](cari-detay-ortak-ozet-taslagi-2026-10-26.png)](cari-detay-ortak-ozet-taslagi-2026-10-26.png) | [![Kredi kartı detay taslağı](kredi-karti-detay-ortak-ozet-taslagi-2026-10-26.png)](kredi-karti-detay-ortak-ozet-taslagi-2026-10-26.png) |
 
 ## Aynı kalan tasarım kuralları
@@ -16,15 +16,15 @@
 
 ## İçeriğe bağlı farklar
 
-| Konu | Cari hesap | Kredi kartı |
-|---|---|---|
-| Ana değer | Cari bakiye ve Alacak/Borç anlamı | Kullanılabilir kredi limiti; banka/kasa nakdi değildir |
-| Diğer alanlar | Tür, ticari unvan, son hareket | Ekstre kalanı, dönem içi ve gelecek taksitler, bağlı hesap |
-| Tarihler | Son hareket | Mevcut ve sonraki kesim/son ödeme tarihleri ayrı |
-| Ekstre karşılaştırması | Bu bağlamda yok | Son ekstre toplamı ile kalan borç ayrı gösterilir |
-| İç yoğunluk | Daha az alan, tek bilgi sırası | Aynı dış kutuda ek tarih/bilgi satırı ve limit kullanım barı |
-| Hareket alanı | Cari hareketleri | Ekstre / Dönem içi işlemler / Gelecek dönem sekmeleri |
-| Tablo | Cari tutar ve bakiye sütunları | Kredi kartının kendi sütunları; cari bakiye sütunu kopyalanmaz |
+| Konu                   | Cari hesap                        | Kredi kartı                                                    |
+| ---------------------- | --------------------------------- | -------------------------------------------------------------- |
+| Ana değer              | Cari bakiye ve Alacak/Borç anlamı | Kullanılabilir kredi limiti; banka/kasa nakdi değildir         |
+| Diğer alanlar          | Tür, ticari unvan, son hareket    | Ekstre kalanı, dönem içi ve gelecek taksitler, bağlı hesap     |
+| Tarihler               | Son hareket                       | Mevcut ve sonraki kesim/son ödeme tarihleri ayrı               |
+| Ekstre karşılaştırması | Bu bağlamda yok                   | Son ekstre toplamı ile kalan borç ayrı gösterilir              |
+| İç yoğunluk            | Daha az alan, tek bilgi sırası    | Aynı dış kutuda ek tarih/bilgi satırı ve limit kullanım barı   |
+| Hareket alanı          | Cari hareketleri                  | Ekstre / Dönem içi işlemler / Gelecek dönem sekmeleri          |
+| Tablo                  | Cari tutar ve bakiye sütunları    | Kredi kartının kendi sütunları; cari bakiye sütunu kopyalanmaz |
 
 ## Örnek kredi kartı senaryosu
 

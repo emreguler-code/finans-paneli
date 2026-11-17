@@ -1,6 +1,6 @@
 {
   "name": "finans-v1",
-  "version": "1.23.0",
+  "version": "1.24.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -23,7 +23,8 @@
     "test:party-ui": "node tests/party120-browser.cjs",
     "lint": "eslint src && stylelint \"src/styles/**/*.css\"",
     "test:layout": "node tests/layout121-browser.cjs",
-    "format:check": "prettier --check src/SmartSearch.jsx src/ListTools.jsx src/styles/smart-search.css src/styles/composer.css src/styles/inline-editor.css src/styles/ledger-interactions.css src/styles/directory-interactions.css eslint.config.mjs stylelint.config.mjs tests/layout121-browser.cjs src/SortHeader.jsx src/sorting.mjs src/search-query.mjs src/styles/sorting.css"
+    "format:check": "node scripts/format.mjs --check",
+    "format": "node scripts/format.mjs --write"
   },
   "dependencies": {
     "@vitejs/plugin-react": "6.3.0",
@@ -35,6 +36,7 @@
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
+    "@prettier/plugin-php": "0.26.0",
     "eslint": "10.15.0",
     "eslint-plugin-react-hooks": "7.1.1",
     "eslint-plugin-unused-imports": "4.4.1",

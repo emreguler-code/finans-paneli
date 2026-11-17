@@ -1,6 +1,9 @@
 /* Component presentation only. The AppShell remains responsible for regions. */
 @media (max-width: 760px) {
-  .layout-shell[data-sidebar="drawer"] .sidebar .brand > span:last-child:not(.brand-mark),
+  .layout-shell[data-sidebar="drawer"]
+    .sidebar
+    .brand
+    > span:last-child:not(.brand-mark),
   .layout-shell[data-sidebar="drawer"] .sidebar .workspace-label,
   .layout-shell[data-sidebar="drawer"] .sidebar button span,
   .layout-shell[data-sidebar="drawer"] .sidebar .demo-note,
@@ -32,13 +35,21 @@
     font-size: 16px;
   }
   /* Every mobile metric starts at the same edge; desktop dividers do not survive. */
-  .layout-shell .summary-section:where(:not(.party-list-summary):not(.vehicle-detail-summary)) .summary-fields {
-    grid-template-columns: minmax(0,1fr);
+  .layout-shell
+    .summary-section:where(
+      :not(.party-list-summary):not(.vehicle-detail-summary)
+    )
+    .summary-fields {
+    grid-template-columns: minmax(0, 1fr);
     gap: 0;
   }
-  .layout-shell .summary-section:where(:not(.party-list-summary):not(.vehicle-detail-summary)) .summary-field:nth-child(n) {
+  .layout-shell
+    .summary-section:where(
+      :not(.party-list-summary):not(.vehicle-detail-summary)
+    )
+    .summary-field:nth-child(n) {
     display: grid;
-    grid-template-columns: minmax(0,1fr) auto;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
     gap: 4px 12px;
     margin: 0;
@@ -46,7 +57,9 @@
     border: 0;
     border-top: 1px solid var(--line);
   }
-  .layout-shell .party-detail-summary:not(.is-open) .summary-field:not(:first-child) {
+  .layout-shell
+    .party-detail-summary:not(.is-open)
+    .summary-field:not(:first-child) {
     display: none;
   }
   .layout-shell .summary-section .summary-field:first-child {
@@ -84,7 +97,7 @@
     line-height: 1.4;
   }
   .layout-shell .report-metrics .summary-field {
-    grid-template-columns: minmax(0,1fr);
+    grid-template-columns: minmax(0, 1fr);
   }
   .layout-shell .report-metrics .summary-value {
     text-align: left;
@@ -129,7 +142,7 @@
   }
   .layout-shell .plan-controls {
     display: grid;
-    grid-template-columns: 44px minmax(0,1fr) 44px;
+    grid-template-columns: 44px minmax(0, 1fr) 44px;
     gap: 8px;
     padding: 12px;
   }
@@ -186,12 +199,12 @@
 }
 @media (max-width: 360px) {
   .layout-shell .credit-face .limit-legend {
-    grid-template-columns: minmax(0,1fr);
+    grid-template-columns: minmax(0, 1fr);
     gap: 8px;
   }
   .layout-shell .credit-face .limit-legend > div {
     display: grid;
-    grid-template-columns: minmax(0,1fr) auto;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: baseline;
     gap: 8px;
   }

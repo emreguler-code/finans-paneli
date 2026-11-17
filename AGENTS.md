@@ -26,6 +26,7 @@ Yayımlanmış sürüm Finans 1.23.0, şema 12’dir. Yayımlanan kapsam `docs/S
 26 Ekim 2026 için onaylı ve 1.9.0 kapsamında uygulanan tasarım kapsamı sonraki sürüm notlarında ve tasarım incelemesindedir. Takvim kuralı artık hem tek gün hem tarih aralığını kapsar: tıklanan alana bağlı açılmalı, ek blur/karartma veya sayfa kayması oluşturmamalıdır; önceki tek gün modal istisnası kaldırılmıştır. Not alma aşaması ile kodlama/yayın aşamasını karıştırmayın.
 
 ## Değişiklik kapsamı
+
 - Kullanıcı açık uygulama talimatı vermeden kod değiştirmeyin; talepleri önce sürüm notlarına alın. Uygulama talimatı verildiyse yetkilendirilen kapsamı tamamlayın ve uygun testleri çalıştırın. Kodlama onayında yukarıdaki GitHub yayın/ZIP akışını tamamlayın; hosting yükleme ve incelemeyi kullanıcıya bırakın.
 - İstenmeyen sütun sırası, yön, renk, tipografi veya yerleşim değişikliği yapmayın. Önceki sürümle diff üzerinden karşılaştırın.
 - Başka projelerdeki tasarım dilini taşımayın; safir mavisi bu projeye ait değildir.
@@ -34,6 +35,7 @@ Yayımlanmış sürüm Finans 1.23.0, şema 12’dir. Yayımlanan kapsam `docs/S
 - Veritabanı değişikliğinde mevcut yönetici hesabını koruyun. Açıkça istenmeden canlı veriyi sıfırlamayın, demo üretmeyin veya canlıya dağıtım yapmayın.
 
 ## Doğrulama
+
 - npm ci; npm test (derleme, birim testleri, Sites worker testleri).
 - PHP değişikliklerinde php -l çalıştırın; hesaplama/API değişikliklerini izole test veritabanında uygun entegrasyon senaryolarıyla doğrulayın.
 - Arayüz değişikliklerinde çalışan uygulamada masaüstü ve dar ekran kontrolü yapın, ekran görüntüsüyle inceleyin. Gerçekte yapılmayan tarayıcı/cihaz testini yapılmış gibi bildirmeyin.
@@ -59,39 +61,30 @@ Hesap/kart carousel kaldırılmıştır; yatay liste → detay akışı kullanı
 
 9 Kasım 2026 sonraki sürüm kriterleri: Onaylı dokuz bölgeli global kabuk ve yerleşim/tema/bileşen/davranış ayrımı `docs/GLOBAL-YERLESIM-SOZLESMESI.md` içindedir. Gelecek arayüz çalışmasında bu sözleşmeyi okuyun. Mimari onay yalnız tasarım kriteridir; bölgelerin detayları görüşülürken kendiliğinden kodlama/yayın veya tema üretimi başlatmayın. Bu tarihsel not yazıldığında çalışma sürümü 1.15.0 idi; güncel sürüm yukarıda belirtilmiştir.
 
-
 1.16.0: Kullanıcının “evet, başla bakalım o zaman kodlamaya” talimatı yukarıdaki not/tasarım aşamasını uygulamaya geçirdi. Yayın/canlı dağıtım veya yeni tema onayı değildir. Ortak AppShell ve dokuz bölge; native scrollbar payıyla ortak kenarlar; tek ana kaydırma sahibi .main-content; yeterli gerçek içerik genişliğinde 1,9:1, aksi halde yardımcı bölge altta. Hızlı işlem grid içinde ayrı alt satırdır, içerik üstüne sabitlenmez. Menü full/compact/hidden tercihi localStorage'da; daralma tercihi silmez. Merkezi taslak onayı body portalında, referans sayımlı inert/odak korumasıyla çalışır. Renkler theme.css, geometri layout-tokens.css/app-shell.css içinde; yeni tema seçici eklenmedi. Finansal anlamlar, API ve şema 12 korunur. Geçerli uygulama eşikleri ve kabul kapsamı global yerleşim sözleşmesinin 1.16.0 bölümündedir.
 
 9 Kasım 2026 yayın talimatı: Kullanıcı 1.16.0 kodlaması ve testleri tamamlandıktan sonra “git huba yükle” dedi. Bu talimat mevcut 1.16.0 kaynak değişikliklerinin ve hosting paketlerinin GitHub sürümü olarak yayımlanmasını yetkilendirir; hosting üzerine canlı kurulum veya veri işlemi değildir. Önceki “GitHub yayını kapsamında değil” ifadeleri bu ek talimattan önceki aşamayı anlatır.
 
 1.17.0: Kullanıcı mobil ekran görüntüleriyle belirlenen düzeltmeleri ve GitHub yayınını birlikte onayladı. Kompakt ledger sunumunda table/tbody/tr/hücre aynı blok akışındadır; eski viewport tabanlı tablo görüntüleme kurallarını yeniden eklemeyin. Açık satırın ve eylemlerinin gerçek genişliğini test edin. Mobil drawer ikon+metin ve açık kapatma düğmesi taşır; kompakt masaüstü modu ayrı kalır. Mobil aramada ayrı submit düğmesi gizlidir, klavye Ara/Enter çalışır; odak menü/zili gizlemez. Filtre kendi başlık/alan/eylem akışındadır; header ile alt gezinme arasında, gövde kaydırılarak çalışır. Eski sticky bottom:64px kuralı kaldırıldı. Mobile bileşen sunumları mobile-components.css içindedir; tema/finansal model ve şema 12 değişmez. Mobil kabul için npm run test:mobile ile Chromium+WebKit kontrolü zorunludur; fiziksel iPhone/Safari testi yapılmış sayılmaz.
 
-
 1.18.0: 16 Kasım cari ekranı incelemesi kullanıcı tarafından uygulama/yayın için onaylandı. Cari kimliği+bakiye aynı kompakt yüzeydedir; bu kapsamda önceki ayrı başlık/özet kuralının yerini alır. Aşağı ok kutu içinde detay açar. Cari liste araçları ilgili hareket panelindedir; header bu detayda genel aramadır. Cari tutar/satır bakiye nötr, yön etiketleri renkli; üst güncel bakiye renklidir. Saat ve kısmi ödeme açıklaması açılan satırda. Filtreli net etki toplamı güncel cari bakiyeden ayrıdır, sadece aktif gerçekleşmiş party_effect toplamıdır. Şema/API aynı; tasarım ve kapsam docs/SURUM-1.18.0.md içindedir. npm run test:party-ui derlenmiş ekranı sentetik API ile Chromium/WebKit'te test eder; gerçek API/mobil kabul testlerinin yerini almaz. Kullanıcı yeni sürüm yayınını istedi; GitHub sürüm paketini yayımlamak yetkilidir, mevcut hosting'e canlı veri/kurulum işlemi yapılmaz.
 
 1.18.1: görsel kontrolde tespit edilen genel dl stilleri cari detay alanından yalıtıldı; mobil bakiye tekrarı kaldırıldı, kimlikte bakiye+ikonlar gerçek genişlik yettiğinde aynı satırda, büyük tutarda kontrollü alt satırdadır. Finansal model değişmedi.
 
-
 1.19.0 tarihsel aday aşaması: Kullanıcı notları bitirdi ve kodlama + çalışan sürümde test istedi. Güncel kapsam docs/SURUM-1.19.0.md. Cari sütunları İşlem/Ekleyen ayrı; tutarda yalnız işaret, bakiyede tüm değer renkli; aylık net etki filtrelenmiş tüm ay, iptal/plan hariç. Cari varsayılan açık işlem formunda X gizler ve taslağı korur, aynı konumda + açar; navigation/replace/reload koruması ve Vazgeç sürer. Başarılı kayıt yeni requestId ile boş form bırakır. Sıralama anchored, blur yok. Menü full/compact/hidden döner. Şema/API/veriler değişmez. Bu tur açıkça GitHub Release/hosting dağıtımı istemedi; codex/1.19.0 aday dalı ve QA, main/canlı değişmeden hazırlanır.
-
 
 1.20.0: Kullanıcı son notları ve cari dışındaki uygun bölümlere yayılımı birlikte uygulama/yeni sürüm/GitHub yükleme için onayladı. Geçerli analiz ve istisnalar docs/SURUM-1.20.0.md. ListTools akıllı arama+çip, Ledger 30 satırlık kademeli sunum, tek tam tarih ve yerinde tür/tutar düzenlemesi paylaşır. Eski sayfa numarası ve ayrı Filtrele/Ara/Sıfırla yoktur. Gizlenen işlem alanı sıfır yüksekliklidir; + aynı noktada yüzer, taslak korunur. Ay satırı gerçek filtrelenmemiş devreden+ay etkisi=Net'tir; rapor/karışık hesap/kart ekstre bağlamına sahte bakiye eklenmez. Düzenleme mevcut atomik API/id/version/reason yolunu kullanır. Banka/kart/ödeme varsayılan giriş paylaşır; rapor/takvim/metadata formları kendi amaçlarını korur. Şema 12/gerçek veriler değişmez. Güncel UI koşucuları party120/browser120/mobile120; eski UI betikleri tarihsel kayıttır, güncel testler mevcut davranışı doğrular. GitHub kaynak/sürüm/paket yayını yetkilidir; hosting canlı kurulum yetkisi değildir.
 
-
 1.21.0: Kullanıcı çözünürlük/form/arama hatalarının kökten giderilmesini, gereksiz kodların temizlenmesini ve GitHub sürümü olarak yayımlanmasını onayladı. Kapsam docs/SURUM-1.21.0.md. Yeni releaseNNN.css yamaları eklemeyin: SmartSearch, composer, inline-editor ve ledger etkileşimleri kendi modüllerinde yönetilir. Ana sütun 880 CSS px altına düşerken yardımcı sütun yan yana kalamaz; workspace 1400 px altında tek akıştır (1,9:1 oranı + 20 px boşluk için güvenli pay). Ortak arama eski cari-search/page-search-row stillerini kullanmaz. Kaydet/iptal ikonları masaüstünde 36, kompakt görünümde 44 px'tir; genel footer flex kuralıyla esnetilmez. Ek seçenekler dock genişliğini kullanır; işlem türüne bağlı alanlar korunur. npm test ESLint 10/Stylelint kontrollerini de çalıştırır; kullanılmayan import/değişken ve hook kullanım hataları reddedilir. Firefox + Chromium + WebKit, üç sidebar modu, eşiklerin çevresi, kısa pencere ve ölçekli görseller kabul kapsamındadır. Daralan etkin viewport testini gerçek tarayıcı yakınlaştırması veya fiziksel iOS testi diye adlandırmayın. Şema 12 ve hesap modeli değişmez; canlı hosting kurulumu yoktur.
-
-
 
 1.22.0: Kullanıcı son notlardan yeni sürüm kodlamasını onayladı. Ayrı filtre formu/sağ ok ve sıralama ikonu/penceresi kaldırılır. Tüm mevcut filtreler aynı arama çubuğunda komut/öneri/çip olarak kullanılır; tarih, TL aralığı, vade, arşiv ve iptal dahil. Ledger başlıkları tıklanır/klavyeyle kullanılır, sadece etkin başlıkta yön oku vardır. Dar ledger'da aynı başlıklar ayrı kompakt satırda erişilebilir. Tüm sonuçlar sıralanır, kayıtlı işlem sonrası bakiye değişmez. Cari dizin ve hareket sıralama tercihleri ayrıdır. Tablosuz listelerde menü yerine doğrudan alan adları vardır. Ana sayfa bölüm aralığı, tek satır TL ve cari dizin arama/CSV hizası bu kapsamda düzeltilir. Şema 12/mali model ve Sade Netlik korunur; canlı hosting kurulumu yoktur.
 
-
 17 Kasım 2026 bağımlılık güncellemesi: Kullanıcı tüm güncellemelerin uygulanmasını onayladı. 1.22.0 kaynakları üzerinde React/React DOM 19.3.1, Lucide 1.74.0, Vite 8.3.8 / React eklentisi 6.3.0, Playwright 1.65.1; Node.js 26.13.1 LTS ve npm 12.2.2 kullanılır. `.node-version`, `.nvmrc`, `.python-version` ve iş akışları eşleştirilmiştir; Python 3.15.2, izole PHP 8.5.12 / MariaDB 12.3.3 LTS, Inter 4.1. Test PHP imajı taban digestine bağlı ayrı etiket kullanır; eski `finans-php-test:latest` imajını güncel taban yerine kullanmayın. Bu çalışma GitHub yayını/canlı kurulum onayı değildir; rapor `docs/BAGIMLILIK-GUNCELLEME-2026-11-17.md` içindedir.
-
 
 1.23.0 yayın talimatı — 17 Kasım 2026: Kullanıcı GitHub yayını ve canlı hosting uygulama güncellemesini açıkça istedi. Yukarıdaki “yayın/canlı kurulum onayı değildir” ifadesi önceki bağımlılık uygulama aşamasını anlatır. Yayın adayı 1.23.0, şema 12. Mevcut kurulumda yapılandırma/özel yedekler ve veriler korunur; dağıtım öncesi yedek alınır. Hosting adresi ve erişim yöntemi henüz verilmediyse GitHub yayını tamamlanır, canlı dağıtım tamamlanmış gibi bildirilmez.
 
-
 17 Kasım 2026 son yayın akışı düzeltmesi: Kullanıcı hosting bağlantısı ve canlıya yükleme/inceleme işlerini kendisi devraldı. Önceki canlı hosting talimatı iptal edildi. Kodlama onayı aynı kapsamın GitHub yayınına da izin verir; ayrıca onay istenmez. Hostinge hazır ZIP + SHA-256 depo içinde `releases/<sürüm>/` altında ve Release varlıklarında tutulur. Bu son talimat, yukarıdaki tarihsel ayrı yayın/onay ve hosting erişimi bekleniyor ifadelerinin yerini alır.
 
-
 1.23.0 yayın sonucu: GitHub Release yayımlandı; Windows ve Linux tam kabulü başarılı (koşu 44066468482). `releases/1.23.0/` altındaki hosting ZIP + SHA-256, yayımlanan varlıkla birebir doğrulandı. Hosting bağlantısı/yükleme/inceleme kullanıcıya aittir; canlı kurulum yapılmadı.
+
+1.24.0 Prettier kapsamı: Kullanıcı tüm projede biçim kontrolünün kalıcı olmasını istedi. `format:check` / `format` kökten otomatik keşif kullanır; sabit dosya listesi eklemeyin. JS/JSX/MJS/CJS, CSS, JSON, HTML, Markdown, YAML ve resmi eklentiyle PHP kapsanır. `.prettierrc.json` ortak kuralları, `.prettierignore` yalnız bağımlılık/çıktı/özel veri ve tarihsel kanıt istisnalarını belirler. Yeni desteklenen dosyalar otomatik kontrol edilir; Python/SQL Prettier tarafından denetlendi diye raporlanmaz. Her kaynak/belge değişikliğinden sonra `npm run format:check` çalıştırın; yayın raporu gibi sonradan yazılan belgeleri de biçimlendirin.

@@ -1,0 +1,35 @@
+# Generated dependencies, builds, runtime data and private configuration.
+node_modules/
+dist/
+hosting/
+.qa/
+.local-runtime/
+.dev-runtime.json
+.env
+.env.*
+!.env.example
+public/api/config.php
+.finans-private-*/
+backups/
+dumps/
+uploads/
+coverage/
+playwright-report/
+test-results/
+qa-evidence/
+
+# Preserve historical test evidence and generated package metadata.
+docs/evidence/
+package-lock.json
+**/*.zip
+**/*.sha256
+**/*.log
+**/*.sqlite
+**/*.sqlite3
+**/*.db
+**/*.sql.gz
+**/*.bak
+
+# Prettier has no Python/SQL parser in this project; native checks remain separate.
+**/*.py
+**/*.sql

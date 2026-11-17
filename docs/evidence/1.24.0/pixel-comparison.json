@@ -1,0 +1,27 @@
+{
+  "baseline": "1.23.0",
+  "candidate": "1.24.0",
+  "normalizedVersionLabel": true,
+  "identical": [
+    "1440-default",
+    "1440-expanded",
+    "390-default",
+    "390-expanded",
+    "320-default",
+    "320-expanded"
+  ],
+  "sha256": {
+    "1440-default-after.png": "f3afd95f11acd08c5e80b1335293b78f6be053073d76f120598ddd31865905fc",
+    "1440-default-before.png": "f3afd95f11acd08c5e80b1335293b78f6be053073d76f120598ddd31865905fc",
+    "1440-expanded-after.png": "cf1f3fbc5a99929d04233e741d89bd70d7022575927d8ea2d3af7cd5cc0d7f4e",
+    "1440-expanded-before.png": "cf1f3fbc5a99929d04233e741d89bd70d7022575927d8ea2d3af7cd5cc0d7f4e",
+    "320-default-after.png": "6c3c0c14d6894e86a81630b4d625d98542bcfc7853da0d40b1472cea22e4e857",
+    "320-default-before.png": "6c3c0c14d6894e86a81630b4d625d98542bcfc7853da0d40b1472cea22e4e857",
+    "320-expanded-after.png": "f5b3858ad242626921e7053f04e120b5bfd9c10ece640db3023f6239ffc05a7e",
+    "320-expanded-before.png": "f5b3858ad242626921e7053f04e120b5bfd9c10ece640db3023f6239ffc05a7e",
+    "390-default-after.png": "ef11c5f43bd13264ecd4372043c98c51c6537e22120e16975ccf652ffcdbaf1e",
+    "390-default-before.png": "ef11c5f43bd13264ecd4372043c98c51c6537e22120e16975ccf652ffcdbaf1e",
+    "390-expanded-after.png": "f0ffa341b0665c144e962b31202ec4534548ed2310fefcdc66314ec6dee56295",
+    "390-expanded-before.png": "f0ffa341b0665c144e962b31202ec4534548ed2310fefcdc66314ec6dee56295"
+  }
+}

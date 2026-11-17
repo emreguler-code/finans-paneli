@@ -15,8 +15,8 @@
 
 ## Görseller
 
-| 1 — Bölümlü yüzey | 2 — Yumuşak kartlar | 3 — Yatay kartlar |
-|---|---|---|
+| 1 — Bölümlü yüzey                                                                                              | 2 — Yumuşak kartlar                                                                                                  | 3 — Yatay kartlar                                                                                              |
+| -------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
 | [![Bölümlü yüzey](hesaplar-stil-1-bolumlu-yuzey-2026-10-26.png)](hesaplar-stil-1-bolumlu-yuzey-2026-10-26.png) | [![Yumuşak kartlar](hesaplar-stil-2-yumusak-kartlar-2026-10-26.png)](hesaplar-stil-2-yumusak-kartlar-2026-10-26.png) | [![Yatay kartlar](hesaplar-stil-3-yatay-kartlar-2026-10-26.png)](hesaplar-stil-3-yatay-kartlar-2026-10-26.png) |
 
 ### 1 — Bölümlü yüzey
@@ -36,7 +36,6 @@ Tek ana panel içinde tam genişlikte yatay hesap kartları. Kimlik, tutar, tür
 ## Finansal anlamlar
 
 KMH limiti nakit bakiyesi değildir. Kullanılan/kullanılabilir limit ve varsa günlük faiz ayrı anlamlarını korur. Vade yalnız ilgili hesap türünde gösterilir. IBAN örnekleri maskelidir. Uyarı örneklerinin metin ve tutarları görsel yerleşim içindir; gerçek uygulama mevcut doğrulanmış verileri kullanacaktır.
-
 
 ## Sonraki netleştirme: kredi kartları ve liste eylemleri
 

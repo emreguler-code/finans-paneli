@@ -27,12 +27,11 @@
 
 @import "./party-detail.css";
 
-@import './motion.css';
-@import './smart-search.css';
-@import './ledger-interactions.css';
-@import './directory-interactions.css';
-@import './composer.css';
-@import './inline-editor.css';
-
+@import "./motion.css";
+@import "./smart-search.css";
+@import "./ledger-interactions.css";
+@import "./directory-interactions.css";
+@import "./composer.css";
+@import "./inline-editor.css";
 
 @import "./sorting.css";

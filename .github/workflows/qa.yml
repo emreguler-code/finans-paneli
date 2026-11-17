@@ -1,8 +1,8 @@
 name: Candidate QA
 on:
   push:
-    branches: ['codex/1.23.0']
-    paths-ignore: ['docs/**', 'README.md', 'AGENTS.md']
+    branches: ["codex/1.24.0"]
+    paths-ignore: ["docs/**", "README.md", "AGENTS.md"]
 permissions:
   contents: read
 jobs:
@@ -12,10 +12,10 @@ jobs:
       - uses: actions/checkout@v7.0.1
       - uses: actions/setup-python@v7.1.0
         with:
-          python-version-file: '.python-version'
+          python-version-file: ".python-version"
       - uses: actions/setup-node@v7.1.0
         with:
-          node-version-file: '.node-version'
+          node-version-file: ".node-version"
           cache: npm
       - run: npm install --global npm@12.2.2
       - run: npm ci
@@ -78,10 +78,10 @@ jobs:
       - uses: actions/checkout@v7.0.1
       - uses: actions/setup-python@v7.1.0
         with:
-          python-version-file: '.python-version'
+          python-version-file: ".python-version"
       - uses: actions/setup-node@v7.1.0
         with:
-          node-version-file: '.node-version'
+          node-version-file: ".node-version"
           cache: npm
       - run: npm install --global npm@12.2.2
       - run: npm ci
@@ -123,10 +123,10 @@ jobs:
       - uses: actions/checkout@v7.0.1
       - uses: actions/setup-python@v7.1.0
         with:
-          python-version-file: '.python-version'
+          python-version-file: ".python-version"
       - uses: actions/setup-node@v7.1.0
         with:
-          node-version-file: '.node-version'
+          node-version-file: ".node-version"
           cache: npm
       - run: npm install --global npm@12.2.2
       - run: npm ci
@@ -142,4 +142,3 @@ jobs:
           name: windows-layout-evidence
           path: .qa/party121/
           if-no-files-found: ignore
-

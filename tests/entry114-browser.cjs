@@ -1,38 +1,414 @@
-const {add:ensureEntry,saved:waitSaved,close:closeEntry}=require('./entry-helpers.cjs');
-module.exports=async({p,go,ok,out})=>{
- const fs=require('fs');const shot=async name=>p.screenshot({path:out+'/114-'+name+'.png',fullPage:true,animations:'disabled'});
- const close=()=>closeEntry(p);
- const nav=async name=>{if(p.viewportSize().width>760)await go(name);else{await p.locator('.mobile-nav').getByRole('button',{name:'Diğer',exact:true}).click();await p.locator('.mobile-more').getByRole('button',{name,exact:true}).click()}};
- for(const width of [1920,1440,768,390,320]){
-  await p.setViewportSize({width,height:width<760?844:1024});
-  for(const [page,label,title] of [['Kredi kartları','Kart ekle','Kredi kartı ekle'],['Hesaplar','Hesap ekle','Hesap ekle'],['Cari hesaplar','Yeni kayıt ekle','Cari Ekle / Değiştir'],['Araçlarım','Araç ekle','Araç ekle']]){
-   await nav(page);await p.getByRole('button',{name:label,exact:true}).click();await p.locator('.entry-page h1').filter({hasText:title}).waitFor();
-   ok(title+' is a real page without modal '+width,await p.locator('.drawer-layer').count()===0&&p.url().includes('/yeni')&&await p.locator('.entry-page').getAttribute('aria-modal')===null);
-   ok(title+' fits viewport '+width,await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
-   ok(title+' keeps reachable header save '+width,await p.locator('.entry-page .page-title').getByRole('button',{name:'Kaydet',exact:true}).isVisible());
-   if(width===1920)ok(title+' preserves 1.9 content ratio',await p.locator('.entry-columns').evaluate(el=>Math.abs(el.children[0].getBoundingClientRect().width/el.children[1].getBoundingClientRect().width-1.9)<.02));
-   if(page==='Kredi kartları'&&width<=390){await p.getByRole('button',{name:'Banka seç',exact:true}).click();await p.getByRole('textbox',{name:'Banka ara',exact:true}).fill('QNB');ok('Bank search popup fits narrow viewport '+width,await p.getByRole('dialog',{name:'Banka seçimi',exact:true}).evaluate(el=>{const r=el.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth}));await p.keyboard.press('Escape');ok('Closing bank search preserves the full-page draft '+width,await p.locator('.entry-page').count()===1)}
-   await shot(title.replaceAll(' ','-')+'-'+width);await close();
+const {
+  add: ensureEntry,
+  saved: waitSaved,
+  close: closeEntry,
+} = require("./entry-helpers.cjs");
+module.exports = async ({ p, go, ok, out }) => {
+  const fs = require("fs");
+  const shot = async (name) =>
+    p.screenshot({
+      path: out + "/114-" + name + ".png",
+      fullPage: true,
+      animations: "disabled",
+    });
+  const close = () => closeEntry(p);
+  const nav = async (name) => {
+    if (p.viewportSize().width > 760) await go(name);
+    else {
+      await p
+        .locator(".mobile-nav")
+        .getByRole("button", { name: "Diğer", exact: true })
+        .click();
+      await p
+        .locator(".mobile-more")
+        .getByRole("button", { name, exact: true })
+        .click();
+    }
+  };
+  for (const width of [1920, 1440, 768, 390, 320]) {
+    await p.setViewportSize({ width, height: width < 760 ? 844 : 1024 });
+    for (const [page, label, title] of [
+      ["Kredi kartları", "Kart ekle", "Kredi kartı ekle"],
+      ["Hesaplar", "Hesap ekle", "Hesap ekle"],
+      ["Cari hesaplar", "Yeni kayıt ekle", "Cari Ekle / Değiştir"],
+      ["Araçlarım", "Araç ekle", "Araç ekle"],
+    ]) {
+      await nav(page);
+      await p.getByRole("button", { name: label, exact: true }).click();
+      await p.locator(".entry-page h1").filter({ hasText: title }).waitFor();
+      ok(
+        title + " is a real page without modal " + width,
+        (await p.locator(".drawer-layer").count()) === 0 &&
+          p.url().includes("/yeni") &&
+          (await p.locator(".entry-page").getAttribute("aria-modal")) === null,
+      );
+      ok(
+        title + " fits viewport " + width,
+        await p.evaluate(
+          () => document.documentElement.scrollWidth <= innerWidth,
+        ),
+      );
+      ok(
+        title + " keeps reachable header save " + width,
+        await p
+          .locator(".entry-page .page-title")
+          .getByRole("button", { name: "Kaydet", exact: true })
+          .isVisible(),
+      );
+      if (width === 1920)
+        ok(
+          title + " preserves 1.9 content ratio",
+          await p
+            .locator(".entry-columns")
+            .evaluate(
+              (el) =>
+                Math.abs(
+                  el.children[0].getBoundingClientRect().width /
+                    el.children[1].getBoundingClientRect().width -
+                    1.9,
+                ) < 0.02,
+            ),
+        );
+      if (page === "Kredi kartları" && width <= 390) {
+        await p.getByRole("button", { name: "Banka seç", exact: true }).click();
+        await p
+          .getByRole("textbox", { name: "Banka ara", exact: true })
+          .fill("QNB");
+        ok(
+          "Bank search popup fits narrow viewport " + width,
+          await p
+            .getByRole("dialog", { name: "Banka seçimi", exact: true })
+            .evaluate((el) => {
+              const r = el.getBoundingClientRect();
+              return r.left >= 0 && r.right <= innerWidth;
+            }),
+        );
+        await p.keyboard.press("Escape");
+        ok(
+          "Closing bank search preserves the full-page draft " + width,
+          (await p.locator(".entry-page").count()) === 1,
+        );
+      }
+      await shot(title.replaceAll(" ", "-") + "-" + width);
+      await close();
+    }
   }
- }
- await p.setViewportSize({width:1440,height:1024});await go('Hesaplar');await p.getByRole('button',{name:'Hesap ekle',exact:true}).click();await p.reload();await p.locator('.entry-page h1').waitFor();ok('Create URL survives browser reload without restoring a modal',p.url().includes('#/hesaplar/yeni'));await p.goBack();await p.locator('.account-grid').waitFor();await p.goForward();await p.locator('.entry-page').waitFor();ok('Clean create-page Back and Forward preserve real history entries',p.url().includes('#/hesaplar/yeni'));
- await p.locator('input[name=name]').fill('Geri taslağı');await p.goBack();await p.getByRole('alertdialog').waitFor();await p.waitForURL('**/#/hesaplar/yeni');await p.getByRole('button',{name:'Düzenlemeye dön',exact:true}).click();ok('Cancelled browser Back keeps the dirty page and draft',await p.locator('input[name=name]').inputValue()==='Geri taslağı');await p.goBack();await p.getByRole('alertdialog').waitFor();await p.getByRole('button',{name:'Değişikliklerden vazgeç',exact:true}).click();await p.locator('.account-grid').waitFor();await p.goForward();await p.locator('.entry-page').waitFor();ok('Confirmed browser Back and Forward do not resurrect discarded form values',await p.locator('input[name=name]').inputValue()==='');
- await p.locator('#search').focus();await p.keyboard.press('Escape');ok('Create page header search closes without a dangling filter handler',await p.locator('.entry-page').count()===1&&await p.locator('.topbar').getByRole('button',{name:'Filtrele',exact:true}).count()===0);
- await p.locator('input[name=name]').fill('Taslak korunur');await p.locator('.sidebar').getByRole('button',{name:'Cari hesaplar',exact:true}).click();await p.getByRole('alertdialog').waitFor();ok('Leaving a dirty page asks before navigation',p.url().includes('/hesaplar/yeni'));await p.getByRole('button',{name:'Düzenlemeye dön',exact:true}).click();ok('Cancelled navigation preserves entered values',await p.locator('input[name=name]').inputValue()==='Taslak korunur');await close();
- await go('Hesaplar');await p.getByRole('button',{name:'Hesap ekle',exact:true}).click();await p.locator('input[name=name]').fill('Ortak banka QA');await p.getByRole('button',{name:'Banka seç',exact:true}).click();await p.getByRole('textbox',{name:'Banka ara',exact:true}).fill('Saha Bankası QA');await p.getByRole('button',{name:'Yeni banka ekle: Saha Bankası QA',exact:true}).click();await p.locator('.entry-page .page-title').getByRole('button',{name:'Kaydet',exact:true}).click();await p.locator('.entry-page').waitFor({state:'hidden'});
- await go('Kredi kartları');await p.getByRole('button',{name:'Kart ekle',exact:true}).click();await p.getByRole('button',{name:'Banka seç',exact:true}).click();await p.getByRole('textbox',{name:'Banka ara',exact:true}).fill('saha bankası qa');ok('New account bank is available in card creation without duplicates',await p.getByRole('button',{name:'Saha Bankası QA',exact:true}).count()===1);await p.getByRole('button',{name:'Saha Bankası QA',exact:true}).click();await p.locator('input[name=name]').fill('Saha kartı QA');await p.locator('input[name=limit]').fill('125000');await p.getByRole('button',{name:'Bu ekstrenin son ödeme tarihi *',exact:true}).click();await p.locator('.date-floating [data-day="2026-10-20"]').click();await p.locator('.entry-page .page-title').getByRole('button',{name:'Kaydet',exact:true}).click();await p.locator('.entry-page').waitFor({state:'hidden'});let state=await(await p.request.get(new URL('api/index.php?action=state',p.url().split('#')[0]).href)).json();ok('Custom bank card persists real card metadata',state.cards.some(c=>c.name==='Saha kartı QA'&&c.bank==='Saha Bankası QA'&&c.limit_cents===12500000));
- await p.getByRole('button',{name:'Kart ekle',exact:true}).click();await p.getByRole('button',{name:'Banka seç',exact:true}).click();await p.getByRole('textbox',{name:'Banka ara',exact:true}).fill('İş Bankası');await p.getByRole('button',{name:'Türkiye İş Bankası',exact:true}).click();ok('Expanded bank catalog suggests the correct optional program',await p.getByRole('combobox',{name:'Kart programı',exact:true}).locator('option').allTextContents().then(values=>values.includes('Maximum')&&values.includes('Yok')&&!values.includes('Axess')));await close();
- await go('Cari hesaplar');await p.locator('.party-row').filter({hasText:'Ada Tasarım'}).click();await ensureEntry(p);await p.locator('input[name=amount]').fill('2500');await p.locator('input[name=description]').fill('Kompakt giriş QA');
- for(const width of [1920,1440,768,390,320]){
-  await p.setViewportSize({width,height:width<=760?844:1024});await p.locator('.entry-dock').waitFor();await p.waitForFunction(()=>{const a=document.querySelector('.entry-dock').getBoundingClientRect(),m=document.querySelector('.content-frame'),r=m.getBoundingClientRect(),s=getComputedStyle(m);return Math.abs(a.left-r.left-parseFloat(s.paddingLeft))<2&&Math.abs(a.right-r.right+parseFloat(s.paddingRight))<2});
-  ok('Composer aligns to content gutters '+width,await p.locator('.entry-dock').evaluate(el=>{const a=el.getBoundingClientRect(),m=document.querySelector('.content-frame'),r=m.getBoundingClientRect(),s=getComputedStyle(m);return Math.abs(a.left-r.left-parseFloat(s.paddingLeft))<2&&Math.abs(a.right-r.right+parseFloat(s.paddingRight))<2}));
-  ok('Composer does not cause horizontal overflow '+width,await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
-  if(width>1100)ok('Desktop composer remains compact '+width,await p.locator('.entry-dock').evaluate(el=>el.getBoundingClientRect().height<220));
-  if(width>1100)ok('Cari balances remain visible without table clipping '+width,await p.locator('.party-ledger').evaluate(table=>table.getBoundingClientRect().right<=table.closest('.cari-table-scroll').getBoundingClientRect().right+1));
-  if(width<=760){ok('Mobile composer clears navigation '+width,await p.locator('.entry-dock').evaluate(el=>el.getBoundingClientRect().bottom<=document.querySelector('.mobile-nav').getBoundingClientRect().top));ok('Mobile navigation is compact with usable targets '+width,await p.locator('.mobile-nav').evaluate(el=>el.getBoundingClientRect().height<=65&&[...el.querySelectorAll('button')].every(b=>b.getBoundingClientRect().height>=44&&b.getBoundingClientRect().width>=44)))}
-  await shot('composer-'+width);
- }
- await p.setViewportSize({width:390,height:844});await p.locator('input[name=description]').focus();await p.evaluate(()=>{Object.defineProperty(window.visualViewport,'height',{configurable:true,get:()=>390});window.visualViewport.dispatchEvent(new Event('resize'))});await p.waitForFunction(()=>document.documentElement.classList.contains('keyboard-open')&&document.querySelector('.entry-dock').getBoundingClientRect().height<=390);ok('Simulated keyboard hides navigation and bounds composer',await p.locator('.mobile-nav').isHidden()&&await p.locator('.entry-dock').evaluate(el=>el.getBoundingClientRect().height<=390));await shot('keyboard-simulation');await p.evaluate(()=>{delete window.visualViewport.height;window.visualViewport.dispatchEvent(new Event('resize'))});await p.waitForFunction(()=>!document.documentElement.classList.contains('keyboard-open'));
- await p.setViewportSize({width:1440,height:1024});await p.locator('.entry-dock').getByRole('button',{name:'İşlemi kaydet',exact:true}).click();await waitSaved(p);state=await(await p.request.get(new URL('api/index.php?action=state',p.url().split('#')[0]).href)).json();const saved=state.events.find(e=>e.description==='Kompakt giriş QA');ok('Compact composer preserves sale financial effects',saved?.amount_cents===250000&&saved.party_effect===250000&&saved.cash_effect===0);
- const row=p.locator('.party-ledger tbody tr').filter({hasText:'Kompakt giriş QA'}).first();await row.click();await p.locator('.ledger-action-row').getByRole('button',{name:'İşlemi düzenle',exact:true}).click();await p.locator('.entry-dock').waitFor();ok('Editing uses the same composer and fills existing values',Number((await p.locator('input[name=amount]').inputValue()).replaceAll('.','').replace(',','.'))===2500&&await p.locator('input[name=description]').inputValue()==='Kompakt giriş QA');await p.locator('input[name=description]').fill('Kompakt düzenleme QA');await p.getByLabel('Değişiklik gerekçesi *',{exact:true}).fill('Saha kontrolü');await p.locator('.entry-dock').getByRole('button',{name:'Kaydet',exact:true}).click();await waitSaved(p);state=await(await p.request.get(new URL('api/index.php?action=state',p.url().split('#')[0]).href)).json();ok('Editing updates one existing event without double posting',state.events.filter(e=>e.id===saved.id).length===1&&state.events.find(e=>e.id===saved.id).description==='Kompakt düzenleme QA');
+  await p.setViewportSize({ width: 1440, height: 1024 });
+  await go("Hesaplar");
+  await p.getByRole("button", { name: "Hesap ekle", exact: true }).click();
+  await p.reload();
+  await p.locator(".entry-page h1").waitFor();
+  ok(
+    "Create URL survives browser reload without restoring a modal",
+    p.url().includes("#/hesaplar/yeni"),
+  );
+  await p.goBack();
+  await p.locator(".account-grid").waitFor();
+  await p.goForward();
+  await p.locator(".entry-page").waitFor();
+  ok(
+    "Clean create-page Back and Forward preserve real history entries",
+    p.url().includes("#/hesaplar/yeni"),
+  );
+  await p.locator("input[name=name]").fill("Geri taslağı");
+  await p.goBack();
+  await p.getByRole("alertdialog").waitFor();
+  await p.waitForURL("**/#/hesaplar/yeni");
+  await p.getByRole("button", { name: "Düzenlemeye dön", exact: true }).click();
+  ok(
+    "Cancelled browser Back keeps the dirty page and draft",
+    (await p.locator("input[name=name]").inputValue()) === "Geri taslağı",
+  );
+  await p.goBack();
+  await p.getByRole("alertdialog").waitFor();
+  await p
+    .getByRole("button", { name: "Değişikliklerden vazgeç", exact: true })
+    .click();
+  await p.locator(".account-grid").waitFor();
+  await p.goForward();
+  await p.locator(".entry-page").waitFor();
+  ok(
+    "Confirmed browser Back and Forward do not resurrect discarded form values",
+    (await p.locator("input[name=name]").inputValue()) === "",
+  );
+  await p.locator("#search").focus();
+  await p.keyboard.press("Escape");
+  ok(
+    "Create page header search closes without a dangling filter handler",
+    (await p.locator(".entry-page").count()) === 1 &&
+      (await p
+        .locator(".topbar")
+        .getByRole("button", { name: "Filtrele", exact: true })
+        .count()) === 0,
+  );
+  await p.locator("input[name=name]").fill("Taslak korunur");
+  await p
+    .locator(".sidebar")
+    .getByRole("button", { name: "Cari hesaplar", exact: true })
+    .click();
+  await p.getByRole("alertdialog").waitFor();
+  ok(
+    "Leaving a dirty page asks before navigation",
+    p.url().includes("/hesaplar/yeni"),
+  );
+  await p.getByRole("button", { name: "Düzenlemeye dön", exact: true }).click();
+  ok(
+    "Cancelled navigation preserves entered values",
+    (await p.locator("input[name=name]").inputValue()) === "Taslak korunur",
+  );
+  await close();
+  await go("Hesaplar");
+  await p.getByRole("button", { name: "Hesap ekle", exact: true }).click();
+  await p.locator("input[name=name]").fill("Ortak banka QA");
+  await p.getByRole("button", { name: "Banka seç", exact: true }).click();
+  await p
+    .getByRole("textbox", { name: "Banka ara", exact: true })
+    .fill("Saha Bankası QA");
+  await p
+    .getByRole("button", {
+      name: "Yeni banka ekle: Saha Bankası QA",
+      exact: true,
+    })
+    .click();
+  await p
+    .locator(".entry-page .page-title")
+    .getByRole("button", { name: "Kaydet", exact: true })
+    .click();
+  await p.locator(".entry-page").waitFor({ state: "hidden" });
+  await go("Kredi kartları");
+  await p.getByRole("button", { name: "Kart ekle", exact: true }).click();
+  await p.getByRole("button", { name: "Banka seç", exact: true }).click();
+  await p
+    .getByRole("textbox", { name: "Banka ara", exact: true })
+    .fill("saha bankası qa");
+  ok(
+    "New account bank is available in card creation without duplicates",
+    (await p
+      .getByRole("button", { name: "Saha Bankası QA", exact: true })
+      .count()) === 1,
+  );
+  await p.getByRole("button", { name: "Saha Bankası QA", exact: true }).click();
+  await p.locator("input[name=name]").fill("Saha kartı QA");
+  await p.locator("input[name=limit]").fill("125000");
+  await p
+    .getByRole("button", {
+      name: "Bu ekstrenin son ödeme tarihi *",
+      exact: true,
+    })
+    .click();
+  await p.locator('.date-floating [data-day="2026-10-20"]').click();
+  await p
+    .locator(".entry-page .page-title")
+    .getByRole("button", { name: "Kaydet", exact: true })
+    .click();
+  await p.locator(".entry-page").waitFor({ state: "hidden" });
+  let state = await (
+    await p.request.get(
+      new URL("api/index.php?action=state", p.url().split("#")[0]).href,
+    )
+  ).json();
+  ok(
+    "Custom bank card persists real card metadata",
+    state.cards.some(
+      (c) =>
+        c.name === "Saha kartı QA" &&
+        c.bank === "Saha Bankası QA" &&
+        c.limit_cents === 12500000,
+    ),
+  );
+  await p.getByRole("button", { name: "Kart ekle", exact: true }).click();
+  await p.getByRole("button", { name: "Banka seç", exact: true }).click();
+  await p
+    .getByRole("textbox", { name: "Banka ara", exact: true })
+    .fill("İş Bankası");
+  await p
+    .getByRole("button", { name: "Türkiye İş Bankası", exact: true })
+    .click();
+  ok(
+    "Expanded bank catalog suggests the correct optional program",
+    await p
+      .getByRole("combobox", { name: "Kart programı", exact: true })
+      .locator("option")
+      .allTextContents()
+      .then(
+        (values) =>
+          values.includes("Maximum") &&
+          values.includes("Yok") &&
+          !values.includes("Axess"),
+      ),
+  );
+  await close();
+  await go("Cari hesaplar");
+  await p.locator(".party-row").filter({ hasText: "Ada Tasarım" }).click();
+  await ensureEntry(p);
+  await p.locator("input[name=amount]").fill("2500");
+  await p.locator("input[name=description]").fill("Kompakt giriş QA");
+  for (const width of [1920, 1440, 768, 390, 320]) {
+    await p.setViewportSize({ width, height: width <= 760 ? 844 : 1024 });
+    await p.locator(".entry-dock").waitFor();
+    await p.waitForFunction(() => {
+      const a = document.querySelector(".entry-dock").getBoundingClientRect(),
+        m = document.querySelector(".content-frame"),
+        r = m.getBoundingClientRect(),
+        s = getComputedStyle(m);
+      return (
+        Math.abs(a.left - r.left - parseFloat(s.paddingLeft)) < 2 &&
+        Math.abs(a.right - r.right + parseFloat(s.paddingRight)) < 2
+      );
+    });
+    ok(
+      "Composer aligns to content gutters " + width,
+      await p.locator(".entry-dock").evaluate((el) => {
+        const a = el.getBoundingClientRect(),
+          m = document.querySelector(".content-frame"),
+          r = m.getBoundingClientRect(),
+          s = getComputedStyle(m);
+        return (
+          Math.abs(a.left - r.left - parseFloat(s.paddingLeft)) < 2 &&
+          Math.abs(a.right - r.right + parseFloat(s.paddingRight)) < 2
+        );
+      }),
+    );
+    ok(
+      "Composer does not cause horizontal overflow " + width,
+      await p.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    );
+    if (width > 1100)
+      ok(
+        "Desktop composer remains compact " + width,
+        await p
+          .locator(".entry-dock")
+          .evaluate((el) => el.getBoundingClientRect().height < 220),
+      );
+    if (width > 1100)
+      ok(
+        "Cari balances remain visible without table clipping " + width,
+        await p
+          .locator(".party-ledger")
+          .evaluate(
+            (table) =>
+              table.getBoundingClientRect().right <=
+              table.closest(".cari-table-scroll").getBoundingClientRect()
+                .right +
+                1,
+          ),
+      );
+    if (width <= 760) {
+      ok(
+        "Mobile composer clears navigation " + width,
+        await p
+          .locator(".entry-dock")
+          .evaluate(
+            (el) =>
+              el.getBoundingClientRect().bottom <=
+              document.querySelector(".mobile-nav").getBoundingClientRect().top,
+          ),
+      );
+      ok(
+        "Mobile navigation is compact with usable targets " + width,
+        await p
+          .locator(".mobile-nav")
+          .evaluate(
+            (el) =>
+              el.getBoundingClientRect().height <= 65 &&
+              [...el.querySelectorAll("button")].every(
+                (b) =>
+                  b.getBoundingClientRect().height >= 44 &&
+                  b.getBoundingClientRect().width >= 44,
+              ),
+          ),
+      );
+    }
+    await shot("composer-" + width);
+  }
+  await p.setViewportSize({ width: 390, height: 844 });
+  await p.locator("input[name=description]").focus();
+  await p.evaluate(() => {
+    Object.defineProperty(window.visualViewport, "height", {
+      configurable: true,
+      get: () => 390,
+    });
+    window.visualViewport.dispatchEvent(new Event("resize"));
+  });
+  await p.waitForFunction(
+    () =>
+      document.documentElement.classList.contains("keyboard-open") &&
+      document.querySelector(".entry-dock").getBoundingClientRect().height <=
+        390,
+  );
+  ok(
+    "Simulated keyboard hides navigation and bounds composer",
+    (await p.locator(".mobile-nav").isHidden()) &&
+      (await p
+        .locator(".entry-dock")
+        .evaluate((el) => el.getBoundingClientRect().height <= 390)),
+  );
+  await shot("keyboard-simulation");
+  await p.evaluate(() => {
+    delete window.visualViewport.height;
+    window.visualViewport.dispatchEvent(new Event("resize"));
+  });
+  await p.waitForFunction(
+    () => !document.documentElement.classList.contains("keyboard-open"),
+  );
+  await p.setViewportSize({ width: 1440, height: 1024 });
+  await p
+    .locator(".entry-dock")
+    .getByRole("button", { name: "İşlemi kaydet", exact: true })
+    .click();
+  await waitSaved(p);
+  state = await (
+    await p.request.get(
+      new URL("api/index.php?action=state", p.url().split("#")[0]).href,
+    )
+  ).json();
+  const saved = state.events.find((e) => e.description === "Kompakt giriş QA");
+  ok(
+    "Compact composer preserves sale financial effects",
+    saved?.amount_cents === 250000 &&
+      saved.party_effect === 250000 &&
+      saved.cash_effect === 0,
+  );
+  const row = p
+    .locator(".party-ledger tbody tr")
+    .filter({ hasText: "Kompakt giriş QA" })
+    .first();
+  await row.click();
+  await p
+    .locator(".ledger-action-row")
+    .getByRole("button", { name: "İşlemi düzenle", exact: true })
+    .click();
+  await p.locator(".entry-dock").waitFor();
+  ok(
+    "Editing uses the same composer and fills existing values",
+    Number(
+      (await p.locator("input[name=amount]").inputValue())
+        .replaceAll(".", "")
+        .replace(",", "."),
+    ) === 2500 &&
+      (await p.locator("input[name=description]").inputValue()) ===
+        "Kompakt giriş QA",
+  );
+  await p.locator("input[name=description]").fill("Kompakt düzenleme QA");
+  await p
+    .getByLabel("Değişiklik gerekçesi *", { exact: true })
+    .fill("Saha kontrolü");
+  await p
+    .locator(".entry-dock")
+    .getByRole("button", { name: "Kaydet", exact: true })
+    .click();
+  await waitSaved(p);
+  state = await (
+    await p.request.get(
+      new URL("api/index.php?action=state", p.url().split("#")[0]).href,
+    )
+  ).json();
+  ok(
+    "Editing updates one existing event without double posting",
+    state.events.filter((e) => e.id === saved.id).length === 1 &&
+      state.events.find((e) => e.id === saved.id).description ===
+        "Kompakt düzenleme QA",
+  );
 };

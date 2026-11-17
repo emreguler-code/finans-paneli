@@ -111,7 +111,6 @@ Durum: Kullanıcı, `TASARIM-INCELEMESI-2026-10-26.md` içindeki A1–A4 ve B1�
 
 Önceki sürümlerde tamamlanan Embla, ortak arama, sağ üst tarih, hesap uyarı sütunu, takvim görünümü ve kapsamlı finans demosu korunur. Kanban iptal kararı sürer.
 
-
 # 1.10.0 — son toplu onay uygulandı
 
 26 Ekim 2026. Kullanıcı araçlarda 2 numaralı Poliçeler özeti ve 3 numaralı İşlemler görünümünü onayladı; bütün onaylı notları kodlama, demoyu yenileme, paketleme ve GitHub yayını talimatı verdi. Aşağıdaki geçmiş not alma ifadeleri kararların alındığı aşamayı gösterir; artık bekleme şartı değildir. İçerik ikonlarını başlığa taşıma kararı iptal edilmiştir ve uygulanmamıştır.
@@ -137,7 +136,6 @@ Uygulananlar: hesap/kart paralel yatay listeler, listeden bilgi/düzenleme ikonl
 - Üçüncü taslaktaki üst araç grubu artık yerleşim şartı değildir; içerik araçları içerik kapsamında kalır. Mobilde yatay kart alanları mevcut duyarlı kurallarla alt alta geçer; içerik kesilmez.
 - Kullanıcı diğer eksikleri aktarmaya devam ediyor; bu seçim tek başına kodlama, paketleme veya yayın talimatı değildir.
 
-
 ## Hesap kartları ve okunaklı uyarılar — sekiz önerinin tamamı onaylandı
 
 26 Ekim 2026. Kullanıcı sekiz inceleme önerisini de onayladı; özellikle uyarıların önem düzeyine göre farklı renklerle ve daha okunaklı sunulmasını istedi. Bu maddeler sonraki tasarımın kapsamıdır; not aşaması devam ediyor.
@@ -158,7 +156,6 @@ Uygulananlar: hesap/kart paralel yatay listeler, listeden bilgi/düzenleme ikonl
 - **Bilgilendirme:** Mevcut teal rolü `#087F8C` ve nötr yüzey; örneğin günlük tahmini faiz bilgisi. Tek başına faiz tahmini kritik alarm gibi gösterilmez.
 - Önem düzeyi renk yanında ikon ve açık durum metniyle anlaşılır. Açık zeminler üzerinde okunabilir metin kontrastı korunur. Uyarı şiddeti ile işlem tutarının mevcut yeşil/kırmızı finansal yönü farklı anlamlardır; renk düzenlemesi hesap işaretlerini değiştirmez.
 - Öncelik, ilgili kaydın gerçek durumuna dayanır; aynı türdeki her kayıt otomatik olarak kritik sayılmaz. Yeni bildirim veya finansal eşik/hesaplama kuralı uydurulmaz.
-
 
 ## Merkezi bildirim sayfası ve bağlama göre sağ sütunlar
 
@@ -187,7 +184,6 @@ Uygulananlar: hesap/kart paralel yatay listeler, listeden bilgi/düzenleme ikonl
 
 Kod, sürüm, veritabanı veya yayın değişikliği yapılmadı. Cari blokları mevcut doğrulanmış net cari bakiye etkisine dayanır; yeni finansal hesaplama veya yön kuralı kurulmaz.
 
-
 ### Cari hareket bloklarının netleşen anlamı
 
 Kullanıcı, “giriş/çıkış” ile **cari bakiyeyi artıran ve azaltan hareketleri** kastettiğini belirtti.
@@ -196,7 +192,6 @@ Kullanıcı, “giriş/çıkış” ile **cari bakiyeyi artıran ve azaltan hare
 - Sınıflandırma mevcut net cari bakiye etkisini (`party_effect`) kullanır: pozitif etki artıran, negatif etki azaltan bloktadır. Etkisi sıfır olan kayıt iki bloktan birine zorla atanmaz.
 - Nakit etkisi, brüt işlem tutarı, işlem adı veya yalnız görsel etiket rengiyle yön tahmin edilmez. Kısmi ödeme gibi durumlarda mevcut cari hesap modeli korunur; işlem tutarı ile net bakiye etkisi karıştırılmaz.
 - Her blok kendi kapsamındaki en son 5 hareketi gösterir. Kullanıcı not aşamasındadır; kodlama/yayın başlatılmaz.
-
 
 ## İçerik ikonlarını yeni işlem düğmesinin yanına taşıma kararı geri alındı
 
@@ -207,7 +202,6 @@ Kullanıcı, “giriş/çıkış” ile **cari bakiyeyi artıran ve azaltan hare
 - Tek ana içerik kutusu, ortak kart hizaları/ölçüleri ve gereksiz ikinci liste başlığının kaldırılması dahil diğer kararlar korunur. Yeni işlem düğmesi başlıkta, kayda ait bilgi/düzenleme ikonları kendi kartı/özetinde kalır.
 - Üç görseldeki üst araç yerleşimi bu iptal kararını geçersiz kılamaz; görseller yalnız kart yerleşiminin referansıdır.
 - Önceki taşıma kararı yalnız belgelerdeydi; uygulama kodu değiştirilmediğinden kod geri alımı yapılmaz. Not aşaması sürüyor, kodlama veya yayın yoktur.
-
 
 ## Hesaplar ve kredi kartları paralel tasarlanacak; liste ikonları kaldırılacak
 
@@ -225,7 +219,6 @@ Kullanıcı, “giriş/çıkış” ile **cari bakiyeyi artıran ve azaltan hare
 
 Uygulama kodu, sürüm veya paket değiştirilmedi. Bu kararlar sonraki toplu uygulama kapsamına eklendi.
 
-
 ## Araçlarım: Özet ve İşlemler sekmeleri
 
 26 Ekim 2026. Kullanıcı araç kartından açılan sayfanın iki sekmeli olmasını istedi; önceki asistanın yalnız birleşik liste önerisi yerine bu akış esas alınır.
@@ -239,7 +232,6 @@ Uygulama kodu, sürüm veya paket değiştirilmedi. Bu kararlar sonraki toplu uy
 - Kamuya açık PistonHeads/Drivvo/Fuelly kaynakları okundu; sosyal forum, yakıt veya otomatik bakım/arıza tahmini özellikleri kapsamımıza kendiliğinden eklenmedi.
 
 Not aşaması devam ediyor. Uygulama kodu, sürüm, veritabanı veya paket değiştirilmedi.
-
 
 # 1.11.0 — 27 Ekim onayları uygulandı
 
@@ -508,6 +500,7 @@ Durum: kullanıcı bölünmüş masaüstü penceresinde okunabilirlik sorununu b
 Kanıt: kullanıcının bu mesajda gönderdiği Mavi Ofis ekranı ve mevcut kaynak kodu. Ekranda tam sol menü + altı sütunlu hareket tablosu + sağ bilgi sütunu birlikte korunuyor; açıklamalar bölünüyor ve işlem türleri kısalıyor. base.css normal sidebar 216 px; context.css sağ cari sütununu 1100 px altında alta geçiriyor; system.css 761 px üzerinde tablo minimumlarını, entry-surfaces.css 1101 px üzerinde bunları kaldıran ayrı kuralı içeriyor. Bu tespit canlı tüm sayfa/cihaz denetimi değil, gönderilen ekran ve kaynak incelemesidir.
 
 Önerilen teknik yön:
+
 - React + mevcut React DOM devam etsin; Vue'ye geçiş bu yerleşim sorununu kendiliğinden çözmez. React bileşen/state yönetir, React DOM tarayıcıya yerleştirir; görünüm uyarlaması esas olarak CSS Grid/Flexbox, media/container queries ve ortak ölçü sözleşmesiyle çözülür.
 - Header / Sidebar / Content bir HTML tabloyla değil ortak AppShell içinde CSS Grid bölgeleriyle yönetilsin. PageLayout; PageHeader, SummaryBar, MainContent/ContextAside ve EntryComposer/OverlayHost sözleşmelerini paylaşsın. Sayfalar kendi shell ölçülerini tekrar tanımlamasın.
 - Sol gezinmenin tam, ikon şeridi ve açılır panel durumları olsun. Otomatik daralma ile kullanıcının tercihi ayrı yönetilsin; yeterli alan geldiğinde tercih geri gelebilsin. Ana içerik okunabilirliği önce gelsin.
@@ -527,6 +520,7 @@ Kabul kapsamı önerisi: 320/390/768/960/1024/1180/1268/1280/1366/1440/1536/1920
 Kullanıcı mimari yaklaşımı uygun bulup taslak istedi. Kod/yayın değiştirilmeden üç bağımsız görsel taslak hazırlandı; her biri aynı cari detayının geniş, bölünmüş pencere ve mobil durumlarını karşılaştırır. Görseller sentetik konsepttir, çalışan arayüz testi değildir. Tipografi/ölçek ve finansal örnekler uygulama sırasında gerçek bileşenlerle doğrulanmalıdır.
 
 Kullanıcıya göründükleri sırayla seçim eşlemesi:
+
 1. Akışkan sütunlar — genişte mevcut ana/sağ oranı, dar pencerede bilgi alanı aşağı; `/workspace/generated_images/exec-cd6bd876-04d7-4e5b-8416-8f180d289e77.png`.
 2. Odaklı çalışma alanı — tam geniş hareketler ve istek üzerine bağlam paneli; `/workspace/generated_images/exec-7327ef71-ba64-4ce0-a0ae-e186f7160a30.png`.
 3. Sekmeli çalışma alanı — aynı sayfada Hareketler / Durum ve bilgiler görünümü; `/workspace/generated_images/exec-80ddd79e-45e0-47c0-afdc-8cb4867dddcd.png`.
@@ -574,7 +568,6 @@ Kullanıcı “evet, başla bakalım o zaman kodlamaya” dedi. Yukarıdaki glob
 
 Kullanıcı mobil ekran görüntülerindeki incelemeye katıldı ve “Sana katılıyorum, değişiklikleri hazırla ve githuba yükle” dedi. Açılan cari satırının dar şeride sıkışması, mobil menüde adların kaybolması, özet ayraç/girintileri, hesap listesi boşlukları, uzun filtre paneli, header arama alanı, ödeme planı yoğunluğu ve bildirim zeminleri kapsam içindedir. Yeni tema veya finansal anlam değişikliği istenmedi. Kaynaklar, testler ve hosting paketleri 1.17.0 etiketiyle GitHub'a yayımlanır; canlı hosting kurulumu yapılmaz. Ayrıntılar SURUM-1.17.0.md ve TEST-RAPORU-1.17.0.md içindedir.
 
-
 ## 17 Kasım 2026 — 1.22.0 bağımlılık analizi (uygulama onayı yok)
 
 - Kullanıcı son yayımlanmış sürümde kullanılan kütüphane, paket ve çalışma ortamlarının listesini ve güncellik analizini istedi. Bu talep paket yükseltme, kodlama veya yayın talimatı değildir.
@@ -585,7 +578,6 @@ Kullanıcı mobil ekran görüntülerindeki incelemeye katıldı ve “Sana kat�
 - Karar bekleniyor: kullanıcı açık uygulama talimatı vermeden hiçbir bağımlılık veya çalışma ortamı yükseltilmeyecek.
 
 1.9.1 bakım eki: detay ekranındaki liste kapsamlı arama eşleşen kaydı seçer; boş sonuçta geri dönüş ve tüm hesap uyarıları korunur. Şema 10 değişmez.
-
 
 ## 17 Kasım 2026 — Bağımlılık güncellemeleri uygulama onayı
 
@@ -598,17 +590,22 @@ Kullanıcı “güncellemelerin tamamını gerçekleştir” talimatıyla bağı
 - Test imajları PHP 8.5.12 ve MariaDB 12.3.3 LTS; Inter fontları 4.1. Eski PHP imajı önbelleğinin güncellemeyi atlaması engellendi.
 - Finansal model, şema 12 ve canlı veri korunur. Doğrulama ayrıntıları `BAGIMLILIK-GUNCELLEME-2026-11-17.md` içindedir. Yeni uygulama sürüm numarası ve GitHub Release yayın talimatında hazırlanacak; bu çalışma mevcut 1.22.0 tabanı üzerindeki yayımlanmamış değişikliklerdir.
 
-
 ## 17 Kasım 2026 — 1.23.0 GitHub yayını ve canlı hosting talimatı
 
 Kullanıcı “githubta yayınla ve canlı hosting güncellemesini yap” diyerek bağımlılık güncellemelerinin yeni GitHub sürümü olarak yayımlanmasını ve mevcut canlı kurulumun güncellenmesini açıkça yetkilendirdi. Hedef sürüm 1.23.0, şema 12. Önceki yalnız yerel uygulama/yayın bekleniyor ifadeleri önceki aşamaya aittir. Canlı uygulama güncellemesi dosya/veritabanı yedeği ve mevcut api/config.php korunarak yapılır; veri sıfırlama veya demo yükleme kapsamında değildir. Hosting hedefi ve erişim bilgisi bu ortamda henüz tanımlı değildir; kullanıcıdan bağlantı yöntemi istenmiştir.
-
 
 ## 17 Kasım 2026 — Geçerli yayın akışı: kodlama onayı GitHub yayınını kapsar
 
 Kullanıcı hosting bağlantısı/dağıtımı işini kapsamdan çıkardı; hosting yükleme ve canlı incelemeyi kendisi devraldı. Bundan sonra açık kodlama/uygulama onayı aynı kapsamın GitHub deposuna gönderilmesini ve yeni GitHub Release yayımlanmasını da yetkilendirir; ayrıca yayın onayı istenmez. Hostinge doğrudan yüklenmeye hazır ZIP ve SHA-256 dosyası hem depo içine hem GitHub Release varlıklarına eklenir. Önceki ayrı GitHub yayın onayı ve bu oturumdaki canlı hosting bağlantısı talebi bu son talimatla değiştirilmiştir.
 
-
 ### 1.23.0 yayın tamamlandı
 
 GitHub Release ve dört varlık (tam ZIP, hosting ZIP, iki SHA-256) yayımlandı. Windows/Linux yayın koşusu 44066468482 başarılı. Repo içindeki hosting ZIP yayın varlığıyla birebir eşleşiyor. Kodlama onayıyla birlikte GitHub yayın akışı kalıcı olarak AGENTS.md'ye işlendi. Hosting bağlantısı/yükleme/inceleme yapılmadı; kullanıcı üstleniyor. Nihai rapor `TEST-RAPORU-1.23.0.md`.
+
+## 17 Kasım 2026 — 1.24.0 proje genelinde biçim kontrolü onayı
+
+Kullanıcı Prettier kapsamının genişletilmesini ve sonraki sürümlerde projenin tamamının denetlenmesini istedi. Sabit 14 dosyalık liste kaldırılacak; desteklenen kaynak/belge/yapılandırma türleri otomatik keşifle kontrol edilecek. PHP için resmi Prettier eklentisi kullanılacak. Python/SQL gibi desteklenmeyen türler Prettier kontrolü yapılıyor gibi gösterilmeyecek. Üretilmiş çıktılar, bağımlılıklar, geçmiş test kanıtları, paket arşivleri, gerçek config ve özel çalışma verileri hariç tutulacak. İlk biçim düzenlemesi ayrı bakım kapsamıdır; uygulama davranışı, finansal model ve şema 12 korunacak. Kodlama onayı GitHub yayınını kapsar; 1.24.0 hosting ZIP + SHA-256 depoya ve Release'e eklenecek, hosting yükleme/inceleme kullanıcıda kalacak.
+
+### 1.24.0 uygulama ve yerel kabul
+
+232 desteklenen dosya otomatik keşifle denetleniyor; 14 dosyalık liste kaldırıldı. Yeni JS/PHP dosyalarıyla kapsam ve hata/düzeltme akışı doğrulandı. Genel format/derleme/birim/worker, API/migrasyon/yedekleme ve paket kurulumu başarılı; altı masaüstü/mobil piksel karşılaştırması aynı. Geçmiş test kanıtları değiştirilmedi. Hosting ZIP + SHA-256 repo için hazırlandı; GitHub tam kabul ve yayın aşamasına geçiliyor.

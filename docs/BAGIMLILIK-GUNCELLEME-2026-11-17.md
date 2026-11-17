@@ -2,23 +2,23 @@
 
 Kullanıcının “güncellemelerin tamamını gerçekleştir” talimatıyla uygulandı. Taban GitHub `main` / 1.22.0, commit `069a2c1`. Önceki 1.17.0 yerel kaynakları bu tabana fast-forward ile eşleştirildi; kullanıcının çalışma kuralları ve analiz notları korundu. Bu analiz ve ilk yerel kabul 1.22.0 tabanında hazırlandı. Sonraki kullanıcı talimatıyla değişiklikler 1.23.0 olarak yayımlandı; nihai GitHub/Windows/Linux doğrulaması `TEST-RAPORU-1.23.0.md` içindedir. Aşağıdaki yerel sonuçlar ilk uygulama aşamasının kaydıdır.
 
-| Bileşen | Önce | Sonra |
-| --- | --- | --- |
-| React / React DOM | 19.2.9 | 19.3.1 |
-| Lucide React | 1.57.0 | 1.74.0 |
-| Vite | 6.4.6 | 8.3.8 |
-| @vitejs/plugin-react | 5.0.4 | 6.3.0 |
-| Playwright | 1.64.1 | 1.65.1 |
-| Node.js | 24 dalı | 26.13.1 LTS |
-| npm | Sabitlenmemiş | 12.2.2 |
-| Python otomasyonu | Sabitlenmemiş | 3.15.2 |
-| PHP test imajı | 8.3 | 8.5.12 |
-| MariaDB test imajı | 11.4 | 12.3.3 LTS |
-| Inter | 4.001 dosyaları | 4.1 dağıtımı |
-| actions/checkout | v5 | v7.0.1 |
-| actions/setup-node | v5 | v7.1.0 |
-| actions/upload-artifact | v6 | v7.0.2 |
-| actions/setup-python | Yok | v7.1.0 |
+| Bileşen                 | Önce            | Sonra        |
+| ----------------------- | --------------- | ------------ |
+| React / React DOM       | 19.2.9          | 19.3.1       |
+| Lucide React            | 1.57.0          | 1.74.0       |
+| Vite                    | 6.4.6           | 8.3.8        |
+| @vitejs/plugin-react    | 5.0.4           | 6.3.0        |
+| Playwright              | 1.64.1          | 1.65.1       |
+| Node.js                 | 24 dalı         | 26.13.1 LTS  |
+| npm                     | Sabitlenmemiş   | 12.2.2       |
+| Python otomasyonu       | Sabitlenmemiş   | 3.15.2       |
+| PHP test imajı          | 8.3             | 8.5.12       |
+| MariaDB test imajı      | 11.4            | 12.3.3 LTS   |
+| Inter                   | 4.001 dosyaları | 4.1 dağıtımı |
+| actions/checkout        | v5              | v7.0.1       |
+| actions/setup-node      | v5              | v7.1.0       |
+| actions/upload-artifact | v6              | v7.0.2       |
+| actions/setup-python    | Yok             | v7.1.0       |
 
 Recharts 3.10.1, ESLint 10.15.0, @eslint/js 10.0.1, eslint-plugin-react-hooks 7.1.1, eslint-plugin-unused-imports 4.4.1, globals 17.14.0, Prettier 3.10.1 ve Stylelint 18.0.0 zaten günceldi; aynı sürümler korunarak kesin sürümlerle sabitlendi. Uyumlu dolaylı bağımlılıklar da `npm update --package-lock-only` ile yenilendi. Kilit dosyasındaki paket kaydı 263'ten 239'a indi. Dolaylı paketlere üst paketlerinin desteklemediği ana sürümler zorlanmadı.
 

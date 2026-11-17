@@ -1,6 +1,6 @@
-# Finans Paneli 1.23.0
+# Finans Paneli 1.24.0
 
-1.23.0: React/React DOM, Vite, ikonlar ve tarayıcı test araçları güncellendi; Node.js 26 LTS, npm 12 ve Python 3.15 ile tekrarlanabilir geliştirme ortamı eşleştirildi. Test ortamı PHP 8.5.12 / MariaDB 12.3.3 LTS, fontlar Inter 4.1. Şema 12. [Sürüm kapsamı](docs/SURUM-1.23.0.md) · [Test raporu](docs/TEST-RAPORU-1.23.0.md).
+1.24.0: Prettier biçim kontrolü proje geneline genişletildi. Desteklenen kaynaklar, belgeler ve yapılandırmalar otomatik keşfedilir; PHP resmi eklentiyle kapsanır. Şema 12. [Sürüm kapsamı](docs/SURUM-1.24.0.md) · [Kod kalite politikası](docs/KOD-KALITESI.md).
 
 1.21.0: içerik genişliğine bağlı tutarlı yerleşim, yalıtılmış arama/form stilleri ve Firefox dahil otomatik geometri kabulü. [Güncel kapsam](docs/SURUM-1.21.0.md) · [1.21.0 test raporu ve ekranlar](docs/TEST-RAPORU-1.21.0.md) · [Kod kalite politikası](docs/KOD-KALITESI.md).
 
@@ -24,6 +24,10 @@ API için boş yerel veritabanına database/schema.sql yükleyin. public/api/con
 ```sh
 npm run dev -- --host 127.0.0.1
 ```
+
+## Biçim kontrolü
+
+`npm run format:check` tüm desteklenen proje dosyalarını değiştirmeden kontrol eder. `npm run format` aynı kapsamı otomatik biçimlendirir. Yeni dosyalar listeye eklenmeden otomatik kapsanır. Ortak kurallar `.prettierrc.json`, üretilmiş/özel dosya istisnaları `.prettierignore` içindedir. JS/JSX, CSS, JSON, HTML, Markdown, YAML ve PHP desteklenir; Python ve SQL kendi test araçlarıyla doğrulanır. `npm test` bu denetimi de çalıştırır.
 
 ## Dosyalar
 
@@ -90,4 +94,3 @@ Yerel Chromium gerekiyorsa `QA_BROWSER_BIN=/usr/bin/chromium` tanımlayın. Dock
 `test:mobile`, aynı izole fixture üzerinde Chromium ve WebKit motorlarıyla mobil açık/kapalı satır, menü, filtre/takvim, tutar ve özet düzenlerini doğrular. Her iki motorun kurulması gerekir. `QA_BROWSER_ENGINES=chromium` yalnız hedefli yerel kontrol içindir; sürüm kabulünde iki motor birlikte çalışır. WebKit emülasyonu fiziksel iPhone testi değildir.
 
 1.18.0 itibarıyla GitHub bağlantısı üzerinden yayın için `release/v<sürüm>` dalına yapılan push da aynı tam kabul iş akışını çalıştırır. Dal adı package.json sürümüyle tam eşleşmelidir. Bütün kontrollerden sonra ilgili commit hedeflenerek sürüm etiketi ve iki ZIP yayımlanır; cPanel'e otomatik dağıtım yapılmaz. `npm run test:party-ui` derlenmiş arayüzü sentetik API üzerinde Chromium ve WebKit ile ayrıca kontrol eder.
-

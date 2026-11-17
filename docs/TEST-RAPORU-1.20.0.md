@@ -6,17 +6,17 @@ Test edilen uygulama commit'i: `d009e30665d4a311922ae663eb57f9a7455c73e3`.
 
 ## Sonuç
 
-| Kontrol | Sonuç |
-|---|---|
-| Yerel birim/statik worker kontrolleri ve derleme | 57 + 4 kontrol başarılı; üretim derlemesi başarılı |
-| Odaklı 1.20 arayüz kabulü | Chromium 43 / WebKit 43 kontrol; çalışma zamanı hatası yok |
-| Gerçek PHP/MariaDB masaüstü kullanıcı akışı | Chromium 146 kontrol başarılı |
-| Gerçek PHP/MariaDB mobil ve çoklu genişlik kabulü | Chromium 146 / WebKit 145 kontrol başarılı |
-| Finansal API | Başarılı |
-| Migrasyon / kurtarma | Başarılı |
-| Yedekleme / geri yükleme | Başarılı |
-| Kapsamlı demo ve rapor mutabakatı | 624 hareket, 29 hafta, 715 bağımsız mutabakat kontrolü başarılı |
-| ZIP kurulum ve paket bütünlüğü | Başarılı; iki dağıtım ZIP'i ve SHA-256 doğrulandı |
+| Kontrol                                           | Sonuç                                                           |
+| ------------------------------------------------- | --------------------------------------------------------------- |
+| Yerel birim/statik worker kontrolleri ve derleme  | 57 + 4 kontrol başarılı; üretim derlemesi başarılı              |
+| Odaklı 1.20 arayüz kabulü                         | Chromium 43 / WebKit 43 kontrol; çalışma zamanı hatası yok      |
+| Gerçek PHP/MariaDB masaüstü kullanıcı akışı       | Chromium 146 kontrol başarılı                                   |
+| Gerçek PHP/MariaDB mobil ve çoklu genişlik kabulü | Chromium 146 / WebKit 145 kontrol başarılı                      |
+| Finansal API                                      | Başarılı                                                        |
+| Migrasyon / kurtarma                              | Başarılı                                                        |
+| Yedekleme / geri yükleme                          | Başarılı                                                        |
+| Kapsamlı demo ve rapor mutabakatı                 | 624 hareket, 29 hafta, 715 bağımsız mutabakat kontrolü başarılı |
+| ZIP kurulum ve paket bütünlüğü                    | Başarılı; iki dağıtım ZIP'i ve SHA-256 doğrulandı               |
 
 Sekiz paralel CI işinin tamamı başarılıdır. Mobil kabul betiği aynı test veritabanında iki motoru sırayla çalıştırır; ikinci motor kendi satış test kaydını üretir, önceki motorun değiştirdiği satış için koşullu kontrol sayısı bir eksiktir.
 

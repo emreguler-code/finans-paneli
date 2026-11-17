@@ -1,22 +1,230 @@
-export const vehicleTypes={insurance:'Trafik sigortası',casco:'Kasko',tax:'MTV',maintenance:'Bakım',inspection:'Muayene'};
-export const rewardTypes={points:'Puan',cashback:'Nakit iade',installments:'Ek taksit',deferment:'Erteleme'};
-export const addDays=(date,n)=>{const d=new Date(date+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10)};
-export function paymentAmount(event){if(!event||event.cancelled||event.scheduled||['transfer','card_payment','cash_advance','card_transfer','opening','salary'].includes(event.operation))return 0;return Math.max(0,-event.cash_effect)+ (event.card_id?Math.max(0,event.card_effect):0);}
-export function vehiclePaid(record,data){return (record.payment_events||[]).reduce((sum,id)=>sum+paymentAmount(data.events.find(e=>e.id===id)),0);}
-export function vehicleSchedule(record,data){if(!record.active||record.estimated)return [];let paid=vehiclePaid(record,data);const rows=record.installments?.length?record.installments:record.due_date?[{date:record.due_date,amount_cents:record.amount_cents}]:[];return rows.map((row,index)=>{const used=Math.min(paid,row.amount_cents);paid-=used;return {...row,index,remaining:row.amount_cents-used}}).filter(row=>row.remaining>0);}
-export function vehicleReminders(data){const result=[];for(const vehicle of data.vehicles||[]){if(!vehicle.active)continue;const records=(data.vehicle_records||[]).filter(r=>r.active&&r.vehicle_id===vehicle.id);for(const record of records){if(['insurance','casco','inspection'].includes(record.type)&&records.some(r=>r.type===record.type&&r.end_date>record.end_date))continue;const date=record.type==='maintenance'?record.next_date:record.end_date;const dueKm=record.type==='maintenance'&&record.next_km>0&&vehicle.km>=record.next_km;if(dueKm||date&&date<=addDays(data.today,record.reminder_days??30))result.push({vehicle,record,date,dueKm});}}return result;}
-export function cardPurchases(data){const groups=new Map();for(const e of data.events||[]){if(!e.card_id||e.cancelled||e.scheduled||e.card_effect<=0||['card_transfer','cash_advance','card_payment'].includes(e.operation))continue;const key=e.installment_group||'event-'+e.id;if(!groups.has(key))groups.set(key,{...e,purchase_key:key,amount_cents:0,ids:[]});const group=groups.get(key);group.amount_cents+=e.settled_cents||e.amount_cents;group.ids.push(e.id);}return [...groups.values()];}
-export function campaignMatches(campaign,event,data){if(!campaign.active||!campaign.card_ids.includes(event.card_id)||event.event_date<campaign.start_date||event.event_date>campaign.end_date||event.amount_cents<campaign.min_spend_cents)return false;if(campaign.party_ids.length&&!campaign.party_ids.includes(event.party_id))return false;if(campaign.tags.length&&!campaign.tags.includes(event.tag||'Genel'))return false;if(campaign.pos_programs.length){const party=data.parties.find(p=>p.id===event.party_id);if(!party||!campaign.pos_programs.some(pos=>party.pos_programs?.includes(pos)))return false;}return true;}
-export function campaignProgress(campaign,data){const purchases=cardPurchases(data),entries=(data.campaign_entries||[]).filter(entry=>entry.active&&entry.campaign_id===campaign.id);const seen=new Set();const matched=entries.flatMap(entry=>{const event=purchases.find(p=>p.ids.includes(entry.event_id));if(!event||seen.has(event.purchase_key)||!campaignMatches(campaign,event,data))return [];seen.add(event.purchase_key);return [{entry,event}]});let expected=0;
- if(campaign.participation!=='required'&&matched.length>=campaign.required_count&&!['installments','deferment'].includes(campaign.reward_type))for(const {event} of matched){let value=campaign.reward_mode==='percent'?event.amount_cents/100*campaign.reward_value/100:campaign.reward_value;if(campaign.per_tx_cap)value=Math.min(value,campaign.per_tx_cap);expected+=value;}
- if(campaign.total_cap)expected=Math.min(expected,campaign.total_cap);const received=Math.round(entries.filter(e=>e.confirmed).reduce((sum,e)=>sum+e.received,0)*100)/100;return {pending:Math.max(0,Math.round((expected-received)*100)/100),count:matched.length,expected:Math.round(expected*100)/100,received:Math.round(entries.filter(e=>e.confirmed).reduce((sum,e)=>sum+e.received,0)*100)/100,matched};}
-export function campaignStatus(campaign,today){if(!campaign.active||campaign.end_date<today)return 'completed';if(campaign.participation==='required')return 'participation';if(campaign.start_date>today)return 'upcoming';return campaign.end_date<=addDays(today,7)?'ending':'active';}
+export const vehicleTypes = {
+  insurance: "Trafik sigortası",
+  casco: "Kasko",
+  tax: "MTV",
+  maintenance: "Bakım",
+  inspection: "Muayene",
+};
+export const rewardTypes = {
+  points: "Puan",
+  cashback: "Nakit iade",
+  installments: "Ek taksit",
+  deferment: "Erteleme",
+};
+export const addDays = (date, n) => {
+  const d = new Date(date + "T12:00:00Z");
+  d.setUTCDate(d.getUTCDate() + n);
+  return d.toISOString().slice(0, 10);
+};
+export function paymentAmount(event) {
+  if (
+    !event ||
+    event.cancelled ||
+    event.scheduled ||
+    [
+      "transfer",
+      "card_payment",
+      "cash_advance",
+      "card_transfer",
+      "opening",
+      "salary",
+    ].includes(event.operation)
+  )
+    return 0;
+  return (
+    Math.max(0, -event.cash_effect) +
+    (event.card_id ? Math.max(0, event.card_effect) : 0)
+  );
+}
+export function vehiclePaid(record, data) {
+  return (record.payment_events || []).reduce(
+    (sum, id) => sum + paymentAmount(data.events.find((e) => e.id === id)),
+    0,
+  );
+}
+export function vehicleSchedule(record, data) {
+  if (!record.active || record.estimated) return [];
+  let paid = vehiclePaid(record, data);
+  const rows = record.installments?.length
+    ? record.installments
+    : record.due_date
+      ? [{ date: record.due_date, amount_cents: record.amount_cents }]
+      : [];
+  return rows
+    .map((row, index) => {
+      const used = Math.min(paid, row.amount_cents);
+      paid -= used;
+      return { ...row, index, remaining: row.amount_cents - used };
+    })
+    .filter((row) => row.remaining > 0);
+}
+export function vehicleReminders(data) {
+  const result = [];
+  for (const vehicle of data.vehicles || []) {
+    if (!vehicle.active) continue;
+    const records = (data.vehicle_records || []).filter(
+      (r) => r.active && r.vehicle_id === vehicle.id,
+    );
+    for (const record of records) {
+      if (
+        ["insurance", "casco", "inspection"].includes(record.type) &&
+        records.some(
+          (r) => r.type === record.type && r.end_date > record.end_date,
+        )
+      )
+        continue;
+      const date =
+        record.type === "maintenance" ? record.next_date : record.end_date;
+      const dueKm =
+        record.type === "maintenance" &&
+        record.next_km > 0 &&
+        vehicle.km >= record.next_km;
+      if (
+        dueKm ||
+        (date && date <= addDays(data.today, record.reminder_days ?? 30))
+      )
+        result.push({ vehicle, record, date, dueKm });
+    }
+  }
+  return result;
+}
+export function cardPurchases(data) {
+  const groups = new Map();
+  for (const e of data.events || []) {
+    if (
+      !e.card_id ||
+      e.cancelled ||
+      e.scheduled ||
+      e.card_effect <= 0 ||
+      ["card_transfer", "cash_advance", "card_payment"].includes(e.operation)
+    )
+      continue;
+    const key = e.installment_group || "event-" + e.id;
+    if (!groups.has(key))
+      groups.set(key, { ...e, purchase_key: key, amount_cents: 0, ids: [] });
+    const group = groups.get(key);
+    group.amount_cents += e.settled_cents || e.amount_cents;
+    group.ids.push(e.id);
+  }
+  return [...groups.values()];
+}
+export function campaignMatches(campaign, event, data) {
+  if (
+    !campaign.active ||
+    !campaign.card_ids.includes(event.card_id) ||
+    event.event_date < campaign.start_date ||
+    event.event_date > campaign.end_date ||
+    event.amount_cents < campaign.min_spend_cents
+  )
+    return false;
+  if (campaign.party_ids.length && !campaign.party_ids.includes(event.party_id))
+    return false;
+  if (campaign.tags.length && !campaign.tags.includes(event.tag || "Genel"))
+    return false;
+  if (campaign.pos_programs.length) {
+    const party = data.parties.find((p) => p.id === event.party_id);
+    if (
+      !party ||
+      !campaign.pos_programs.some((pos) => party.pos_programs?.includes(pos))
+    )
+      return false;
+  }
+  return true;
+}
+export function campaignProgress(campaign, data) {
+  const purchases = cardPurchases(data),
+    entries = (data.campaign_entries || []).filter(
+      (entry) => entry.active && entry.campaign_id === campaign.id,
+    );
+  const seen = new Set();
+  const matched = entries.flatMap((entry) => {
+    const event = purchases.find((p) => p.ids.includes(entry.event_id));
+    if (
+      !event ||
+      seen.has(event.purchase_key) ||
+      !campaignMatches(campaign, event, data)
+    )
+      return [];
+    seen.add(event.purchase_key);
+    return [{ entry, event }];
+  });
+  let expected = 0;
+  if (
+    campaign.participation !== "required" &&
+    matched.length >= campaign.required_count &&
+    !["installments", "deferment"].includes(campaign.reward_type)
+  )
+    for (const { event } of matched) {
+      let value =
+        campaign.reward_mode === "percent"
+          ? ((event.amount_cents / 100) * campaign.reward_value) / 100
+          : campaign.reward_value;
+      if (campaign.per_tx_cap) value = Math.min(value, campaign.per_tx_cap);
+      expected += value;
+    }
+  if (campaign.total_cap) expected = Math.min(expected, campaign.total_cap);
+  const received =
+    Math.round(
+      entries
+        .filter((e) => e.confirmed)
+        .reduce((sum, e) => sum + e.received, 0) * 100,
+    ) / 100;
+  return {
+    pending: Math.max(0, Math.round((expected - received) * 100) / 100),
+    count: matched.length,
+    expected: Math.round(expected * 100) / 100,
+    received:
+      Math.round(
+        entries
+          .filter((e) => e.confirmed)
+          .reduce((sum, e) => sum + e.received, 0) * 100,
+      ) / 100,
+    matched,
+  };
+}
+export function campaignStatus(campaign, today) {
+  if (!campaign.active || campaign.end_date < today) return "completed";
+  if (campaign.participation === "required") return "participation";
+  if (campaign.start_date > today) return "upcoming";
+  return campaign.end_date <= addDays(today, 7) ? "ending" : "active";
+}
 
-export function currentVehicleRecord(records,type,today){const candidates=records.filter(r=>r.active&&r.type===type);return candidates.filter(r=>r.date<=today).sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id)[0]||candidates.sort((a,b)=>a.date.localeCompare(b.date)||a.id-b.id)[0]||null;}
-export function vehicleRecordStatus(record,vehicle,data){
- if(!record.active)return {text:'Takip kapalı',level:'info'};
- if(record.date>data.today)return {text:'Başlayacak',level:'info'};
- if(['insurance','casco','inspection'].includes(record.type))return record.end_date&&record.end_date<data.today?{text:'Süresi doldu',level:'danger'}:{text:record.end_date?'Geçerli':'Bitiş belirtilmedi',level:record.end_date?'success':'info'};
- if(record.type==='maintenance')return record.next_km>0&&vehicle.km>=record.next_km||record.next_date&&record.next_date<=data.today?{text:'Bakım zamanı',level:'warning'}:{text:'Takipte',level:'info'};
- const due=vehicleSchedule(record,data);return due.some(r=>r.date<data.today)?{text:'Gecikmiş',level:'danger'}:due.length?{text:'Ödeme bekliyor',level:'warning'}:{text:record.estimated?'Tahmini':vehiclePaid(record,data)>=record.amount_cents?'Ödendi':'Kayıtlı',level:'info'};
+export function currentVehicleRecord(records, type, today) {
+  const candidates = records.filter((r) => r.active && r.type === type);
+  return (
+    candidates
+      .filter((r) => r.date <= today)
+      .sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id)[0] ||
+    candidates.sort((a, b) => a.date.localeCompare(b.date) || a.id - b.id)[0] ||
+    null
+  );
+}
+export function vehicleRecordStatus(record, vehicle, data) {
+  if (!record.active) return { text: "Takip kapalı", level: "info" };
+  if (record.date > data.today) return { text: "Başlayacak", level: "info" };
+  if (["insurance", "casco", "inspection"].includes(record.type))
+    return record.end_date && record.end_date < data.today
+      ? { text: "Süresi doldu", level: "danger" }
+      : {
+          text: record.end_date ? "Geçerli" : "Bitiş belirtilmedi",
+          level: record.end_date ? "success" : "info",
+        };
+  if (record.type === "maintenance")
+    return (record.next_km > 0 && vehicle.km >= record.next_km) ||
+      (record.next_date && record.next_date <= data.today)
+      ? { text: "Bakım zamanı", level: "warning" }
+      : { text: "Takipte", level: "info" };
+  const due = vehicleSchedule(record, data);
+  return due.some((r) => r.date < data.today)
+    ? { text: "Gecikmiş", level: "danger" }
+    : due.length
+      ? { text: "Ödeme bekliyor", level: "warning" }
+      : {
+          text: record.estimated
+            ? "Tahmini"
+            : vehiclePaid(record, data) >= record.amount_cents
+              ? "Ödendi"
+              : "Kayıtlı",
+          level: "info",
+        };
 }

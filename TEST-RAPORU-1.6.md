@@ -2,14 +2,14 @@
 
 13 Ekim 2026. Varsayımsal, ayrı PHP 8.3 / MariaDB veritabanında kontrol edildi. Kullanıcının hosting sunucusuna bağlanılmadı ve yayın yapılmadı.
 
-| Kontrol | Sonuç |
-|---|---|
-| Gerçek PHP/MariaDB entegrasyonu | 69 geçti |
-| Para, tarih, dönem, yön ve KMH yardımcıları | 18 geçti |
-| Paketleme/Worker kontrolleri | 4 geçti |
-| Çalışan derlenmiş uygulama, Chromium 150 | 58 geçti |
-| PHP sözdizimi | 9 dosya geçti |
-| Üretim derlemesi | Geçti |
+| Kontrol                                     | Sonuç         |
+| ------------------------------------------- | ------------- |
+| Gerçek PHP/MariaDB entegrasyonu             | 69 geçti      |
+| Para, tarih, dönem, yön ve KMH yardımcıları | 18 geçti      |
+| Paketleme/Worker kontrolleri                | 4 geçti       |
+| Çalışan derlenmiş uygulama, Chromium 150    | 58 geçti      |
+| PHP sözdizimi                               | 9 dosya geçti |
+| Üretim derlemesi                            | Geçti         |
 
 Toplam 149 davranış kontrolü, ayrıca PHP sözdizimi ve build. Önceki sürüm testleri bu sayıya eklenmedi. Kanıtlar `docs/v16-*` ve `docs/ekranlar/checks.json` içinde.
 

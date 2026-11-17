@@ -1,105 +1,486 @@
 /* 1.6 keeps the approved typography/palette and restores existing list density. */
-.finance-page,.page-title,.page-title>div,.panel,.cari-table-scroll{min-width:0}
-.ledger-view td{padding-top:18px;padding-bottom:18px}
-.ledger-view td:last-child{padding:18px 22px;width:auto}
-.ledger-view th:nth-child(3){width:230px}
-.ledger-view .party-ledger th:nth-child(3){width:100px}
-.ledger-view .party-ledger th:nth-child(4){width:230px}
-.ledger-view th:last-child,.ledger-view th:nth-last-child(2){width:150px}
-.ledger-view .cari-entry-kind{grid-template-columns:130px 4px minmax(50px,1fr);gap:6px;min-width:0}
-.ledger-view .cari-entry-kind .cari-badge{width:130px;min-width:130px;max-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;line-height:30px;text-align:center;font-size:var(--text-small);padding:0 5px}
-.ledger-view .expanded td:first-child{box-shadow:inset 3px 0 var(--brand)}
-.ledger-view .ledger-action-row>td{border:0!important;padding:0!important;box-shadow:inset 3px 0 var(--brand);background:var(--palette-f0f7f8)}
-.ledger-actions{min-height:32px;padding:0 15px 5px}
-.ledger-view .settled-note{font-size:var(--text-small);color:var(--muted);font-weight:400;white-space:normal}
-.party-detail-header{flex-wrap:wrap}
-.party-inline-info{flex:0 0 100%;border-top:1px solid var(--line);padding-top:14px}
-.party-inline-info dl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 22px;margin:0}
-.party-inline-info dt{font-size:var(--text-small);color:var(--muted)}
-.party-inline-info dd{margin:3px 0 0;overflow-wrap:anywhere;font-size:var(--text-body)}
-.rotate-open{transform:rotate(180deg)}
-.account-page{gap:var(--page-gap)}
-.account-title{align-items:flex-start;gap:var(--space-3)}
-.account-title-actions{display:flex;align-items:flex-start;justify-content:flex-end;gap:var(--space-3);min-width:0;flex:1}
-.account-title-actions>.primary-button{min-height:var(--control-size);flex-shrink:0}
-.account-card-actions{display:flex;gap:4px;position:absolute;right:12px;bottom:12px;z-index:2}
-.account-card-actions .icon-button{width:32px;height:32px;background:var(--surface-raised);border:1px solid var(--line);border-radius:var(--radius-control)}
-.account-face{position:relative}
-.bank-face footer{padding-right:72px}
-.face-mark{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
-.kmh-card-body{margin:auto 0}
-.kmh-totals{display:flex;justify-content:space-between;gap:15px;font-size:var(--text-small);margin-top:8px}
-.kmh-totals span{display:block;color:var(--muted)}
-.kmh-totals strong{font-size:var(--text-body);white-space:nowrap}
-.alert-notice{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border:1px solid var(--palette-e8d9bc);background:var(--palette-fcf8ef);border-radius:var(--radius-control);color:var(--status-warning);width:100%;text-align:left}
-.alert-notice>span{flex:1;min-width:0}
-.alert-notice strong{display:block;font-size:var(--text-body)}
-.alert-notice small{display:block;font-size:var(--text-small);line-height:1.5;margin-top:3px;color:var(--muted);overflow-wrap:anywhere}
-.alert-notice.danger{border-color:var(--palette-edcece);background:var(--palette-fcf3f3);color:var(--red)}
-.notification-list{display:flex;flex-direction:column;gap:10px}
-.drawer-layer{overscroll-behavior:contain}
-.drawer.finance-sheet{min-width:0;overscroll-behavior:contain}
-.sheet-scroll{touch-action:pan-y;-webkit-overflow-scrolling:touch}
-@media(max-width:1100px){.account-title{flex-wrap:wrap}.account-title-actions{flex-basis:100%}.ledger-view .party-ledger{min-width:980px}}
-@media(max-width:1100px){.party-inline-info dl{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:760px){
-  html,body,#root{width:100%;max-width:100%;min-width:0}.breadcrumb{min-width:0}.breadcrumb b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100px}
-  .top-actions{min-width:0;flex:1;justify-content:flex-end}.top-actions .search{min-width:0;max-width:150px;flex:1}.top-actions .search input{min-width:0;width:100%;font-size:var(--text-section)}
-  .account-page .page-title{flex-direction:column;align-items:stretch;gap:10px}
-  .account-title-actions{width:100%;flex-basis:auto;gap:var(--space-3)}
-  .common-toolbar .cari-search input{font-size:var(--text-section)}
-  .account-ledger-heading .cari-tabs{flex:1;width:auto;gap:4px}
-  .account-ledger-heading .cari-tabs button{font-size:var(--text-body);white-space:normal;padding:10px 6px}
-  .account-ledger-heading{gap:6px;align-items:center}
-  .account-ledger-heading .cari-actions{gap:5px}
-  .account-ledger-heading .list-icon{width:var(--control-size);height:var(--control-size)}
-  .account-ledger-heading .primary-button{min-height:var(--control-size);width:40px;padding:0;justify-content:center}
-  .party-detail-header .party-heading{min-width:0}.party-detail-header h1{overflow-wrap:anywhere}
-  .party-inline-info dl{grid-template-columns:1fr 1fr;gap:12px}
-  .alert-notice{padding:10px;gap:8px}
-  .common-toolbar{flex-wrap:wrap}.common-toolbar .cari-search{min-width:0}
+.finance-page,
+.page-title,
+.page-title > div,
+.panel,
+.cari-table-scroll {
+  min-width: 0;
 }
-@media(max-width:760px){
-  .ledger-view .party-ledger{min-width:0}
-  .ledger-view .expanded td:first-child{box-shadow:none}
-  .ledger-view .ledger-action-row>td{box-shadow:none}
-  .ledger-view .cari-entry-kind{display:flex;gap:5px;flex-wrap:wrap}
-  .ledger-view .cari-entry-kind .cari-badge{width:110px;min-width:110px;max-width:110px;height:27px;line-height:27px}
-  .ledger-view .expense-tag{margin-left:0}
-  .ledger-actions{min-height:42px}
-  .finance-table td[data-label="Açıklama"]{overflow-wrap:anywhere}
-  .ledger-view .settled-note{max-width:140px}
-  .drawer-layer{padding:10px}.drawer.finance-sheet{max-width:100%;max-height:calc(min(var(--visible-height,100dvh),100dvh) - 20px)}
-  .date-centered .date-months{grid-template-columns:minmax(0,1fr)}
-  .date-centered .date-second{display:none}
-  .date-navigation{gap:4px;min-width:0}.date-navigation select{min-width:0;max-width:100%}
-  .party-inline-info dl{grid-template-columns:1fr}
+.ledger-view td {
+  padding-top: 18px;
+  padding-bottom: 18px;
 }
-@media(max-width:390px){.bank-face h2{font-size:var(--text-section)}.bank-face .account-face-balance>div{font-size:27px}.account-title-actions>.primary-button{height:var(--control-size);min-height:var(--control-size)}.bank-face footer{padding-right:70px}}
-@media(max-width:350px){.breadcrumb b{max-width:76px}.account-card-actions{right:9px;bottom:9px}}
+.ledger-view td:last-child {
+  padding: 18px 22px;
+  width: auto;
+}
+.ledger-view th:nth-child(3) {
+  width: 230px;
+}
+.ledger-view .party-ledger th:nth-child(3) {
+  width: 100px;
+}
+.ledger-view .party-ledger th:nth-child(4) {
+  width: 230px;
+}
+.ledger-view th:last-child,
+.ledger-view th:nth-last-child(2) {
+  width: 150px;
+}
+.ledger-view .cari-entry-kind {
+  grid-template-columns: 130px 4px minmax(50px, 1fr);
+  gap: 6px;
+  min-width: 0;
+}
+.ledger-view .cari-entry-kind .cari-badge {
+  width: 130px;
+  min-width: 130px;
+  max-width: 130px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  line-height: 30px;
+  text-align: center;
+  font-size: var(--text-small);
+  padding: 0 5px;
+}
+.ledger-view .expanded td:first-child {
+  box-shadow: inset 3px 0 var(--brand);
+}
+.ledger-view .ledger-action-row > td {
+  border: 0 !important;
+  padding: 0 !important;
+  box-shadow: inset 3px 0 var(--brand);
+  background: var(--palette-f0f7f8);
+}
+.ledger-actions {
+  min-height: 32px;
+  padding: 0 15px 5px;
+}
+.ledger-view .settled-note {
+  font-size: var(--text-small);
+  color: var(--muted);
+  font-weight: 400;
+  white-space: normal;
+}
+.party-detail-header {
+  flex-wrap: wrap;
+}
+.party-inline-info {
+  flex: 0 0 100%;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+.party-inline-info dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px 22px;
+  margin: 0;
+}
+.party-inline-info dt {
+  font-size: var(--text-small);
+  color: var(--muted);
+}
+.party-inline-info dd {
+  margin: 3px 0 0;
+  overflow-wrap: anywhere;
+  font-size: var(--text-body);
+}
+.rotate-open {
+  transform: rotate(180deg);
+}
+.account-page {
+  gap: var(--page-gap);
+}
+.account-title {
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+.account-title-actions {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  min-width: 0;
+  flex: 1;
+}
+.account-title-actions > .primary-button {
+  min-height: var(--control-size);
+  flex-shrink: 0;
+}
+.account-card-actions {
+  display: flex;
+  gap: 4px;
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  z-index: 2;
+}
+.account-card-actions .icon-button {
+  width: 32px;
+  height: 32px;
+  background: var(--surface-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+}
+.account-face {
+  position: relative;
+}
+.bank-face footer {
+  padding-right: 72px;
+}
+.face-mark {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+  flex-shrink: 0;
+}
+.kmh-card-body {
+  margin: auto 0;
+}
+.kmh-totals {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  font-size: var(--text-small);
+  margin-top: 8px;
+}
+.kmh-totals span {
+  display: block;
+  color: var(--muted);
+}
+.kmh-totals strong {
+  font-size: var(--text-body);
+  white-space: nowrap;
+}
+.alert-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--palette-e8d9bc);
+  background: var(--palette-fcf8ef);
+  border-radius: var(--radius-control);
+  color: var(--status-warning);
+  width: 100%;
+  text-align: left;
+}
+.alert-notice > span {
+  flex: 1;
+  min-width: 0;
+}
+.alert-notice strong {
+  display: block;
+  font-size: var(--text-body);
+}
+.alert-notice small {
+  display: block;
+  font-size: var(--text-small);
+  line-height: 1.5;
+  margin-top: 3px;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.alert-notice.danger {
+  border-color: var(--palette-edcece);
+  background: var(--palette-fcf3f3);
+  color: var(--red);
+}
+.notification-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.drawer-layer {
+  overscroll-behavior: contain;
+}
+.drawer.finance-sheet {
+  min-width: 0;
+  overscroll-behavior: contain;
+}
+.sheet-scroll {
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+}
+@media (max-width: 1100px) {
+  .account-title {
+    flex-wrap: wrap;
+  }
+  .account-title-actions {
+    flex-basis: 100%;
+  }
+  .ledger-view .party-ledger {
+    min-width: 980px;
+  }
+}
+@media (max-width: 1100px) {
+  .party-inline-info dl {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 760px) {
+  html,
+  body,
+  #root {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+  .breadcrumb {
+    min-width: 0;
+  }
+  .breadcrumb b {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100px;
+  }
+  .top-actions {
+    min-width: 0;
+    flex: 1;
+    justify-content: flex-end;
+  }
+  .top-actions .search {
+    min-width: 0;
+    max-width: 150px;
+    flex: 1;
+  }
+  .top-actions .search input {
+    min-width: 0;
+    width: 100%;
+    font-size: var(--text-section);
+  }
+  .account-page .page-title {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .account-title-actions {
+    width: 100%;
+    flex-basis: auto;
+    gap: var(--space-3);
+  }
+  .common-toolbar .cari-search input {
+    font-size: var(--text-section);
+  }
+  .account-ledger-heading .cari-tabs {
+    flex: 1;
+    width: auto;
+    gap: 4px;
+  }
+  .account-ledger-heading .cari-tabs button {
+    font-size: var(--text-body);
+    white-space: normal;
+    padding: 10px 6px;
+  }
+  .account-ledger-heading {
+    gap: 6px;
+    align-items: center;
+  }
+  .account-ledger-heading .cari-actions {
+    gap: 5px;
+  }
+  .account-ledger-heading .list-icon {
+    width: var(--control-size);
+    height: var(--control-size);
+  }
+  .account-ledger-heading .primary-button {
+    min-height: var(--control-size);
+    width: 40px;
+    padding: 0;
+    justify-content: center;
+  }
+  .party-detail-header .party-heading {
+    min-width: 0;
+  }
+  .party-detail-header h1 {
+    overflow-wrap: anywhere;
+  }
+  .party-inline-info dl {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .alert-notice {
+    padding: 10px;
+    gap: 8px;
+  }
+  .common-toolbar {
+    flex-wrap: wrap;
+  }
+  .common-toolbar .cari-search {
+    min-width: 0;
+  }
+}
+@media (max-width: 760px) {
+  .ledger-view .party-ledger {
+    min-width: 0;
+  }
+  .ledger-view .expanded td:first-child {
+    box-shadow: none;
+  }
+  .ledger-view .ledger-action-row > td {
+    box-shadow: none;
+  }
+  .ledger-view .cari-entry-kind {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+  .ledger-view .cari-entry-kind .cari-badge {
+    width: 110px;
+    min-width: 110px;
+    max-width: 110px;
+    height: 27px;
+    line-height: 27px;
+  }
+  .ledger-view .expense-tag {
+    margin-left: 0;
+  }
+  .ledger-actions {
+    min-height: 42px;
+  }
+  .finance-table td[data-label="Açıklama"] {
+    overflow-wrap: anywhere;
+  }
+  .ledger-view .settled-note {
+    max-width: 140px;
+  }
+  .drawer-layer {
+    padding: 10px;
+  }
+  .drawer.finance-sheet {
+    max-width: 100%;
+    max-height: calc(min(var(--visible-height, 100dvh), 100dvh) - 20px);
+  }
+  .date-centered .date-months {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .date-centered .date-second {
+    display: none;
+  }
+  .date-navigation {
+    gap: 4px;
+    min-width: 0;
+  }
+  .date-navigation select {
+    min-width: 0;
+    max-width: 100%;
+  }
+  .party-inline-info dl {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 390px) {
+  .bank-face h2 {
+    font-size: var(--text-section);
+  }
+  .bank-face .account-face-balance > div {
+    font-size: 27px;
+  }
+  .account-title-actions > .primary-button {
+    height: var(--control-size);
+    min-height: var(--control-size);
+  }
+  .bank-face footer {
+    padding-right: 70px;
+  }
+}
+@media (max-width: 350px) {
+  .breadcrumb b {
+    max-width: 76px;
+  }
+  .account-card-actions {
+    right: 9px;
+    bottom: 9px;
+  }
+}
 
-@media(max-width:760px){
- .bank-account-page .account-ledger-heading>.cari-tabs{flex-wrap:nowrap;min-width:0}
- .bank-account-page .account-ledger-heading>.cari-tabs button{flex:1;min-width:0}
- .account-page .ledger-view .common-toolbar{padding:12px;gap:6px;flex-wrap:nowrap}
- .account-page .ledger-view .common-toolbar>.cari-search{width:auto;flex:1;min-width:0}
- .account-page .ledger-view .common-toolbar .cari-toolbar-actions{width:auto;gap:4px}
- .account-page .ledger-view .common-toolbar .list-icon{width:32px;height:40px}
- .bank-account-page .account-face h2{font-size:var(--text-section)}
- .credit-face .limit-legend{grid-template-columns:1fr 1fr 1.15fr}
- .credit-face .limit-legend span{white-space:normal;line-height:1.5}
+@media (max-width: 760px) {
+  .bank-account-page .account-ledger-heading > .cari-tabs {
+    flex-wrap: nowrap;
+    min-width: 0;
+  }
+  .bank-account-page .account-ledger-heading > .cari-tabs button {
+    flex: 1;
+    min-width: 0;
+  }
+  .account-page .ledger-view .common-toolbar {
+    padding: 12px;
+    gap: 6px;
+    flex-wrap: nowrap;
+  }
+  .account-page .ledger-view .common-toolbar > .cari-search {
+    width: auto;
+    flex: 1;
+    min-width: 0;
+  }
+  .account-page .ledger-view .common-toolbar .cari-toolbar-actions {
+    width: auto;
+    gap: 4px;
+  }
+  .account-page .ledger-view .common-toolbar .list-icon {
+    width: 32px;
+    height: 40px;
+  }
+  .bank-account-page .account-face h2 {
+    font-size: var(--text-section);
+  }
+  .credit-face .limit-legend {
+    grid-template-columns: 1fr 1fr 1.15fr;
+  }
+  .credit-face .limit-legend span {
+    white-space: normal;
+    line-height: 1.5;
+  }
 }
-@media(max-width:350px){
- .ledger-view .cari-entry-kind .cari-badge{min-width:100px;max-width:100px;width:100px}
+@media (max-width: 350px) {
+  .ledger-view .cari-entry-kind .cari-badge {
+    min-width: 100px;
+    max-width: 100px;
+    width: 100px;
+  }
 }
 
-@media(max-width:760px){
- .party-detail-header.page-title{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center}
- .party-detail-header>div:first-child{grid-column:1/-1;min-width:0}
- .party-detail-header .party-header-balance{grid-column:1;margin:0;min-width:0;width:auto}
- .party-detail-header .party-header-balance .cari-total{font-size:var(--text-value-mobile);white-space:nowrap}
- .party-detail-header>.cari-actions{grid-column:2;grid-row:2;gap:6px;width:auto}
- .party-detail-header>.cari-actions>button{width:40px;height:var(--control-size);min-height:var(--control-size);padding:0;justify-content:center}
- .party-inline-info{grid-column:1/-1}
- .ledger-view .ledger-action-row>td{box-shadow:inset 3px 0 var(--brand)}
+@media (max-width: 760px) {
+  .party-detail-header.page-title {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+  }
+  .party-detail-header > div:first-child {
+    grid-column: 1/-1;
+    min-width: 0;
+  }
+  .party-detail-header .party-header-balance {
+    grid-column: 1;
+    margin: 0;
+    min-width: 0;
+    width: auto;
+  }
+  .party-detail-header .party-header-balance .cari-total {
+    font-size: var(--text-value-mobile);
+    white-space: nowrap;
+  }
+  .party-detail-header > .cari-actions {
+    grid-column: 2;
+    grid-row: 2;
+    gap: 6px;
+    width: auto;
+  }
+  .party-detail-header > .cari-actions > button {
+    width: 40px;
+    height: var(--control-size);
+    min-height: var(--control-size);
+    padding: 0;
+    justify-content: center;
+  }
+  .party-inline-info {
+    grid-column: 1/-1;
+  }
+  .ledger-view .ledger-action-row > td {
+    box-shadow: inset 3px 0 var(--brand);
+  }
 }

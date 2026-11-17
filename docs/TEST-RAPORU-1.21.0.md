@@ -4,19 +4,19 @@ Test edilen kaynak commit'i: `31a7342d98cd489025e48905bbe2e6a543d3da03`. [Dokuz 
 
 ## Sonuçlar
 
-| Kontrol | Sonuç |
-|---|---|
-| ESLint 10 / React Hooks / kullanılmayan kod | Src genelinde hata yok; kullanılmayan import/değişkenler temizlendi |
-| Stylelint / biçim | CSS özellik/birim/renk/tekrar kontrolleri ve ortak bileşen biçimi başarılı |
-| npm audit | Tüm bağımlılıklarda raporlanan açık: 0 |
-| Birim ve statik worker | 57 + 4 test başarılı |
-| Linux sentetik arayüz / geometri | Chromium 111, WebKit 111, Firefox 111; çalışma zamanı hatası 0 |
-| Windows sentetik arayüz / geometri | Firefox 111, Chromium 111; çalışma zamanı hatası 0 |
-| Gerçek PHP/MariaDB masaüstü kullanıcı akışı | Chromium 146 kontrol, hata 0 |
-| Gerçek PHP/MariaDB mobil / çoklu genişlik akışı | Chromium 146, WebKit 145, Firefox 145; hata 0 |
-| API / migrasyon / yedekleme | Üçü de başarılı |
-| Kapsamlı demo ve raporlar | 624 hareket, 29 hafta, 715 bağımsız mali mutabakat; arayüz ve rapor kontrolleri başarılı |
-| Paketleme / ZIP kurulum | Başarılı; iki ZIP ve SHA-256 doğrulandı; özel config/oturum dosyası yok |
+| Kontrol                                         | Sonuç                                                                                    |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| ESLint 10 / React Hooks / kullanılmayan kod     | Src genelinde hata yok; kullanılmayan import/değişkenler temizlendi                      |
+| Stylelint / biçim                               | CSS özellik/birim/renk/tekrar kontrolleri ve ortak bileşen biçimi başarılı               |
+| npm audit                                       | Tüm bağımlılıklarda raporlanan açık: 0                                                   |
+| Birim ve statik worker                          | 57 + 4 test başarılı                                                                     |
+| Linux sentetik arayüz / geometri                | Chromium 111, WebKit 111, Firefox 111; çalışma zamanı hatası 0                           |
+| Windows sentetik arayüz / geometri              | Firefox 111, Chromium 111; çalışma zamanı hatası 0                                       |
+| Gerçek PHP/MariaDB masaüstü kullanıcı akışı     | Chromium 146 kontrol, hata 0                                                             |
+| Gerçek PHP/MariaDB mobil / çoklu genişlik akışı | Chromium 146, WebKit 145, Firefox 145; hata 0                                            |
+| API / migrasyon / yedekleme                     | Üçü de başarılı                                                                          |
+| Kapsamlı demo ve raporlar                       | 624 hareket, 29 hafta, 715 bağımsız mali mutabakat; arayüz ve rapor kontrolleri başarılı |
+| Paketleme / ZIP kurulum                         | Başarılı; iki ZIP ve SHA-256 doğrulandı; özel config/oturum dosyası yok                  |
 
 İkinci/üçüncü motor aynı izole veri üzerinde çalışırken önceki motorun değiştirdiği satış yerine yeni test satışı oluşturur; koşullu mali kontrol sayısı bu yüzden bir eksiktir.
 

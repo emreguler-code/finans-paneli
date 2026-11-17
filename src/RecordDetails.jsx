@@ -1,16 +1,223 @@
-
-import {Pencil, Archive, RotateCcw} from 'lucide-react';
-import {Sheet, Badge, can, fmt, tone} from './ui';
-import {bankName, PROGRAMS} from './BankCards';
-import {hasMaturity} from './account-utils.mjs';
-import {AuditHistory} from './AuditHistory';
-const day=d=>d?new Date(d+'T12:00:00').toLocaleDateString('tr-TR',{day:'numeric',month:'short',year:'numeric'}):'—';
-const inputMoney=n=>String((n||0)/100).replace('.',',');
-export function RecordDetails({context,data,onClose:close,replace}) {
- const {entity,mode,item}=context;
- const title=mode==='history'?'Değişiklik geçmişi':'Hareket ayrıntısı';
- if(mode==='history')return <Sheet title={title} onClose={close}><div className="sheet-scroll"><AuditHistory entity={entity} id={item.id} data={data}/></div></Sheet>;
- if(mode==='view'&&entity==='party')return <Sheet title={item.name+' — Cari bilgileri'} onClose={close}><div className="sheet-scroll cari-info"><dl>{[['Kısa ad',item.name],['Ticari unvan',item.title],['Tür',item.type],['Telefon',item.phone],['E-posta',item.email],['Vergi no',item.tax_no],['Vergi dairesi',item.tax_office],['Adres',item.address],['Notlar',item.notes]].map(([k,v])=><div key={k}><dt>{k}</dt><dd>{v||'Eklenmedi'}</dd></div>)}</dl><AuditHistory entity="party" id={item.id} data={data}/></div></Sheet>;
- if(mode==='view'&&['account','card'].includes(entity))return <Sheet title={item.name+(entity==='card'?' — Kart bilgileri':' — Hesap bilgileri')} onClose={close}><div className="sheet-scroll cari-info"><dl>{[['Ad',item.name],['Banka',bankName(item.bank_code)||item.bank],['Hesap sahibi',item.holder],['IBAN',item.iban],['Son dört hane',item.last_four],['Program',PROGRAMS[item.program_code]],...(entity==='card'?[['Son ödeme',item.due],['Bağlı hesap',data.accounts.find(a=>a.id===item.linked_account_id)?.name||'Seçilmedi']]:hasMaturity(item)?[['Vade sonu',item.maturity_date]]:[])].map(([k,v])=><div key={k}><dt>{k}</dt><dd>{v||'—'}</dd></div>)}</dl><AuditHistory entity={entity} id={item.id} data={data}/></div></Sheet>;
- if(mode==='view'){const matches=data.allocations.filter(a=>a.bill_id===item.id||a.payment_id===item.id);const outstanding=data.claims.find(c=>c.id===item.id);const viewEffect=context.effect??(item.cash_effect||item.party_effect||-item.card_effect||0);const viewNeutral=item.cancelled||context.neutral||(['Virman','Kart ödemesi'].includes(item.kind)&&context.effect===undefined);return <Sheet title={title} onClose={close}><div className="sheet-scroll"><div className={'cari-total '+(viewNeutral?'':tone(viewEffect))}>{fmt(item.amount_cents)} TL</div><p><Badge kind={item.kind} effect={viewEffect} neutral={viewNeutral}/> · {item.creator}{item.cancelled?' · İptal':''}</p><div className="cari-info"><dl>{[['Açıklama',item.description],['Tarih',day(item.event_date)+' · '+item.event_time],['Vade',item.due_date?day(item.due_date):'—'],['Cari',item.party_name||'Bağımsız işlem'],['Hesap',item.account_name||'Nakit etkisi yok'],['Hedef',item.target_name||item.card_name||'—'],['Belge',item.document_no||'—']].map(([k,v])=><div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl></div><div className="dialog-actions">{outstanding&&can(data.user,'create')&&!item.cancelled&&<button className="primary-button" onClick={()=>replace({entity:'event',lockedPartyId:item.party_id,initial:{operation:item.operation==='customer_return'?'return_payment':outstanding.type==='borç'?'payment':'collection',kind:outstanding.type==='borç'?'Ödeme':'Tahsilat',partyId:item.party_id,amount:inputMoney(outstanding.amount_cents),description:item.description,linkedId:item.id}})}>{outstanding.type==='borç'?'Ödeme kaydet':'Tahsilat kaydet'}</button>}{can(data.user,'edit')&&!item.cancelled&&<button className="secondary-button icon-only" aria-label="Düzenle" title="Düzenle" onClick={()=>replace({...context,mode:'edit'})}><Pencil size={18}/></button>}{can(data.user,'admin')&&<button className="secondary-button" aria-label={item.cancelled?'Geri aç':'İptal et'} title={item.cancelled?'Geri aç':'İptal et'} onClick={()=>replace({...context,mode:'status'})}>{item.cancelled?<RotateCcw size={18}/>:<Archive size={18}/>} {item.cancelled?'Geri aç':'İptal et'}</button>}</div>{matches.length>0&&<section className="allocation-list"><h3>Kapama / avans eşleşmeleri</h3>{matches.map(a=>{const other=data.events.find(e=>e.id===(a.bill_id===item.id?a.payment_id:a.bill_id));return <button className="finance-due" key={a.bill_id+'-'+a.payment_id} onClick={()=>replace({entity:'event',mode:'view',item:other})}><span>{other?.description}<small>{day(a.date)}</small></span><strong>{fmt(a.amount_cents)} TL</strong></button>})}</section>}<AuditHistory entity="event" id={item.id} data={data}/></div></Sheet>}
+import { Pencil, Archive, RotateCcw } from "lucide-react";
+import { Sheet, Badge, can, fmt, tone } from "./ui";
+import { bankName, PROGRAMS } from "./BankCards";
+import { hasMaturity } from "./account-utils.mjs";
+import { AuditHistory } from "./AuditHistory";
+const day = (d) =>
+  d
+    ? new Date(d + "T12:00:00").toLocaleDateString("tr-TR", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      })
+    : "—";
+const inputMoney = (n) => String((n || 0) / 100).replace(".", ",");
+export function RecordDetails({ context, data, onClose: close, replace }) {
+  const { entity, mode, item } = context;
+  const title = mode === "history" ? "Değişiklik geçmişi" : "Hareket ayrıntısı";
+  if (mode === "history")
+    return (
+      <Sheet title={title} onClose={close}>
+        <div className="sheet-scroll">
+          <AuditHistory entity={entity} id={item.id} data={data} />
+        </div>
+      </Sheet>
+    );
+  if (mode === "view" && entity === "party")
+    return (
+      <Sheet title={item.name + " — Cari bilgileri"} onClose={close}>
+        <div className="sheet-scroll cari-info">
+          <dl>
+            {[
+              ["Kısa ad", item.name],
+              ["Ticari unvan", item.title],
+              ["Tür", item.type],
+              ["Telefon", item.phone],
+              ["E-posta", item.email],
+              ["Vergi no", item.tax_no],
+              ["Vergi dairesi", item.tax_office],
+              ["Adres", item.address],
+              ["Notlar", item.notes],
+            ].map(([k, v]) => (
+              <div key={k}>
+                <dt>{k}</dt>
+                <dd>{v || "Eklenmedi"}</dd>
+              </div>
+            ))}
+          </dl>
+          <AuditHistory entity="party" id={item.id} data={data} />
+        </div>
+      </Sheet>
+    );
+  if (mode === "view" && ["account", "card"].includes(entity))
+    return (
+      <Sheet
+        title={
+          item.name +
+          (entity === "card" ? " — Kart bilgileri" : " — Hesap bilgileri")
+        }
+        onClose={close}
+      >
+        <div className="sheet-scroll cari-info">
+          <dl>
+            {[
+              ["Ad", item.name],
+              ["Banka", bankName(item.bank_code) || item.bank],
+              ["Hesap sahibi", item.holder],
+              ["IBAN", item.iban],
+              ["Son dört hane", item.last_four],
+              ["Program", PROGRAMS[item.program_code]],
+              ...(entity === "card"
+                ? [
+                    ["Son ödeme", item.due],
+                    [
+                      "Bağlı hesap",
+                      data.accounts.find((a) => a.id === item.linked_account_id)
+                        ?.name || "Seçilmedi",
+                    ],
+                  ]
+                : hasMaturity(item)
+                  ? [["Vade sonu", item.maturity_date]]
+                  : []),
+            ].map(([k, v]) => (
+              <div key={k}>
+                <dt>{k}</dt>
+                <dd>{v || "—"}</dd>
+              </div>
+            ))}
+          </dl>
+          <AuditHistory entity={entity} id={item.id} data={data} />
+        </div>
+      </Sheet>
+    );
+  if (mode === "view") {
+    const matches = data.allocations.filter(
+      (a) => a.bill_id === item.id || a.payment_id === item.id,
+    );
+    const outstanding = data.claims.find((c) => c.id === item.id);
+    const viewEffect =
+      context.effect ??
+      (item.cash_effect || item.party_effect || -item.card_effect || 0);
+    const viewNeutral =
+      item.cancelled ||
+      context.neutral ||
+      (["Virman", "Kart ödemesi"].includes(item.kind) &&
+        context.effect === undefined);
+    return (
+      <Sheet title={title} onClose={close}>
+        <div className="sheet-scroll">
+          <div
+            className={"cari-total " + (viewNeutral ? "" : tone(viewEffect))}
+          >
+            {fmt(item.amount_cents)} TL
+          </div>
+          <p>
+            <Badge kind={item.kind} effect={viewEffect} neutral={viewNeutral} />{" "}
+            · {item.creator}
+            {item.cancelled ? " · İptal" : ""}
+          </p>
+          <div className="cari-info">
+            <dl>
+              {[
+                ["Açıklama", item.description],
+                ["Tarih", day(item.event_date) + " · " + item.event_time],
+                ["Vade", item.due_date ? day(item.due_date) : "—"],
+                ["Cari", item.party_name || "Bağımsız işlem"],
+                ["Hesap", item.account_name || "Nakit etkisi yok"],
+                ["Hedef", item.target_name || item.card_name || "—"],
+                ["Belge", item.document_no || "—"],
+              ].map(([k, v]) => (
+                <div key={k}>
+                  <dt>{k}</dt>
+                  <dd>{v}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+          <div className="dialog-actions">
+            {outstanding && can(data.user, "create") && !item.cancelled && (
+              <button
+                className="primary-button"
+                onClick={() =>
+                  replace({
+                    entity: "event",
+                    lockedPartyId: item.party_id,
+                    initial: {
+                      operation:
+                        item.operation === "customer_return"
+                          ? "return_payment"
+                          : outstanding.type === "borç"
+                            ? "payment"
+                            : "collection",
+                      kind: outstanding.type === "borç" ? "Ödeme" : "Tahsilat",
+                      partyId: item.party_id,
+                      amount: inputMoney(outstanding.amount_cents),
+                      description: item.description,
+                      linkedId: item.id,
+                    },
+                  })
+                }
+              >
+                {outstanding.type === "borç"
+                  ? "Ödeme kaydet"
+                  : "Tahsilat kaydet"}
+              </button>
+            )}
+            {can(data.user, "edit") && !item.cancelled && (
+              <button
+                className="secondary-button icon-only"
+                aria-label="Düzenle"
+                title="Düzenle"
+                onClick={() => replace({ ...context, mode: "edit" })}
+              >
+                <Pencil size={18} />
+              </button>
+            )}
+            {can(data.user, "admin") && (
+              <button
+                className="secondary-button"
+                aria-label={item.cancelled ? "Geri aç" : "İptal et"}
+                title={item.cancelled ? "Geri aç" : "İptal et"}
+                onClick={() => replace({ ...context, mode: "status" })}
+              >
+                {item.cancelled ? (
+                  <RotateCcw size={18} />
+                ) : (
+                  <Archive size={18} />
+                )}{" "}
+                {item.cancelled ? "Geri aç" : "İptal et"}
+              </button>
+            )}
+          </div>
+          {matches.length > 0 && (
+            <section className="allocation-list">
+              <h3>Kapama / avans eşleşmeleri</h3>
+              {matches.map((a) => {
+                const other = data.events.find(
+                  (e) =>
+                    e.id === (a.bill_id === item.id ? a.payment_id : a.bill_id),
+                );
+                return (
+                  <button
+                    className="finance-due"
+                    key={a.bill_id + "-" + a.payment_id}
+                    onClick={() =>
+                      replace({ entity: "event", mode: "view", item: other })
+                    }
+                  >
+                    <span>
+                      {other?.description}
+                      <small>{day(a.date)}</small>
+                    </span>
+                    <strong>{fmt(a.amount_cents)} TL</strong>
+                  </button>
+                );
+              })}
+            </section>
+          )}
+          <AuditHistory entity="event" id={item.id} data={data} />
+        </div>
+      </Sheet>
+    );
+  }
 }

@@ -1,10 +1,124 @@
-import {routeHash} from './routes.mjs';
-const fold=v=>String(v||'').normalize('NFC').toLocaleLowerCase('tr-TR');
-export const searchCategories=[['parties','Cari hesaplar'],['events','İşlemler'],['accounts','Hesaplar'],['cards','Kredi kartları'],['vehicles','Araçlarım']];
-export function searchRecords(data,query,{archived=false,cancelled=false}={}){const q=fold(query.trim());const result=Object.fromEntries(searchCategories.map(([key])=>[key,[]]));if(q.length<3)return result;const match=(...values)=>values.some(v=>fold(v).includes(q));
- for(const p of data.parties||[])if((archived||p.active)&&match(p.name,p.title))result.parties.push({key:'party-'+p.id,title:p.name,detail:p.type+(!p.active?' · Arşiv':''),route:{page:'Cari hesaplar',record:String(p.id)}});
- for(const a of data.accounts||[])if((archived||a.active)&&match(a.name,a.holder))result.accounts.push({key:'account-'+a.id,title:a.name,detail:a.holder||a.type,route:{page:'Hesaplar',record:String(a.id)}});
- for(const c of data.cards||[])if((archived||c.active)&&match(c.name,c.holder))result.cards.push({key:'card-'+c.id,title:c.name,detail:[c.holder,c.last_four&&'•••• '+c.last_four].filter(Boolean).join(' · '),route:{page:'Kredi kartları',record:String(c.id)}});
- for(const v of data.vehicles||[])if((archived||v.active)&&match(v.plate,v.name,v.owner))result.vehicles.push({key:'vehicle-'+v.id,title:v.plate,detail:[v.name,v.owner].filter(Boolean).join(' · '),route:{page:'Araçlarım',record:String(v.id)}});
- for(const e of [...data.events||[]].sort((a,b)=>(b.event_date+b.event_time).localeCompare(a.event_date+a.event_time)||b.id-a.id))if((cancelled||!e.cancelled)&&match(e.description)){const page=e.party_id?'Cari hesaplar':e.card_id?'Kredi kartları':e.account_id?'Hesaplar':'Tahsilat & Ödeme',record=e.party_id||e.card_id||e.account_id||'';const source=page==='Cari hesaplar'?data.parties:page==='Kredi kartları'?data.cards:page==='Hesaplar'?data.accounts:null;if(!archived&&source?.find(x=>String(x.id)===String(record))?.active===false)continue;result.events.push({key:'event-'+e.id,title:e.description,detail:[e.event_date,e.kind,e.party_name||e.card_name||e.account_name,e.cancelled?'İptal':e.scheduled?'Planlanan':''].filter(Boolean).join(' · '),route:{page,record:String(record),event:String(e.id),...(e.card_id?{tab:(e.period_date||e.event_date)<=(data.cards.find(c=>c.id===e.card_id)?.statement_date||'')?'Ekstre':(e.period_date||e.event_date)>data.today?'Gelecek Dönem':'Dönem içi işlemler',statement:String((data.cards.find(c=>c.id===e.card_id)?.statements||[]).find(s=>s.cut_date>=(e.period_date||e.event_date))?.id||'')}:e.scheduled&&e.account_id?{tab:'Gelecek dönem hareketleri'}:{})}})}return result;}
-export const searchHref=row=>routeHash(row.route);
+import { routeHash } from "./routes.mjs";
+const fold = (v) =>
+  String(v || "")
+    .normalize("NFC")
+    .toLocaleLowerCase("tr-TR");
+export const searchCategories = [
+  ["parties", "Cari hesaplar"],
+  ["events", "İşlemler"],
+  ["accounts", "Hesaplar"],
+  ["cards", "Kredi kartları"],
+  ["vehicles", "Araçlarım"],
+];
+export function searchRecords(
+  data,
+  query,
+  { archived = false, cancelled = false } = {},
+) {
+  const q = fold(query.trim());
+  const result = Object.fromEntries(searchCategories.map(([key]) => [key, []]));
+  if (q.length < 3) return result;
+  const match = (...values) => values.some((v) => fold(v).includes(q));
+  for (const p of data.parties || [])
+    if ((archived || p.active) && match(p.name, p.title))
+      result.parties.push({
+        key: "party-" + p.id,
+        title: p.name,
+        detail: p.type + (!p.active ? " · Arşiv" : ""),
+        route: { page: "Cari hesaplar", record: String(p.id) },
+      });
+  for (const a of data.accounts || [])
+    if ((archived || a.active) && match(a.name, a.holder))
+      result.accounts.push({
+        key: "account-" + a.id,
+        title: a.name,
+        detail: a.holder || a.type,
+        route: { page: "Hesaplar", record: String(a.id) },
+      });
+  for (const c of data.cards || [])
+    if ((archived || c.active) && match(c.name, c.holder))
+      result.cards.push({
+        key: "card-" + c.id,
+        title: c.name,
+        detail: [c.holder, c.last_four && "•••• " + c.last_four]
+          .filter(Boolean)
+          .join(" · "),
+        route: { page: "Kredi kartları", record: String(c.id) },
+      });
+  for (const v of data.vehicles || [])
+    if ((archived || v.active) && match(v.plate, v.name, v.owner))
+      result.vehicles.push({
+        key: "vehicle-" + v.id,
+        title: v.plate,
+        detail: [v.name, v.owner].filter(Boolean).join(" · "),
+        route: { page: "Araçlarım", record: String(v.id) },
+      });
+  for (const e of [...(data.events || [])].sort(
+    (a, b) =>
+      (b.event_date + b.event_time).localeCompare(
+        a.event_date + a.event_time,
+      ) || b.id - a.id,
+  ))
+    if ((cancelled || !e.cancelled) && match(e.description)) {
+      const page = e.party_id
+          ? "Cari hesaplar"
+          : e.card_id
+            ? "Kredi kartları"
+            : e.account_id
+              ? "Hesaplar"
+              : "Tahsilat & Ödeme",
+        record = e.party_id || e.card_id || e.account_id || "";
+      const source =
+        page === "Cari hesaplar"
+          ? data.parties
+          : page === "Kredi kartları"
+            ? data.cards
+            : page === "Hesaplar"
+              ? data.accounts
+              : null;
+      if (
+        !archived &&
+        source?.find((x) => String(x.id) === String(record))?.active === false
+      )
+        continue;
+      result.events.push({
+        key: "event-" + e.id,
+        title: e.description,
+        detail: [
+          e.event_date,
+          e.kind,
+          e.party_name || e.card_name || e.account_name,
+          e.cancelled ? "İptal" : e.scheduled ? "Planlanan" : "",
+        ]
+          .filter(Boolean)
+          .join(" · "),
+        route: {
+          page,
+          record: String(record),
+          event: String(e.id),
+          ...(e.card_id
+            ? {
+                tab:
+                  (e.period_date || e.event_date) <=
+                  (data.cards.find((c) => c.id === e.card_id)?.statement_date ||
+                    "")
+                    ? "Ekstre"
+                    : (e.period_date || e.event_date) > data.today
+                      ? "Gelecek Dönem"
+                      : "Dönem içi işlemler",
+                statement: String(
+                  (
+                    data.cards.find((c) => c.id === e.card_id)?.statements || []
+                  ).find((s) => s.cut_date >= (e.period_date || e.event_date))
+                    ?.id || "",
+                ),
+              }
+            : e.scheduled && e.account_id
+              ? { tab: "Gelecek dönem hareketleri" }
+              : {}),
+        },
+      });
+    }
+  return result;
+}
+export const searchHref = (row) => routeHash(row.route);

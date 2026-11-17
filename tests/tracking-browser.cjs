@@ -1,19 +1,319 @@
-const {more:entryMore}=require('./entry-helpers.cjs');
-module.exports=async({p,go,ok,out})=>{
- const nav=async name=>{if(name==='Kampanyalar'){const parent=p.locator(p.viewportSize().width<=760?'.mobile-more':'.sidebar').getByRole('button',{name:'Kredi kartları',exact:true});if(p.viewportSize().width<=760)await p.locator('.mobile-nav').getByRole('button',{name:'Diğer',exact:true}).click();if(await parent.getAttribute('aria-expanded')!=='true')await parent.click();if(p.viewportSize().width<=760&& !await p.locator('.mobile-more').count())await p.locator('.mobile-nav').getByRole('button',{name:'Diğer',exact:true}).click();if(p.viewportSize().width<=760){await p.locator('.mobile-more').getByRole('button',{name,exact:true}).click();return}}if(p.viewportSize().width<=760){await p.locator('.mobile-nav').getByRole('button',{name:'Diğer',exact:true}).click();await p.locator('.mobile-more').getByRole('button',{name,exact:true}).click()}else if(name==='Genel bakış')await p.locator('.sidebar').getByRole('button',{name,exact:true}).click();else await go(name)};
- const close=async()=>p.getByRole('button',{name:'Paneli kapat',exact:true}).last().click();
- const save=async()=>{await p.locator('[data-entry]').getByRole('button',{name:/^(Kaydet|Cariyi ekle|Kartı ekle|İşlemi kaydet)$/,exact:true}).filter({visible:true}).click();await p.locator('[data-entry]').waitFor({state:'hidden'})};
- await p.setViewportSize({width:1440,height:1000});await nav('Araçlarım');await p.getByRole('button',{name:'Araç ekle',exact:true}).click();await p.locator('input[name=plate]').fill('34 QA 180');await p.locator('input[name=name]').fill('Deneme araç');await p.locator('input[name=km]').fill('45000');await save();
- await p.locator('.vehicle-card-main').filter({hasText:'34QA180'}).waitFor();ok('Vehicle created through real UI',true);await p.locator('.vehicle-card-main').filter({hasText:'34QA180'}).click();
- await p.getByRole('button',{name:'Araç kaydı ekle',exact:true}).click();await p.getByRole('combobox',{name:'Kayıt türü',exact:true}).selectOption('maintenance');await p.locator('input[name=title]').fill('Deneme periyodik bakım');await p.locator('input[name=amount]').fill('800');await p.locator('input[name=km]').fill('44000');await p.locator('input[name=next_km]').fill('45000');await save();await p.getByRole('button',{name:'İşlemler',exact:true}).click();ok('Maintenance record persisted through UI',await p.locator('.vehicle-record').filter({hasText:'Deneme periyodik bakım'}).isVisible());
- await p.locator('.vehicle-record-row').filter({hasText:'Deneme periyodik bakım'}).click();await p.getByRole('button',{name:'Araç kaydı bilgileri',exact:true}).click();ok('Vehicle record information is read only',await p.getByRole('dialog').getByRole('button',{name:/^(Kaydet|Cariyi ekle|Kartı ekle|İşlemi kaydet)$/,exact:true}).count()===0);await close();await p.screenshot({path:out+'/vehicles-desktop.png',fullPage:true});
- // Create matching campaign and purchase using the authenticated, isolated API fixture.
- const ids=await p.evaluate(async()=>{const api=async(action,body)=>{const session=await fetch('/api/index.php?action=session').then(r=>r.json());const response=await fetch('/api/index.php?action='+action,body?{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':session.csrf},body:JSON.stringify({requestId:crypto.randomUUID(),...body})}:{});const r=await response.json();if(!response.ok)throw Error(JSON.stringify(r));return r};const s=await api('state'),card=s.cards[0].id;const purchase=await api('event_save',{operation:'expense',cardId:card,account:'',amount:'500',settled:'0',date:s.today,periodDate:s.today,description:'Tarayıcı kampanya harcaması'});const campaign=await api('campaign_save',{name:'Tarayıcı puan kampanyası',start_date:'2026-10-01',end_date:'2026-10-31',participation:'joined',reward_type:'points',reward_mode:'percent',reward_value:'10',per_tx_cap:'40',total_cap:'100',min_spend:'100',required_count:1,card_ids:[card],party_ids:[],tags:[],pos_programs:[]});return {campaign:campaign.id,purchase:purchase.id}});
- await p.reload();await p.locator('.app').waitFor();await nav('Kampanyalar');await p.locator('.campaign-summary').filter({hasText:'Tarayıcı puan kampanyası'}).click();const candidate=p.locator('.campaign-details .tracking-linked').filter({hasText:'Tarayıcı kampanya harcaması'});await candidate.getByRole('button',{name:'İlişkilendir',exact:true}).click();await save();ok('Campaign purchase linked in UI',(await p.locator('.campaign-details').innerText()).includes('40 puan'));await p.getByRole('button',{name:'Kampanya işlemini düzenle',exact:true}).click();await p.locator('input[name=received]').fill('20');await p.getByRole('checkbox',{name:'Kazanç banka tarafından verildi',exact:true}).check();await save();ok('Expected and received points remain separate',(await p.locator('.campaign-details').innerText()).includes('20 puan'));await p.screenshot({path:out+'/campaigns-desktop.png',fullPage:true});
- await p.getByRole('button',{name:'Kampanyayı düzenle',exact:true}).click();await p.locator('input[name=name]').fill('Tarayıcı puan kampanyası güncel');await save();ok('Campaign edit persists',await p.locator('.campaign-summary').filter({hasText:'Tarayıcı puan kampanyası güncel'}).isVisible());
- for(const width of [390,320]){await p.setViewportSize({width,height:844});ok('Campaign page fits '+width,await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await p.screenshot({path:out+'/campaigns-'+width+'.png',fullPage:true});await nav('Araçlarım');ok('Vehicle page fits '+width,await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await p.screenshot({path:out+'/vehicles-'+width+'.png',fullPage:true});await nav('Kampanyalar')}
- await p.setViewportSize({width:1440,height:1000});await nav('Genel bakış');const before=await p.locator('main h1').boundingBox();await p.locator('.topbar').getByRole('button',{name:'Filtrele',exact:true}).click();const after=await p.locator('main h1').boundingBox();ok('Filter overlay never pushes page',Math.abs(before.y-after.y)<1);ok('Filter overlay has no blur or scroll lock',await p.evaluate(()=>!document.querySelector('.drawer-layer .backdrop')&&document.body.style.overflow!=='hidden'));const filter=p.getByRole('dialog',{name:'Filtreler',exact:true});await filter.getByRole('button',{name:'Tarih aralığı',exact:true}).click();const date=p.getByRole('dialog',{name:'Tarih aralığı',exact:true});ok('Range opens anchored inside filter',await date.isVisible()&&await filter.isVisible());await p.keyboard.press('Escape');ok('Escape closes nested range only',await date.count()===0&&await filter.isVisible());await p.keyboard.press('Escape');
- await p.locator('.topbar').getByRole('button',{name:'Filtrele',exact:true}).click();await p.locator('.search-filter-panel').getByRole('button',{name:'Temizle',exact:true}).click();await p.locator('.search-filter-panel').getByRole('button',{name:'Ara',exact:true}).click();ok('Clearing overview filters restores a valid cashflow range',await p.getByRole('button',{name:'Nakit akışı dönemi',exact:true}).isVisible());
- await p.getByRole('button',{name:'Nakit akışı dönemi',exact:true}).click();ok('Cashflow range has no backdrop',await p.getByRole('dialog',{name:'Nakit akışı dönemi',exact:true}).isVisible()&&await p.evaluate(()=>!document.querySelector('.drawer-layer .backdrop')));await p.keyboard.press('Escape');
- await p.getByRole('button',{name:'Bildirimleri aç',exact:true}).click();ok('Bell is compact anchored popover',await p.locator('.notification-compact').isVisible()&&await p.evaluate(()=>document.body.style.overflow!=='hidden'&&!document.querySelector('.drawer-layer .backdrop')));await p.screenshot({path:out+'/notifications-compact-desktop.png'});await p.locator('.notification-row').filter({hasText:'Yıldız Tedarik'}).click();ok('Claim notification selects its own date and party',await p.locator('.selected-day-panel h2').innerText()==='18 Ekim 2026'&&(await p.locator('.search-chips').innerText()).includes('Yıldız Tedarik'));await nav('Genel bakış');
+const { more: entryMore } = require("./entry-helpers.cjs");
+module.exports = async ({ p, go, ok, out }) => {
+  const nav = async (name) => {
+    if (name === "Kampanyalar") {
+      const parent = p
+        .locator(p.viewportSize().width <= 760 ? ".mobile-more" : ".sidebar")
+        .getByRole("button", { name: "Kredi kartları", exact: true });
+      if (p.viewportSize().width <= 760)
+        await p
+          .locator(".mobile-nav")
+          .getByRole("button", { name: "Diğer", exact: true })
+          .click();
+      if ((await parent.getAttribute("aria-expanded")) !== "true")
+        await parent.click();
+      if (
+        p.viewportSize().width <= 760 &&
+        !(await p.locator(".mobile-more").count())
+      )
+        await p
+          .locator(".mobile-nav")
+          .getByRole("button", { name: "Diğer", exact: true })
+          .click();
+      if (p.viewportSize().width <= 760) {
+        await p
+          .locator(".mobile-more")
+          .getByRole("button", { name, exact: true })
+          .click();
+        return;
+      }
+    }
+    if (p.viewportSize().width <= 760) {
+      await p
+        .locator(".mobile-nav")
+        .getByRole("button", { name: "Diğer", exact: true })
+        .click();
+      await p
+        .locator(".mobile-more")
+        .getByRole("button", { name, exact: true })
+        .click();
+    } else if (name === "Genel bakış")
+      await p
+        .locator(".sidebar")
+        .getByRole("button", { name, exact: true })
+        .click();
+    else await go(name);
+  };
+  const close = async () =>
+    p.getByRole("button", { name: "Paneli kapat", exact: true }).last().click();
+  const save = async () => {
+    await p
+      .locator("[data-entry]")
+      .getByRole("button", {
+        name: /^(Kaydet|Cariyi ekle|Kartı ekle|İşlemi kaydet)$/,
+        exact: true,
+      })
+      .filter({ visible: true })
+      .click();
+    await p.locator("[data-entry]").waitFor({ state: "hidden" });
+  };
+  await p.setViewportSize({ width: 1440, height: 1000 });
+  await nav("Araçlarım");
+  await p.getByRole("button", { name: "Araç ekle", exact: true }).click();
+  await p.locator("input[name=plate]").fill("34 QA 180");
+  await p.locator("input[name=name]").fill("Deneme araç");
+  await p.locator("input[name=km]").fill("45000");
+  await save();
+  await p
+    .locator(".vehicle-card-main")
+    .filter({ hasText: "34QA180" })
+    .waitFor();
+  ok("Vehicle created through real UI", true);
+  await p.locator(".vehicle-card-main").filter({ hasText: "34QA180" }).click();
+  await p.getByRole("button", { name: "Araç kaydı ekle", exact: true }).click();
+  await p
+    .getByRole("combobox", { name: "Kayıt türü", exact: true })
+    .selectOption("maintenance");
+  await p.locator("input[name=title]").fill("Deneme periyodik bakım");
+  await p.locator("input[name=amount]").fill("800");
+  await p.locator("input[name=km]").fill("44000");
+  await p.locator("input[name=next_km]").fill("45000");
+  await save();
+  await p.getByRole("button", { name: "İşlemler", exact: true }).click();
+  ok(
+    "Maintenance record persisted through UI",
+    await p
+      .locator(".vehicle-record")
+      .filter({ hasText: "Deneme periyodik bakım" })
+      .isVisible(),
+  );
+  await p
+    .locator(".vehicle-record-row")
+    .filter({ hasText: "Deneme periyodik bakım" })
+    .click();
+  await p
+    .getByRole("button", { name: "Araç kaydı bilgileri", exact: true })
+    .click();
+  ok(
+    "Vehicle record information is read only",
+    (await p
+      .getByRole("dialog")
+      .getByRole("button", {
+        name: /^(Kaydet|Cariyi ekle|Kartı ekle|İşlemi kaydet)$/,
+        exact: true,
+      })
+      .count()) === 0,
+  );
+  await close();
+  await p.screenshot({ path: out + "/vehicles-desktop.png", fullPage: true });
+  // Create matching campaign and purchase using the authenticated, isolated API fixture.
+  const ids = await p.evaluate(async () => {
+    const api = async (action, body) => {
+      const session = await fetch("/api/index.php?action=session").then((r) =>
+        r.json(),
+      );
+      const response = await fetch(
+        "/api/index.php?action=" + action,
+        body
+          ? {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-Token": session.csrf,
+              },
+              body: JSON.stringify({ requestId: crypto.randomUUID(), ...body }),
+            }
+          : {},
+      );
+      const r = await response.json();
+      if (!response.ok) throw Error(JSON.stringify(r));
+      return r;
+    };
+    const s = await api("state"),
+      card = s.cards[0].id;
+    const purchase = await api("event_save", {
+      operation: "expense",
+      cardId: card,
+      account: "",
+      amount: "500",
+      settled: "0",
+      date: s.today,
+      periodDate: s.today,
+      description: "Tarayıcı kampanya harcaması",
+    });
+    const campaign = await api("campaign_save", {
+      name: "Tarayıcı puan kampanyası",
+      start_date: "2026-10-01",
+      end_date: "2026-10-31",
+      participation: "joined",
+      reward_type: "points",
+      reward_mode: "percent",
+      reward_value: "10",
+      per_tx_cap: "40",
+      total_cap: "100",
+      min_spend: "100",
+      required_count: 1,
+      card_ids: [card],
+      party_ids: [],
+      tags: [],
+      pos_programs: [],
+    });
+    return { campaign: campaign.id, purchase: purchase.id };
+  });
+  await p.reload();
+  await p.locator(".app").waitFor();
+  await nav("Kampanyalar");
+  await p
+    .locator(".campaign-summary")
+    .filter({ hasText: "Tarayıcı puan kampanyası" })
+    .click();
+  const candidate = p
+    .locator(".campaign-details .tracking-linked")
+    .filter({ hasText: "Tarayıcı kampanya harcaması" });
+  await candidate
+    .getByRole("button", { name: "İlişkilendir", exact: true })
+    .click();
+  await save();
+  ok(
+    "Campaign purchase linked in UI",
+    (await p.locator(".campaign-details").innerText()).includes("40 puan"),
+  );
+  await p
+    .getByRole("button", { name: "Kampanya işlemini düzenle", exact: true })
+    .click();
+  await p.locator("input[name=received]").fill("20");
+  await p
+    .getByRole("checkbox", {
+      name: "Kazanç banka tarafından verildi",
+      exact: true,
+    })
+    .check();
+  await save();
+  ok(
+    "Expected and received points remain separate",
+    (await p.locator(".campaign-details").innerText()).includes("20 puan"),
+  );
+  await p.screenshot({ path: out + "/campaigns-desktop.png", fullPage: true });
+  await p
+    .getByRole("button", { name: "Kampanyayı düzenle", exact: true })
+    .click();
+  await p.locator("input[name=name]").fill("Tarayıcı puan kampanyası güncel");
+  await save();
+  ok(
+    "Campaign edit persists",
+    await p
+      .locator(".campaign-summary")
+      .filter({ hasText: "Tarayıcı puan kampanyası güncel" })
+      .isVisible(),
+  );
+  for (const width of [390, 320]) {
+    await p.setViewportSize({ width, height: 844 });
+    ok(
+      "Campaign page fits " + width,
+      await p.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    );
+    await p.screenshot({
+      path: out + "/campaigns-" + width + ".png",
+      fullPage: true,
+    });
+    await nav("Araçlarım");
+    ok(
+      "Vehicle page fits " + width,
+      await p.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    );
+    await p.screenshot({
+      path: out + "/vehicles-" + width + ".png",
+      fullPage: true,
+    });
+    await nav("Kampanyalar");
+  }
+  await p.setViewportSize({ width: 1440, height: 1000 });
+  await nav("Genel bakış");
+  const before = await p.locator("main h1").boundingBox();
+  await p
+    .locator(".topbar")
+    .getByRole("button", { name: "Filtrele", exact: true })
+    .click();
+  const after = await p.locator("main h1").boundingBox();
+  ok("Filter overlay never pushes page", Math.abs(before.y - after.y) < 1);
+  ok(
+    "Filter overlay has no blur or scroll lock",
+    await p.evaluate(
+      () =>
+        !document.querySelector(".drawer-layer .backdrop") &&
+        document.body.style.overflow !== "hidden",
+    ),
+  );
+  const filter = p.getByRole("dialog", { name: "Filtreler", exact: true });
+  await filter
+    .getByRole("button", { name: "Tarih aralığı", exact: true })
+    .click();
+  const date = p.getByRole("dialog", { name: "Tarih aralığı", exact: true });
+  ok(
+    "Range opens anchored inside filter",
+    (await date.isVisible()) && (await filter.isVisible()),
+  );
+  await p.keyboard.press("Escape");
+  ok(
+    "Escape closes nested range only",
+    (await date.count()) === 0 && (await filter.isVisible()),
+  );
+  await p.keyboard.press("Escape");
+  await p
+    .locator(".topbar")
+    .getByRole("button", { name: "Filtrele", exact: true })
+    .click();
+  await p
+    .locator(".search-filter-panel")
+    .getByRole("button", { name: "Temizle", exact: true })
+    .click();
+  await p
+    .locator(".search-filter-panel")
+    .getByRole("button", { name: "Ara", exact: true })
+    .click();
+  ok(
+    "Clearing overview filters restores a valid cashflow range",
+    await p
+      .getByRole("button", { name: "Nakit akışı dönemi", exact: true })
+      .isVisible(),
+  );
+  await p
+    .getByRole("button", { name: "Nakit akışı dönemi", exact: true })
+    .click();
+  ok(
+    "Cashflow range has no backdrop",
+    (await p
+      .getByRole("dialog", { name: "Nakit akışı dönemi", exact: true })
+      .isVisible()) &&
+      (await p.evaluate(
+        () => !document.querySelector(".drawer-layer .backdrop"),
+      )),
+  );
+  await p.keyboard.press("Escape");
+  await p.getByRole("button", { name: "Bildirimleri aç", exact: true }).click();
+  ok(
+    "Bell is compact anchored popover",
+    (await p.locator(".notification-compact").isVisible()) &&
+      (await p.evaluate(
+        () =>
+          document.body.style.overflow !== "hidden" &&
+          !document.querySelector(".drawer-layer .backdrop"),
+      )),
+  );
+  await p.screenshot({ path: out + "/notifications-compact-desktop.png" });
+  await p
+    .locator(".notification-row")
+    .filter({ hasText: "Yıldız Tedarik" })
+    .click();
+  ok(
+    "Claim notification selects its own date and party",
+    (await p.locator(".selected-day-panel h2").innerText()) ===
+      "18 Ekim 2026" &&
+      (await p.locator(".search-chips").innerText()).includes("Yıldız Tedarik"),
+  );
+  await nav("Genel bakış");
 };

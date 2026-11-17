@@ -104,13 +104,13 @@ Borçsuz yeni kartta da mevcut API'nin zorunlu tuttuğu takip edilen ekstre tari
 
 Bunlar tasarım örnekleridir, yeni muhasebe kuralları değildir. Nihai önizleme mevcut hesaplama mantığıyla doğrulanmalıdır.
 
-| Senaryo | Kaydetmeden önce anlatılacak sonuç |
-| --- | --- |
+| Senaryo                                           | Kaydetmeden önce anlatılacak sonuç                                                                                                                       |
+| ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Tedarikçiden 10.000 TL alış, 2.000 TL hemen ödeme | Bu alıştan 8.000 TL açık borç kalır. Seçilen banka/kasadan 2.000 TL çıkar. Cari net etkisi −8.000 TL; mevcut diğer alacak/borçlar ayrıca hesaba katılır. |
-| Personele 30.000 TL maaş hak edişi | Personele borç 30.000 TL artar. Bu kayıt banka/kasadan para çıkarmaz. |
-| Bankadan kasaya 5.000 TL virman | Banka −5.000 TL, kasa +5.000 TL; toplam nakit değişmez. Gelir/gider oluşturmaz. |
-| Kredi kartıyla harcama | Kart borcu artar; o anda banka/kasadan ödeme çıkmaz. Taksit varsa dönem dağılımı ayrıca gösterilir. |
-| Gelecek tarihe planlanan ödeme | Plan kaydedilir; şimdi bakiye değişmez. |
+| Personele 30.000 TL maaş hak edişi                | Personele borç 30.000 TL artar. Bu kayıt banka/kasadan para çıkarmaz.                                                                                    |
+| Bankadan kasaya 5.000 TL virman                   | Banka −5.000 TL, kasa +5.000 TL; toplam nakit değişmez. Gelir/gider oluşturmaz.                                                                          |
+| Kredi kartıyla harcama                            | Kart borcu artar; o anda banka/kasadan ödeme çıkmaz. Taksit varsa dönem dağılımı ayrıca gösterilir.                                                      |
+| Gelecek tarihe planlanan ödeme                    | Plan kaydedilir; şimdi bakiye değişmez.                                                                                                                  |
 
 Özet yalnız yeşil/kırmızı rakam olamaz; hangi hesap/cari ve hangi etki olduğu yazmalıdır. Gerçek güncel bakiyeye erişilmiyorsa tahmini yeni bakiye gösterilmez. Önizleme sunucu doğrulamasının yerini tutmaz.
 
@@ -127,11 +127,11 @@ Bunlar tasarım örnekleridir, yeni muhasebe kuralları değildir. Nihai önizle
 
 ## Alternatiflerin değerlendirilmesi
 
-| Yaklaşım | Güçlü taraf | Bedel | Bu ürün için öneri |
-| --- | --- | --- | --- |
-| Bölümlü tek form, ayrıntıları gerektiğinde aç | Bağlam kaybolmaz, kısa günlük giriş hızlı, ortak kabuk korunur | Bölüm sayısı ve hata açılımı iyi tasarlanmalı | Varsayılan yaklaşım |
-| Çok adımlı sihirbaz | İlk görünüm sade, karmaşık ilk kurulumda rehberlik | Tek işlemi çok sayıda İleri/Geri'ye böler; önceki tutarı görmek zorlaşır | Tüm girişlere uygulanmasın; gelecekte banka verisi içe aktarma gibi özel kurulumda değerlendirilebilir |
-| Ayrı tam sayfa düzenleyici | Çok uzun/belgeli kayıt için geniş alan ve bağlantı | Kullanıcıyı mevcut liste bağlamından çıkarır | Günlük cari/kart/işlem için varsayılan olmasın; gerçekten uzun yeni bir akışta değerlendirilsin |
+| Yaklaşım                                      | Güçlü taraf                                                    | Bedel                                                                    | Bu ürün için öneri                                                                                     |
+| --------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| Bölümlü tek form, ayrıntıları gerektiğinde aç | Bağlam kaybolmaz, kısa günlük giriş hızlı, ortak kabuk korunur | Bölüm sayısı ve hata açılımı iyi tasarlanmalı                            | Varsayılan yaklaşım                                                                                    |
+| Çok adımlı sihirbaz                           | İlk görünüm sade, karmaşık ilk kurulumda rehberlik             | Tek işlemi çok sayıda İleri/Geri'ye böler; önceki tutarı görmek zorlaşır | Tüm girişlere uygulanmasın; gelecekte banka verisi içe aktarma gibi özel kurulumda değerlendirilebilir |
+| Ayrı tam sayfa düzenleyici                    | Çok uzun/belgeli kayıt için geniş alan ve bağlantı             | Kullanıcıyı mevcut liste bağlamından çıkarır                             | Günlük cari/kart/işlem için varsayılan olmasın; gerçekten uzun yeni bir akışta değerlendirilsin        |
 
 Önerilen karar: aynı kabuk + aynı alan/hata/eylem sözleşmesi + kayıt türüne göre anlamlı bölüm içerikleri. Her forma aynı alanları koymak veya bütün alanları gizlemek hedef değil.
 

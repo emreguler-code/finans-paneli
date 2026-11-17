@@ -33,11 +33,11 @@ Kaynak: `src/Reports.jsx:10`, `src/styles/system.css:8`; referans `src/styles/ba
 
 **Kanıt:** Aynı 1440 px görünümde:
 
-| Ekran | Ana / sağ sütun | Oran | Ara boşluk |
-|---|---:|---:|---:|
-| Finansal görünüm | 746,9 / 393,1 px | 1,90:1 | 20 px |
-| Hesaplar | 860 / 280 px | 3,07:1 | 20 px |
-| Ödeme Planı | 852 / 290 px | 2,94:1 | 18 px |
+| Ekran            |  Ana / sağ sütun |   Oran | Ara boşluk |
+| ---------------- | ---------------: | -----: | ---------: |
+| Finansal görünüm | 746,9 / 393,1 px | 1,90:1 |      20 px |
+| Hesaplar         |     860 / 280 px | 3,07:1 |      20 px |
+| Ödeme Planı      |     852 / 290 px | 2,94:1 |      18 px |
 
 Adım 1, 4 ve 5. Hesaplar ve Ödeme Planı sağ sütunları referansa göre daha dar; tarih, tutar ve açıklamalar daha yoğun sarılıyor.
 
@@ -133,32 +133,32 @@ Kaynak: `src/styles/base.css:472`, `src/styles/system.css:174`, `src/styles/cale
 
 Aşağıdaki her adımın kabul edilmiş görüntüsü, notuyla birlikte görsel raporda bulunur.
 
-| Adım | Ekran | Genel durum |
-|---:|---|---|
-| 1 | Finansal görünüm, 1440 | Ortak referans; menü kuralı bekliyor |
-| 2 | Cari hesaplar listesi, 1440 | Özetin boş alan/hizası iyileştirilebilir |
-| 3 | Tahsilat & Ödeme, 1440 | Büyük ölçüde tutarlı |
-| 4 | Ödeme Planı, 1440 | Özet ve sütun oranı ayrışıyor |
-| 5 | Hesaplar, 1440 | Grid/detail ve ortak oran bekliyor |
-| 6 | Kredi kartları, 1440 | Grid/detail bekliyor; ikon adları bağlamsız |
-| 7 | Kampanyalar listesi, 1440 | Temel düzen tutarlı; hiyerarşi bekliyor |
-| 8 | Araçlarım listesi, 1440 | Uyarılar listeyi aşağı itiyor |
-| 9 | Raporlar, 1440 | Özet kutuları ortak dile uymuyor |
-| 10 | Kullanıcılar, 1440 | Temel düzen tutarlı; dipnot bağlamsız |
-| 11 | Cari detay, 1440 | Başlık ve özet ortaklaştırılabilir |
-| 12 | Araç detay, 1440 | Geri dönüş/özet/boşluk düzeni ayrışıyor |
-| 13 | Kampanya detay, 1440 | Metrik hiyerarşisi ve başlık rolü iyileştirilebilir |
-| 14 | Anasayfa filtresi, 1440 | Bağlı pencere davranışı uygun |
-| 15 | Hesaplar, 1100 | Uyarı erişimi var; tablet hedefleri gözden geçirilmeli |
-| 16 | Finansal görünüm, 390 | Tek özet yüzeyi korunuyor; küçük metin eylemleri var |
-| 17 | Raporlar, 390 | Ayrı özet kartları grafiği aşağı itiyor |
-| 18 | Hesaplar, 390 | Uyarı düğmesi tutarı örtüyor |
-| 19 | Kredi kartları, 390 | Sekmeler/araçlar farklı satırlara dağılıyor |
-| 20 | Ödeme Planı, 390 | Tarih gezinme kontrolleri örtüşüyor |
-| 21 | Kampanyalar, 390 | İçerik ve ana düğmeler sığıyor |
-| 22 | Araç detay, 390 | Sekmeler dağınık ve küçük hedefler var |
-| 23 | Kullanıcılar, 390 | Temel düzen tutarlı; finans dipnotu gereksiz |
-| 24 | Mobil Diğer menüsü, 390 | Kampanyalar yanlış hiyerarşide sürekli görünür |
+| Adım | Ekran                       | Genel durum                                            |
+| ---: | --------------------------- | ------------------------------------------------------ |
+|    1 | Finansal görünüm, 1440      | Ortak referans; menü kuralı bekliyor                   |
+|    2 | Cari hesaplar listesi, 1440 | Özetin boş alan/hizası iyileştirilebilir               |
+|    3 | Tahsilat & Ödeme, 1440      | Büyük ölçüde tutarlı                                   |
+|    4 | Ödeme Planı, 1440           | Özet ve sütun oranı ayrışıyor                          |
+|    5 | Hesaplar, 1440              | Grid/detail ve ortak oran bekliyor                     |
+|    6 | Kredi kartları, 1440        | Grid/detail bekliyor; ikon adları bağlamsız            |
+|    7 | Kampanyalar listesi, 1440   | Temel düzen tutarlı; hiyerarşi bekliyor                |
+|    8 | Araçlarım listesi, 1440     | Uyarılar listeyi aşağı itiyor                          |
+|    9 | Raporlar, 1440              | Özet kutuları ortak dile uymuyor                       |
+|   10 | Kullanıcılar, 1440          | Temel düzen tutarlı; dipnot bağlamsız                  |
+|   11 | Cari detay, 1440            | Başlık ve özet ortaklaştırılabilir                     |
+|   12 | Araç detay, 1440            | Geri dönüş/özet/boşluk düzeni ayrışıyor                |
+|   13 | Kampanya detay, 1440        | Metrik hiyerarşisi ve başlık rolü iyileştirilebilir    |
+|   14 | Anasayfa filtresi, 1440     | Bağlı pencere davranışı uygun                          |
+|   15 | Hesaplar, 1100              | Uyarı erişimi var; tablet hedefleri gözden geçirilmeli |
+|   16 | Finansal görünüm, 390       | Tek özet yüzeyi korunuyor; küçük metin eylemleri var   |
+|   17 | Raporlar, 390               | Ayrı özet kartları grafiği aşağı itiyor                |
+|   18 | Hesaplar, 390               | Uyarı düğmesi tutarı örtüyor                           |
+|   19 | Kredi kartları, 390         | Sekmeler/araçlar farklı satırlara dağılıyor            |
+|   20 | Ödeme Planı, 390            | Tarih gezinme kontrolleri örtüşüyor                    |
+|   21 | Kampanyalar, 390            | İçerik ve ana düğmeler sığıyor                         |
+|   22 | Araç detay, 390             | Sekmeler dağınık ve küçük hedefler var                 |
+|   23 | Kullanıcılar, 390           | Temel düzen tutarlı; finans dipnotu gereksiz           |
+|   24 | Mobil Diğer menüsü, 390     | Kampanyalar yanlış hiyerarşide sürekli görünür         |
 
 ## Kanıt sınırları
 

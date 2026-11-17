@@ -3,58 +3,42 @@
     {
       "code": "garanti",
       "name": "Garanti BBVA",
-      "programs": [
-        "bonus"
-      ]
+      "programs": ["bonus"]
     },
     {
       "code": "yapikredi",
       "name": "Yapı Kredi",
-      "programs": [
-        "world"
-      ]
+      "programs": ["world"]
     },
     {
       "code": "akbank",
       "name": "Akbank",
-      "programs": [
-        "axess"
-      ]
+      "programs": ["axess"]
     },
     {
       "code": "isbank",
       "name": "Türkiye İş Bankası",
-      "programs": [
-        "maximum"
-      ]
+      "programs": ["maximum"]
     },
     {
       "code": "ziraat",
       "name": "Ziraat Bankası",
-      "programs": [
-        "bankkart"
-      ]
+      "programs": ["bankkart"]
     },
     {
       "code": "halkbank",
       "name": "Halkbank",
-      "programs": [
-        "paraf"
-      ]
+      "programs": ["paraf"]
     },
     {
       "code": "vakifbank",
       "name": "VakıfBank",
-      "programs": [
-        "world"
-      ]
+      "programs": ["world"]
     },
     {
       "code": "qnb",
       "name": "QNB",
-      "programs": [
-        "cardfinans"
-      ]
+      "programs": ["cardfinans"]
     },
     {
       "code": "enpara",
@@ -64,51 +48,37 @@
     {
       "code": "denizbank",
       "name": "DenizBank",
-      "programs": [
-        "bonus"
-      ]
+      "programs": ["bonus"]
     },
     {
       "code": "teb",
       "name": "Türk Ekonomi Bankası (TEB)",
-      "programs": [
-        "bonus"
-      ]
+      "programs": ["bonus"]
     },
     {
       "code": "ing",
       "name": "ING",
-      "programs": [
-        "bonus"
-      ]
+      "programs": ["bonus"]
     },
     {
       "code": "hsbc",
       "name": "HSBC",
-      "programs": [
-        "advantage"
-      ]
+      "programs": ["advantage"]
     },
     {
       "code": "sekerbank",
       "name": "Şekerbank",
-      "programs": [
-        "bonus"
-      ]
+      "programs": ["bonus"]
     },
     {
       "code": "kuveytturk",
       "name": "Kuveyt Türk",
-      "programs": [
-        "saglam"
-      ]
+      "programs": ["saglam"]
     },
     {
       "code": "turkiyefinans",
       "name": "Türkiye Finans",
-      "programs": [
-        "happy"
-      ]
+      "programs": ["happy"]
     },
     {
       "code": "albaraka",

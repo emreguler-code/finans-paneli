@@ -1,15 +1,41 @@
 /* Sade Netlik: roles shared by every page. */
 :root {
-  --text-page:27px; --text-page-mobile:24px; --text-section:16px;
-  --text-subsection:14px; --text-body:14px; --text-small:12px;
-  --text-dialog:21px; --text-dialog-mobile:18px;
-  --text-value:30px; --text-value-mobile:27px; --text-input-mobile:16px;
-  --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px;
-  --space-5:20px; --space-6:24px; --space-8:32px;
-  --radius-control:8px; --radius-panel:12px; --radius-dialog:14px;
-  --control-size:44px; --control-compact:32px;
-  --page-gutter:32px; --page-gap:24px; --panel-padding:24px;
-
+  --text-page: 27px;
+  --text-page-mobile: 24px;
+  --text-section: 16px;
+  --text-subsection: 14px;
+  --text-body: 14px;
+  --text-small: 12px;
+  --text-dialog: 21px;
+  --text-dialog-mobile: 18px;
+  --text-value: 30px;
+  --text-value-mobile: 27px;
+  --text-input-mobile: 16px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --radius-control: 8px;
+  --radius-panel: 12px;
+  --radius-dialog: 14px;
+  --control-size: 44px;
+  --control-compact: 32px;
+  --page-gutter: 32px;
+  --page-gap: 24px;
+  --panel-padding: 24px;
 }
-@media(max-width:1100px){:root{--page-gutter:24px}}
-@media(max-width:760px){:root{--page-gutter:12px;--page-gap:16px;--panel-padding:16px}}
+@media (max-width: 1100px) {
+  :root {
+    --page-gutter: 24px;
+  }
+}
+@media (max-width: 760px) {
+  :root {
+    --page-gutter: 12px;
+    --page-gap: 16px;
+    --panel-padding: 16px;
+  }
+}

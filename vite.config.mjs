@@ -12,7 +12,10 @@ export default defineConfig({
   },
   server: {
     host: "0.0.0.0",
-    proxy: { "/update.php": { target: "http://127.0.0.1:8088", changeOrigin: true }, "/api": { target: "http://127.0.0.1:8088", changeOrigin: true } },
+    proxy: {
+      "/update.php": { target: "http://127.0.0.1:8088", changeOrigin: true },
+      "/api": { target: "http://127.0.0.1:8088", changeOrigin: true },
+    },
     allowedHosts: ["terminal.local"],
     warmup: {
       clientFiles: ["./src/main.jsx"],

@@ -2,18 +2,18 @@
 
 30 Ekim 2026 · Şema 12. Gerçek hosting veya kullanıcı verisi değiştirilmeden, izole PHP/MariaDB ve Chromium ortamlarında çalıştırıldı.
 
-| Kontrol | Sonuç |
-| --- | --- |
-| Üretim derlemesi | Geçti |
-| Birim testleri | 45 geçti |
-| Sites worker testleri | 4 geçti |
-| Finansal API | 131 geçti |
-| Şema/migration kurtarma | 34 geçti |
-| Yedekleme ve geri yükleme | 67 geçti |
-| Masaüstü/mobil tarayıcı | 591 geçti; 0 çalışma zamanı hatası |
-| Geniş demo çapraz kontrol | 715 kontrol, 624 işlem, 29 hafta |
-| Demo arayüzü | 105 kontrol geçti |
-| Hazır hosting paketi kurulumu | Geçti; ZIP içerikleri eşleşiyor |
+| Kontrol                       | Sonuç                              |
+| ----------------------------- | ---------------------------------- |
+| Üretim derlemesi              | Geçti                              |
+| Birim testleri                | 45 geçti                           |
+| Sites worker testleri         | 4 geçti                            |
+| Finansal API                  | 131 geçti                          |
+| Şema/migration kurtarma       | 34 geçti                           |
+| Yedekleme ve geri yükleme     | 67 geçti                           |
+| Masaüstü/mobil tarayıcı       | 591 geçti; 0 çalışma zamanı hatası |
+| Geniş demo çapraz kontrol     | 715 kontrol, 624 işlem, 29 hafta   |
+| Demo arayüzü                  | 105 kontrol geçti                  |
+| Hazır hosting paketi kurulumu | Geçti; ZIP içerikleri eşleşiyor    |
 
 Komutlar: `npm test`, PHP sözdizimi denetimi, `npm run test:api`, `npm run test:migrations`, `npm run test:backups`, `npm run test:browser`, `npm run test:demo`, `npm run release:package`, `npm run test:package`. Paket kurulumu ayrıca temiz izole ortamda doğrulanır; yayın iş akışı tüm kontrolleri tekrar çalıştırır.
 

@@ -72,7 +72,6 @@ Finans Paneli'nin kendi tasarım dili korunur; başka projelerin görsel tercihl
 - Yeni işlem ve geri dönüş bilgi kutusunun dışında; kayda ait bilgi/ayar/düzenleme ikonları ilgili bilgi bandının kendi üzerinde kalır.
 - Bilgi bandının dış yüzeyi, ayırıcıları, tipografi ve boşluk sistemi ortaktır; alanlar kaydın türüne göre yerleştirilir. Aynı görünüm uğruna finansal anlamlar, hesap modeli veya tablo sütun sırası değiştirilmez. Cari ve kredi kartı taslakları kullanıcı tarafından onaylanan referanstır.
 
-
 ## 26 Ekim 2026 — 1.9.1 sonrası başlık araçları ve kart alanı (uygulama bekliyor)
 
 - Gereksiz ikinci liste başlığı kaldırılır. Kullanıcı, içerik araçlarını ana başlığa taşıma kararından vazgeçti: sıralama/indirme ve benzer ikonlar ilgili içerik/listenin kapsamında kalır; yeni işlem düğmesinin yanına taşınmaz.
@@ -80,7 +79,6 @@ Finans Paneli'nin kendi tasarım dili korunur; başka projelerin görsel tercihl
 - Not ve görsel aşamasıdır; kodlama/yayın onayı değildir. Ayrıntılar sonraki sürüm notlarındadır.
 
 - Onaylı 3 numaralı görsel yalnız yerleşim referansıdır; nihai fontlar, tipografi/değer rolleri, boşluklar, kontrol ölçüleri, renkler ve ana/sağ sütun oranı bu belgedeki ortak kurallara uyar. Görseldeki üst araç yerleşimi artık geçerli değildir; içerik araçları ilgili içerik alanında, yeni işlem düğmesi başlıkta kalır. Mobilde kart içeriği okunabilir biçimde alt alta düzenlenir.
-
 
 ## 26 Ekim 2026 — Onaylı kart hizaları ve uyarı hiyerarşisi (uygulama bekliyor)
 
@@ -91,7 +89,6 @@ Finans Paneli'nin kendi tasarım dili korunur; başka projelerin görsel tercihl
 - Uyarılarda tarih kartlarla aynı Türkçe biçimde gösterilir; hesap/açıklama/tarih/tutar hizası ortaktır. Para değeri ve TL birimi birlikte kalır.
 - Bu kararlar sonraki tasarıma aittir; kullanıcı notlarına devam ediyor. Kodlama ve yayın henüz başlatılmaz.
 
-
 ## 26 Ekim 2026 — Merkezi bildirim ve bağlamsal önizleme (uygulama bekliyor)
 
 - Bildirimler ortak mekanizmaya ve tek global sayfaya dayanır; modüller aynı kayıtları kendi bölüm kapsamıyla önizler. Kaynak, önem rengi, durum metni ve hedef davranışı ortaktır.
@@ -101,7 +98,6 @@ Finans Paneli'nin kendi tasarım dili korunur; başka projelerin görsel tercihl
 - Kullanıcı cari giriş/çıkışını net cari bakiyeyi artıran/azaltan hareketler olarak netleştirdi. Bloklar mevcut `party_effect` yönünü kullanır; nakit etkisi veya brüt tutardan sınıflandırma yapılmaz. Sıfır etki iki bloktan birine zorla atanmaz. Ek filtre/sıralama önerileri ve son işlemler kapsamı sonraki sürüm notlarında ayrı değerlendirme olarak kayıtlıdır.
 - Kullanıcı notlarına devam ediyor; kodlama, paketleme ve yayın başlatılmaz.
 
-
 ## 26 Ekim 2026 — İçerik araçlarını başlığa taşıma kararı iptal edildi
 
 - Kullanıcı, sıralama/indirme ve benzer içerik ikonlarını yeni işlem düğmesinin yanına ayraçla toplama kararından vazgeçti. Ayrı içerik araç satırlarını kaldırma zorunluluğu da iptal edildi.
@@ -109,7 +105,6 @@ Finans Paneli'nin kendi tasarım dili korunur; başka projelerin görsel tercihl
 - Hesaplar ekranındaki rahatsızlık mevcut kart düzeniyle ilişkilidir; onaylı 3 numaralı yatay liste/kart düzenine geçilerek giderilecektir. Tek ana içerik kutusu, kart hizaları, gereksiz ikinci başlığın kaldırılması ve diğer onaylı kararlar korunur.
 - Taslak görsellerdeki üst araç grubu uygulanacak kural değildir; görseller yatay kart yerleşimi için referans olmaya devam eder.
 - Bu karar henüz uygulama koduna taşınmadığından kod geri alımı gerekmiyor; yalnız belgeler düzeltildi. Not aşaması sürüyor, kodlama/yayın başlatılmaz.
-
 
 ## 26 Ekim 2026 — Paralel hesap/kredi kartı tasarımı ve kompakt listeler (uygulama bekliyor)
 
@@ -119,7 +114,6 @@ Finans Paneli'nin kendi tasarım dili korunur; başka projelerin görsel tercihl
 - Gerektiğinde ek bilgi satırlarıyla okunabilirlik korunur; kompaktlık için küçük yazı, kesilmiş tutar veya kayıp bilgi kullanılmaz. Gereksiz ikinci liste başlıkları iki menüden de kaldırılır.
 - Bu son karar, görsellerde veya önceki notlarda hesap/kart liste ikonlarının bulunmasını isteyen kısımların yerini alır. Kullanıcı not aşamasındadır; henüz kodlama/yayın yapılmaz.
 
-
 ## 26 Ekim 2026 — Araç detayında iki sekme (uygulama bekliyor)
 
 - Araç kartından varsayılan Özet açılır; kategori bazlı grid bölmeler güncel poliçe/MTV/bakım ve diğer mevcut araç bilgilerini gösterir. İşlemler ikinci sekmedir; tüm kayıt türleri tek tarih sıralı listede karışık yer alır. Trafik sigortası/kasko/MTV/bakım/muayene ayrı navigasyon sekmeleri olarak kullanılmaz.
@@ -127,11 +121,9 @@ Finans Paneli'nin kendi tasarım dili korunur; başka projelerin görsel tercihl
 - Geçerlilik durumu ile ödeme durumu, tahmini tutar ile gerçek ödeme ve kayıt tarihi ile yaklaşan tarih/km ayrı anlamlardır. Özet veya liste ikinci finansal hareket üretmez.
 - Görsel yerleşim alternatifleri kullanıcı değerlendirmesindedir; ilk Özet ile birleşik işlem günlüğü asistan önerisidir. Not aşaması sürer, kodlama/yayın başlatılmaz.
 
-
 ## 1.10.0 uygulama durumu
 
 26 Ekim 2026 toplu kodlama/yayın onayıyla yukarıdaki bekleyen hesap/kart yatay liste, merkezi bildirim ve cari sağ sütun kuralları uygulanmıştır. Araçlarda kullanıcı 2 numaralı Poliçeler özeti ile 3 numaralı birleşik İşlemler görünümünü seçmiştir. Önceki not aşaması/uygulama bekliyor ifadeleri tarihsel durumdur; bekleme şartı değildir. Zil dahil küçük önizlemeler 5 kayıtla sınırlıdır. İçerik ikonlarını başlığa taşıma kararı iptal edilmiş olarak kalır.
-
 
 ## 1.11.0 — kompakt mobil ve yatay araçlar
 
@@ -185,7 +177,6 @@ Yalnız kapalı liste ve body taşması kontrolü yeterli değildir. Seçili/aç
 
 Mobil filtre başlık/alanlar/eylemler olarak bölünür; yalnız alan gövdesi kaydırılır, eylemler alt gezinme üstünde erişilebilir kalır. Mobil header ayrı Ara düğmesi yerine klavyenin Ara/Enter eylemini kullanır; erişilebilir tam arama etiketi korunur, kısa placeholder kullanılır. Odak menüyü ve zili gizlemez. Hesap listesinde banka/ad/bakiye önceliklidir; sahip/IBAN/tür bilgisi detaydan erişilebilir kalır. Çok dar kart listesinde finansal metrikler para birimiyle tam görünür. Bildirim önemi metin ve ikonla sürer; bütün satırı boyamak zorunlu değildir. 44 px temel eylem hedefleri korunur. Chromium ve WebKit'te gerçek satır/hücre geometrisi, filtre footer'ı ve kritik tutarlar kontrol edilir; viewport emülasyonu gerçek cihaz testi olarak sunulmaz.
 
-
 ## 16 Kasım 2026 — 1.18.0 onaylı cari detay istisnası
 
 Cari detayında ad/tür/güncel bakiye kompakt tek yüzeydedir; önceki ayrı başlık ve dört metrikli özet yerine kullanılır. Aşağı ok bilgileri kendi yüzeyinde genişletir; rol izinli geri/düzenle/yeni işlem korunur. Cari hareket araması, filtre, sıfırla, sırala ve CSV bu listede birliktedir; header araması açıkça genel arama kapsamındadır. Ortak kabuk ve diğer modüllerin arama yerleşimi korunur. Cari hareket rakamları nötr, yön etiketleri işarete göre renkli; üst net bakiye renkli kalır. Brüt tutar/peşin ödeme/net etki/tarihsel bakiye açılan satırda ayrı anlam taşır. Filtre toplamı güncel bakiye yerine geçmez. Masaüstü sütun sırası ve mobil blok sunumu korunur. Bu değişiklik için kullanıcı uygulama ve yeni sürüm yayını onayı verdi.
@@ -197,7 +188,6 @@ Cari detayında ad/tür/güncel bakiye kompakt tek yüzeydedir; önceki ayrı ba
 ## 1.20.0 — Son notların yürürlüğü
 
 Ayrıntılı bölüm bazlı analiz SURUM-1.20.0.md içindedir. Arama/filtre aynı çubukta kaldırılabilir çiplerdir; eski harici ara/filtre/sıfırla düğmeleri kalkar. Aktif tarih aynı sütunda iki satır (12 px/500 tarih, 12 px/400 gün-saat-saniye), tekrarsızdır. Finansal düzenleme işlem türü dahil kendi satırında; ilgili alanlar aynı satırda genişler. Görünüm son 30 hareketten başlar, önceki kayıtlar konumu bozmadan eklenir. Gerçek ay sonu bakiyesi filtrelenen toplamla karıştırılmaz. Gizli giriş formu grid'de yer bırakmaz, + aynı konumda yüzer. Ortak davranışlar cari/banka/kart/ödeme/rapor hareketlerinde paylaşılır; araç, takvim, ekstre ve ayarların farklı veri anlamları korunur.
-
 
 ## 1.21.0 — Yerleşim ve bileşen sahipliği
 

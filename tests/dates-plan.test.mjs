@@ -1,20 +1,170 @@
-import test from 'node:test';
-import assert from 'node:assert/strict';
-import {presetRange,monthDays,shiftMonth,dueMatches} from '../src/date-utils.mjs';
-test('Calendar Monday start and full rows across leap/year boundaries',()=>{for(const [month,count] of [['2026-02',35],['2026-03',42],['2024-02',35],['2026-10',35]]){const days=monthDays(month);assert.equal(days.length,count);assert.equal(new Date(days[0]+'T12:00:00Z').getUTCDay(),1);assert.equal(new Date(days.at(-1)+'T12:00:00Z').getUTCDay(),0)}assert.equal(shiftMonth('2026-01',-1),'2025-12')});
-test('Preset bounds consistent and locale-independent',()=>{assert.deepEqual(presetRange('Bu Hafta','2026-10-12'),{from:'2026-10-12',to:'2026-10-18'});assert.deepEqual(presetRange('Bu Ay','2024-02-15'),{from:'2024-02-01',to:'2024-02-29'});assert.deepEqual(presetRange('Son 3 Ay','2026-01-12'),{from:'2025-11-01',to:'2026-01-12'});assert.deepEqual(presetRange('Son 1 Yıl','2026-10-12'),{from:'2025-11-01',to:'2026-10-12'})});
-test('Due filters preserve historical balance and exclude undated from late/today/soon',()=>{const event={id:1,kind:'Borç',amount_cents:10000,due_date:null,party_balance:-20000};const data={today:'2026-10-12',claims:[{id:1,amount_cents:10000}]};for(const f of ['late','today','soon','dated','partial','closed'])assert.equal(Boolean(dueMatches(event,data,f)),false);assert.equal(dueMatches(event,data,'undated'),true);assert.equal(dueMatches(event,data,'open'),true);data.claims[0].amount_cents=4000;assert.equal(dueMatches(event,data,'partial'),true);event.due_date='2026-10-15';assert.equal(Boolean(dueMatches(event,data,'soon')),true);data.claims=[];assert.equal(dueMatches(event,data,'closed'),true);assert.equal(event.party_balance,-20000)});
+import test from "node:test";
+import assert from "node:assert/strict";
+import {
+  presetRange,
+  monthDays,
+  shiftMonth,
+  dueMatches,
+} from "../src/date-utils.mjs";
+test("Calendar Monday start and full rows across leap/year boundaries", () => {
+  for (const [month, count] of [
+    ["2026-02", 35],
+    ["2026-03", 42],
+    ["2024-02", 35],
+    ["2026-10", 35],
+  ]) {
+    const days = monthDays(month);
+    assert.equal(days.length, count);
+    assert.equal(new Date(days[0] + "T12:00:00Z").getUTCDay(), 1);
+    assert.equal(new Date(days.at(-1) + "T12:00:00Z").getUTCDay(), 0);
+  }
+  assert.equal(shiftMonth("2026-01", -1), "2025-12");
+});
+test("Preset bounds consistent and locale-independent", () => {
+  assert.deepEqual(presetRange("Bu Hafta", "2026-10-12"), {
+    from: "2026-10-12",
+    to: "2026-10-18",
+  });
+  assert.deepEqual(presetRange("Bu Ay", "2024-02-15"), {
+    from: "2024-02-01",
+    to: "2024-02-29",
+  });
+  assert.deepEqual(presetRange("Son 3 Ay", "2026-01-12"), {
+    from: "2025-11-01",
+    to: "2026-01-12",
+  });
+  assert.deepEqual(presetRange("Son 1 Yıl", "2026-10-12"), {
+    from: "2025-11-01",
+    to: "2026-10-12",
+  });
+});
+test("Due filters preserve historical balance and exclude undated from late/today/soon", () => {
+  const event = {
+    id: 1,
+    kind: "Borç",
+    amount_cents: 10000,
+    due_date: null,
+    party_balance: -20000,
+  };
+  const data = {
+    today: "2026-10-12",
+    claims: [{ id: 1, amount_cents: 10000 }],
+  };
+  for (const f of ["late", "today", "soon", "dated", "partial", "closed"])
+    assert.equal(Boolean(dueMatches(event, data, f)), false);
+  assert.equal(dueMatches(event, data, "undated"), true);
+  assert.equal(dueMatches(event, data, "open"), true);
+  data.claims[0].amount_cents = 4000;
+  assert.equal(dueMatches(event, data, "partial"), true);
+  event.due_date = "2026-10-15";
+  assert.equal(Boolean(dueMatches(event, data, "soon")), true);
+  data.claims = [];
+  assert.equal(dueMatches(event, data, "closed"), true);
+  assert.equal(event.party_balance, -20000);
+});
 
-import {globalEventAmount} from '../src/list-utils.mjs';
-test('Global movement direction keeps card-funded payments distinct from cari effect',()=>{assert.equal(globalEventAmount({kind:'Ödeme',cash_effect:0,party_effect:120050,card_effect:120050,amount_cents:120050}),-120050);assert.equal(globalEventAmount({kind:'Tahsilat',cash_effect:0,party_effect:-20000,card_effect:-20000,amount_cents:20000}),20000);assert.equal(globalEventAmount({kind:'Borç',cash_effect:0,party_effect:-10000,amount_cents:10000}),-10000);assert.equal(globalEventAmount({kind:'Kart ödemesi',cash_effect:-20000,amount_cents:20000}),-20000);assert.equal(globalEventAmount({kind:'Açılış',cash_effect:0,party_effect:-50000,amount_cents:50000}),-50000)});
+import { globalEventAmount } from "../src/list-utils.mjs";
+test("Global movement direction keeps card-funded payments distinct from cari effect", () => {
+  assert.equal(
+    globalEventAmount({
+      kind: "Ödeme",
+      cash_effect: 0,
+      party_effect: 120050,
+      card_effect: 120050,
+      amount_cents: 120050,
+    }),
+    -120050,
+  );
+  assert.equal(
+    globalEventAmount({
+      kind: "Tahsilat",
+      cash_effect: 0,
+      party_effect: -20000,
+      card_effect: -20000,
+      amount_cents: 20000,
+    }),
+    20000,
+  );
+  assert.equal(
+    globalEventAmount({
+      kind: "Borç",
+      cash_effect: 0,
+      party_effect: -10000,
+      amount_cents: 10000,
+    }),
+    -10000,
+  );
+  assert.equal(
+    globalEventAmount({
+      kind: "Kart ödemesi",
+      cash_effect: -20000,
+      amount_cents: 20000,
+    }),
+    -20000,
+  );
+  assert.equal(
+    globalEventAmount({
+      kind: "Açılış",
+      cash_effect: 0,
+      party_effect: -50000,
+      amount_cents: 50000,
+    }),
+    -50000,
+  );
+});
 
-import {sortPlanItems} from '../src/list-utils.mjs';
-test('Plan sorting applies before day details and keeps source records intact',()=>{const rows=[{id:1,date:'2026-10-13',amount:10000},{id:2,date:'2026-10-13',amount:35000},{id:3,date:'2026-10-12',amount:20000}];const original=JSON.stringify(rows);assert.deepEqual(sortPlanItems(rows,'amount-desc').filter(x=>x.date==='2026-10-13').map(x=>x.id),[2,1]);assert.deepEqual(sortPlanItems(rows,'date-asc').map(x=>x.id),[3,1,2]);assert.deepEqual(sortPlanItems(rows,'date-desc').map(x=>x.id),[1,2,3]);assert.equal(JSON.stringify(rows),original)});
+import { sortPlanItems } from "../src/list-utils.mjs";
+test("Plan sorting applies before day details and keeps source records intact", () => {
+  const rows = [
+    { id: 1, date: "2026-10-13", amount: 10000 },
+    { id: 2, date: "2026-10-13", amount: 35000 },
+    { id: 3, date: "2026-10-12", amount: 20000 },
+  ];
+  const original = JSON.stringify(rows);
+  assert.deepEqual(
+    sortPlanItems(rows, "amount-desc")
+      .filter((x) => x.date === "2026-10-13")
+      .map((x) => x.id),
+    [2, 1],
+  );
+  assert.deepEqual(
+    sortPlanItems(rows, "date-asc").map((x) => x.id),
+    [3, 1, 2],
+  );
+  assert.deepEqual(
+    sortPlanItems(rows, "date-desc").map((x) => x.id),
+    [1, 2, 3],
+  );
+  assert.equal(JSON.stringify(rows), original);
+});
 
 // Statement estimates clamp cut days across short/leap months without changing records.
-test('Next card dates are estimates and require verified settings', async()=>{
- const {nextCardDates}=await import('../src/date-utils.mjs');
- assert.deepEqual(nextCardDates({cut_day:31,statement_date:'2028-01-31',due:'2028-02-10'},'2028-02-15'),{cut:'2028-02-29',due:'2028-03-10'});
- assert.deepEqual(nextCardDates({cut_day:10,statement_date:'2026-10-10',due:'2026-10-20'},'2026-10-26'),{cut:'2026-11-10',due:'2026-11-20'});
- assert.deepEqual(nextCardDates({cut_day:10,statement_date:'2026-10-10',due:'2026-10-20',statement_needs_review:1},'2026-10-26'),{cut:'',due:''});
+test("Next card dates are estimates and require verified settings", async () => {
+  const { nextCardDates } = await import("../src/date-utils.mjs");
+  assert.deepEqual(
+    nextCardDates(
+      { cut_day: 31, statement_date: "2028-01-31", due: "2028-02-10" },
+      "2028-02-15",
+    ),
+    { cut: "2028-02-29", due: "2028-03-10" },
+  );
+  assert.deepEqual(
+    nextCardDates(
+      { cut_day: 10, statement_date: "2026-10-10", due: "2026-10-20" },
+      "2026-10-26",
+    ),
+    { cut: "2026-11-10", due: "2026-11-20" },
+  );
+  assert.deepEqual(
+    nextCardDates(
+      {
+        cut_day: 10,
+        statement_date: "2026-10-10",
+        due: "2026-10-20",
+        statement_needs_review: 1,
+      },
+      "2026-10-26",
+    ),
+    { cut: "", due: "" },
+  );
 });

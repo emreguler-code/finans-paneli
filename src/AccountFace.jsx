@@ -1,13 +1,163 @@
-import {cardDisplayName} from './account-display.mjs';
-import {Wallet} from 'lucide-react';
-import {BankMark, bankName, PROGRAMS} from './BankCards';
-import {fmt, tone} from './ui';
-import {isKmh, kmhUsage, hasMaturity} from './account-utils.mjs';
-import {dateLabel} from './DatePicker';
-import {limitSegments} from './operations.mjs';
-export function AccountFace({item:a,isCard,actions}){
- const limit=isCard?limitSegments(a):null;const kmh=isKmh(a)?kmhUsage(a):null;
- return <section className={'panel account-face '+(isCard?'credit-face':'bank-face')}><header><div><p>{bankName(a.bank_code)||a.bank||a.type||'Kredi kartı'}{isCard&&PROGRAMS[a.program_code]&&!cardDisplayName(a.name,(bankName(a.bank_code)||a.bank||'').replace(' BBVA',''),PROGRAMS[a.program_code]).toLocaleLowerCase('tr').includes(PROGRAMS[a.program_code].toLocaleLowerCase('tr'))?' · '+PROGRAMS[a.program_code]:''}</p><h2>{isCard?cardDisplayName(a.name,(bankName(a.bank_code)||a.bank||'').replace(' BBVA',''),PROGRAMS[a.program_code]):a.name}{!a.active?' · Arşiv':''}</h2>{isCard?<><div className="card-mask">**** **** **** {a.last_four||'••••'}</div><p>{a.holder||'Kart sahibi belirtilmedi'}</p></>:<>{a.iban&&<p className="account-iban">{a.iban}</p>}<p className="account-owner">{a.holder||'Hesap sahibi belirtilmedi'}</p></>}</div><div className="face-mark">{!isCard&&(a.type==='Kasa'?<Wallet size={26}/>:a.bank_code!=='akbank'?<BankMark code={a.bank_code}/>:null)}</div></header>{actions&&<div className="account-card-actions">{actions}</div>}
- {isCard?<div className="card-limit-area"><div className="limit-total"><span>Toplam limit</span><strong>{fmt(a.limit_cents)} TL</strong></div><div className="limit-bar" aria-label={`Kalan ekstre borcu ${fmt(limit.statement)}, dönem ve taksitler ${fmt(limit.period)}, kullanılabilir ${fmt(limit.available)} TL`}>{limit.widths.map((w,i)=><span key={i} className={['statement','period','available'][i]} style={{width:w+'%'}}/>)}</div><div className="limit-legend">{[['Ekstre borcu',limit.statement,'statement'],['Dönem içi',a.unbilled_cents||0,'period'],['Gelecek taksitler',a.future_cents||0,'period'],['Kullanılabilir',limit.available,'available']].map(([label,n,k])=><div key={label} title={label}><span><i className={k}/>{label}</span><strong>{fmt(n)} TL</strong></div>)}</div></div>:kmh?<div className="kmh-card-body"><div className="limit-total"><span>KMH limiti</span><strong>{fmt(kmh.limit)} TL</strong></div><div className="limit-bar" aria-label={`Kullanılan limit ${fmt(kmh.used)}, kullanılabilir ${fmt(kmh.available)} TL`}><span className="period" style={{width:kmh.percent+'%'}}/><span className="available" style={{width:(100-kmh.percent)+'%'}}/></div><div className="kmh-totals"><div><span>Kullanılan</span><strong>{fmt(kmh.used)} TL</strong></div><div><span>Kullanılabilir</span><strong>{fmt(kmh.available)} TL</strong></div></div></div>:<div className="account-face-balance"><span>Hesap bakiyesi</span><div className={tone(a.balance_cents)}>{fmt(a.balance_cents)} <small>TL</small></div></div>}
- <footer>{isCard?<><span>Hesap kesim<strong>{dateLabel(a.statement_date)}</strong></span><span>Son ödeme<strong>{dateLabel(a.due)}</strong></span></>:<><span>Hesap türü<strong title={a.type}>{isKmh(a)?'KMH':a.type}</strong></span>{hasMaturity(a)&&<span>Vade sonu<strong>{dateLabel(a.maturity_date)}</strong></span>}</>}</footer></section>;
+import { cardDisplayName } from "./account-display.mjs";
+import { Wallet } from "lucide-react";
+import { BankMark, bankName, PROGRAMS } from "./BankCards";
+import { fmt, tone } from "./ui";
+import { isKmh, kmhUsage, hasMaturity } from "./account-utils.mjs";
+import { dateLabel } from "./DatePicker";
+import { limitSegments } from "./operations.mjs";
+export function AccountFace({ item: a, isCard, actions }) {
+  const limit = isCard ? limitSegments(a) : null;
+  const kmh = isKmh(a) ? kmhUsage(a) : null;
+  return (
+    <section
+      className={"panel account-face " + (isCard ? "credit-face" : "bank-face")}
+    >
+      <header>
+        <div>
+          <p>
+            {bankName(a.bank_code) || a.bank || a.type || "Kredi kartı"}
+            {isCard &&
+            PROGRAMS[a.program_code] &&
+            !cardDisplayName(
+              a.name,
+              (bankName(a.bank_code) || a.bank || "").replace(" BBVA", ""),
+              PROGRAMS[a.program_code],
+            )
+              .toLocaleLowerCase("tr")
+              .includes(PROGRAMS[a.program_code].toLocaleLowerCase("tr"))
+              ? " · " + PROGRAMS[a.program_code]
+              : ""}
+          </p>
+          <h2>
+            {isCard
+              ? cardDisplayName(
+                  a.name,
+                  (bankName(a.bank_code) || a.bank || "").replace(" BBVA", ""),
+                  PROGRAMS[a.program_code],
+                )
+              : a.name}
+            {!a.active ? " · Arşiv" : ""}
+          </h2>
+          {isCard ? (
+            <>
+              <div className="card-mask">
+                **** **** **** {a.last_four || "••••"}
+              </div>
+              <p>{a.holder || "Kart sahibi belirtilmedi"}</p>
+            </>
+          ) : (
+            <>
+              {a.iban && <p className="account-iban">{a.iban}</p>}
+              <p className="account-owner">
+                {a.holder || "Hesap sahibi belirtilmedi"}
+              </p>
+            </>
+          )}
+        </div>
+        <div className="face-mark">
+          {!isCard &&
+            (a.type === "Kasa" ? (
+              <Wallet size={26} />
+            ) : a.bank_code !== "akbank" ? (
+              <BankMark code={a.bank_code} />
+            ) : null)}
+        </div>
+      </header>
+      {actions && <div className="account-card-actions">{actions}</div>}
+      {isCard ? (
+        <div className="card-limit-area">
+          <div className="limit-total">
+            <span>Toplam limit</span>
+            <strong>{fmt(a.limit_cents)} TL</strong>
+          </div>
+          <div
+            className="limit-bar"
+            aria-label={`Kalan ekstre borcu ${fmt(limit.statement)}, dönem ve taksitler ${fmt(limit.period)}, kullanılabilir ${fmt(limit.available)} TL`}
+          >
+            {limit.widths.map((w, i) => (
+              <span
+                key={i}
+                className={["statement", "period", "available"][i]}
+                style={{ width: w + "%" }}
+              />
+            ))}
+          </div>
+          <div className="limit-legend">
+            {[
+              ["Ekstre borcu", limit.statement, "statement"],
+              ["Dönem içi", a.unbilled_cents || 0, "period"],
+              ["Gelecek taksitler", a.future_cents || 0, "period"],
+              ["Kullanılabilir", limit.available, "available"],
+            ].map(([label, n, k]) => (
+              <div key={label} title={label}>
+                <span>
+                  <i className={k} />
+                  {label}
+                </span>
+                <strong>{fmt(n)} TL</strong>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : kmh ? (
+        <div className="kmh-card-body">
+          <div className="limit-total">
+            <span>KMH limiti</span>
+            <strong>{fmt(kmh.limit)} TL</strong>
+          </div>
+          <div
+            className="limit-bar"
+            aria-label={`Kullanılan limit ${fmt(kmh.used)}, kullanılabilir ${fmt(kmh.available)} TL`}
+          >
+            <span className="period" style={{ width: kmh.percent + "%" }} />
+            <span
+              className="available"
+              style={{ width: 100 - kmh.percent + "%" }}
+            />
+          </div>
+          <div className="kmh-totals">
+            <div>
+              <span>Kullanılan</span>
+              <strong>{fmt(kmh.used)} TL</strong>
+            </div>
+            <div>
+              <span>Kullanılabilir</span>
+              <strong>{fmt(kmh.available)} TL</strong>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="account-face-balance">
+          <span>Hesap bakiyesi</span>
+          <div className={tone(a.balance_cents)}>
+            {fmt(a.balance_cents)} <small>TL</small>
+          </div>
+        </div>
+      )}
+      <footer>
+        {isCard ? (
+          <>
+            <span>
+              Hesap kesim<strong>{dateLabel(a.statement_date)}</strong>
+            </span>
+            <span>
+              Son ödeme<strong>{dateLabel(a.due)}</strong>
+            </span>
+          </>
+        ) : (
+          <>
+            <span>
+              Hesap türü
+              <strong title={a.type}>{isKmh(a) ? "KMH" : a.type}</strong>
+            </span>
+            {hasMaturity(a) && (
+              <span>
+                Vade sonu<strong>{dateLabel(a.maturity_date)}</strong>
+              </span>
+            )}
+          </>
+        )}
+      </footer>
+    </section>
+  );
 }

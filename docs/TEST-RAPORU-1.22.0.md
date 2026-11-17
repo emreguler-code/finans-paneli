@@ -2,18 +2,18 @@
 
 Test edilen uygulama commit'i: `1204b7b7fe248b9b59fe8ea0674d22e839620fcb`. [Dokuz başarılı iş grubu](https://github.com/emreguler-code/finans-paneli/actions/runs/44058031179). Sonraki belge ve ekran commit'i uygulama kodunu değiştirmez.
 
-| Kontrol | Sonuç |
-|---|---|
-| ESLint / Stylelint / biçim / derleme | Başarılı |
-| Birim / statik worker | 63 + 4 başarılı |
-| npm audit | Raporlanan açık 0 |
-| Linux sentetik arayüz / geometri | Chromium, WebKit, Firefox: motor başına 130 kontrol; hata 0 |
-| Windows sentetik arayüz / geometri | Firefox, Chromium: motor başına 130 kontrol; hata 0 |
-| Gerçek PHP/MariaDB masaüstü | Chromium kabulü başarılı |
-| Gerçek PHP/MariaDB mobil | Chromium 146, WebKit 145, Firefox 145 kontrol; hata 0 |
-| API / migrasyon / yedekleme | Başarılı |
-| Kapsamlı demo ve mali rapor mutabakatı | Başarılı |
-| Paketleme / izole ZIP kurulum | Başarılı; iki ZIP ve SHA-256 doğrulandı |
+| Kontrol                                | Sonuç                                                       |
+| -------------------------------------- | ----------------------------------------------------------- |
+| ESLint / Stylelint / biçim / derleme   | Başarılı                                                    |
+| Birim / statik worker                  | 63 + 4 başarılı                                             |
+| npm audit                              | Raporlanan açık 0                                           |
+| Linux sentetik arayüz / geometri       | Chromium, WebKit, Firefox: motor başına 130 kontrol; hata 0 |
+| Windows sentetik arayüz / geometri     | Firefox, Chromium: motor başına 130 kontrol; hata 0         |
+| Gerçek PHP/MariaDB masaüstü            | Chromium kabulü başarılı                                    |
+| Gerçek PHP/MariaDB mobil               | Chromium 146, WebKit 145, Firefox 145 kontrol; hata 0       |
+| API / migrasyon / yedekleme            | Başarılı                                                    |
+| Kapsamlı demo ve mali rapor mutabakatı | Başarılı                                                    |
+| Paketleme / izole ZIP kurulum          | Başarılı; iki ZIP ve SHA-256 doğrulandı                     |
 
 ## Kabul edilen davranış
 
