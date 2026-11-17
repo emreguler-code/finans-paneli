@@ -36,3 +36,7 @@ Test edilen uygulama commit'i: `1204b7b7fe248b9b59fe8ea0674d22e839620fcb`. [Doku
 ## Sınırlar
 
 Fiziksel iPhone/iOS, kullanıcının kişisel Firefox profili veya gerçek tarayıcı yakınlaştırması test edilmedi. Ölçekli/etkin viewport kontrolleri bunların yerine geçmiş sayılmaz. Son 30 kayıt istemci tarafında kademeli gösterilir; sunucu sayfalaması değildir. Vite büyük JS parçası uyarısı sürmektedir; bu sürümde bağımlılık veya mali model yeniden yazımı yapılmadı. Şema 12, gerçek veriler ve canlı hosting değişmedi.
+
+## GitHub yayını
+
+[1.22.0 yayını](https://github.com/emreguler-code/finans-paneli/releases/tag/v1.22.0) tamamlandı. [Son yayın iş akışı](https://github.com/emreguler-code/finans-paneli/actions/runs/44058941362) Windows kontrolü ve tüm Linux kabul/kurulum kontrollerini yeniden başarıyla çalıştırdı. Yayımlanan iki ZIP'in SHA-256 değerleri test edilen aday paketlerle aynıdır. Dört indirme dosyası (iki ZIP ve iki checksum) doğrulandı. [Yayın makbuzu](evidence/1.22.0/release-receipt.json). Canlı hosting'e kurulum yapılmadı.
