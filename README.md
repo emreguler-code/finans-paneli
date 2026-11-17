@@ -1,6 +1,6 @@
 # Finans Paneli 1.22.0
 
-1.22.0: ayrı filtre ve sıralama pencereleri kaldırıldı. Arama komutları ve sütun başlıklarından sıralama; ortak panel/araç hizaları. [Güncel kapsam](docs/SURUM-1.22.0.md).
+1.22.0: ayrı filtre ve sıralama pencereleri kaldırıldı. Arama komutları ve sütun başlıklarından sıralama; ortak panel/araç hizaları. [Güncel kapsam](docs/SURUM-1.22.0.md) · [Test raporu ve çalışan ekranlar](docs/TEST-RAPORU-1.22.0.md).
 
 1.21.0: içerik genişliğine bağlı tutarlı yerleşim, yalıtılmış arama/form stilleri ve Firefox dahil otomatik geometri kabulü. [Güncel kapsam](docs/SURUM-1.21.0.md) · [1.21.0 test raporu ve ekranlar](docs/TEST-RAPORU-1.21.0.md) · [Kod kalite politikası](docs/KOD-KALITESI.md).
 
