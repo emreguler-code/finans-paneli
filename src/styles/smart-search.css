@@ -129,26 +129,6 @@
   background: var(--surface-hover);
   color: var(--accent);
 }
-.smart-field-editor .shared-filters {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
-  gap: 12px;
-  padding: 16px;
-}
-.smart-field-editor label {
-  display: grid;
-  align-content: start;
-  gap: 6px;
-  min-width: 0;
-  font-size: 12px;
-}
-.smart-field-editor input,
-.smart-field-editor select,
-.smart-field-editor .date-trigger {
-  min-width: 0;
-  max-width: 100%;
-  min-height: 44px;
-}
 @container search (width < 480px) {
   .smart-search-controls kbd {
     display: none;
@@ -168,9 +148,6 @@
   }
   .smart-search-controls button {
     min-height: 44px;
-  }
-  .smart-field-editor .shared-filters {
-    grid-template-columns: minmax(0, 1fr);
   }
   .smart-search-controls kbd {
     display: none;

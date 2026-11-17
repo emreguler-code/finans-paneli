@@ -1,31 +1,13 @@
-import {
-  cloneElement,
-  useEffect,
-  useLayoutEffect,
-  useId,
-  useRef,
-  useState,
-} from "react";
-import { Search, X, ChevronDown } from "lucide-react";
+import { useEffect, useLayoutEffect, useId, useRef, useState } from "react";
+import { Search, X } from "lucide-react";
 import { FloatingPanel } from "./FloatingPanel";
 import {
-  fold,
-  fieldAlias,
+  activeField,
+  multiField,
   parseSearch,
+  searchSuggestions,
   selectedValues,
 } from "./search-query.mjs";
-import { presetRange } from "./date-utils.mjs";
-const active = (f) =>
-  f.range
-    ? Boolean(f.value.from || f.value.to) &&
-      !(
-        f.defaultRange &&
-        f.value.from === f.defaultRange.from &&
-        f.value.to === f.defaultRange.to
-      )
-    : f.check
-      ? f.value !== f.empty
-      : !["", "all", "Tümü", String(f.empty)].includes(String(f.value));
 const labelFor = (f, v) =>
   f.range
     ? [v.from, v.to].filter(Boolean).join(" – ")
@@ -34,10 +16,6 @@ const labelFor = (f, v) =>
         ? "Evet"
         : "Hayır"
       : f.options.find((o) => String(o.value) === String(v))?.label || v;
-const multi = (f) =>
-  ["etiket", "işlem", "ekleyen", "cari", "hesap", "tür", "kayıt türü"].includes(
-    fieldAlias(f.label),
-  ) && f.options.length > 0;
 export function SmartSearch({
   query = "",
   setQuery,
@@ -57,8 +35,6 @@ export function SmartSearch({
 }) {
   const [text, setText] = useState(query),
     [opened, setOpened] = useState(false),
-    [editor, setEditor] = useState(false),
-    [draft, setDraft] = useState({}),
     [error, setError] = useState(""),
     [index, setIndex] = useState(-1),
     [composing, setComposing] = useState(false);
@@ -67,6 +43,9 @@ export function SmartSearch({
     id = useId(),
     setter = useRef(setQuery);
   setter.current = setQuery;
+  const today =
+    fields.find((f) => f.range)?.child?.props.today ||
+    new Date().toLocaleDateString("sv-SE");
   useLayoutEffect(() => setText(query), [query]);
   useEffect(() => {
     if (
@@ -79,24 +58,68 @@ export function SmartSearch({
     const timer = setTimeout(() => setter.current(text.trim()), 300);
     return () => clearTimeout(timer);
   }, [text, query, composing]);
-  const chips = fields.filter(active).flatMap((f) =>
+  const chips = fields.filter(activeField).flatMap((f) =>
     selectedValues(f.value).map((v) => ({
       field: f,
       value: v,
       label: f.label + ": " + labelFor(f, v),
     })),
   );
-  function choose(f, value) {
-    const current = active(f) ? selectedValues(f.value) : [];
-    const combined = [...new Set([...current, value])];
-    f.change(multi(f) && combined.length > 1 ? combined : value);
-    setText("");
-    setQuery("");
+  const suggested = searchSuggestions(text, fields, today),
+    show =
+      opened &&
+      suggested.length > 0 &&
+      (!suggestions ||
+        text.includes(":") ||
+        !text.trim() ||
+        suggested.some((s) => !s.hint));
+  function apply(parsed) {
+    if (parsed.errors.length) {
+      setError(parsed.errors.join(" "));
+      return false;
+    }
+    for (const f of new Set(parsed.filters.map((x) => x.field))) {
+      const values = parsed.filters
+        .filter((x) => x.field === f)
+        .map((x) => x.value);
+      f.change(
+        multiField(f) && values.length > 1
+          ? [...new Set(values)]
+          : values.at(-1),
+      );
+    }
+    setQuery(parsed.query);
+    setText(parsed.query);
+    onSearchText?.(parsed.query);
     setOpened(false);
     setIndex(-1);
     setError("");
-    input.current?.focus({ preventScroll: true });
-    onFiltersApplied?.("");
+    onFiltersApplied?.(parsed.query);
+    return true;
+  }
+  function choose(s) {
+    if (s.hint) {
+      setText((s.prefix ? s.prefix + " " : "") + s.text);
+      setIndex(-1);
+      setOpened(true);
+      input.current?.focus({ preventScroll: true });
+      return;
+    }
+    const parsed = parseSearch(s.prefix || "", fields, { today });
+    const existing = parsed.filters
+      .filter((x) => x.field === s.field)
+      .map((x) => x.value);
+    const current = existing.length
+      ? existing
+      : activeField(s.field) && multiField(s.field)
+        ? selectedValues(s.field.value)
+        : [];
+    parsed.filters = parsed.filters.filter((x) => x.field !== s.field);
+    const values = multiField(s.field)
+      ? [...new Set([...current, s.value])]
+      : [s.value];
+    parsed.filters.push(...values.map((value) => ({ field: s.field, value })));
+    if (apply(parsed)) input.current?.focus({ preventScroll: true });
   }
   function remove(f, value) {
     const remaining = selectedValues(f.value).filter((v) => v !== value);
@@ -108,83 +131,12 @@ export function SmartSearch({
           : f.empty,
     );
   }
-  const q = ["odenmemis", "odenmeyen"].includes(fold(text))
-      ? "acik"
-      : fold(text),
-    suggested = fields
-      .flatMap((f) =>
-        (f.check
-          ? [{ value: !f.empty, label: !f.empty ? "Evet" : "Hayır" }]
-          : f.options
-        )
-          .filter(
-            (o) =>
-              String(o.value) !== String(f.empty) &&
-              !["Tümü", "all"].includes(o.value),
-          )
-          .filter(
-            (o) =>
-              !q ||
-              fold(f.label + " " + o.label).includes(q) ||
-              fold(fieldAlias(f.label) + ":" + o.label).includes(q),
-          )
-          .slice(0, q ? 8 : 3)
-          .map((o) => ({
-            field: f,
-            value: o.value,
-            label: f.label + ": " + o.label,
-          })),
-      )
-      .slice(0, 12);
-  const range = fields.find((f) => f.range);
-  if (
-    range &&
-    ["bu ay", "bugün", "dün", "bu hafta"].includes(
-      text.toLocaleLowerCase("tr-TR").trim(),
-    )
-  ) {
-    const names = {
-      "bu ay": "Bu Ay",
-      bugün: "Bugün",
-      dün: "Dün",
-      "bu hafta": "Bu Hafta",
-    };
-    const name = names[text.toLocaleLowerCase("tr-TR").trim()];
-    suggested.unshift({
-      field: range,
-      value: presetRange(
-        name,
-        range.child.props.today || new Date().toLocaleDateString("sv-SE"),
-      ),
-      label: "Tarih: " + name,
-    });
-  }
   function submit(ev) {
     ev?.preventDefault();
-    if (index >= 0 && suggested[index]) {
-      const s = suggested[index];
-      choose(s.field, s.value);
-      return;
-    }
-    const parsed = parseSearch(text, fields);
-    if (parsed.errors.length) {
-      setError(parsed.errors.join(" "));
-      return;
-    }
-    for (const { field, value } of parsed.filters) {
-      const group = parsed.filters
-        .filter((x) => x.field.key === field.key)
-        .map((x) => x.value);
-      field.change(
-        multi(field) && group.length > 1 ? [...new Set(group)] : value,
-      );
-    }
-    setQuery(parsed.query);
-    setText(parsed.query);
-    setOpened(false);
-    setError("");
-    if (onSearchSubmit && !parsed.filters.length) onSearchSubmit();
-    onFiltersApplied?.(parsed.query);
+    if (index >= 0 && suggested[index]) return choose(suggested[index]);
+    const parsed = parseSearch(text, fields, { today });
+    if (apply(parsed) && onSearchSubmit && !parsed.filters.length)
+      onSearchSubmit();
   }
   function clear() {
     reset?.();
@@ -193,36 +145,8 @@ export function SmartSearch({
     onSearchText?.("");
     setError("");
     setOpened(false);
-    input.current?.focus();
-  }
-  const show =
-    opened &&
-    fields.length > 0 &&
-    !suggestions &&
-    (editor || (text.trim().length > 0 && suggested.length > 0));
-  function applyFields() {
-    for (const f of fields) {
-      const value = draft[f.key] ?? f.value;
-      if (f.range && value.from && value.to && value.from > value.to) {
-        setError("Başlangıç tarihi bitiş tarihinden sonra olamaz.");
-        return;
-      }
-    }
-    const min = fields.find((f) => f.child.props.name === "amountMin"),
-      max = fields.find((f) => f.child.props.name === "amountMax");
-    const low = min ? (draft[min.key] ?? min.value) : "",
-      high = max ? (draft[max.key] ?? max.value) : "";
-    if (low !== "" && high !== "" && Number(low) > Number(high)) {
-      setError("Tutar aralığını kontrol edin.");
-      return;
-    }
-    fields.forEach((f) => {
-      if (f.key in draft) f.change(draft[f.key]);
-    });
-    setOpened(false);
-    setEditor(false);
-    setError("");
-    onFiltersApplied?.(query);
+    setIndex(-1);
+    input.current?.focus({ preventScroll: true });
   }
   return (
     <div className="page-search smart-search" ref={box}>
@@ -241,6 +165,7 @@ export function SmartSearch({
                 type="button"
                 className="search-token"
                 aria-label={label + " filtresini kaldır"}
+                title={label}
                 onClick={() => remove(f, v)}
               >
                 <span>{label}</span>
@@ -257,14 +182,11 @@ export function SmartSearch({
               role={fields.length ? "combobox" : undefined}
               aria-expanded={fields.length ? show : undefined}
               aria-autocomplete="list"
-              aria-controls={show ? id : undefined}
+              aria-controls={show ? id + "-list" : undefined}
               aria-activedescendant={
-                index >= 0 ? id + "-" + index : activeSuggestion
+                show && index >= 0 ? id + "-" + index : activeSuggestion
               }
-              onFocus={() => {
-                setOpened(true);
-                setEditor(false);
-              }}
+              onFocus={() => setOpened(true)}
               onChange={(e) => {
                 setText(e.target.value);
                 setOpened(true);
@@ -275,7 +197,12 @@ export function SmartSearch({
               onCompositionStart={() => setComposing(true)}
               onCompositionEnd={() => setComposing(false)}
               onKeyDown={(e) => {
-                onSearchKeyDown?.(e);
+                if (!(
+                  show &&
+                  ["ArrowDown", "ArrowUp", "Enter"].includes(e.key) &&
+                  text.includes(":")
+                ))
+                  onSearchKeyDown?.(e);
                 if (e.defaultPrevented) return;
                 if (e.key === "ArrowDown" && show) {
                   e.preventDefault();
@@ -289,7 +216,7 @@ export function SmartSearch({
                   e.preventDefault();
                   e.stopPropagation();
                   setOpened(false);
-                  setEditor(false);
+                  setIndex(-1);
                   setText(query);
                   setError("");
                 }
@@ -312,23 +239,6 @@ export function SmartSearch({
                 <X size={16} />
               </button>
             )}
-            {fields.length > 0 && (
-              <button
-                className="search-options"
-                type="button"
-                aria-label="Arama alanlarını düzenle"
-                title="Arama alanları"
-                aria-expanded={show && editor}
-                onClick={() => {
-                  setOpened(!(opened && editor));
-                  setEditor(true);
-                  setDraft({});
-                  setError("");
-                }}
-              >
-                <ChevronDown size={16} />
-              </button>
-            )}
             {!inline && !chips.length && <kbd aria-hidden="true">Ctrl K</kbd>}
           </div>
         </div>
@@ -339,131 +249,38 @@ export function SmartSearch({
           anchor={input.current}
           alignTo={box.current}
           width={Math.min(box.current?.clientWidth || 500, 760)}
-          maxPanelHeight={540}
-          title={editor ? "Arama alanları" : "Arama önerileri"}
-          autoFocus={editor}
-          mobileFit
-          className={
-            editor
-              ? "search-filter-panel smart-field-editor"
-              : "smart-suggestions"
-          }
+          maxPanelHeight={360}
+          title="Arama önerileri"
+          autoFocus={false}
+          className="smart-suggestions"
           onClose={() => {
             setOpened(false);
-            setEditor(false);
+            setIndex(-1);
           }}
         >
-          {editor ? (
-            <>
-              <div className="finance-filters shared-filters">
-                {fields.map((f) => {
-                  const value = draft[f.key] ?? f.value;
-                  return (
-                    <label key={f.key}>
-                      {f.label}
-                      {cloneElement(f.child, {
-                        ...(f.range
-                          ? value
-                          : f.check
-                            ? { checked: value }
-                            : {
-                                value: Array.isArray(value) ? value[0] : value,
-                              }),
-                        onChange: (ev) =>
-                          setDraft((d) => ({
-                            ...d,
-                            [f.key]: f.range
-                              ? ev
-                              : f.check
-                                ? ev.target.checked
-                                : ev.target.value,
-                          })),
-                      })}
-                    </label>
-                  );
-                })}
-              </div>
-              <div className="search-filter-actions">
-                <button
-                  type="button"
-                  className="secondary-button"
-                  onClick={() => {
-                    setOpened(false);
-                    setEditor(false);
-                  }}
-                >
-                  Vazgeç
-                </button>
-                <button
-                  type="button"
-                  className="secondary-button"
-                  onClick={() =>
-                    setDraft(
-                      Object.fromEntries(fields.map((f) => [f.key, f.empty])),
-                    )
-                  }
-                >
-                  Temizle
-                </button>
-                <button
-                  type="button"
-                  className="primary-button"
-                  onClick={applyFields}
-                >
-                  Uygula
-                </button>
-              </div>
-            </>
-          ) : (
-            <div id={id + "-list"} role="listbox" aria-label="Arama filtreleri">
-              {text && !text.includes(":") && (
-                <button
-                  type="button"
-                  className="search-text-option"
-                  onClick={() => submit()}
-                >
-                  Metinde “{text}” ara
-                </button>
-              )}
-              {suggested.map((s, i) => (
-                <button
-                  type="button"
-                  id={id + "-" + i}
-                  role="option"
-                  aria-selected={i === index}
-                  key={s.field.key + JSON.stringify(s.value)}
-                  onClick={() => choose(s.field, s.value)}
-                >
-                  {s.label}
-                </button>
-              ))}
-              {range && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setEditor(true);
-                    setDraft({});
-                  }}
-                >
-                  Tarih aralığı seç…
-                </button>
-              )}
+          <div id={id + "-list"} role="listbox" aria-label="Arama filtreleri">
+            {text && !text.includes(":") && (
               <button
                 type="button"
-                onClick={() => {
-                  setEditor(true);
-                  setDraft({});
-                }}
+                className="search-text-option"
+                onClick={() => submit()}
               >
-                Tüm arama alanları…
+                Metinde “{text}” ara
               </button>
-            </div>
-          )}
-          {error && (
-            <p className="cari-error" role="alert">
-              {error}
-            </p>
-          )}
+            )}
+            {suggested.map((s, i) => (
+              <button
+                type="button"
+                role="option"
+                id={id + "-" + i}
+                aria-selected={i === index}
+                key={(s.field?.key || s.text) + JSON.stringify(s.value)}
+                onClick={() => choose(s)}
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
         </FloatingPanel>
       )}
       {(error || searchFeedback) && (
@@ -471,7 +288,7 @@ export function SmartSearch({
           {error || searchFeedback}
         </p>
       )}
-      {suggestions?.({ anchor: input.current, host, filters: false })}
+      {suggestions?.({ anchor: input.current, host, filters: show })}
       <span className="sr-only" role="status" aria-live="polite">
         {resultCount === undefined ? "" : resultCount + " sonuç"}
       </span>

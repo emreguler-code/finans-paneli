@@ -20,4 +20,4 @@ export function planItems(data){
 
 export const globalEventAmount=e=>e.kind==='Virman'?e.amount_cents:e.cash_effect||(e.kind==='Açılış'?e.party_effect:['Borç','Kart harcaması','Ödeme'].includes(e.kind)?-e.amount_cents:e.amount_cents);
 
-export function sortPlanItems(items,sort){return [...items].sort((a,b)=>sort==='amount-desc'?b.amount-a.amount:sort==='date-desc'?b.date.localeCompare(a.date):a.date.localeCompare(b.date))}
+export function sortPlanItems(items,sort){return [...items].sort((a,b)=>sort.startsWith('amount-')?(sort==='amount-asc'?1:-1)*(a.amount-b.amount):sort==='date-desc'?b.date.localeCompare(a.date):a.date.localeCompare(b.date))}

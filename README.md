@@ -1,4 +1,6 @@
-# Finans Paneli 1.21.0
+# Finans Paneli 1.22.0
+
+1.22.0: ayrı filtre ve sıralama pencereleri kaldırıldı. Arama komutları ve sütun başlıklarından sıralama; ortak panel/araç hizaları. [Güncel kapsam](docs/SURUM-1.22.0.md).
 
 1.21.0: içerik genişliğine bağlı tutarlı yerleşim, yalıtılmış arama/form stilleri ve Firefox dahil otomatik geometri kabulü. [Güncel kapsam](docs/SURUM-1.21.0.md) · [1.21.0 test raporu ve ekranlar](docs/TEST-RAPORU-1.21.0.md) · [Kod kalite politikası](docs/KOD-KALITESI.md).
 
@@ -86,3 +88,4 @@ Yerel Chromium gerekiyorsa `QA_BROWSER_BIN=/usr/bin/chromium` tanımlayın. Dock
 `test:mobile`, aynı izole fixture üzerinde Chromium ve WebKit motorlarıyla mobil açık/kapalı satır, menü, filtre/takvim, tutar ve özet düzenlerini doğrular. Her iki motorun kurulması gerekir. `QA_BROWSER_ENGINES=chromium` yalnız hedefli yerel kontrol içindir; sürüm kabulünde iki motor birlikte çalışır. WebKit emülasyonu fiziksel iPhone testi değildir.
 
 1.18.0 itibarıyla GitHub bağlantısı üzerinden yayın için `release/v<sürüm>` dalına yapılan push da aynı tam kabul iş akışını çalıştırır. Dal adı package.json sürümüyle tam eşleşmelidir. Bütün kontrollerden sonra ilgili commit hedeflenerek sürüm etiketi ve iki ZIP yayımlanır; cPanel'e otomatik dağıtım yapılmaz. `npm run test:party-ui` derlenmiş arayüzü sentetik API üzerinde Chromium ve WebKit ile ayrıca kontrol eder.
+

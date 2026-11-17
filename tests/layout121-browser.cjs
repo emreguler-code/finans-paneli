@@ -75,37 +75,23 @@ module.exports = async function layoutAcceptance(p, ok, shot) {
   );
   await input.scrollIntoViewIfNeeded();
   await shot("firefox-reported-filter-layout");
-  await scope
-    .getByRole("button", { name: "Arama alanlarını düzenle", exact: true })
-    .click();
-  const panel = p.getByRole("dialog", { name: "Arama alanları", exact: true });
   ok(
-    "Advanced search fits the available viewport",
-    await panel.evaluate((e) => {
-      const r = e.getBoundingClientRect();
-      return (
-        r.width <= 761 &&
-        r.top >= 0 &&
-        r.bottom <= innerHeight + 1 &&
-        r.height <= 541
-      );
-    }),
+    "No filter form or disclosure arrow",
+    (await scope
+      .getByRole("button", { name: "Arama alanlarını düzenle", exact: true })
+      .count()) === 0 &&
+      (await p
+        .getByRole("dialog", { name: "Arama alanları", exact: true })
+        .count()) === 0,
   );
-  await panel
-    .getByRole("button", { name: "Uygula", exact: true })
-    .scrollIntoViewIfNeeded();
+  await input.fill("tutar:50..500 tarih:2026-05-01..2026-07-31 iptal:hayır");
+  await input.press("Enter");
   ok(
-    "Advanced search actions stay inside panel",
-    await panel
-      .getByRole("button", { name: "Uygula", exact: true })
-      .evaluate((e) => {
-        const p = e.closest("[data-floating-panel]").getBoundingClientRect(),
-          r = e.getBoundingClientRect();
-        return r.top >= p.top && r.bottom <= p.bottom + 1;
-      }),
+    "Numeric date and cancellation filters are search tokens",
+    (await scope.locator(".search-token").count()) === 6,
   );
-  await shot("advanced-search");
-  await p.keyboard.press("Escape");
+  await input.scrollIntoViewIfNeeded();
+  await shot("search-only-filters");
   await scope
     .getByRole("button", { name: "Aramayı temizle", exact: true })
     .click();
@@ -194,6 +180,101 @@ module.exports = async function layoutAcceptance(p, ok, shot) {
   await p
     .getByRole("button", { name: "Düzenlemeyi iptal et", exact: true })
     .click();
+  await p.setViewportSize({ width: 1440, height: 900 });
+  const head = p.locator(".ledger-view thead");
+  for (const label of [
+    "Açıklama",
+    "Etiket",
+    "İşlem",
+    "Ekleyen",
+    "Tutar",
+    "Bakiye",
+    "Tarih",
+  ]) {
+    await head
+      .getByRole("button", { name: label + " sıralaması", exact: true })
+      .click();
+    ok(
+      "Exactly one active header: " + label,
+      (await head.locator("th[aria-sort]").count()) === 1 &&
+        (await head.locator("svg").count()) === 1,
+    );
+    const before = await head
+      .locator("th[aria-sort]")
+      .getAttribute("aria-sort");
+    await head
+      .getByRole("button", { name: label + " sıralaması", exact: true })
+      .click();
+    ok(
+      "Header toggles direction: " + label,
+      (await head.locator("th[aria-sort]").getAttribute("aria-sort")) !==
+        before,
+    );
+  }
+  await head
+    .getByRole("button", { name: "Ekleyen sıralaması", exact: true })
+    .click();
+  ok(
+    "Creator sorting includes older records not yet rendered",
+    (await p
+      .locator("[data-ledger-id]")
+      .first()
+      .getAttribute("data-ledger-id")) === "2",
+  );
+  await head
+    .getByRole("button", { name: "Tutar sıralaması", exact: true })
+    .click();
+  ok(
+    "Signed amount sorting covers the full result set",
+    (await p
+      .locator("[data-ledger-id]")
+      .first()
+      .getAttribute("data-ledger-id")) === "2",
+  );
+  await p.setViewportSize({ width: 390, height: 844 });
+  await p.locator(".ledger-mobile-sort").scrollIntoViewIfNeeded();
+  await p
+    .locator(".ledger-mobile-sort")
+    .getByRole("button", { name: "Tarih sıralaması", exact: true })
+    .click();
+  ok(
+    "Mobile sorting uses the same direct column labels",
+    (await p.locator(".ledger-mobile-sort").isVisible()) &&
+      (await p.getByRole("button", { name: "Sırala", exact: true }).count()) ===
+        0,
+  );
+  await shot("column-sort-mobile");
+  await p.setViewportSize({ width: 1440, height: 900 });
+  const back = p.locator(".party-heading-row .page-back");
+  await back.click();
+  await p.locator(".party-directory").waitFor();
+  const tools = p.locator(".party-directory > .inline-list-tools");
+  ok(
+    "Directory search and CSV share one aligned row",
+    await tools.evaluate((e) => {
+      const a = e.querySelector(".smart-search-box").getBoundingClientRect(),
+        b = e.querySelector('[aria-label="CSV indir"]').getBoundingClientRect();
+      return (
+        Math.abs(a.y + a.height / 2 - b.y - b.height / 2) < 2 &&
+        b.x >= a.right &&
+        a.x > e.getBoundingClientRect().x
+      );
+    }),
+  );
+  await p
+    .getByRole("button", { name: "Net bakiye sıralaması", exact: true })
+    .click();
+  ok(
+    "Directory balance is sortable without a menu",
+    await p
+      .locator(".party-directory .party-row")
+      .first()
+      .innerText()
+      .then((t) => t.includes("Ada Tasarım")),
+  );
+  await shot("directory-toolbar");
+  await p.locator(".party-row").filter({ hasText: "Poyraz Gıda" }).click();
+  await p.locator(".persistent-composer").waitFor();
   // Effective viewport tests represent the space left by zoom. They do not pretend to set browser chrome zoom.
   for (const [width, height] of [
     [1092, 614],

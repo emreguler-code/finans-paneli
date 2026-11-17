@@ -33,3 +33,6 @@
 @import './directory-interactions.css';
 @import './composer.css';
 @import './inline-editor.css';
+
+
+@import "./sorting.css";
