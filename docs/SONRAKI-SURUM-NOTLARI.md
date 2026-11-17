@@ -607,3 +607,8 @@ Kullanıcı “githubta yayınla ve canlı hosting güncellemesini yap” diyere
 ## 17 Kasım 2026 — Geçerli yayın akışı: kodlama onayı GitHub yayınını kapsar
 
 Kullanıcı hosting bağlantısı/dağıtımı işini kapsamdan çıkardı; hosting yükleme ve canlı incelemeyi kendisi devraldı. Bundan sonra açık kodlama/uygulama onayı aynı kapsamın GitHub deposuna gönderilmesini ve yeni GitHub Release yayımlanmasını da yetkilendirir; ayrıca yayın onayı istenmez. Hostinge doğrudan yüklenmeye hazır ZIP ve SHA-256 dosyası hem depo içine hem GitHub Release varlıklarına eklenir. Önceki ayrı GitHub yayın onayı ve bu oturumdaki canlı hosting bağlantısı talebi bu son talimatla değiştirilmiştir.
+
+
+### 1.23.0 yayın tamamlandı
+
+GitHub Release ve dört varlık (tam ZIP, hosting ZIP, iki SHA-256) yayımlandı. Windows/Linux yayın koşusu 44066468482 başarılı. Repo içindeki hosting ZIP yayın varlığıyla birebir eşleşiyor. Kodlama onayıyla birlikte GitHub yayın akışı kalıcı olarak AGENTS.md'ye işlendi. Hosting bağlantısı/yükleme/inceleme yapılmadı; kullanıcı üstleniyor. Nihai rapor `TEST-RAPORU-1.23.0.md`.

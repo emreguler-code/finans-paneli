@@ -12,7 +12,7 @@
 
 ## Güncel sürüm ve kaynak durumu — 17 Kasım 2026
 
-- GitHub'da doğrulanan son yayımlanmış sürüm **1.22.0** (`v1.22.0`), veritabanı şeması **12**'dir. GitHub `main/package.json` da 1.22.0'dır.
+- GitHub'da doğrulanan son yayımlanmış sürüm **1.23.0** (`v1.23.0`), veritabanı şeması **12**'dir. GitHub `main/package.json` da 1.23.0'dır.
 - Bu belge güncel GitHub `AGENTS.md` kararlarıyla eşleştirilmiştir. Kullanıcının bağımlılık güncelleme talimatıyla yerel kaynaklar GitHub `main` commit `069a2c1` (1.22.0) ile eşleştirildi. Bağımlılık güncellemeleri bu kaynak üzerinde hazırlanır. Son kullanıcı talimatına göre kodlama onayı GitHub yayınını kapsar; hosting yükleme/inceleme kullanıcıya aittir.
 - Yeni talepler `docs/SONRAKI-SURUM-NOTLARI.md` içinde taslak olarak tutulur; bu dosyadaki geçmiş onaylar yeni talepleri kendiliğinden yetkilendirmez.
 - Aşağıdaki sürüm paragrafları karar geçmişidir. Daha yeni sürümün aynı konuda açıkça değiştirdiği kural geçerlidir; eski sürüm numaraları güncel sürüm bildirimi değildir. Kullanıcının yukarıdaki çalışma talimatı tüm yeni işler için geçerlidir.
@@ -20,7 +20,7 @@
 
 ## Ortak kurallar ve sürüm geçmişi
 
-Yayımlanmış sürüm Finans 1.22.0, şema 12’dir. Yayımlanan kapsam `docs/SURUM-1.22.0.md`, yeni taleplerin taslağı `docs/SONRAKI-SURUM-NOTLARI.md` içindedir. Bildirimler, filtreler ve tüm takvimler tıklanan alana bağlı, bulanıklık ve sayfa kayması olmadan açılır. Kayda ait eylemler ilgili kayıt kapsamında kalır. Hesap/kredi kartı yatay liste özetlerinde info/düzenle ikonları yoktur; işlevler detay ekranındadır. Kampanya puanları TL bakiyesine eklenmez; araç ödemeleri mevcut hareketlere bağlanır ve ikinci finansal işlem üretmez. Ürün dili Türkçe, tasarım dili Sade Netlik'tir.
+Yayımlanmış sürüm Finans 1.23.0, şema 12’dir. Yayımlanan kapsam `docs/SURUM-1.23.0.md`, yeni taleplerin taslağı `docs/SONRAKI-SURUM-NOTLARI.md` içindedir. Bildirimler, filtreler ve tüm takvimler tıklanan alana bağlı, bulanıklık ve sayfa kayması olmadan açılır. Kayda ait eylemler ilgili kayıt kapsamında kalır. Hesap/kredi kartı yatay liste özetlerinde info/düzenle ikonları yoktur; işlevler detay ekranındadır. Kampanya puanları TL bakiyesine eklenmez; araç ödemeleri mevcut hareketlere bağlanır ve ikinci finansal işlem üretmez. Ürün dili Türkçe, tasarım dili Sade Netlik'tir.
 Önce README.md, docs/TASARIM-ILKELERI.md ve docs/CODEX-BASLANGIC.md dosyalarını okuyun.
 
 26 Ekim 2026 için onaylı ve 1.9.0 kapsamında uygulanan tasarım kapsamı sonraki sürüm notlarında ve tasarım incelemesindedir. Takvim kuralı artık hem tek gün hem tarih aralığını kapsar: tıklanan alana bağlı açılmalı, ek blur/karartma veya sayfa kayması oluşturmamalıdır; önceki tek gün modal istisnası kaldırılmıştır. Not alma aşaması ile kodlama/yayın aşamasını karıştırmayın.
@@ -92,3 +92,6 @@ Hesap/kart carousel kaldırılmıştır; yatay liste → detay akışı kullanı
 
 
 17 Kasım 2026 son yayın akışı düzeltmesi: Kullanıcı hosting bağlantısı ve canlıya yükleme/inceleme işlerini kendisi devraldı. Önceki canlı hosting talimatı iptal edildi. Kodlama onayı aynı kapsamın GitHub yayınına da izin verir; ayrıca onay istenmez. Hostinge hazır ZIP + SHA-256 depo içinde `releases/<sürüm>/` altında ve Release varlıklarında tutulur. Bu son talimat, yukarıdaki tarihsel ayrı yayın/onay ve hosting erişimi bekleniyor ifadelerinin yerini alır.
+
+
+1.23.0 yayın sonucu: GitHub Release yayımlandı; Windows ve Linux tam kabulü başarılı (koşu 44066468482). `releases/1.23.0/` altındaki hosting ZIP + SHA-256, yayımlanan varlıkla birebir doğrulandı. Hosting bağlantısı/yükleme/inceleme kullanıcıya aittir; canlı kurulum yapılmadı.

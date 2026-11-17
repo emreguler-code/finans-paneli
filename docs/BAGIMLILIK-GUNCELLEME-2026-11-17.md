@@ -1,6 +1,6 @@
 # 17 Kasım 2026 — Bağımlılık güncellemesi
 
-Kullanıcının “güncellemelerin tamamını gerçekleştir” talimatıyla uygulandı. Taban GitHub `main` / 1.22.0, commit `069a2c1`. Önceki 1.17.0 yerel kaynakları bu tabana fast-forward ile eşleştirildi; kullanıcının çalışma kuralları ve analiz notları korundu. Değişiklikler henüz yayımlanmadı; uygulama sürüm numarası 1.22.0 olarak kalır ve yeni yayın talimatında artırılır.
+Kullanıcının “güncellemelerin tamamını gerçekleştir” talimatıyla uygulandı. Taban GitHub `main` / 1.22.0, commit `069a2c1`. Önceki 1.17.0 yerel kaynakları bu tabana fast-forward ile eşleştirildi; kullanıcının çalışma kuralları ve analiz notları korundu. Bu analiz ve ilk yerel kabul 1.22.0 tabanında hazırlandı. Sonraki kullanıcı talimatıyla değişiklikler 1.23.0 olarak yayımlandı; nihai GitHub/Windows/Linux doğrulaması `TEST-RAPORU-1.23.0.md` içindedir. Aşağıdaki yerel sonuçlar ilk uygulama aşamasının kaydıdır.
 
 | Bileşen | Önce | Sonra |
 | --- | --- | --- |
@@ -46,3 +46,7 @@ Güncellenen PHP/MariaDB sürümleri izole test ortamına aittir. Canlı hosting
 Bu bulut ortamında yeni Playwright tarayıcıları için eksik Debian kütüphaneleri `/tmp` altında açılıp yerel yükleme yollarıyla sağlandı. WebKit'in indirilen yerel başlatıcısına bu kütüphane yolu aktarıldı. Sistem ldconfig önbelleği bu geçici dizini göstermediğinden yalnız Playwright'ın host ön kontrolü atlandı; gerçek motorlar ve bütün senaryolar çalıştırıldı. Firefox için geçici XDG dizinleri ve konteynerin izin vermediği iç sandbox katmanlarını kapatan ortam değişkenleri kullanıldı. Bu ayarlar depoya/ürüne eklenmedi. Bu testler fiziksel cihaz veya Windows testi olarak değerlendirilmez.
 
 Resmi geçiş kaynakları: https://vite.dev/guide/migration · https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react · https://nodejs.org/dist/index.json · https://www.php.net/releases/ · https://github.com/rsms/inter/releases/tag/v4.1
+
+## Son yayın sonucu
+
+Kullanıcının ek talimatı ve son kapsam düzeltmesiyle 1.23.0 GitHub sürümü yayımlandı; Windows ve Linux tam kabulü başarılıdır. Hostinge hazır ZIP + SHA-256 repo içine ve Release varlıklarına eklendi, birebir eşliği doğrulandı. Önceki “GitHub/Windows çalıştırılmadı” ifadeleri ilk yerel aşamaya aittir. Hosting yükleme ve inceleme kullanıcı tarafından yürütülür; bağlantı veya canlı dağıtım yapılmadı. Ayrıntılar [nihai test raporunda](TEST-RAPORU-1.23.0.md).
