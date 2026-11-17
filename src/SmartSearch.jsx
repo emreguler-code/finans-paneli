@@ -119,7 +119,10 @@ export function SmartSearch({
       ? [...new Set([...current, s.value])]
       : [s.value];
     parsed.filters.push(...values.map((value) => ({ field: s.field, value })));
-    if (apply(parsed)) input.current?.focus({ preventScroll: true });
+    if (apply(parsed)) {
+      input.current?.focus({ preventScroll: true });
+      setOpened(false);
+    }
   }
   function remove(f, value) {
     const remaining = selectedValues(f.value).filter((v) => v !== value);
@@ -147,6 +150,7 @@ export function SmartSearch({
     setOpened(false);
     setIndex(-1);
     input.current?.focus({ preventScroll: true });
+    setOpened(false);
   }
   return (
     <div className="page-search smart-search" ref={box}>

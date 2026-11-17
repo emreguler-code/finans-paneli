@@ -133,10 +133,11 @@ export function parseSearch(
       filters,
       errors: ["Tırnak içindeki arama değerini tamamlayın."],
     };
-  const tokens = text.match(/[^\s:]+:(?:"[^"]*"|[^\s]*)|"[^"]*"|[^\s]+/g) || [];
+  const tokens =
+    text.match(/[^\s:"]+:(?:"[^"]*"|[^\s]*)|"[^"]*"|[^\s]+/g) || [];
   for (const token of tokens) {
     const split = token.indexOf(":");
-    if (split < 0) {
+    if (split < 0 || token.startsWith('"')) {
       plain.push(token.replace(/^"|"$/g, ""));
       continue;
     }
