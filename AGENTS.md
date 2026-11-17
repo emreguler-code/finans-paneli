@@ -8,11 +8,12 @@
 - Önceki sürümlere ait toplu kodlama, paketleme veya yayın onayları yalnız o sürümlerin kapsamına aittir; yeni taleplere otomatik olarak taşınmaz. Bu çalışma talimatı, aşağıdaki tarihsel onayların yeni işler için sürekli yetki olarak yorumlanmasını engeller.
 - Her yayında hostinge doğrudan yüklenmeye hazır ZIP ve SHA-256 dosyası `releases/<sürüm>/` altında depoya commit edilir ve GitHub Release varlıklarına da eklenir. Gerçek yapılandırma, şifre, veri veya yedek paketlenmez.
 - Hosting bağlantısı, canlıya yükleme ve canlı hosting incelemesi çalışma kapsamı dışındadır; bunları kullanıcı yürütür. Hosting erişimi istemeyin, bağlantı/dağıtım otomasyonu eklemeyin ve canlı kurulum başlatmayın. Veri silme veya sıfırlama yetkisi verilmiş sayılmaz.
+- Her sürümde `npm run format:check`, Prettier’ın desteklediği tüm proje kaynaklarını/belgelerini/yapılandırmalarını (PHP dahil) otomatik keşifle kontrol eder; sabit dosya listesine dönmeyin. Yeni desteklenen dosyalar otomatik kapsanır. Özel/üretilmiş dosya istisnaları `.prettierignore`, ortak kurallar `.prettierrc.json` içindedir.
 - Bu kural sonraki oturumlarda da uygulanır; kullanıcı açıkça değiştirmedikçe geçerlidir.
 
 ## Güncel sürüm ve kaynak durumu — 17 Kasım 2026
 
-- GitHub'da doğrulanan son yayımlanmış sürüm **1.23.0** (`v1.23.0`), veritabanı şeması **12**'dir. GitHub `main/package.json` da 1.23.0'dır.
+- GitHub'da doğrulanan son yayımlanmış sürüm **1.24.0** (`v1.24.0`), veritabanı şeması **12**'dir. GitHub `main/package.json` da 1.24.0'dır.
 - Bu belge güncel GitHub `AGENTS.md` kararlarıyla eşleştirilmiştir. Kullanıcının bağımlılık güncelleme talimatıyla yerel kaynaklar GitHub `main` commit `069a2c1` (1.22.0) ile eşleştirildi. Bağımlılık güncellemeleri bu kaynak üzerinde hazırlanır. Son kullanıcı talimatına göre kodlama onayı GitHub yayınını kapsar; hosting yükleme/inceleme kullanıcıya aittir.
 - Yeni talepler `docs/SONRAKI-SURUM-NOTLARI.md` içinde taslak olarak tutulur; bu dosyadaki geçmiş onaylar yeni talepleri kendiliğinden yetkilendirmez.
 - Aşağıdaki sürüm paragrafları karar geçmişidir. Daha yeni sürümün aynı konuda açıkça değiştirdiği kural geçerlidir; eski sürüm numaraları güncel sürüm bildirimi değildir. Kullanıcının yukarıdaki çalışma talimatı tüm yeni işler için geçerlidir.
@@ -20,7 +21,7 @@
 
 ## Ortak kurallar ve sürüm geçmişi
 
-Yayımlanmış sürüm Finans 1.23.0, şema 12’dir. Yayımlanan kapsam `docs/SURUM-1.23.0.md`, yeni taleplerin taslağı `docs/SONRAKI-SURUM-NOTLARI.md` içindedir. Bildirimler, filtreler ve tüm takvimler tıklanan alana bağlı, bulanıklık ve sayfa kayması olmadan açılır. Kayda ait eylemler ilgili kayıt kapsamında kalır. Hesap/kredi kartı yatay liste özetlerinde info/düzenle ikonları yoktur; işlevler detay ekranındadır. Kampanya puanları TL bakiyesine eklenmez; araç ödemeleri mevcut hareketlere bağlanır ve ikinci finansal işlem üretmez. Ürün dili Türkçe, tasarım dili Sade Netlik'tir.
+Yayımlanmış sürüm Finans 1.24.0, şema 12’dir. Yayımlanan kapsam `docs/SURUM-1.24.0.md`, yeni taleplerin taslağı `docs/SONRAKI-SURUM-NOTLARI.md` içindedir. Bildirimler, filtreler ve tüm takvimler tıklanan alana bağlı, bulanıklık ve sayfa kayması olmadan açılır. Kayda ait eylemler ilgili kayıt kapsamında kalır. Hesap/kredi kartı yatay liste özetlerinde info/düzenle ikonları yoktur; işlevler detay ekranındadır. Kampanya puanları TL bakiyesine eklenmez; araç ödemeleri mevcut hareketlere bağlanır ve ikinci finansal işlem üretmez. Ürün dili Türkçe, tasarım dili Sade Netlik'tir.
 Önce README.md, docs/TASARIM-ILKELERI.md ve docs/CODEX-BASLANGIC.md dosyalarını okuyun.
 
 26 Ekim 2026 için onaylı ve 1.9.0 kapsamında uygulanan tasarım kapsamı sonraki sürüm notlarında ve tasarım incelemesindedir. Takvim kuralı artık hem tek gün hem tarih aralığını kapsar: tıklanan alana bağlı açılmalı, ek blur/karartma veya sayfa kayması oluşturmamalıdır; önceki tek gün modal istisnası kaldırılmıştır. Not alma aşaması ile kodlama/yayın aşamasını karıştırmayın.
@@ -88,3 +89,5 @@ Hesap/kart carousel kaldırılmıştır; yatay liste → detay akışı kullanı
 1.23.0 yayın sonucu: GitHub Release yayımlandı; Windows ve Linux tam kabulü başarılı (koşu 44066468482). `releases/1.23.0/` altındaki hosting ZIP + SHA-256, yayımlanan varlıkla birebir doğrulandı. Hosting bağlantısı/yükleme/inceleme kullanıcıya aittir; canlı kurulum yapılmadı.
 
 1.24.0 Prettier kapsamı: Kullanıcı tüm projede biçim kontrolünün kalıcı olmasını istedi. `format:check` / `format` kökten otomatik keşif kullanır; sabit dosya listesi eklemeyin. JS/JSX/MJS/CJS, CSS, JSON, HTML, Markdown, YAML ve resmi eklentiyle PHP kapsanır. `.prettierrc.json` ortak kuralları, `.prettierignore` yalnız bağımlılık/çıktı/özel veri ve tarihsel kanıt istisnalarını belirler. Yeni desteklenen dosyalar otomatik kontrol edilir; Python/SQL Prettier tarafından denetlendi diye raporlanmaz. Her kaynak/belge değişikliğinden sonra `npm run format:check` çalıştırın; yayın raporu gibi sonradan yazılan belgeleri de biçimlendirin.
+
+1.24.0 yayın sonucu: Windows ve Linux tam kabulü başarılı (koşu 44070786379). Proje genelindeki 232 desteklenen dosya için biçim kontrolü ve PHP eklentisi iki platformda doğrulandı. Hostinge hazır ZIP + SHA-256 repo içinde ve GitHub Release varlıklarında; indirilen hosting ZIP repo dosyasıyla birebir eşleşti. Hosting yükleme/inceleme kullanıcıda kalır.

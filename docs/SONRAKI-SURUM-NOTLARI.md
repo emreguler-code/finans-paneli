@@ -609,3 +609,7 @@ Kullanıcı Prettier kapsamının genişletilmesini ve sonraki sürümlerde proj
 ### 1.24.0 uygulama ve yerel kabul
 
 232 desteklenen dosya otomatik keşifle denetleniyor; 14 dosyalık liste kaldırıldı. Yeni JS/PHP dosyalarıyla kapsam ve hata/düzeltme akışı doğrulandı. Genel format/derleme/birim/worker, API/migrasyon/yedekleme ve paket kurulumu başarılı; altı masaüstü/mobil piksel karşılaştırması aynı. Geçmiş test kanıtları değiştirilmedi. Hosting ZIP + SHA-256 repo için hazırlandı; GitHub tam kabul ve yayın aşamasına geçiliyor.
+
+### 1.24.0 yayın tamamlandı
+
+Windows/Linux tam kabulü ve GitHub Release yayını başarılı (44070786379). Yeni desteklenen dosyalar otomatik keşfediliyor; PHP dahil proje genelindeki biçim kontrolü artık kalıcı yayın koşulu. Hostinge hazır ZIP + SHA-256 repo içine ve Release varlıklarına eklendi, indirilip birebir eşliği doğrulandı. Hosting yükleme/inceleme kullanıcıya ait.

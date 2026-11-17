@@ -1,0 +1,71 @@
+{
+  "version": "1.24.0",
+  "commit": "b534dbddf6ef1c24c136e61a008cf1da296ec88d",
+  "status": "success",
+  "run": "https://github.com/emreguler-code/finans-paneli/actions/runs/44070786379",
+  "release": "https://github.com/emreguler-code/finans-paneli/releases/tag/v1.24.0",
+  "publishedAt": "2026-11-17T11:13:10Z",
+  "checksums": {
+    "finans-paneli-1.24.0.zip": "2813e4e284810d4a8f52abe0f6d8512eeb0e7ea88a0ebb7893365406fe445293",
+    "finans-paneli-1.24.0-hosting.zip": "ca4b78c59a578c31760424635a5fd1ee006cf3af4d2187d60629c2510d5b0321"
+  },
+  "repositoryHostingZipMatchesPublishedAsset": true,
+  "jobs": [
+    {
+      "name": "Windows Firefox and Chromium layout",
+      "conclusion": "success",
+      "steps": {
+        "Set up job": "success",
+        "Run actions/checkout@v7.0.1": "success",
+        "Run actions/setup-python@v7.1.0": "success",
+        "Run actions/setup-node@v7.1.0": "success",
+        "Run npm install --global npm@12.2.2": "success",
+        "Run npm ci": "success",
+        "Run npm test": "success",
+        "Run npx playwright install firefox chromium": "success",
+        "Run npm run test:party-ui": "success",
+        "Save Windows layout evidence": "success",
+        "Post Run actions/setup-node@v7.1.0": "success",
+        "Post Run actions/setup-python@v7.1.0": "success",
+        "Post Run actions/checkout@v7.0.1": "success",
+        "Complete job": "success"
+      }
+    },
+    {
+      "name": "package",
+      "conclusion": "success",
+      "steps": {
+        "Set up job": "success",
+        "Run actions/checkout@v7.0.1": "success",
+        "Run actions/setup-python@v7.1.0": "success",
+        "Run actions/setup-node@v7.1.0": "success",
+        "Validate release ref": "success",
+        "Use project npm version": "success",
+        "Run npm ci": "success",
+        "Run npm test": "success",
+        "Run npm audit --audit-level=moderate": "success",
+        "Check PHP syntax": "success",
+        "Test financial API and migration recovery": "success",
+        "Prepare browser for checks": "success",
+        "Prepare WebKit for mobile checks": "success",
+        "Check compact party UI against synthetic API": "success",
+        "Test desktop and mobile workflows": "success",
+        "Test mobile layouts across Chromium and WebKit": "success",
+        "Reconcile comprehensive demo and reports": "success",
+        "Package hosting files": "success",
+        "Test packaged hosting installation": "success",
+        "Verify archive": "success",
+        "Verify repository hosting package": "success",
+        "Run actions/upload-artifact@v7.0.2": "success",
+        "Add hosting archive to existing release": "skipped",
+        "Publish GitHub release": "success",
+        "Save browser evidence": "success",
+        "Record release result for Git-only clients": "success",
+        "Post Run actions/setup-node@v7.1.0": "success",
+        "Post Run actions/setup-python@v7.1.0": "success",
+        "Post Run actions/checkout@v7.0.1": "success",
+        "Complete job": "success"
+      }
+    }
+  ]
+}
