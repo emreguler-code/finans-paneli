@@ -584,6 +584,7 @@ export function FinancePages({
   ) : null;
   const table = (
     <Ledger
+      key={party ? "party-" + party.id : "global"}
       onSort={setSort}
       title={party ? "Cari hareketleri" : undefined}
       scope={listScope}
@@ -604,6 +605,7 @@ export function FinancePages({
       amount={amount}
       accountLabel={accountLabel}
       party={Boolean(party)}
+      lockedPartyId={party?.active ? party.id : undefined}
       global={!party}
     />
   );
@@ -891,7 +893,7 @@ export function FinancePages({
           <div className="party-main">{content}</div>
           <aside className="context-aside">
             {party ? (
-              <PartyContext {...{ party, data, open }} />
+              <PartyContext key={party.id} {...{ party, data, open }} />
             ) : (
               <RecentActivity
                 data={data}

@@ -1,0 +1,447 @@
+.party-context-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+  width: 100%;
+}
+.party-context-tabs {
+  display: none;
+}
+.party-context h3,
+.week-section h3,
+.context-block h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.week-section h3 svg,
+.context-block h3 svg {
+  color: var(--accent);
+}
+.week-period {
+  color: var(--muted);
+  font-size: 12px;
+  margin: 0 0 12px;
+}
+.week-calendar {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 5px;
+}
+.week-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 0;
+  min-height: 86px;
+  padding: 8px 0;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: var(--surface-page);
+  color: var(--muted);
+}
+.week-day > span {
+  font-size: 12px;
+}
+.week-day strong {
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.week-day small {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 10px;
+  font-size: 9px;
+}
+.week-day .day-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: transparent;
+}
+.week-day.visit {
+  background: var(--surface-hover);
+  color: var(--accent);
+}
+.week-day.visit .day-dot,
+.week-day.past-visit .day-dot {
+  background: currentcolor;
+}
+.week-day.past-visit {
+  background: var(--palette-e6ebee);
+}
+.week-day.morning,
+.week-legend i.morning {
+  background: linear-gradient(
+    to bottom,
+    var(--palette-cae4e7) 50%,
+    var(--surface-page) 50%
+  );
+}
+.week-day.evening,
+.week-legend i.evening {
+  background: linear-gradient(
+    to bottom,
+    var(--surface-page) 50%,
+    var(--palette-cae4e7) 50%
+  );
+}
+.week-day.weekly_leave,
+.week-legend i.weekly_leave {
+  background: var(--palette-fff1da);
+  color: var(--status-warning);
+}
+.week-day.annual_leave,
+.week-day.sick_leave,
+.week-legend i.annual_leave {
+  background: var(--palette-fbecec);
+  color: var(--red);
+}
+.week-day.is-today,
+.week-legend i.is-today {
+  border: 1px solid var(--accent);
+}
+.week-legend {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  overflow-x: auto;
+  white-space: nowrap;
+  margin-top: 12px;
+  font-size: 10px;
+  color: var(--muted);
+  padding-bottom: 4px;
+}
+.week-legend > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.week-legend i {
+  display: inline-block;
+  width: 10px;
+  height: 12px;
+  border-radius: 3px;
+  background: var(--surface-page);
+  flex-shrink: 0;
+}
+.calendar-hint {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 12px 0 0;
+}
+.context-block,
+.customer-history {
+  border-top: 1px solid var(--line);
+  padding-top: 20px;
+  margin-top: 20px;
+}
+.party-compact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+}
+.party-compact-info > div {
+  padding: 0;
+  border: 0;
+  display: grid;
+  grid-template-columns: 80px minmax(0, 1fr);
+  gap: 8px;
+  font-size: 12px;
+}
+.party-compact-info dt {
+  width: auto;
+  min-width: 0;
+  color: var(--muted);
+}
+.party-compact-info dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.supplier-pos {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  align-items: center;
+}
+.supplier-pos-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 44px;
+  width: 80%;
+}
+.supplier-pos-logo > svg {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+.supplier-pos-logo .program-mark {
+  font-size: 14px;
+}
+.supplier-pos-logo .program-mark svg {
+  width: 17px;
+  height: 17px;
+}
+.supplier-pos-logo.garanti {
+  color: var(--status-positive);
+}
+.compact-campaigns > button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 40px;
+  padding: 4px 0;
+  font-size: 12px;
+  color: var(--ink);
+  text-align: left;
+}
+.compact-campaigns > button span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.compact-campaigns > button svg {
+  flex-shrink: 0;
+}
+.party-monthly {
+  padding: 24px;
+}
+.party-monthly > header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+.party-monthly h2 {
+  font-size: 16px;
+  margin: 0;
+}
+.party-monthly h3 {
+  font-size: 14px;
+  margin: 20px 0 16px;
+  font-weight: 500;
+}
+.month-navigation {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.month-navigation input {
+  border: 0;
+  padding: 4px;
+  min-width: 0;
+  color: var(--muted);
+  font: inherit;
+  font-size: 12px;
+  background: transparent;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+.month-navigation .icon-button {
+  min-width: 28px;
+  width: 28px;
+  min-height: 32px;
+  padding: 4px;
+}
+.monthly-totals {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.monthly-totals span {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.monthly-totals b {
+  color: var(--ink);
+  font-weight: 500;
+  font-size: 15px;
+  white-space: nowrap;
+}
+.party-donut {
+  position: relative;
+  width: 244px;
+  height: 244px;
+  margin: 12px auto;
+}
+.donut-center {
+  position: absolute;
+  inset: 76px 42px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  pointer-events: none;
+}
+.donut-center small {
+  color: var(--muted);
+  font-size: 12px;
+}
+.donut-center strong {
+  font-size: 20px;
+  font-weight: 600;
+}
+.donut-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.donut-legend h4 {
+  margin: 10px 0 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+}
+.donut-legend > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto 40px;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+.donut-legend > div > span {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.donut-legend i {
+  width: 7px;
+  height: 7px;
+  flex-shrink: 0;
+  border-radius: 50%;
+}
+.donut-legend b {
+  white-space: nowrap;
+  font-weight: 500;
+}
+.donut-legend small {
+  text-align: right;
+  color: var(--muted);
+}
+.monthly-foot {
+  border-top: 1px solid var(--line);
+  margin-top: 20px;
+  padding-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 12px;
+}
+.monthly-foot span {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--muted);
+}
+.monthly-foot b {
+  font-weight: 500;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.monthly-empty {
+  padding: 24px 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+.customer-history summary {
+  font-size: 12px;
+  color: var(--accent);
+  cursor: pointer;
+}
+.work-plan-days {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+@media (max-width: 760px) {
+  .party-context-stack {
+    gap: 12px;
+  }
+  .party-context-tabs {
+    display: flex;
+    gap: 8px;
+    border-bottom: 1px solid var(--line);
+  }
+  .party-context-tabs button {
+    flex: 1;
+    padding: 12px 6px;
+    min-height: 44px;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    color: var(--muted);
+    font-size: 14px;
+    background: transparent;
+  }
+  .party-context-tabs button[aria-selected="true"] {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+  .party-context-stack[data-tab="info"] .party-month-view,
+  .party-context-stack[data-tab="month"] .party-info-view {
+    display: none;
+  }
+  .party-monthly {
+    padding: 16px;
+  }
+  .work-plan-days {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.context-aside:has(.party-context-stack) {
+  display: flex;
+  flex-direction: column;
+}
+
+.supplier-pos-logo img {
+  display: block;
+  width: 100%;
+  height: 40px;
+  object-fit: contain;
+}
+
+.month-navigation label {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 112px;
+  min-height: 36px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.month-navigation label:focus-within {
+  outline: 2px solid var(--accent);
+  border-radius: 6px;
+}
+@media (max-width: 760px) {
+  .month-navigation .icon-button {
+    width: 44px;
+    min-width: 44px;
+    min-height: 44px;
+  }
+}

@@ -61,9 +61,11 @@ export function EntryForm({ onSubmit, children, className = "", id }) {
             ? `${name} için geçerli bir değer girin.`
             : `${name} değerini kontrol edin.`;
         const key = issueId + "-" + i,
-          control = node.classList.contains("date-validation")
-            ? node.previousElementSibling
-            : node,
+          control =
+            node.classList.contains("date-validation") ||
+            node.classList.contains("choice-validation")
+              ? node.previousElementSibling
+              : node,
           previous = control.getAttribute("aria-describedby");
         control.setAttribute("aria-invalid", "true");
         control.setAttribute(
@@ -84,9 +86,11 @@ export function EntryForm({ onSubmit, children, className = "", id }) {
       if (parent.tagName === "DETAILS") parent.open = true;
       parent = parent.parentElement;
     }
-    const target = node.classList.contains("date-validation")
-      ? node.previousElementSibling
-      : node;
+    const target =
+      node.classList.contains("date-validation") ||
+      node.classList.contains("choice-validation")
+        ? node.previousElementSibling
+        : node;
     requestAnimationFrame(() => {
       target?.scrollIntoView({ block: "nearest" });
       target?.focus({ preventScroll: true });

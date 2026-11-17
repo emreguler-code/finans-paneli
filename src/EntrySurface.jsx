@@ -383,9 +383,10 @@ export function EntrySurface({
         className="surface-body"
         onClickCapture={(e) => {
           if (
-            !inline &&
-            e.target.closest('.sheet-footer button[type="button"]')
-              ?.textContent === "Vazgeç"
+            e.target.closest("[data-entry-cancel]") ||
+            (!inline &&
+              e.target.closest('.sheet-footer button[type="button"]')
+                ?.textContent === "Vazgeç")
           ) {
             e.preventDefault();
             e.stopPropagation();

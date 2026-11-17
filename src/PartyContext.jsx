@@ -1,14 +1,16 @@
+import { useState, useId } from "react";
+import { MonitorCheck, ChevronRight } from "lucide-react";
+import { WeekCalendar } from "./WeekCalendar";
+import { PartyMonthlySummary } from "./PartyMonthlySummary";
 import { CheckCircle2, Clock, Info, AlertCircle } from "lucide-react";
 import { fmt, can } from "./ui";
 import { dateLabel } from "./DatePicker";
 import { POS_PROGRAMS } from "./BankCards";
-import { campaignProgress } from "./tracking-utils.mjs";
-import {
-  nextVisit,
-  weekdays,
-  staffStatus,
-  customerStats,
-} from "./profile-utils.mjs";
+import bonusLogo from "./assets/pos/bonus.png";
+import worldLogo from "./assets/pos/world.webp";
+import axessLogo from "./assets/pos/axess.png";
+const posLogos = { bonus: bonusLogo, world: worldLogo, axess: axessLogo };
+import { customerStats } from "./profile-utils.mjs";
 function Line({ label, children, help, level = "" }) {
   const Icon =
     level === "success"
@@ -30,177 +32,185 @@ function Line({ label, children, help, level = "" }) {
   );
 }
 export function PartyContext({ party, data, open }) {
-  const profile = party.profile || {},
-    edit = () => open({ entity: "party", item: party });
-  const period = new Date(data.today + "T12:00:00Z").toLocaleDateString(
-    "tr-TR",
-    { month: "long", year: "numeric", timeZone: "UTC" },
-  );
+  const [tab, setTab] = useState("info");
+  const tabId = useId();
+  const edit = () => open({ entity: "party", item: party });
   let content;
   if (party.type === "Personel") {
-    const s = staffStatus(party, data),
-      status = (due, paid) => (!due ? "" : paid >= due ? "success" : "warning");
     content = (
       <>
-        <p className="context-period">{period}</p>
-        <Line
-          label="Maaş"
-          level={status(s.salary, s.paid)}
-          help={
-            s.salary
-              ? `Ödenen ${fmt(s.paid)} TL · Kalan ${fmt(Math.max(0, s.salary - s.paid))} TL`
-              : "Bu ay maaş hak edişi girilmedi."
-          }
-        >
-          {s.salary ? fmt(s.salary) + " TL" : "Tanımlanmadı"}
-        </Line>
-        <Line
-          label="Yemek ücreti"
-          level={status(s.meal, s.mealPaid)}
-          help={
-            s.meal
-              ? `Ödenen ${fmt(s.mealPaid)} TL · Kalan ${fmt(Math.max(0, s.meal - s.mealPaid))} TL`
-              : "Dönem tutarı ve ilgili ödemeler ayrıca seçilir."
-          }
-        >
-          {s.meal ? fmt(s.meal) + " TL" : "Tanımlanmadı"}
-        </Line>
-        <Line
-          label="Haftalık izin"
-          help="Kullanılan / haftalık hak · yıllık izin dahil değildir."
-        >
-          {s.leave ? `${s.leave.used} / ${s.leave.total} gün` : "Tanımlanmadı"}
-        </Line>
+        <WeekCalendar party={party} data={data} />
+        <CompactInfo party={party} staff />
       </>
     );
   } else if (party.type === "Tedarikçi") {
-    const days = profile.visit_days || [],
-      next = nextVisit(days, data.today);
     const campaigns = (data.campaigns || []).filter(
       (c) =>
         c.active &&
         c.start_date <= data.today &&
         c.end_date >= data.today &&
-        (!c.party_ids.length || c.party_ids.includes(party.id)) &&
-        (!c.pos_programs.length ||
+        (!c.party_ids?.length || c.party_ids.includes(party.id)) &&
+        (!c.pos_programs?.length ||
           c.pos_programs.some((p) => (party.pos_programs || []).includes(p))),
     );
     content = (
       <>
-        <Line
-          label="Ziyaret günleri"
-          help={
-            next
-              ? "Sonraki planlı ziyaret: " +
-                (next === data.today ? "Bugün" : dateLabel(next))
-              : ""
-          }
-        >
-          {days.length
-            ? days.map((d) => weekdays[d - 1]).join(" · ")
-            : "Ziyaret günü tanımlanmadı"}
-        </Line>
-        <Line label="POS programları">
-          {(party.pos_programs || [])
-            .map((p) => POS_PROGRAMS.find((v) => v.code === p)?.label || p)
-            .join(" · ") || "Tanımlanmadı"}
-        </Line>
-        <h3 className="context-subtitle">İlişkili aktif kampanyalar</h3>
-        {campaigns.length ? (
-          campaigns.map((c) => {
-            const entries = (data.campaign_entries || []).filter((entry) =>
-              data.events.some(
-                (e) => e.id === entry.event_id && e.party_id === party.id,
-              ),
-            );
-            const progress = campaignProgress(c, data);
-            const ownReceived = entries
-              .filter((e) => e.active && e.confirmed)
-              .reduce((sum, e) => sum + e.received, 0);
-            return (
-              <Line
+        <WeekCalendar party={party} data={data} />
+        <section className="context-block">
+          <h3>
+            <MonitorCheck size={17} />
+            POS Cihazları
+          </h3>
+          <div className="supplier-pos">
+            {(party.pos_programs || []).map((code) => {
+              const [bank, program] = code.split(":");
+              return (
+                <span
+                  className={"supplier-pos-logo " + bank}
+                  key={code}
+                  role="img"
+                  aria-label={
+                    POS_PROGRAMS.find((p) => p.code === code)?.label || code
+                  }
+                  title={
+                    POS_PROGRAMS.find((p) => p.code === code)?.label || code
+                  }
+                >
+                  <img src={posLogos[program]} alt="" />
+                </span>
+              );
+            })}
+          </div>
+          {!party.pos_programs?.length && <p className="muted">Tanımlanmadı</p>}
+        </section>
+        <section className="context-block compact-campaigns">
+          <h3>Kampanyalar</h3>
+          {campaigns.length ? (
+            campaigns.map((c) => (
+              <button
                 key={c.id}
-                label={c.name}
-                help={data.cards
-                  .filter((card) => c.card_ids.includes(card.id))
-                  .map((card) => card.name)
-                  .join(" · ")}
+                className="text-button"
+                title={c.name}
+                onClick={() =>
+                  open({ entity: "campaign", item: c, mode: "view" })
+                }
               >
-                {c.participation === "joined"
-                  ? "Katılım yapıldı"
-                  : c.participation === "required"
-                    ? "Katılım bekliyor"
-                    : "Katılım gerekmiyor"}
-                <small>
-                  Bu tedarikçi: {entries.filter((e) => e.active).length} bağlı
-                  kayıt
-                  {["points", "cashback"].includes(c.reward_type)
-                    ? ` · Alınan ${ownReceived} ${c.reward_type === "points" ? "puan" : "TL"}`
-                    : ""}
-                </small>
-                {["points", "cashback"].includes(c.reward_type) && (
-                  <small>
-                    Kampanya geneli beklenen: {progress.expected}{" "}
-                    {c.reward_type === "points" ? "puan" : "TL"}
-                  </small>
-                )}
-              </Line>
-            );
-          })
-        ) : (
-          <p className="muted">Bu tedarikçiyle eşleşen aktif kampanya yok.</p>
-        )}
+                <span>– {c.name}</span>
+                <ChevronRight size={14} />
+              </button>
+            ))
+          ) : (
+            <p className="muted">İlişkili aktif kampanya yok.</p>
+          )}
+        </section>
       </>
     );
   } else {
     const s = customerStats(party, data);
     content = (
       <>
-        <Line
-          label="Aylık brüt satış ortalaması"
-          help={`${dateLabel(s.from)} – ${dateLabel(s.to)} öncesi · son 6 tamamlanmış ay; iadeler dahil değil.`}
-        >
-          {s.avg === null ? "Yeterli veri yok" : fmt(s.avg) + " TL"}
-        </Line>
-        <Line
-          label="Zamanında tahsil edilen tutar"
-          help="Vadesi gelen satışlarda, vadeye kadar kapatılan tutarın oranı. Vadesiz satışlar dahil değil."
-        >
-          {s.performance === null ? "Yeterli veri yok" : `%${s.performance}`}
-        </Line>
-        <h3 className="context-subtitle">Tahsilat durumu</h3>
-        {s.claims
-          .filter((c) => c.due)
-          .slice(0, 5)
-          .map((c) => (
-            <Line
-              key={c.id}
-              label={
-                c.due < data.today ? "Geciken tahsilat" : "Yaklaşan tahsilat"
-              }
-              level={c.due < data.today ? "danger" : "warning"}
-              help={dateLabel(c.due)}
-            >
-              {fmt(c.amount_cents)} TL
-            </Line>
-          ))}
-        {!s.claims.some((c) => c.due) && (
-          <p className="muted">Vadeli açık tahsilat bulunmuyor.</p>
-        )}
+        <WeekCalendar party={party} data={data} />
+        <CompactInfo party={party} />
+        <details className="customer-history">
+          <summary>Geçmiş dönem ve vadeli tahsilatlar</summary>
+          <Line
+            label="Aylık brüt satış ortalaması"
+            help={`${dateLabel(s.from)} – ${dateLabel(s.to)} öncesi · son 6 tamamlanmış ay; iadeler dahil değil.`}
+          >
+            {s.avg === null ? "Yeterli veri yok" : fmt(s.avg) + " TL"}
+          </Line>
+          <Line
+            label="Zamanında tahsil edilen tutar"
+            help="Vadesi gelen satışlarda, vadeye kadar kapatılan tutarın oranı. Vadesiz satışlar dahil değil."
+          >
+            {s.performance === null ? "Yeterli veri yok" : `%${s.performance}`}
+          </Line>
+          <h3 className="context-subtitle">Tahsilat durumu</h3>
+          {s.claims
+            .filter((c) => c.due)
+            .slice(0, 5)
+            .map((c) => (
+              <Line
+                key={c.id}
+                label={
+                  c.due < data.today ? "Geciken tahsilat" : "Yaklaşan tahsilat"
+                }
+                level={c.due < data.today ? "danger" : "warning"}
+                help={dateLabel(c.due)}
+              >
+                {fmt(c.amount_cents)} TL
+              </Line>
+            ))}
+          {!s.claims.some((c) => c.due) && (
+            <p className="muted">Vadeli açık tahsilat bulunmuyor.</p>
+          )}
+        </details>
       </>
     );
   }
   return (
-    <section className="panel party-context">
-      <header>
-        <h2>Durum ve bilgiler</h2>
-        {can(data.user, "edit") && (
-          <button className="text-button" onClick={edit}>
-            Düzenle
-          </button>
-        )}
-      </header>
-      {content}
+    <div className="party-context-stack" data-tab={tab}>
+      <div
+        className="party-context-tabs"
+        role="tablist"
+        aria-label="Cari özeti"
+      >
+        <button
+          id={tabId + "-info-tab"}
+          role="tab"
+          aria-selected={tab === "info"}
+          aria-controls={tabId + "-info"}
+          onClick={() => setTab("info")}
+        >
+          Durum ve bilgiler
+        </button>
+        <button
+          id={tabId + "-month-tab"}
+          role="tab"
+          aria-selected={tab === "month"}
+          aria-controls={tabId + "-month"}
+          onClick={() => setTab("month")}
+        >
+          Aylık Özet
+        </button>
+      </div>
+      <div id={tabId + "-info"} className="party-info-view">
+        <section className="panel party-context">
+          <header>
+            <h2>Durum ve bilgiler</h2>
+            {can(data.user, "edit") && (
+              <button className="text-button" onClick={edit}>
+                Düzenle
+              </button>
+            )}
+          </header>
+          {content}
+        </section>
+      </div>
+      <div id={tabId + "-month"} className="party-month-view">
+        <PartyMonthlySummary key={party.id} party={party} data={data} />
+      </div>
+    </div>
+  );
+}
+function CompactInfo({ party, staff = false }) {
+  const fields = [
+    [staff ? "Ad soyad" : "Ünvan", party.title || party.name],
+    [staff ? "TCKN" : "TCKN/VKN", party.tax_no],
+    ["Adres", party.address],
+    ["Telefon", party.phone],
+  ];
+  return (
+    <section className="context-block">
+      <h3>{staff ? "Personel bilgileri" : "Müşteri bilgileri"}</h3>
+      <dl className="party-compact-info">
+        {fields.map(([name, value]) => (
+          <div key={name}>
+            <dt>{name}</dt>
+            <dd>{value || "Tanımlanmadı"}</dd>
+          </div>
+        ))}
+      </dl>
     </section>
   );
 }

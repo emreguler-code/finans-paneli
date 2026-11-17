@@ -1,4 +1,6 @@
-# Finans Paneli 1.24.0
+# Finans Paneli 1.25.0
+
+1.25.0: Cari işlemler liste sonunda modern satır içi eklenir ve düzenlenir; ek bilgiler kapalı başlar. Tedarikçi/müşteri/personel takvimleri, kompakt bilgiler ve aylık çalışma grafikleri eklendi. Arama ve takvim kapanışları düzeltildi. Şema 12. [Sürüm kapsamı](docs/SURUM-1.25.0.md).
 
 1.24.0: Prettier biçim kontrolü proje geneline genişletildi. Desteklenen kaynaklar, belgeler ve yapılandırmalar otomatik keşfedilir; PHP resmi eklentiyle kapsanır. Şema 12. [Sürüm kapsamı](docs/SURUM-1.24.0.md) · [Kod kalite politikası](docs/KOD-KALITESI.md).
 

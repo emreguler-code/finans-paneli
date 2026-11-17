@@ -95,49 +95,43 @@ module.exports = async function layoutAcceptance(p, ok, shot) {
   await scope
     .getByRole("button", { name: "Aramayı temizle", exact: true })
     .click();
-  const composer = p.locator(".persistent-composer");
-  ok(
-    "Closed form actions align with amount input",
-    await composer.evaluate((e) => {
-      const a = e.querySelector("input[name=amount]").getBoundingClientRect(),
-        b = e
-          .querySelector(".sheet-footer .primary-button")
-          .getBoundingClientRect();
-      return Math.abs(a.bottom - b.bottom) < 2;
+  await p.getByRole("button", { name: "Yeni işlem ekle", exact: true }).click();
+  const rowDraft = p.locator(".ledger-new-row");
+  const beforeCells = await rowDraft.locator("td").evaluateAll((es) =>
+    es.map((e) => {
+      const r = e.getBoundingClientRect();
+      return { x: r.x, width: r.width };
     }),
   );
-  await composer
-    .getByRole("button", { name: "Diğer seçenekler", exact: true })
-    .click();
-  ok(
-    "Additional form fields use the full dock width",
-    await composer
-      .locator(".dock-options")
-      .evaluate(
-        (e) =>
-          e.getBoundingClientRect().width >=
-          e.closest("form").getBoundingClientRect().width - 2,
-      ),
+  await p.locator(".inline-extra > summary").click();
+  const afterCells = await rowDraft.locator("td").evaluateAll((es) =>
+    es.map((e) => {
+      const r = e.getBoundingClientRect();
+      return { x: r.x, width: r.width };
+    }),
   );
   ok(
-    "Open composer leaves room for the ledger",
-    (await composer.evaluate(
-      (e) => e.getBoundingClientRect().height < innerHeight * 0.5,
-    )) &&
-      (await p.locator(".main-content").evaluate((e) => e.clientHeight > 200)),
+    "Optional information preserves primary column positions and widths",
+    beforeCells.every(
+      (r, i) =>
+        Math.abs(r.x - afterCells[i].x) < 1 &&
+        Math.abs(r.width - afterCells[i].width) < 1,
+    ),
   );
-  await composer
-    .getByRole("button", { name: "İşlemi kaydet", exact: true })
-    .scrollIntoViewIfNeeded();
   ok(
-    "Save remains reachable in expanded composer",
-    await composer
-      .getByRole("button", { name: "İşlemi kaydet", exact: true })
-      .isVisible(),
+    "Optional fields stop before balance/action rail",
+    await p.locator(".inline-extra").evaluate((e) => {
+      const a = e.getBoundingClientRect();
+      const b = e
+        .closest("tbody")
+        .querySelector('.ledger-new-row [data-label="Bakiye"]')
+        .getBoundingClientRect();
+      return a.right <= b.left + 1;
+    }),
   );
-  await shot("expanded-composer");
-  await composer
-    .getByRole("button", { name: "Diğer seçenekler", exact: true })
+  await shot("expanded-inline-draft");
+  await p
+    .getByRole("button", { name: "Yeni işlemi iptal et", exact: true })
     .click();
   await p
     .locator(".main-content")
@@ -274,7 +268,9 @@ module.exports = async function layoutAcceptance(p, ok, shot) {
   );
   await shot("directory-toolbar");
   await p.locator(".party-row").filter({ hasText: "Poyraz Gıda" }).click();
-  await p.locator(".persistent-composer").waitFor();
+  await p
+    .getByRole("button", { name: "Yeni işlem ekle", exact: true })
+    .waitFor();
   // Effective viewport tests represent the space left by zoom. They do not pretend to set browser chrome zoom.
   for (const [width, height] of [
     [1092, 614],
@@ -289,18 +285,24 @@ module.exports = async function layoutAcceptance(p, ok, shot) {
         () => document.documentElement.scrollWidth <= innerWidth,
       ),
     );
-    const toggle = p.locator(".party-compose-toggle");
-    await toggle.click();
-    await p.locator(".composer-folded").waitFor({ state: "attached" });
+    await p
+      .getByRole("button", { name: "Yeni işlem ekle", exact: true })
+      .click();
+    const save = p.getByRole("button", { name: "İşlemi kaydet", exact: true });
+    await save.scrollIntoViewIfNeeded();
     ok(
-      "Collapsed dock releases space " + width,
-      await p
-        .locator("#entry-dock-root")
-        .evaluate((e) => e.getBoundingClientRect().height === 0),
+      "Inline action remains compact and reachable " + width,
+      await save.evaluate((e) => e.getBoundingClientRect().width <= 45),
     );
-    await toggle.click();
+    await p
+      .getByRole("button", { name: "Yeni işlemi iptal et", exact: true })
+      .click();
   }
   await p.setViewportSize({ width: 1440, height: 1000 });
-  assert.ok(await p.locator(".persistent-composer").count());
+  assert.ok(
+    await p
+      .getByRole("button", { name: "Yeni işlem ekle", exact: true })
+      .count(),
+  );
 };
 if (require.main === module) require("./party120-browser.cjs");

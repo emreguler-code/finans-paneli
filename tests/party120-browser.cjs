@@ -193,7 +193,10 @@ const server = http.createServer((req, res) => {
       });
     });
     p.setDefaultTimeout(12000);
-    p.on("pageerror", (e) => errors.push(e.message));
+    p.on("pageerror", (e) => {
+      errors.push(e.message);
+      console.error("Runtime", engine, e.stack);
+    });
     const ok = (name, value) => {
       assert.ok(value, name);
       checks.push(name);
@@ -206,7 +209,9 @@ const server = http.createServer((req, res) => {
       });
     try {
       await p.goto(base + "/#/cariler/1");
-      await p.locator(".persistent-composer").waitFor();
+      await p
+        .getByRole("button", { name: "Yeni işlem ekle", exact: true })
+        .waitFor();
       await p.waitForTimeout(300);
       const ids = () =>
         p
@@ -234,26 +239,33 @@ const server = http.createServer((req, res) => {
         (await p.locator("[data-ledger-id]").count()) === 60 &&
           Math.abs(prior.y - after.y) < 3,
       );
-      const main = p.locator(".main-content"),
-        toggle = p.locator(".party-compose-toggle");
-      const before = await main.boundingBox(),
-        a = await toggle.boundingBox();
-      await toggle.click();
-      await p.locator(".composer-folded").waitFor({ state: "attached" });
-      const b = await toggle.boundingBox(),
-        grown = await main.boundingBox();
+      await p
+        .getByRole("button", { name: "Yeni işlem ekle", exact: true })
+        .click();
       ok(
-        "Hidden composer consumes no layout height",
-        (await p
-          .locator("#entry-dock-root")
-          .evaluate((e) => e.getBoundingClientRect().height === 0)) &&
-          grown.height > before.height + 50,
+        "New draft is appended after persisted rows",
+        await p
+          .locator(".ledger-new-row")
+          .evaluate(
+            (e) =>
+              !e.parentElement.querySelector(
+                "[data-ledger-id] ~ .ledger-new-row ~ [data-ledger-id]",
+              ),
+          ),
       );
       ok(
-        "Floating plus keeps the close-button coordinate",
-        Math.abs(a.x - b.x) < 2 && Math.abs(a.y - b.y) < 2,
+        "New optional details are initially closed",
+        !(await p.locator(".inline-extra").getAttribute("open")),
       );
-      await toggle.click();
+      ok(
+        "Save is disabled until operation and positive amount are entered",
+        await p
+          .getByRole("button", { name: "İşlemi kaydet", exact: true })
+          .isDisabled(),
+      );
+      await p
+        .getByRole("button", { name: "Yeni işlemi iptal et", exact: true })
+        .click();
       const row = p.locator('[data-ledger-id="75"]');
       await row.click();
       ok(
@@ -278,14 +290,14 @@ const server = http.createServer((req, res) => {
         (await row.locator('td[data-label="Tutar"] input').inputValue()) ===
           "12.345" && (await p.locator(".entry-dock").count()) === 0,
       );
-      await row
-        .getByRole("combobox", { name: "İşlem", exact: true })
-        .selectOption("purchase_no_invoice");
+      await row.getByRole("combobox", { name: "İşlem", exact: true }).click();
+      await p
+        .getByRole("option", { name: "Faturasız Alış", exact: true })
+        .click();
       ok(
         "Operation is editable within the same row",
-        (await row
-          .getByRole("combobox", { name: "İşlem", exact: true })
-          .inputValue()) === "purchase_no_invoice",
+        (await row.locator('select[aria-label="İşlem"]').inputValue()) ===
+          "purchase_no_invoice",
       );
       ok(
         "Reason required and native form owns portaled fields",
@@ -301,6 +313,11 @@ const server = http.createServer((req, res) => {
       await p
         .getByRole("button", { name: "Düzenlemeyi iptal et", exact: true })
         .click();
+      const discard = p.getByRole("button", {
+        name: "Değişikliklerden vazgeç",
+        exact: true,
+      });
+      if (await discard.count()) await discard.click();
       await p.locator(".entry-inline").waitFor({ state: "hidden" });
       ok(
         "Cancel preserves the existing amount",
@@ -315,12 +332,16 @@ const server = http.createServer((req, res) => {
         .getByRole("button", { name: "İşlemi düzenle", exact: true })
         .click();
       await p.locator(".entry-inline").waitFor();
+      await p.locator(".inline-extra > summary").click();
       const paidBefore = await p
         .locator(".entry-inline input[name=settled]")
         .inputValue();
       await partialRow
         .getByRole("combobox", { name: "İşlem", exact: true })
-        .selectOption("purchase_no_invoice");
+        .click();
+      await p
+        .getByRole("option", { name: "Faturasız Alış", exact: true })
+        .click();
       ok(
         "Invoice classification preserves existing partial payment",
         (await p.locator(".entry-inline input[name=settled]").inputValue()) ===
@@ -329,6 +350,11 @@ const server = http.createServer((req, res) => {
       await p
         .getByRole("button", { name: "Düzenlemeyi iptal et", exact: true })
         .click();
+      const discard2 = p.getByRole("button", {
+        name: "Değişikliklerden vazgeç",
+        exact: true,
+      });
+      if (await discard2.count()) await discard2.click();
       const local = p.locator(".inline-list-tools"),
         input = local.locator("input");
       await input.fill("fatura");
@@ -467,7 +493,9 @@ const server = http.createServer((req, res) => {
       });
       const sp = await scaled.newPage();
       await sp.goto(base + "/#/cariler/1");
-      await sp.locator(".persistent-composer").waitFor();
+      await sp
+        .getByRole("button", { name: "Yeni işlem ekle", exact: true })
+        .waitFor();
       await sp.locator(".inline-list-tools input").fill("ekleyen:Test");
       await sp.locator(".inline-list-tools input").press("Enter");
       await sp.screenshot({
@@ -481,6 +509,7 @@ const server = http.createServer((req, res) => {
           .evaluate((e) => e.getBoundingClientRect().height < 24),
       );
       await scaled.close();
+      await require("./party125-browser.cjs")(p, ok, shot, base, data);
       await p.goto(base + "/?viewer=1#/cariler/1");
       await p.locator(".party-heading-name").waitFor();
       ok(

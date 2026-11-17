@@ -40,6 +40,7 @@ export function SmartSearch({
     [composing, setComposing] = useState(false);
   const input = useRef(null),
     box = useRef(null),
+    dismissed = useRef(false),
     id = useId(),
     setter = useRef(setQuery);
   setter.current = setQuery;
@@ -91,6 +92,7 @@ export function SmartSearch({
     setQuery(parsed.query);
     setText(parsed.query);
     onSearchText?.(parsed.query);
+    dismissed.current = true;
     setOpened(false);
     setIndex(-1);
     setError("");
@@ -190,8 +192,15 @@ export function SmartSearch({
               aria-activedescendant={
                 show && index >= 0 ? id + "-" + index : activeSuggestion
               }
-              onFocus={() => setOpened(true)}
+              onFocus={() => {
+                if (!dismissed.current) setOpened(true);
+              }}
+              onClick={() => {
+                dismissed.current = false;
+                setOpened(true);
+              }}
               onChange={(e) => {
+                dismissed.current = false;
                 setText(e.target.value);
                 setOpened(true);
                 setIndex(-1);
@@ -208,7 +217,9 @@ export function SmartSearch({
                 ))
                   onSearchKeyDown?.(e);
                 if (e.defaultPrevented) return;
-                if (e.key === "ArrowDown" && show) {
+                if (e.key === "ArrowDown") {
+                  dismissed.current = false;
+                  setOpened(true);
                   e.preventDefault();
                   setIndex((i) => Math.min(suggested.length - 1, i + 1));
                 }
@@ -221,7 +232,7 @@ export function SmartSearch({
                   e.stopPropagation();
                   setOpened(false);
                   setIndex(-1);
-                  setText(query);
+                  dismissed.current = true;
                   setError("");
                 }
                 if (e.key === "Backspace" && !text && chips.length) {
@@ -258,6 +269,7 @@ export function SmartSearch({
           autoFocus={false}
           className="smart-suggestions"
           onClose={() => {
+            dismissed.current = true;
             setOpened(false);
             setIndex(-1);
           }}

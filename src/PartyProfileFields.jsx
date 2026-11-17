@@ -1,7 +1,11 @@
+import { useState } from "react";
+import { weekDates } from "./party-monthly.mjs";
+import { shiftLabels } from "./WeekCalendar";
 import { weekdays, weekStart } from "./profile-utils.mjs";
 import { dateLabel } from "./DatePicker";
 import { fmt } from "./ui";
 export function PartyProfileFields({ form, change, data }) {
+  const [planWeek, setPlanWeek] = useState(weekStart(data.today));
   const p = form.profile || {},
     set = (key, value) => change("profile", { ...p, [key]: value });
   if (form.type === "Tedarikçi")
@@ -46,6 +50,47 @@ export function PartyProfileFields({ form, change, data }) {
   return (
     <details className="cari-fold">
       <summary>Personel dönem bilgileri</summary>
+      <fieldset className="profile-fields work-plan-editor">
+        <legend>Çalışma takvimi</legend>
+        <p className="muted">
+          Tarih bazlı plan. Başka haftaya tekrarlanmaz; ücret veya devam kaydı
+          oluşturmaz.
+        </p>
+        <label className="cari-field">
+          Plan haftası
+          <input
+            type="date"
+            value={planWeek}
+            onChange={(e) => {
+              if (e.target.value) setPlanWeek(weekStart(e.target.value));
+            }}
+          />
+        </label>
+        <div className="work-plan-days">
+          {weekDates(planWeek).map((date, i) => (
+            <label className="cari-field" key={date}>
+              {weekdays[i]} · {dateLabel(date)}
+              <select
+                aria-label={weekdays[i] + " planı"}
+                value={p.work_calendar?.[date] || ""}
+                onChange={(e) => {
+                  const plan = { ...(p.work_calendar || {}) };
+                  if (e.target.value) plan[date] = e.target.value;
+                  else delete plan[date];
+                  set("work_calendar", plan);
+                }}
+              >
+                <option value="">Plan yok</option>
+                {Object.entries(shiftLabels).map(([key, label]) => (
+                  <option key={key} value={key}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </label>
+          ))}
+        </div>
+      </fieldset>
       <p className="cari-hint">
         Maaş hak edişi kayıtlı maaş işlemlerinden gelir. Avans veya diğer
         ödemeler yalnız burada seçilirse ilgili kaleme sayılır; yeni finansal

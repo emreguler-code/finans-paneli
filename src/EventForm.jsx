@@ -1,3 +1,5 @@
+import { TagInput } from "./TagInput";
+import { SelectControl } from "./SelectControl";
 import { EntrySurface } from "./EntrySurface";
 import { EntryForm, FormSection } from "./EntryForm";
 import { MoneyInput } from "./MoneyInput";
@@ -16,14 +18,16 @@ export function EventForm({ context, data, onClose, onState, notify }) {
     [ready, setReady] = useState(false);
   useLayoutEffect(() => setReady(true), []);
   const place = (name, node) =>
-    context.inline &&
-    ready &&
-    document.getElementById(context.slotPrefix + "-" + name)
-      ? createPortal(
-          node,
-          document.getElementById(context.slotPrefix + "-" + name),
-        )
-      : node;
+    name === "extras" && !context.inline
+      ? node.props.children
+      : context.inline &&
+          ready &&
+          document.getElementById(context.slotPrefix + "-" + name)
+        ? createPortal(
+            node,
+            document.getElementById(context.slotPrefix + "-" + name),
+          )
+        : node;
   const e = context.item || {},
     init = context.initial || {},
     locked = context.lockedPartyId || e.party_id || null;
@@ -48,7 +52,7 @@ export function EventForm({ context, data, onClose, onState, notify }) {
                 : "expense";
   const initialForm = () => ({
     partyId: initialParty,
-    operation: e.operation || init.operation || guessed,
+    operation: e.operation || init.operation || (context.inline ? "" : guessed),
     amount: e.id ? money(e.amount_cents) : formatMoneyInput(init.amount || ""),
     settled: money(e.settled_cents),
     date: init.date || e.event_date || data.today,
@@ -116,6 +120,7 @@ export function EventForm({ context, data, onClose, onState, notify }) {
     opts = context.inline && party ? ["opening", ...opts] : ["opening"];
   if (
     context.inline &&
+    e.id &&
     e.operation !== "card_transfer" &&
     !opts.includes(e.operation)
   )
@@ -128,6 +133,8 @@ export function EventForm({ context, data, onClose, onState, notify }) {
         <MoneyInput
           name={key}
           required={required}
+          aria-label={label}
+          placeholder={context.inline && key === "amount" ? "0,00" : undefined}
           value={f[key]}
           onValueChange={(v) => change(key, v)}
         />
@@ -136,7 +143,8 @@ export function EventForm({ context, data, onClose, onState, notify }) {
   const select = (key, label, options) => (
     <label className="cari-field">
       {label}
-      <select
+      <SelectControl
+        modern={context.inline && Boolean(party)}
         aria-label={label}
         value={String(f[key] ?? "")}
         onChange={(ev) => {
@@ -164,7 +172,7 @@ export function EventForm({ context, data, onClose, onState, notify }) {
             {t}
           </option>
         ))}
-      </select>
+      </SelectControl>
     </label>
   );
   const accounts = data.accounts
@@ -177,7 +185,8 @@ export function EventForm({ context, data, onClose, onState, notify }) {
   const accountSelect = (
     <label className="cari-field">
       İşlem hesabı *
-      <select
+      <SelectControl
+        modern={context.inline && Boolean(party)}
         name="account"
         aria-label="İşlem hesabı *"
         required
@@ -197,7 +206,7 @@ export function EventForm({ context, data, onClose, onState, notify }) {
             {t}
           </option>
         ))}
-      </select>
+      </SelectControl>
     </label>
   );
   const invoice = isInvoice(f.operation),
@@ -212,7 +221,8 @@ export function EventForm({ context, data, onClose, onState, notify }) {
     f.operation,
   );
   const needsAccount =
-    (!invoice &&
+    (Boolean(f.operation) &&
+      !invoice &&
       !["salary", "employee_purchase", "opening"].includes(f.operation)) ||
     f.immediate;
   function choose(op) {
@@ -404,7 +414,7 @@ export function EventForm({ context, data, onClose, onState, notify }) {
     <EntrySurface
       variant={context.inline ? "inline" : "dock"}
       externalFormId={formId}
-      collapsible={Boolean(context.persistent)}
+      collapsible={Boolean(context.persistent && !context.inline)}
       autoFocus={!context.persistent && !context.inline}
       resetKey={f.requestId + String(ready)}
       title={title}
@@ -425,7 +435,8 @@ export function EventForm({ context, data, onClose, onState, notify }) {
               "operation",
               <label className="cari-field">
                 İşlem
-                <select
+                <SelectControl
+                  modern={context.inline && Boolean(party)}
                   aria-label="İşlem"
                   value={
                     fixedCard || context.inline
@@ -436,12 +447,15 @@ export function EventForm({ context, data, onClose, onState, notify }) {
                   }
                   onChange={(ev) => choose(ev.target.value)}
                 >
+                  {context.inline && !e.id && (
+                    <option value="">İşlem seç</option>
+                  )}
                   {opts.map((op) => (
                     <option value={op} key={op}>
                       {operations[op]}
                     </option>
                   ))}
-                </select>
+                </SelectControl>
               </label>,
             )}
             {place(
@@ -450,6 +464,8 @@ export function EventForm({ context, data, onClose, onState, notify }) {
                 Açıklama (isteğe bağlı)
                 <input
                   name="description"
+                  aria-label="Açıklama (isteğe bağlı)"
+                  placeholder={context.inline ? "Açıklama ekleyin" : undefined}
                   value={f.description}
                   maxLength={1000}
                   onChange={(ev) => change("description", ev.target.value)}
@@ -468,6 +484,14 @@ export function EventForm({ context, data, onClose, onState, notify }) {
                 <span className="sr-only">İşlem tarihi *</span>
                 <DatePicker
                   iconOnly={!context.inline}
+                  displayText={
+                    context.inline && f.date
+                      ? new Date(f.date + "T12:00:00Z").toLocaleDateString(
+                          "tr-TR",
+                          { day: "numeric", month: "short", timeZone: "UTC" },
+                        )
+                      : undefined
+                  }
                   value={f.date}
                   today={data.today}
                   required
@@ -483,8 +507,13 @@ export function EventForm({ context, data, onClose, onState, notify }) {
                 />
               </label>,
             )}
-            {!fixedCard && !transfer && needsAccount && accountSelect}
-            {invoice &&
+            {!context.inline &&
+              !fixedCard &&
+              !transfer &&
+              needsAccount &&
+              accountSelect}
+            {!context.inline &&
+              invoice &&
               f.immediate &&
               paymentMode === "partial" &&
               amountInput(
@@ -495,277 +524,338 @@ export function EventForm({ context, data, onClose, onState, notify }) {
                 true,
               )}
           </FormSection>
-          <FormSection
-            title="Ödeme ve hesap bilgileri"
-            optional={!transfer && !context.inline}
-            open
-          >
-            {invoice && (
-              <label className="cari-field">
-                {invoiceReturn ? "İade bedeli" : "Ödeme / tahsilat"}
-                <select
-                  value={
-                    f.immediate
-                      ? paymentMode
-                      : invoiceReturn && f.returnMode === "later"
-                        ? "later"
-                        : "open"
-                  }
-                  onChange={(ev) => {
-                    const value = ev.target.value;
-                    setPaymentMode(value === "partial" ? "partial" : "full");
-                    setF((s) => ({
-                      ...s,
-                      returnMode: value === "later" ? "later" : "offset",
-                      immediate: ["full", "partial"].includes(value),
-                      settled:
-                        value === "full"
-                          ? s.amount
-                          : value === "partial"
-                            ? ""
-                            : "0",
-                    }));
-                  }}
-                >
-                  {!fixedCard && (
-                    <option value="open">
-                      {invoiceReturn
-                        ? f.operation === "supplier_return"
-                          ? "Borçtan düş / caride bırak"
-                          : "Cari hesaptan düş"
-                        : "Açık hesaba ekle"}
-                    </option>
+          {context.inline && (
+            <details className="inline-extra">
+              <summary>Ek bilgiler</summary>
+              <div className="inline-extra-grid">
+                <div
+                  id={context.slotPrefix + "-extras"}
+                  className="inline-extra-content-slot"
+                />
+                {!fixedCard && !transfer && needsAccount && accountSelect}
+                {invoice &&
+                  f.immediate &&
+                  paymentMode === "partial" &&
+                  amountInput(
+                    "settled",
+                    f.operation === "sale" || f.operation === "supplier_return"
+                      ? "Şimdi tahsil edilen (TL) *"
+                      : "Şimdi ödenen (TL) *",
+                    true,
                   )}
-                  <option value="full">
-                    {invoiceReturn
-                      ? f.operation === "supplier_return"
-                        ? "Bedelin tamamını tahsil et"
-                        : "Bedelin tamamını geri öde"
-                      : f.operation === "sale"
-                        ? "Tamamını tahsil et"
-                        : "Tamamını öde"}
-                  </option>
-                  <option value="partial">
-                    {f.operation === "sale" || f.operation === "supplier_return"
-                      ? "Kısmen tahsil et"
-                      : "Kısmen öde"}
-                  </option>
-                  {invoiceReturn && !fixedCard && (
-                    <option value="later">
-                      {f.operation === "supplier_return"
-                        ? "Sonra tahsil et"
-                        : "Sonra geri öde"}
-                    </option>
-                  )}
-                </select>
-              </label>
-            )}
-
-            {party?.type === "Personel" &&
-              f.operation === "payment" &&
-              select("paymentPurpose", "Ödeme amacı", [
-                ["Maaş", "Maaş"],
-                ["Avans", "Avans"],
-                ["Diğer", "Diğer"],
-              ])}
-            {!fixedCard && !party && transfer && (
-              <label className="cari-field">
-                Aktarım türü
-                <select
-                  value={f.operation}
-                  onChange={(ev) => change("operation", ev.target.value)}
-                >
-                  {[
-                    ["transfer", "Kasa / banka arasında virman"],
-                    ["card_payment", "Kart borcu ödeme"],
-                    ["cash_advance", "Karttan nakit kullanımı"],
-                  ].map(([v, t]) => (
-                    <option key={v} value={v}>
-                      {t}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            )}
-            {transfer ? (
-              f.operation === "transfer" ? (
-                <>
-                  {select("account", "Kaynak hesap *", accounts)}
-                  {select(
-                    "target",
-                    "Hedef hesap *",
-                    accounts.filter((a) => a[0] !== f.account),
-                  )}
-                </>
-              ) : f.operation === "card_payment" ? (
-                <>
-                  {select("account", "Kaynak hesap *", accounts)}
-                  {!fixedCard &&
-                    select(
-                      "cardId",
-                      "Ödenecek kart *",
-                      data.cards
-                        .filter((c) => c.active)
-                        .map((c) => [c.id, c.name]),
-                    )}
-                  {select("linkedId", "Ekstre (isteğe bağlı)", [
-                    ["", "Son ekstre"],
-                    ...(
-                      data.cards.find((c) => c.id === Number(f.cardId))
-                        ?.statements || []
-                    ).map((st) => [
-                      st.id,
-                      st.cut_date + " · " + fmt(st.remaining_cents) + " TL",
-                    ]),
-                  ])}
-                </>
-              ) : (
-                <>
-                  {!fixedCard &&
-                    select(
-                      "cardId",
-                      "Kaynak kredi kartı *",
-                      data.cards
-                        .filter((c) => c.active)
-                        .map((c) => [c.id, c.name]),
-                    )}
-                  {f.operation === "cash_advance"
-                    ? select("account", "Paranın gireceği hesap *", accounts)
-                    : select(
-                        "targetCardId",
-                        "Borcu kapatılacak kart *",
-                        data.cards
-                          .filter((c) => c.active && c.id !== Number(f.cardId))
-                          .map((c) => [c.id, c.name]),
+              </div>
+            </details>
+          )}
+          {place(
+            "extras",
+            <div
+              className={context.inline ? "inline-extra-content" : undefined}
+            >
+              <FormSection
+                title="Ödeme ve hesap bilgileri"
+                optional={!transfer && !context.inline}
+                open
+              >
+                {invoice && (
+                  <label className="cari-field">
+                    {invoiceReturn ? "İade bedeli" : "Ödeme / tahsilat"}
+                    <SelectControl
+                      modern={context.inline && Boolean(party)}
+                      aria-label={
+                        invoiceReturn ? "İade bedeli" : "Ödeme / tahsilat"
+                      }
+                      value={
+                        f.immediate
+                          ? paymentMode
+                          : invoiceReturn && f.returnMode === "later"
+                            ? "later"
+                            : "open"
+                      }
+                      onChange={(ev) => {
+                        const value = ev.target.value;
+                        setPaymentMode(
+                          value === "partial" ? "partial" : "full",
+                        );
+                        setF((s) => ({
+                          ...s,
+                          returnMode: value === "later" ? "later" : "offset",
+                          immediate: ["full", "partial"].includes(value),
+                          settled:
+                            value === "full"
+                              ? s.amount
+                              : value === "partial"
+                                ? ""
+                                : "0",
+                        }));
+                      }}
+                    >
+                      {!fixedCard && (
+                        <option value="open">
+                          {invoiceReturn
+                            ? f.operation === "supplier_return"
+                              ? "Borçtan düş / caride bırak"
+                              : "Cari hesaptan düş"
+                            : "Açık hesaba ekle"}
+                        </option>
                       )}
-                </>
-              )
-            ) : null}
-            {f.operation === "opening" &&
-              select("direction", "Bakiye yönü", [
-                ["Alacak", "Alacak"],
-                ["Borç", "Borç"],
-              ])}
-            {f.operation === "salary" && (
-              <p className="cari-hint">
-                Maaş hak edişi kaydedilir. Para çıkışı için Ödeme → Maaş
-                kullanın.
-              </p>
-            )}
-            {borcland && (
-              <p className="cari-hint">
-                {f.operation === "employee_purchase"
-                  ? "Alışveriş personelin borcuna eklenir; para hareketi oluşmaz."
-                  : "Şirket personel adına ödeme yapar; personelin borcu artar ve seçilen hesaptan para çıkar."}
-              </p>
-            )}
-            {!party && !f.cardId && (
-              <label className="check-label">
-                <input
-                  type="checkbox"
-                  checked={f.scheduled}
-                  onChange={(ev) => change("scheduled", ev.target.checked)}
-                />
-                Gelecek tarih için planla (şimdi bakiye değiştirmez)
-              </label>
-            )}
-            {(invoice ||
-              f.operation === "salary" ||
-              f.scheduled ||
-              f.linkedId) && (
-              <label className="cari-field">
-                Vade (isteğe bağlı)
-                <DatePicker
-                  value={f.due}
-                  today={data.today}
-                  onChange={(v) => change("due", v)}
-                  label="Vade"
-                />
-              </label>
-            )}
-            {f.cardId && !transfer && (
-              <>
+                      <option value="full">
+                        {invoiceReturn
+                          ? f.operation === "supplier_return"
+                            ? "Bedelin tamamını tahsil et"
+                            : "Bedelin tamamını geri öde"
+                          : f.operation === "sale"
+                            ? "Tamamını tahsil et"
+                            : "Tamamını öde"}
+                      </option>
+                      <option value="partial">
+                        {f.operation === "sale" ||
+                        f.operation === "supplier_return"
+                          ? "Kısmen tahsil et"
+                          : "Kısmen öde"}
+                      </option>
+                      {invoiceReturn && !fixedCard && (
+                        <option value="later">
+                          {f.operation === "supplier_return"
+                            ? "Sonra tahsil et"
+                            : "Sonra geri öde"}
+                        </option>
+                      )}
+                    </SelectControl>
+                  </label>
+                )}
+
+                {party?.type === "Personel" &&
+                  f.operation === "payment" &&
+                  select("paymentPurpose", "Ödeme amacı", [
+                    ["Maaş", "Maaş"],
+                    ["Avans", "Avans"],
+                    ["Diğer", "Diğer"],
+                  ])}
+                {!fixedCard && !party && transfer && (
+                  <label className="cari-field">
+                    Aktarım türü
+                    <SelectControl
+                      modern={context.inline && Boolean(party)}
+                      value={f.operation}
+                      onChange={(ev) => change("operation", ev.target.value)}
+                    >
+                      {[
+                        ["transfer", "Kasa / banka arasında virman"],
+                        ["card_payment", "Kart borcu ödeme"],
+                        ["cash_advance", "Karttan nakit kullanımı"],
+                      ].map(([v, t]) => (
+                        <option key={v} value={v}>
+                          {t}
+                        </option>
+                      ))}
+                    </SelectControl>
+                  </label>
+                )}
+                {transfer ? (
+                  f.operation === "transfer" ? (
+                    <>
+                      {select("account", "Kaynak hesap *", accounts)}
+                      {select(
+                        "target",
+                        "Hedef hesap *",
+                        accounts.filter((a) => a[0] !== f.account),
+                      )}
+                    </>
+                  ) : f.operation === "card_payment" ? (
+                    <>
+                      {select("account", "Kaynak hesap *", accounts)}
+                      {!fixedCard &&
+                        select(
+                          "cardId",
+                          "Ödenecek kart *",
+                          data.cards
+                            .filter((c) => c.active)
+                            .map((c) => [c.id, c.name]),
+                        )}
+                      {select("linkedId", "Ekstre (isteğe bağlı)", [
+                        ["", "Son ekstre"],
+                        ...(
+                          data.cards.find((c) => c.id === Number(f.cardId))
+                            ?.statements || []
+                        ).map((st) => [
+                          st.id,
+                          st.cut_date + " · " + fmt(st.remaining_cents) + " TL",
+                        ]),
+                      ])}
+                    </>
+                  ) : (
+                    <>
+                      {!fixedCard &&
+                        select(
+                          "cardId",
+                          "Kaynak kredi kartı *",
+                          data.cards
+                            .filter((c) => c.active)
+                            .map((c) => [c.id, c.name]),
+                        )}
+                      {f.operation === "cash_advance"
+                        ? select(
+                            "account",
+                            "Paranın gireceği hesap *",
+                            accounts,
+                          )
+                        : select(
+                            "targetCardId",
+                            "Borcu kapatılacak kart *",
+                            data.cards
+                              .filter(
+                                (c) => c.active && c.id !== Number(f.cardId),
+                              )
+                              .map((c) => [c.id, c.name]),
+                          )}
+                    </>
+                  )
+                ) : null}
+                {f.operation === "opening" &&
+                  select("direction", "Bakiye yönü", [
+                    ["Alacak", "Alacak"],
+                    ["Borç", "Borç"],
+                  ])}
+                {f.operation === "salary" && (
+                  <p className="cari-hint">
+                    Maaş hak edişi kaydedilir. Para çıkışı için Ödeme → Maaş
+                    kullanın.
+                  </p>
+                )}
+                {borcland && (
+                  <p className="cari-hint">
+                    {f.operation === "employee_purchase"
+                      ? "Alışveriş personelin borcuna eklenir; para hareketi oluşmaz."
+                      : "Şirket personel adına ödeme yapar; personelin borcu artar ve seçilen hesaptan para çıkar."}
+                  </p>
+                )}
+                {!party && !f.cardId && (
+                  <label className="check-label">
+                    <input
+                      type="checkbox"
+                      checked={f.scheduled}
+                      onChange={(ev) => change("scheduled", ev.target.checked)}
+                    />
+                    Gelecek tarih için planla (şimdi bakiye değiştirmez)
+                  </label>
+                )}
+                {(invoice ||
+                  f.operation === "salary" ||
+                  f.scheduled ||
+                  f.linkedId) && (
+                  <label className="cari-field">
+                    Vade (isteğe bağlı)
+                    <DatePicker
+                      value={f.due}
+                      today={data.today}
+                      onChange={(v) => change("due", v)}
+                      label="Vade"
+                    />
+                  </label>
+                )}
+                {f.cardId && !transfer && (
+                  <>
+                    <label className="cari-field">
+                      Kartta işleneceği dönem tarihi
+                      <DatePicker
+                        value={f.periodDate}
+                        today={data.today}
+                        onChange={(v) => change("periodDate", v)}
+                        label="Kart dönem tarihi"
+                      />
+                    </label>
+                    {!e.id &&
+                      !party &&
+                      select(
+                        "installments",
+                        "Taksit sayısı",
+                        Array.from({ length: 36 }, (_, i) => [
+                          i + 1,
+                          i === 0 ? "Tek çekim" : `${i + 1} taksit`,
+                        ]),
+                      )}
+                  </>
+                )}
+              </FormSection>
+              <FormSection
+                title="Ayrıntılar"
+                optional={!context.inline}
+                summary={[
+                  f.description && "Açıklama",
+                  f.tag || "Genel",
+                  f.document && "Belge",
+                ]
+                  .filter(Boolean)
+                  .join(" · ")}
+              >
+                {" "}
+                {place(
+                  "tag",
+                  <label className="cari-field">
+                    Etiket (isteğe bağlı)
+                    {context.inline ? (
+                      <TagInput
+                        value={f.tag}
+                        onChange={(v) => change("tag", v)}
+                        options={[
+                          ...new Set([
+                            "Genel",
+                            "Gıda",
+                            "Kırtasiye",
+                            "Otomotiv",
+                            ...data.events.map((e) => e.tag || "Genel"),
+                          ]),
+                        ]}
+                      />
+                    ) : (
+                      <>
+                        <input
+                          list="expense-tags"
+                          value={f.tag}
+                          maxLength={80}
+                          placeholder="Genel"
+                          onChange={(ev) => change("tag", ev.target.value)}
+                        />
+                        <datalist id="expense-tags">
+                          {[
+                            ...new Set([
+                              "Genel",
+                              "Gıda",
+                              "Kırtasiye",
+                              "Otomotiv",
+                              ...data.events.map((e) => e.tag || "Genel"),
+                            ]),
+                          ].map((t) => (
+                            <option key={t} value={t} />
+                          ))}
+                        </datalist>
+                      </>
+                    )}
+                  </label>,
+                )}
                 <label className="cari-field">
-                  Kartta işleneceği dönem tarihi
-                  <DatePicker
-                    value={f.periodDate}
-                    today={data.today}
-                    onChange={(v) => change("periodDate", v)}
-                    label="Kart dönem tarihi"
+                  İşlem saati
+                  <input
+                    name="time"
+                    type="time"
+                    step="1"
+                    value={f.time}
+                    onInput={(ev) => change("time", ev.currentTarget.value)}
+                    onChange={(ev) => change("time", ev.currentTarget.value)}
                   />
                 </label>
-                {!e.id &&
-                  !party &&
-                  select(
-                    "installments",
-                    "Taksit sayısı",
-                    Array.from({ length: 36 }, (_, i) => [
-                      i + 1,
-                      i === 0 ? "Tek çekim" : `${i + 1} taksit`,
-                    ]),
-                  )}
-              </>
-            )}
-          </FormSection>
-          <FormSection
-            title="Ayrıntılar"
-            optional={!context.inline}
-            summary={[
-              f.description && "Açıklama",
-              f.tag || "Genel",
-              f.document && "Belge",
-            ]
-              .filter(Boolean)
-              .join(" · ")}
-          >
-            {" "}
-            {place(
-              "tag",
-              <label className="cari-field">
-                Etiket (isteğe bağlı)
-                <input
-                  list="expense-tags"
-                  value={f.tag}
-                  maxLength={80}
-                  placeholder="Genel"
-                  onChange={(ev) => change("tag", ev.target.value)}
-                />
-                <datalist id="expense-tags">
-                  {[
-                    ...new Set([
-                      "Genel",
-                      "Gıda",
-                      "Kırtasiye",
-                      "Otomotiv",
-                      ...data.events.map((e) => e.tag || "Genel"),
-                    ]),
-                  ].map((t) => (
-                    <option key={t} value={t} />
-                  ))}
-                </datalist>
-              </label>,
-            )}
-            <label className="cari-field">
-              İşlem saati
-              <input
-                name="time"
-                type="time"
-                step="1"
-                value={f.time}
-                onInput={(ev) => change("time", ev.currentTarget.value)}
-                onChange={(ev) => change("time", ev.currentTarget.value)}
-              />
-            </label>
-            <label className="cari-field">
-              Belge / fatura no
-              <input
-                name="document"
-                maxLength={160}
-                value={f.document}
-                onChange={(ev) => change("document", ev.target.value)}
-              />
-            </label>
-          </FormSection>
+                <label className="cari-field">
+                  Belge / fatura no
+                  <input
+                    name="document"
+                    maxLength={160}
+                    value={f.document}
+                    onChange={(ev) => change("document", ev.target.value)}
+                  />
+                </label>
+              </FormSection>
+            </div>,
+          )}
           <div
             className="entry-effect"
             role="status"
@@ -774,7 +864,7 @@ export function EventForm({ context, data, onClose, onState, notify }) {
             <strong>İşlem etkisi</strong>
             <p>{effect()}</p>
           </div>
-          {context.inline && (
+          {context.inline && e.id && (
             <div className="inline-effect-preview" role="status">
               <strong>
                 Mevcut {party ? "cari" : e.card_id ? "kart" : "hesap"} etkisi:{" "}
@@ -836,34 +926,56 @@ export function EventForm({ context, data, onClose, onState, notify }) {
             </p>
           )}
         </div>
-        <div className="sheet-footer">
-          <button
-            type="button"
-            className="secondary-button"
-            aria-label={context.inline ? "Düzenlemeyi iptal et" : undefined}
-            title="Vazgeç"
-            disabled={busy}
-            onClick={onClose}
-          >
-            {context.inline ? <X size={18} /> : <>Vazgeç</>}
-          </button>
-          <button
-            className="primary-button"
-            aria-label={context.inline ? "Değişiklikleri kaydet" : undefined}
-            title="Kaydet"
-            disabled={busy}
-          >
-            {busy ? (
-              <LoaderCircle className="loading-spinner" size={16} />
-            ) : context.inline ? (
-              <Check size={18} />
-            ) : e.id ? (
-              "Kaydet"
-            ) : (
-              "İşlemi kaydet"
-            )}
-          </button>
-        </div>
+        {place(
+          "actions",
+          <div className="sheet-footer">
+            <button
+              type="button"
+              data-entry-cancel
+              className="secondary-button"
+              aria-label={
+                context.inline
+                  ? e.id
+                    ? "Düzenlemeyi iptal et"
+                    : "Yeni işlemi iptal et"
+                  : undefined
+              }
+              title="Vazgeç"
+              disabled={busy}
+              onClick={onClose}
+            >
+              {context.inline ? <X size={18} /> : <>Vazgeç</>}
+            </button>
+            <button
+              className="primary-button"
+              form={formId}
+              type="submit"
+              aria-label={
+                context.inline
+                  ? e.id
+                    ? "Değişiklikleri kaydet"
+                    : "İşlemi kaydet"
+                  : undefined
+              }
+              title="Kaydet"
+              disabled={
+                busy ||
+                (context.inline &&
+                  (!f.operation || !Number.isFinite(total) || total <= 0))
+              }
+            >
+              {busy ? (
+                <LoaderCircle className="loading-spinner" size={16} />
+              ) : context.inline ? (
+                <Check size={18} />
+              ) : e.id ? (
+                "Kaydet"
+              ) : (
+                "İşlemi kaydet"
+              )}
+            </button>
+          </div>,
+        )}
       </EntryForm>
     </EntrySurface>
   );

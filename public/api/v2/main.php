@@ -183,7 +183,7 @@ function partyProfile(PDO $db, array $b, ?array $old): string
         return $old["profile_json"] ?? "{}";
     }
     $p = $b["profile"];
-    if (!is_array($p) || count($p) > 10) {
+    if (!is_array($p) || count($p) > 11) {
         throw new DomainException("Cari bilgi alanlarını kontrol edin.");
     }
     $result = [];
@@ -240,6 +240,34 @@ function partyProfile(PDO $db, array $b, ?array $old): string
         "meal_due_cents",
         1000000000,
     );
+    $calendar = $p["work_calendar"] ?? [];
+    if (!is_array($calendar) || count($calendar) > 3660) {
+        throw new DomainException("Çalışma takvimini kontrol edin.");
+    }
+    $result["work_calendar"] = [];
+    foreach ($calendar as $date => $shift) {
+        if (!is_string($date)) {
+            throw new DomainException("Çalışma günü tarihini kontrol edin.");
+        }
+        validDate($date, true);
+        if (
+            !in_array(
+                $shift,
+                [
+                    "morning",
+                    "evening",
+                    "weekly_leave",
+                    "annual_leave",
+                    "sick_leave",
+                ],
+                true,
+            )
+        ) {
+            throw new DomainException("Vardiya veya izin türünü kontrol edin.");
+        }
+        $result["work_calendar"][$date] = $shift;
+    }
+    ksort($result["work_calendar"]);
     $used = [];
     foreach (["salary_payments", "meal_payments"] as $key) {
         $result[$key] = trackingIds($db, $p, $key, "fin_events");

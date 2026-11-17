@@ -164,17 +164,6 @@ export function App({ initialData, onLogout }) {
     )
       return;
     let context;
-    if (nav.route.page === "Cari hesaplar") {
-      const party = fullData.parties.find(
-        (p) => p.id === Number(nav.route.record),
-      );
-      if (party?.active)
-        context = {
-          entity: "event",
-          lockedPartyId: party.id,
-          persistent: true,
-        };
-    }
     if (["Hesaplar", "Kredi kartları"].includes(nav.route.page)) {
       const card = nav.route.page === "Kredi kartları",
         item = (card ? fullData.cards : fullData.accounts).find(
@@ -928,6 +917,13 @@ export function App({ initialData, onLogout }) {
         end: () => setInlineActive(false),
         onState: applyState,
         notify,
+        createContext:
+          financeContext?.entity === "event" &&
+          !financeContext.item?.id &&
+          nav.route.page === "Cari hesaplar"
+            ? { ...financeContext, stamp: contextKey }
+            : null,
+        clearCreate: () => setFinanceContext(null),
       }}
     >
       <AppShell layout={shell}>
@@ -1667,17 +1663,23 @@ export function App({ initialData, onLogout }) {
             </section>
           </div>
         )}
-        {financeContext && (
-          <FinanceDialog
-            key={contextKey}
-            context={financeContext}
-            data={fullData}
-            onClose={closeFinance}
-            onState={applyState}
-            notify={notify}
-            replace={openFinance}
-          />
-        )}
+        {financeContext &&
+          !(
+            financeContext.entity === "event" &&
+            !financeContext.item?.id &&
+            nav.route.page === "Cari hesaplar" &&
+            financeContext.lockedPartyId
+          ) && (
+            <FinanceDialog
+              key={contextKey}
+              context={financeContext}
+              data={fullData}
+              onClose={closeFinance}
+              onState={applyState}
+              notify={notify}
+              replace={openFinance}
+            />
+          )}
         {toast && (
           <div className="toast" role="status">
             <span className="status-icon success">

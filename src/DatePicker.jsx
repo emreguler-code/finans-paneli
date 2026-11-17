@@ -211,6 +211,10 @@ export function DatePicker({
   const CalendarWindow = FloatingPanel;
   const close = React.useCallback(() => setAnchor(null), []);
   function show(e) {
+    if (anchor) {
+      close();
+      return;
+    }
     setMonth((range ? from : value)?.slice(0, 7) || today.slice(0, 7));
     setDraft("");
     setDraftEnd("");
@@ -243,7 +247,7 @@ export function DatePicker({
         className="date-trigger"
         aria-label={label}
         aria-describedby={id + "-value"}
-        title={displayText || text}
+        title={text}
         aria-expanded={Boolean(anchor)}
         aria-haspopup="dialog"
         aria-required={required || undefined}

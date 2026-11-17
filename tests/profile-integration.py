@@ -15,3 +15,8 @@ ok('Leave used cannot exceed weekly entitlement',save_profile(pid,{**base,'leave
 ok('Leave week must start on Monday',save_profile(pid,{**base,'leave_week':'2026-10-13'})[0]==422)
 ok('Payment references must belong to selected employee',save_profile(pid,{**base,'salary_payments':[before['events'][0]['id']]})[0]==422)
 after=state();ok('Staff metadata never creates financial transactions or changes balances',before['events']==after['events'] and [a['balance_cents'] for a in before['accounts']]==[a['balance_cents'] for a in after['accounts']])
+plan={**base,'work_calendar':{'2026-10-12':'morning','2026-10-13':'evening','2026-10-14':'weekly_leave','2026-10-15':'annual_leave','2026-10-16':'sick_leave'}}
+ok('Date-based schedule round-trips without financial movement',save_profile(pid,plan)[0]==200 and entity('parties',pid)['profile']['work_calendar']==plan['work_calendar'] and state()['events']==before['events'])
+ok('Schedule rejects impossible dates',save_profile(pid,{**base,'work_calendar':{'2026-02-30':'morning'}})[0]==422)
+ok('Schedule rejects invented shift types',save_profile(pid,{**base,'work_calendar':{'2026-10-12':'night'}})[0]==422)
+ok('Schedule rejects a list instead of dated entries',save_profile(pid,{**base,'work_calendar':['morning']})[0]==422)

@@ -1,3 +1,14 @@
+# 1.25.0 — Cari çalışma ekranları ve satır içi işlemler
+
+- Yeni işlem listenin sonunda taslak satırı açar; düzenleme aynı modern alan ve açılır menü dilini paylaşır. Ek bilgiler kapalı başlar, ana sütunlar sabit kalır; kaydet/iptal bakiye sütunundadır.
+- Tedarikçi ziyaret takvimi, etiketsiz POS logoları ve kompakt kampanya listesi; müşteride alışveriş günleri ve bilgiler; personelde vardiya/izin takvimi ve tarih bazlı plan düzenleme.
+- Aylık Özet masaüstünde bilgi sütununun altında, mobilde sekmededir. İnce alış/hakediş halkası ve ödeme dağılımı; iadeler, eski dönem ödemeleri ve tanımsız bağlantılar ayrı değerlendirilir.
+- Arama önerilerinin X/Escape ile kapanışı ve takvim ikonunun tekrar tıklandığında kapanması düzeltildi. Taslak koruması ve finansal düzenleme gerekçesi sürer.
+
+Şema 12; gerçek veriler ve yapılandırma korunur. Hosting ZIP + SHA-256 `releases/1.25.0/` altında ve Release varlıklarındadır. Hosting yükleme/inceleme kullanıcıya aittir. [Ayrıntılı kapsam](SURUM-1.25.0.md).
+
+---
+
 # 1.24.0 — Prettier proje genelinde
 
 - Sabit dosya listesi kaldırıldı; desteklenen tüm kaynak, belge ve yapılandırmalar otomatik keşifle kontrol edilir.

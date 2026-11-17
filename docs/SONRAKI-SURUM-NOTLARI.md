@@ -613,3 +613,214 @@ Kullanıcı Prettier kapsamının genişletilmesini ve sonraki sürümlerde proj
 ### 1.24.0 yayın tamamlandı
 
 Windows/Linux tam kabulü ve GitHub Release yayını başarılı (44070786379). Yeni desteklenen dosyalar otomatik keşfediliyor; PHP dahil proje genelindeki biçim kontrolü artık kalıcı yayın koşulu. Hostinge hazır ZIP + SHA-256 repo içine ve Release varlıklarına eklendi, indirilip birebir eşliği doğrulandı. Hosting yükleme/inceleme kullanıcıya ait.
+
+## 17 Kasım 2026 — Yeni sürüm tasarım notları: tedarikçi bilgi alanı ve aylık çalışma hacmi
+
+**Durum: Tasarım/kapsam onayı; not toplama aşaması sürüyor. Kodlama, paketleme, commit/push veya yayın başlatılmayacak.** Kullanıcı önce yeni fikirlerini tamamlayacak; yalnız açık ve kesin “kodlamaya başla” veya eşdeğer başlangıç talimatıyla uygulamaya geçilecek. Bir fikrin uygun bulunması, kapsam genişletme veya görseldeki yaklaşımı uygulama yönünün onaylanması başlangıç talimatı sayılmaz. Başlangıç talimatı verildiğinde mevcut GitHub yayın/hosting ZIP akışı geçerlidir; hosting yükleme ve incelemeyi kullanıcı yapar.
+
+Görsel referans: [Tedarikçi bilgi alanı, masaüstü ve mobil aylık özet](tasarimlar/tedarikci-hafta-pos-aylik-ozet-2026-11-17.png). Aşağıdaki son kullanıcı düzeltmesi, referans görseldeki geçmiş gün zemininden önceliklidir. Görseldeki banka logoları, sayısal değerler ve hareket satırları sunum örneğidir; mevcut finansal veriler veya işlem tablosu değişikliği talimatı değildir.
+
+### Son düzeltme — Geçmiş ziyaret gününün arka planı
+
+- **Geçmiş planlı ziyaret gününün pasif gri arka planı yalnız tarih rakamını değil, gün kısaltmasını, tarih rakamını ve ziyaret işaretini birlikte kapsayacak.** Aktif/gelecek planlı ziyaret günündeki dikey yüzeyle aynı sınır, yükseklik, köşe ve hizalama kullanılacak; yalnız renk pasif nötr gri/bej rolünde olacak.
+- Referans görselde örneğin “Pzt” dışarıda, “16” gri zemin içinde kalıyor; bu ayrım düzeltilmeli. Kullanıcı diğer görsel kararlarını uygun buldu. Bu onay kodlamaya başlama talimatı değildir.
+
+### Ziyaret günleri
+
+- “Ziyaret günleri” başlığı korunur. Metin listesi yerine içinde bulunulan hafta, pazartesi–pazar sırasıyla yedi eşit sütunda ve kompakt gösterilir; gün kısaltması ve tarih rakamı aynı sütundadır.
+- Planlı ziyaretler işaretlenir. Geçmiş planlı ziyaret nötr pasif gri, bugün/gelecek planlı ziyaret açık turkuazdır. Bugün ince turkuaz çerçeveyle ayrıca ayrılır.
+- Planlı ziyaret bilgisi gerçekleşmiş ziyaret/katılım takibi değildir; tamamlandı işareti veya yeni ziyaret gerçekleşme kaydı üretilmez.
+- Referans tarihi 17 Kasım 2026, örnek hafta 16–22 Kasım'dır; uygulama gerçek içinde bulunulan haftaya göre ilerler. Örnek ziyaret günleri gerçek tedarikçi kaydına yazılmayacak.
+
+### POS Cihazları
+
+- “POS programları” başlığı **“POS Cihazları”** olur; bilgi “i” ikonu yerine uygun mevcut POS cihazı ikonu, yoksa kasa ikonu kullanılır.
+- İlişkili banka/POS kimlikleri logolarla gösterilir. **Logo altında ayrı banka/program etiketi olmayacak.** Son görseldeki gibi yalnız banka logosu/wordmark kalır; Bonus, World veya Axess için altta ek açıklama satırı eklenmez.
+- Logo boyutları önceki büyük taslağın yaklaşık %80'ine indirilir; grup yatay alanı sıkışık doldurmaz, dengeli boşluk bırakır. Genişliğe göre satırda 3–4 logo hedeflenir; örnek referansta üç logo vardır.
+- Yeni bir banka/POS finansal bağlantısı üretilmez; mevcut ilişkilendirme bilgileri kullanılır.
+
+### Kampanyalar
+
+- Başlık **“Kampanyalar”** olur. İlişkilendirilmiş kampanyalar her biri tek satırlık ad olarak alt alta listelenir.
+- Katılım durumu, kayıt/puan/iade tutarı ve uzun açıklama alt satırları bu kompakt bilgi alanında gösterilmez. Kampanya verisi veya ayrıntı işlevi kaldırılmaz.
+- Örnek adlar: “Bonus market kampanyası”, “World Otomotiv Sektöründe 2 taksit kampanyası”. Örnek kampanyalar gerçek kayda otomatik eklenmez.
+
+### Aylık Özet — Yerleşim
+
+- Masaüstü iki sütunlu görünümde **yardımcı sağ sütunda, Durum ve bilgiler panelinin altına** aynı genişlikte ayrı Aylık Özet paneli gelir. Masaüstünde bu iki panel ayrı sekmelere dönüştürülmez.
+- Mobil görünümde aynı alan “Durum ve bilgiler” / “Aylık Özet” sekmeleriyle kullanılabilir.
+- Ay seçimiyle rapor değişir. Mevcut Recharts ile dinamik grafik hazırlanabilir; sırf grafik için Chart.js gibi ikinci bir kütüphane eklemek onaylı kapsam değildir.
+
+### Aylık Özet — Anlam ve oranlar
+
+- Amaç finansal kasa/banka akışı değil, **seçili ayda tedarikçiyle çalışma hacmi ve bu hacmin dağılımıdır**.
+- Yalnız ilgili ayın alışları ve bunlara bağlı ödeme/iade işlemleri kapsanır. Önceki aylara ait borç ödemesi seçili ayın dağılımına katılmaz; toplam cari bakiye bu ayın açık borcu yerine kullanılmaz.
+- Faturalı/faturasız brüt alış ve iade tutarı kısa özet olarak gösterilir; net alış hacmi iadeler düşüldükten sonraki tutardır.
+- İade bağımsız gelir dilimi değildir. İlgili alış hacminden düşer; nakit/banka veya karta geri alındıysa ilgili ödeme grubunun net tutarını, açık borçtan düşüldüyse açık borç grubunu azaltır. Bankaya olan kredi kartı borcu, kasa/banka bakiye etkisi bu raporun konusu değildir.
+- **İki eş merkezli halka aynı net alış toplamını bağımsız iki şekilde sınıflandırır:** dış halka faturalı/faturasız alış; iç halka nakit/banka, kredi kartı, açık borç. Her halka kendi içinde %100'dür; beş kategori tek halkada toplanmaz.
+- Dıştaki alış halkasının kalınlığı içteki ödeme/borç halkasının **yarısıdır (%50 daha ince)**. Bu yalnız görsel kalınlık kararıdır, veri oranlarını değiştirmez. Ortada net alış toplamı; açıklamalarda tutar ve yüzde görünür.
+- Onaylı örnek: brüt faturalı 6.000 TL + faturasız 4.000 TL − iade 2.000 TL = net 8.000 TL. Örnekte her alış türünden 1.000 TL iade varsayılır: dış halka faturalı 5.000 TL/%62,5, faturasız 3.000 TL/%37,5. İç halka nakit/banka 3.000 TL/%37,5, kart 2.000 TL/%25, açık borç 3.000 TL/%37,5. Örnek tutarlar gerçek veri değildir.
+- Uygulama aşamasında ödeme/iadenin ilgili ayın alışına bağlantısı mevcut veri modeliyle doğrulanmalıdır. Bağlantı bilinmiyorsa önceki borç ödemelerini tahminen aya dağıtmak veya mevcut finansal modeli bu görselden çıkarımla değiştirmek yetkisi yoktur; eksik ilişki netleştirilir.
+
+### Önceki arama önerileri sorunu — Çözüm taslağı
+
+Kullanıcı öneriler penceresinin çarpıyla kapandıktan sonra arama odağı nedeniyle yeniden açılmasını bildirdi ve çözüm düşünülmesini istedi. Önerilen davranış: çarpı/Esc açık önerileri kapatır; metin/filtre ve imleç korunur; odağın geri gelmesi tek başına pencereyi açmaz. Yeni yazma, açıkça yeniden tıklama veya Aşağı Ok ile yeniden açılır. Bu çözüm önerisi henüz ayrıca uygulama başlangıç talimatı almadı; not aşamasındadır.
+
+## 17 Kasım 2026 — Müşteri ve personel bilgi alanı: yeni tasarım çalışması
+
+**Durum: Kullanıcının talepleri ve görüş bekleyen tasarım önerileri. Kodlama/yayın başlangıç talimatı yoktur.** Kullanıcı müşteri görünümünün tedarikçi tasarımıyla sürekliliğini ve personel için öneriler hazırlanmasını istedi; önce görselleri yorumlayacak. Önceki tedarikçi tasarım onayı bu yeni önerilerin kendiliğinden onaylandığı anlamına gelmez.
+
+### Müşteri — Kullanıcının istediği kapsam
+
+- Tedarikçideki “Ziyaret günleri” yerine müşteride **“Alışveriş günleri”** başlığı kullanılır. İçinde bulunulan haftada ilgili cariye ait gerçek işlem olan günler aktif işaretlenir.
+- Bu, tedarikçinin planlı ziyaret takvimi değildir: işlem gerçekleşmiş geçmiş günler de aktif görünür; tedarikçinin geçmiş planlı ziyaretine ait pasif gri kuralı müşterinin gerçekleşmiş işlem günlerine otomatik taşınmaz. Gün kısaltması/tarih/işaret aynı yüzeyde kalır; bugün ince çerçeveyle ayrıca ayrılır.
+- Altında kompakt “Müşteri bilgileri”: **Ünvan, TCKN/VKN, Adres, Telefon**, her biri kısa ayrı satır. Uzun adres dar ekranda taşmadan gerektiği kadar sarılır.
+- Altında aynı görsel dilde aylık halka grafik: müşterinin ay içindeki borçlanmasını ve borç ödeme/tahsilat durumunu anlamayı amaçlar.
+- Masaüstünde bilgi alanı ve Aylık Özet aynı yardımcı sütunda alt alta; mobilde bilgi/aylık özet sekmeleri önerilir.
+
+### Müşteri — Görüş bekleyen grafik önerisi
+
+- Tek halka: **seçili ayın net satışına ait tahsil edilmiş ve açık kalan tutar**. İade satıştan düşer; iade, tahsil edilmiş para diye gösterilmez. Sıfır toplamda anlamsız yüzde üretilmez.
+- Ay içinde önceki aylara ait borç da tahsil edilebilir; bu tutarı mevcut ayın satış halkasına eklemek %100'ü aşan veya yanıltıcı oran doğurabilir. Öneri: bu tahsilatı halkanın dışında ayrı bir satırda göstermek. Kullanıcının istediği “aynı ay ne kadar girdi/çıktı” için ay içindeki toplam tahsilat ayrıca görünür olur; bunun aynı aya ait satış tahsilatından farklı olduğu açıkça adlandırılır. Bu ayrım henüz kullanıcı tarafından ayrıca onaylanmadı.
+- Örnek: brüt satış 22.000 TL − iade 2.000 TL = net satış 20.000 TL. Bu satışlara ait tahsilat 14.000 TL/%70, açık kalan 6.000 TL/%30. Ay içi toplam tahsilat 16.000 TL ise bunun 2.000 TL'si önceki ay alacağına aittir; halkaya dahil edilmez.
+- Grafiğin adı gerçekleşmiş “Tahsilat dağılımı” veya “Aylık satış ve tahsilat” olabilir. Tek ayın gerçekleşmiş oranı, geleceğe dönük ödeme potansiyeli/risk puanı diye sunulmaz. Mevcut altı aylık satış ve vadeye göre zamanında tahsilat metriklerini kaldırma kararı henüz verilmedi.
+- İptal/plan kayıtları gerçek işlem günlerini doldurmaz; işlem tarihi esas alınır. Ödeme/iadenin hangi satışa bağlı olduğu uygulama aşamasında doğrulanır; bağlantı eksikse ilişki uydurulmaz.
+
+### Personel — Yorum bekleyen öneri
+
+- Aynı ortak bilgi/aylık özet düzeni; haftalık başlık **“İşlem günleri”**. Yalnız gerçekleşmiş cari hareketlerin günleri işaretlenir; devam/puantaj veya işe gelme takibi gibi gösterilmez.
+- Kompakt “Personel bilgileri”: Ad soyad, TCKN, Telefon; gerekirse mevcut adres alanı. Yeni görev/departman/işe giriş verisi varsayılmaz.
+- Mevcut kayıtların desteklediği kısa haftalık izin özeti: kullanılan/toplam gün. Yalnız haftalık sayı biliniyorsa belirli bir gün izinliymiş gibi takvime işaret konmaz.
+- Aylık hakediş ve ödeme özeti: maaş + tanımlı yemek hakkı; ödenen/kalan. Örnek maaş 30.000 TL + yemek 3.000 TL = toplam 33.000 TL, buna bağlı ödenen 24.000 TL/%72,7 ve kalan 9.000 TL/%27,3.
+- Tedarikçideki görsel devamlılık için ince dış halkada maaş/yemek payı (%90,9/%9,1), iç halkada ödenen/kalan (%72,7/%27,3) önerilir; her halka ayrı %100'dür.
+- Maaş/yemek ödemesi mevcut açık kalem/ay bağlantısıyla hesaplanır; aynı ödeme iki kalemde sayılmaz. Avans kendiliğinden yeniden borç veya otomatik mahsup üretmez. Personelin şirkete olan ayrı borcu maaş alacağından otomatik düşülmez; gerekirse ayrı satırda gösterilir.
+- Öneriler yeni bordro, puantaj, performans/risk puanı veya finansal hesaplama değişikliği yetkisi değildir. Görsellerdeki tüm tutar, ad ve iletişim bilgileri örnektir.
+
+### Müşteri ve personel — Görsel taslaklar hazır, kullanıcı yorumu bekleniyor
+
+- [Müşteri taslağı](tasarimlar/musteri-hafta-bilgi-aylik-ozet-2026-11-17.png): gerçek cari işlem günleri, gün kısaltmasını/tarihi/işareti birlikte kapsayan aktif yüzeyler; kompakt müşteri bilgileri; net satışa ait tahsil edilen/açık kalan halka. Ay içi toplam tahsilat ve önceki aydan gelen tahsilat ayrı satır önerisidir.
+- [Personel taslağı](tasarimlar/personel-hafta-bilgi-aylik-ozet-2026-11-17.png): gerçek işlem günleri, kompakt personel bilgileri, haftalık izin sayısı ve iki halkalı hakediş/ödeme özeti. Takvim devam/puantaj takibi değildir.
+- Müşteri taslağındaki geçmiş gerçekleşmiş işlem günü aktif turkuazdır; tedarikçinin geçmiş planlı ziyaretindeki pasif griden bilinçli olarak farklıdır. Her aktif günün zemin/çerçevesi gün kısaltması dahil tüm hücreyi kapsar.
+- Bu görsellerdeki sayılar ve maskeli kimlik/telefonlar örnektir. Taslaktaki maskeleme gerçek alanların görünürlüğünü değiştirme kararı değildir. Personel taslağı asistan önerisidir; müşteri grafiği için eski ay tahsilatının ayrı satır önerisi de dahil kullanıcı yorumu beklenir.
+- Yalnız belge ve görsel referansları kaydedildi. Uygulama kodu değiştirilmedi; commit/push, paketleme veya yayın yapılmadı.
+
+### Personel — Kullanıcının çalışma takvimi ve vardiya düzeltmesi
+
+**Not ve görsel aşaması sürüyor; kodlama/yayın başlatılmayacak.** Bu talep yalnız personel taslağındaki önceki “İşlem günleri” önerisini değiştirir; müşteri ve tedarikçinin takvim anlamları korunur.
+
+- Personel haftalık alanının başlığı **“Çalışma takvimi”** olur. Gerçek cari işlem günleri yerine planlanan çalışma vardiyası ve haftalık izin günü gösterilir.
+- İki vardiya vardır: sabah ve akşam. Taslaktaki önerilen yön: gün hücresinin **üst yarısı sabah**, **alt yarısı akşam**; planlanan vardiya yarısı uygun tonla vurgulanır, diğer yarı nötr kalır. Sabah için açık turkuaz, akşam için hafif nötr arduvaz tonu önerildi.
+- Haftalık izin günü mevcut uyarı paletindeki **sarı-turuncu açık zeminle tüm hücre boyunca** işaretlenir. Gün kısaltması, tarih ve izin etiketi bu zemin içinde kalır. Bugün tüm hücreyi kapsayan ince çerçeveyle ayrıca ayrılır. Küçük açıklama üst/alt yarının anlamını belirtir.
+- Görseldeki pazartesi/çarşamba/cuma sabah, salı/perşembe/cumartesi akşam, pazar izin planı **yalnız örnektir**; gerçek personele otomatik atanmaz. Vardiya başlangıç/bitiş saatleri verilmedi, uydurulmaz.
+- Haftalık izin satırında örnek planlanan gün gösterilir; “kullanıldı” veya gerçekleşmiş devam bilgisi varsayılmaz. Bu, puantaj/gerçekleşmiş katılım takibi değildir.
+- Mevcut modelde yalnız haftalık kullanılan/toplam izin sayısı olması, belirli bir izin günü veya günlük vardiya bilindiği anlamına gelmez. Uygulama öncesinde gün bazlı vardiya ve izin planının girileceği yer, tekrar/haftalık değişiklik davranışı ve kayıt modeli netleştirilmelidir. Maaş/izin kesintisi, devamsızlık veya otomatik finansal etki bu talepten türetilmez.
+- Personel bilgileri ve aylık hakediş/ödeme grafiği bu görsel revizyonda korunur.
+
+Görsel referans: [Personel çalışma takvimi ve vardiya taslağı](tasarimlar/personel-calisma-takvimi-vardiya-2026-11-17.png). Kullanıcı görseli henüz ayrıca onaylamadı; örnek tonlar ve üst/alt gösterim öneri olarak sunuldu.
+
+### Personel — Tek vardiya vurgu rengi ve izinlerin yalnız takvimde gösterimi
+
+**Kullanıcının son tasarım düzeltmesi; not/görsel aşaması sürer, kodlama ve yayın başlamaz.** Aşağıdaki kararlar önceki farklı sabah/akşam renk önerisini ve personel bilgileri altındaki ayrı haftalık izin satırını değiştirir.
+
+- Sabah ve akşam vardiyası **aynı aktif vurgu rengini** kullanır; ayrı renk anlamı yoktur. Aktif yarı açık turkuaz, pasif yarı nötrdür. Aktif vurgu **üst yarıdaysa sabah**, **alt yarıdaysa akşam** anlaşılır. Küçük açıklamalar bu konumsal anlamı gösterir.
+- Haftalık izin gününün tamamı sarı-turuncu uyarı zeminiyle işaretlenir.
+- Yıllık izin ve hastalık izni mevcut **kırmızı vurgu** ve hafif kırmızı zeminle tüm gün hücresinde gösterilir. Aynı rengi kullanan bu iki izin türü kısa “Yıllık” / “Hastalık” etiketiyle ayrılır; devamsızlık veya hata olarak yorumlanmaz.
+- İzin hücrelerinde aktif vardiya yarısı gösterilmez; gün kısaltması, tarih ve izin etiketi tek tam yüzeyde kalır. Bugün çerçevesi tüm hücreyi kapsar.
+- **Personel bilgileri altındaki haftalık izin satırı kaldırılır.** İzinler takvimde gösterilir; aynı bilgi altta tekrarlanmaz.
+- Bu tek renk kararı çalışma takviminin vardiya tonlarına aittir; aylık hakediş/ödeme grafiğindeki veri kategorilerinin renklerini değiştirmez.
+- Örnek görselde cuma yıllık izin, cumartesi hastalık izni, pazar haftalık izin yalnız gösterim örneğidir; gerçek personele plan atanmaz. İzin saatleri, ücret kesintisi, hakediş etkisi, yıllık izin kotası veya puantaj davranışı bu görsel talebinden türetilmez. Gün bazlı vardiya/izin planının giriş ve kayıt modeli uygulama öncesi netleştirilmeyi bekler.
+
+Yeni referans: [Personel tek vurgu renkli vardiya ve izin takvimi](tasarimlar/personel-calisma-takvimi-tek-vurgu-2026-11-17.png). Önceki vardiya görseli karar geçmişidir.
+
+### Personel — Tasarım onayı ve tek satırlık lejant düzeltmesi
+
+**Kullanıcı personelin son tasarımını, aşağıdaki lejant düzeltmesiyle onaylı değişiklik olarak kaydetmemizi istedi. Bu, yalnız tasarım/kapsam onayıdır; kodlamaya başlama veya yayın talimatı değildir. Yeni fikirler için not toplama aşaması sürer.**
+
+- **Çalışma takvimi altındaki lejant tek satıra sığacak; iki satıra bölünmeyecek.** Sabah/akşam, haftalık izin, yıllık/hastalık ve bugün anlamları kısa etiketler ve küçük ortak sembollerle korunur. Örnek kısa etiketler: “Sabah”, “Akşam”, “Haftalık izin”, “Yıllık/Hastalık”, “Bugün”. Okunabilirlik ve üst/alt yarının anlamı korunur; anlamsız renk farkı veya metin taşması eklenmez. Görsel referanstaki iki satırlı lejantın yerine bu son karar geçerlidir.
+- Tek aktif turkuaz / nötr pasif yarı; üst=sabah, alt=akşam; sarı-turuncu haftalık izin; kırmızı yıllık/hastalık; tüm hücreyi kapsayan bugün çerçevesi ve personel bilgileri altındaki izin tekrarının kaldırılması onaylı tasarım kapsamıdır.
+- Son personel görselindeki diğer düzen, kompakt personel bilgileri ve aylık hakediş/ödeme görünümü tasarım olarak uygun bulundu. Önceki farklı vardiya renkleri ve ayrı haftalık izin satırı tarihsel önerilerdir, geri eklenmez.
+- Bu onay müşterinin grafik ayrıntılarına veya henüz kararlaştırılmamış vardiya/izin giriş ve kayıt modeline otomatik olarak taşınmaz. Örnek günler/tutarlar gerçek veri değildir.
+- Kod, paket, sürüm numarası ve yayın değiştirilmedi. Açık kodlamaya başlama talimatı beklenir.
+
+## 17 Kasım 2026 — Takvim aç/kapat ve işlem ekleme ekranı için görsel alternatifler
+
+**Not ve görsel keşif aşaması. Kullanıcı kodlamaya başlama talimatı vermedi.** Paylaşılan ekran/eskiz kesin tasarım kararı değildir; alternatifler hazırlanıp yorumlanacaktır. Görsel seçimi de tek başına kodlama/yayın talimatı sayılmaz.
+
+### Takvim ikonu
+
+- Takvimi açan aynı ikona tekrar basıldığında açık takvim kapanır; tetikleyici aç/kapat davranışı gösterir. Kapanışta odağın geri dönmesi takvimi yeniden açmaz.
+- İşlem tarihi/vade için ilgili takvim kendi alanına bağlı kalır; ikinci tıklama formu kapatmaz ve kaydedilmiş tarihi temizlemez. Aralık/taslak iptal anlamı mevcut ilgili takvim kuralıyla korunur. Kullanıcı bu davranışı istedi; uygulama aşaması açık başlangıç talimatını bekler.
+
+### İşlem ekleme — Kullanıcının tasarım kriterleri
+
+- Opsiyonel özellikler açıldığında mevcut ana alanlar yerini ve boyutunu korur; ek alanlar için ayrı yer açılır. Alanlar birbirini yatay sıkıştırmaz, mevcut girişlerin konumu/ölçüsü yeniden dağıtılmaz.
+- Tutarlı grid ve hizalar sürer. Tarih/saat gibi kompakt olabilen alanlar gereksiz yere genişlemez; metin ve açıklama gerçek ihtiyaca göre alan kullanır.
+- Sade Netlik, Türkçe etiketler, mevcut finansal anlamlar ve kolay takip edilen giriş akışı korunur. Yeni bir işlem/hukuki alan veya muhasebe davranışı görselden türetilmez.
+- Kullanıcı yenilikçi bir veri girişi yaklaşımına da açık; üç bağımsız görsel yön araştırılacak. İlk yön sabit ana şerit ve altta genişleyen grid; ikinci yön değişmeyen temel form ve ayrı iç ayrıntı sütunu; üçüncü yön işlem cümlesi/fişi ve isteğe göre eklenen alan grupları. Bunlar adaydır, henüz seçilmedi.
+- Bu statik görseller etkileşim veya ekran kayması testinin yapılmış sayılması değildir; seçilen tasarım kodlama talimatından sonra ayrıca doğrulanır. Örnek tutar/tarih/hesaplar gerçek kayıt oluşturmaz.
+
+### İşlem ekleme — Üç görsel aday, henüz seçim yok
+
+Sohbette görüntülenen gerçek sıraya göre referanslar:
+
+1. [Sabit ana şerit](tasarimlar/islem-ekleme-sabit-serit-2026-11-17.png): işlem/açıklama/tutar/kompakt tarih ve kaydet aynı şeritte; ayrıntılar aşağıda hizalı yeni satırda.
+2. [Temel form ve ayrıntı sütunu](tasarimlar/islem-ekleme-ayrinti-sutunu-2026-11-17.png): ana alanlar solda sabit, isteğe bağlı alanlar formun kendi içindeki ayrılmış sağ bölgeye açılır; global sağ drawer değildir.
+3. [İşlem cümlesi ve fiş](tasarimlar/islem-ekleme-islem-fisi-2026-11-17.png): sabit işlem/tutar/tarih çekirdeği, istenen ödeme/vade/belge/etiket gruplarıyla aşağı genişleyen yapı.
+
+Bu üçü bağımsız tasarım adaylarıdır, aynı anda uygulanacak özellikler değildir. Kullanıcı tercih/düzeltme bildirecek. Seçim yalnız tasarım yönünü belirler; açık kodlamaya başlama talimatı olmadan kod, paket veya yayın işlemi yapılmaz. Görsellerdeki işlem tablosu örneklerinin sıralama/tarih/tutar detayları gerçek tablo davranışını değiştirme talimatı değildir. Statik görsel, alanların konumunun etkileşimde gerçekten sabit kaldığını kanıtlamaz; uygulama aşamasında ölçülmesi gerekir.
+
+### İşlem ekleme — Önceki üç aday reddedildi; listenin sonunda yeni satır yönü
+
+**Kullanıcı önceki üç işlem ekleme görselini seçmedi.** Sabit şerit, ayrıntı sütunu ve işlem fişi adayları uygulama referansı değildir; karar geçmişi olarak kalır. Yeni talep tek bir satır içi işlem ekleme alternatifinin görsel çalışmasıdır. Kodlama veya yayın başlangıç talimatı yoktur.
+
+- Yeni işlem, listenin sonunda yeni bir satır açar; mevcut bir kayıt düzenleniyormuş gibi aynı tablo hücrelerinde sıfırdan doldurulur. Eski bir kaydın değerleri kopyalanmaz; görseldeki girilmiş örnekler taslak örneğidir.
+- Ana alanlar mevcut **Tarih / Açıklama / Etiket / İşlem / Ekleyen / Tutar / Bakiye** sütun sırasıyla hizalanır. Ekleyen mevcut kullanıcı bilgisidir; kaydetmeden gerçekleşmiş bakiye değişikliği gösterilmez. Taslak ile kayıtlı hareket görsel olarak açık ayrılır.
+- Seçilen opsiyonlara göre ek bilgi alanları yeni satırın alt satırlarında, aynı genişleyen yüzeyde ve tutarlı grid içinde açılır. Ayrı alt giriş paneli, modal veya işlem fişi bu yönün yerine kullanılmaz. Ana satırın alanları yer/boyut değiştirmez.
+- Mevcut düzenleme alanındaki zorunlu değişiklik gerekçesi, **yeni kayıt oluşturma** alanına taşınmaz. İsteğe bağlı açıklama ve işleme bağlı zorunlu alanlar kendi anlamlarını korur.
+- Tarih/saat kompakt; işlem türü ve etiket seçeneklerinin adları kesilmeden okunur. Tutarlar sağa hizalı ve Türkçe para biçimindedir; uzun açıklama için makul alan ayrılır.
+- Kullanıcı görselin oran/orantı ve finansal okunaklılık açısından önce değerlendirilmesini istedi. Görselde ana tutar, şimdi ödenen, alıştan açık kalan borç ve varsa tahmini kayıt sonrası cari bakiye birbirine karıştırılmayacak. Taslak hesapları kesinleşmiş hareket gibi sunulmayacak.
+- Kontrol örneği: mevcut tedarikçi cari bakiyesi −39.963,00 TL; yeni alış 12.500,00 TL; kısmi ödeme 2.500,00 TL; bu alıştan açık borç 10.000,00 TL; kayıt sonrası cari bakiye önizlemesi −49.963,00 TL. Kasa çıkışı 2.500,00 TL'dir; ikinci alış kaydı üretilmez. Örnek değerler gerçek finansal kayıt oluşturmaz.
+- Statik görsel yalnız tasarım değerlendirmesidir; veri bağlama, kaydırma, yeni satırın görünür olması, sıralama/filtreyle etkileşimi uygulama aşamasında ayrıca netleştirilip test edilir.
+
+### Satır içi yeni işlem — Görsel ve okunaklılık değerlendirmesi
+
+Yeni aday: [Listenin sonunda yeni işlem satırı](tasarimlar/islem-ekleme-liste-sonu-yeni-satir-2026-11-17.png). Bu son görsel, aynı turdaki ara taslakların yerini alır; henüz kullanıcı tarafından onaylanmadı. Önceki üç alternatif reddedilmiş olarak kalır.
+
+- İki kayıtlı hareketten sonra en sonda yeni taslak satır, tüm alt alanları kapsayan tek hafif turkuaz yüzey ve sol işaretle gösterildi. Kaydedilmemiş Bakiye hücresinde sayısal gerçekleşmiş bakiye yerine tire ve “Kaydedilmedi” var.
+- İlk görsel kendi içinde incelendi: alış/ödeme/kalan borç hesabı tutarlıydı; ancak vade alanı fazla geniş, ek ödeme tutarı sola hizalı ve belge/saat satırı üst gridle uyumsuzdu. Son revizyonda para girişi sağa hizalandı, belge ve saat üst alanların hizalarına alındı, belge/tarih/saat kontrolleri daha sınırlı boyutla gösterildi.
+- Görselde işlem türü ve etiket metinleri kesilmeden, tutarlar tam ve sağa hizalı gösterilir; açıklamaya ayrı alan ayrılır. Ana kalemler mevcut tablo sütunları sırasındadır. Tarih/saat kompakt tutulması ve sütun hizalarının gerçek ekran genişliğinde ölçülmesi uygulama kabul koşuludur.
+- Finansal kontrol: 12.500,00 TL alış − 2.500,00 TL şimdi ödeme = 10.000,00 TL açık borç; −39.963,00 TL mevcut cari bakiye − 10.000,00 TL yeni net borç = −49.963,00 TL yalnız **önizleme**. Kaydetmeden gerçek hareket/bakiye güncellenmez. Yeni işlem olduğu için değişiklik gerekçesi alanı yoktur.
+- Görsel örnek değerlerle doldurulmuş bir yeni taslağı gösterir; “yeni satır açınca eski kayıt değerleri kopyalansın” anlamına gelmez.
+- Bu değerlendirme statik görsel okumasıdır; ekran boyutu, etkileşimde sabit alan ölçüleri, klavye/odak ve mobil davranış test edilmiş sayılmaz. Yalnız not ve görsel kaydı yapıldı; kodlama/commit/push/paketleme/yayın yapılmadı.
+
+### Satır içi yeni işlem — Varsayılan kapalı ek bilgiler ve alanların görsel yenilenmesi
+
+**Not/görsel revizyon aşaması; kodlama veya yayın talimatı yoktur.** Kullanıcı mevcut satır içi taslağı henüz tam uygun bulmadığını söyledi; yeni düzeltmelerle geliştirme istiyor.
+
+- **Ek bilgiler yeni işlemde varsayılan olarak kapalı gelir.** Ödeme/vade/belge/saat gibi ek alanlar ilk açılışta sergilenmez. Açılıp kapanması ana satırdaki alanları yeniden dağıtmaz; kapanış girilmiş değerleri kendiliğinden temizleme anlamına gelmez.
+- Kullanıcı giriş alanları ve dropdown menülerini eski görünümlü buldu. Sade Netlik korunarak daha hafif, modern, anlaşılır düzenlenebilir hücreler ve okunaklı seçim listeleri için görsel revizyon yapılır. Görsel yenileme tarih/tutar/işlem anlamlarını değiştirmez.
+- Kullanıcının çizdiği sınır, **giriş alanlarının Tutar sütunu sınırında bitmesi; sağdaki bakiye/eylem bölgesine taşmaması** olarak yorumlandı. İptal/kaydet, çizimdeki X ve onay ikonlarıyla sağda ayrı bir alanda önerilir. Bu yorum görsel üzerinden değerlendirilecek; bağımsız yeni bir muhasebe sütunu ekleme kararı değildir.
+- Tarih/etiket/işlem tetikleyicileri kompakt; açıklama için yeterli alan ve para girişi için sağ hizalı net tipografi. Odak görünür, eylemler anlaşılır; yalnız modern görünmek için gereksiz animasyon/gölge veya okunaksız kutusuz alan eklenmez.
+- Yeni işlem görüntüsü boş başlangıç durumuyla hazırlanabilir: tarih/ekleyen gibi mevcut varsayılanlar dışında eski kayıt değerleri taşınmaz, tutar henüz girilmemişken sayısal bakiye önizlemesi uydurulmaz. Bu revizyon için eski örnekteki kısmi ödeme varsayılan kabul edilmez.
+- Açık bir dropdown örneği, ek bilgilerin açık olduğu anlamına gelmez. Önerilen özel seçim görünümü şimdilik yalnız taslaktır; gerçek klavye/odak/erişilebilirlik davranışı uygulanmış veya test edilmiş sayılmaz.
+
+### Satır içi yeni işlem — Hafif hücreler, kapalı ek bilgiler ve ayrı ikon alanı görseli
+
+Yeni aday: [Modern satır içi giriş, ek bilgiler kapalı](tasarimlar/islem-ekleme-satir-ici-modern-kapali-2026-11-17.png). Henüz onaylı nihai tasarım değildir. Aynı turdaki ara görüntü yerine son revizyon referans alınır.
+
+- Boş başlangıç durumunda açıklama/tutar girilmemiş, işlem seçilmemiş örnek gösterildi; kaydet ikonu gerekli alanlar tamamlanana kadar pasif görünümdedir. Bakiye hücresinde taslak işareti vardır, sayısal bakiye önizlemesi uydurulmaz.
+- Geleneksel kalın kutular hafif düzenlenebilir hücrelerle, kompakt tarih ve seçim tetikleyicileriyle yenilendi. Tutar odağı ince turkuaz çerçeveyle görünür; metin/para okunaklılığı korunur. İşlem menüsü ayrı hizalı seçenek listesi örneğidir; açık menü, varsayılan kapalı Ek bilgiler durumunu değiştirmez.
+- Sağda, tutar alanının sınırını aşmayan iptal X ve kaydet onay ikonu bölgesi önerildi; büyük metin düğmeleri bu görsel adayda yoktur. İkonların gerçek uygulamada erişilebilir adları, odak ve klavye davranışı gerekecektir. Bunların çalıştığı iddia edilmez.
+- Görsel kontrolde menü için oluşan gereksiz beyaz ara alan fark edildi; revizyonda menü, önceki kayıtların üzerine açılan katman olarak ele alındı. Gerçekte satırların/panelin kaymaması ve kayıtlar arasına boşluk eklenmemesi, uygulama aşamasında ayrıca ölçülmesi gereken koşuldur; statik görsel etkileşim testi değildir.
+- Kullanıcının ek bilgiler kapalı gelsin talebi kaydedildi; giriş/dropdown stili ve sağdaki ikon düzeni yorum bekleyen görsel öneridir. Kodlama, commit/push, paketleme ve yayın yapılmadı.
+
+## 17 Kasım 2026 — Açık uygulama ve GitHub yayın talimatı
+
+Kullanıcı son satır içi tasarımı onayladı ve “düzenleme ekranını da buna göre tasarlıyorsun ve aldığımız son notlarla birlikte yeni sürümü kodlayıp githuba yüklüyorsun” talimatını verdi. Biriken son kararlar 1.25.0 kapsamında uygulanır. Önceki not/görsel aşaması ifadeleri karar geçmişidir.
+
+- Yeni işlem ve düzenleme aynı modern satır içi dili kullanır; ek bilgiler başlangıçta kapalıdır. Ana sütunlar sabit kalır; bakiye sütunu kaydet/iptal eylemlerine ayrılır. Yeni işlem gerekçe istemez, düzenleme gerekçesi korunur.
+- Tedarikçi, müşteri ve personel için son takvim/bilgi/aylık özet kararları, arama kapanışı ve takvim tetikleyicisinin aç/kapat davranışı uygulanır.
+- Personel planı cari düzenlemede tarih bazında girilir; başka haftaya otomatik tekrar etmez. Girilmeyen günlere vardiya atanmaz. Planın ücret/puantaj etkisi yoktur. Mevcut haftalık izin sayıları korunur, gün planı diye yorumlanmaz.
+- Aylık oranlar yalnız seçilen ayın gerçekleşmiş kayıtlarına ve mevcut açık kalem eşleştirme kuralına dayanır. Ay dışında oluşmuş borç tahsilatı/ödemesi ayrıca gösterilir; halka toplamına zorla eklenmez. Orana sığmayan iade/mahsup açıkça ayrı gösterilir.
+- Şema 12 korunur; profil JSON alanı doğrulanarak genişletilir. Gerçek veriler ve yapılandırma değiştirilmez.
+- Kaynak ve yeni GitHub Release yayımlanır; hostinge hazır ZIP + SHA-256 depoya eklenir. Hosting yüklemesi/incelemesi kullanıcıya aittir.

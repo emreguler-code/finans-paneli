@@ -102,7 +102,9 @@ fs.mkdirSync(out, { recursive: true });
       const start = await state(),
         customer = start.parties.find((x) => x.type === "Müşteri" && x.active);
       await p.locator(".party-row").filter({ hasText: customer.name }).click();
-      await p.locator(".persistent-composer").waitFor();
+      await p
+        .getByRole("button", { name: "Yeni işlem ekle", exact: true })
+        .waitFor();
       if (
         !(await state()).events.some(
           (e) =>
@@ -112,23 +114,26 @@ fs.mkdirSync(out, { recursive: true });
         )
       ) {
         await p
-          .locator(".persistent-composer")
+          .getByRole("button", { name: "Yeni işlem ekle", exact: true })
+          .click();
+        await p
+          .locator(".ledger-new-row")
           .getByRole("combobox", { name: "İşlem", exact: true })
-          .selectOption("sale");
-        await p.locator(".persistent-composer input[name=amount]").fill("100");
+          .click();
+        await p.getByRole("option", { name: "Satış", exact: true }).click();
+        await p.locator(".ledger-new-row input[name=amount]").fill("100");
         await p
           .getByRole("button", { name: "İşlemi kaydet", exact: true })
           .click();
-        await p.waitForFunction(
-          () =>
-            document.querySelector(".persistent-composer input[name=amount]")
-              ?.value === "",
-        );
+        await p.locator(".ledger-new-row").waitFor({ state: "hidden" });
       }
       ok(
-        "Customer opens a default composer without header add",
+        "Customer offers inline creation without a detached dock",
         (await p.locator(".party-heading-actions .primary-button").count()) ===
-          0 && (await p.locator(".persistent-composer").isVisible()),
+          0 &&
+          (await p
+            .getByRole("button", { name: "Yeni işlem ekle", exact: true })
+            .isVisible()),
       );
       const headerBalance = await p
           .locator(".party-current-balance")
@@ -175,9 +180,8 @@ fs.mkdirSync(out, { recursive: true });
         .click();
       await p.locator(".entry-inline").waitFor();
       await row.locator("input[name=amount]").fill("2300");
-      await row
-        .getByRole("combobox", { name: "İşlem", exact: true })
-        .selectOption("customer_return");
+      await row.getByRole("combobox", { name: "İşlem", exact: true }).click();
+      await p.getByRole("option", { name: "İade", exact: true }).click();
       await p
         .getByRole("button", { name: "Değişiklikleri kaydet", exact: true })
         .click();
@@ -255,37 +259,55 @@ fs.mkdirSync(out, { recursive: true });
         ).includes("QA120 işlem yönü düzeltildi"),
       );
       await p.keyboard.press("Escape");
-      await p.locator(".party-compose-toggle").click();
-      const expandedMain = await p.locator(".main-content").boundingBox();
-      ok(
-        "Collapsed composer releases its entire layout row",
-        await p
-          .locator("#entry-dock-root")
-          .evaluate((e) => e.getBoundingClientRect().height === 0),
-      );
-      await p.locator(".party-compose-toggle").click();
-      ok(
-        "Reopening restores composer space",
-        (await p.locator(".main-content").evaluate((e) => e.clientHeight)) <
-          expandedMain.height,
-      );
       await p
-        .locator(".persistent-composer input[name=description]")
-        .fill("QA120 gizli taslak");
-      await p.locator(".party-compose-toggle").click();
+        .getByRole("button", { name: "Yeni işlem ekle", exact: true })
+        .click();
+      await p
+        .locator(".ledger-new-row input[name=description]")
+        .fill("QA125 korunacak taslak");
       await go("Hesaplar");
       await p.getByRole("alertdialog").waitFor();
       await p
         .getByRole("button", { name: "Düzenlemeye dön", exact: true })
         .click();
       ok(
-        "Hidden draft still guards navigation",
+        "Inline new draft guards navigation and preserves entered data",
         (await p
-          .locator(".persistent-composer input[name=description]")
-          .inputValue()) === "QA120 gizli taslak",
+          .locator(".ledger-new-row input[name=description]")
+          .inputValue()) === "QA125 korunacak taslak",
       );
-      await p.locator(".party-compose-toggle").click();
-      await p.locator(".persistent-composer input[name=description]").fill("");
+      await p
+        .getByRole("button", { name: "Yeni işlemi iptal et", exact: true })
+        .click();
+      await p
+        .getByRole("button", { name: "Değişikliklerden vazgeç", exact: true })
+        .click();
+      const createBefore = await state();
+      await p
+        .getByRole("button", { name: "Yeni işlem ekle", exact: true })
+        .click();
+      const draft = p.locator(".ledger-new-row");
+      await draft.getByRole("combobox", { name: "İşlem", exact: true }).click();
+      await p.getByRole("option", { name: "Satış", exact: true }).click();
+      await draft
+        .locator("input[name=description]")
+        .fill("QA125 yeni satır " + engine);
+      await draft.locator("input[name=amount]").fill("25,50");
+      await p
+        .getByRole("button", { name: "İşlemi kaydet", exact: true })
+        .click();
+      await draft.waitFor({ state: "hidden" });
+      const createAfter = await state();
+      ok(
+        "New inline row creates exactly one posted sale with no edit reason",
+        createAfter.events.length === createBefore.events.length + 1 &&
+          createAfter.events.some(
+            (e) =>
+              e.description === "QA125 yeni satır " + engine &&
+              e.amount_cents === 2550 &&
+              e.party_effect === 2550,
+          ),
+      );
       await shot("party-desktop");
       await go("Hesaplar");
       const account = (await state()).accounts.find((a) => a.active);
@@ -343,6 +365,7 @@ fs.mkdirSync(out, { recursive: true });
       await bankRow
         .getByRole("combobox", { name: "İşlem", exact: true })
         .selectOption("expense");
+      await p.locator(".inline-extra > summary").click();
       await bankRow.locator("input[name=amount]").fill("30");
       await p
         .locator(".entry-inline")
