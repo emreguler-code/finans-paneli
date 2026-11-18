@@ -1036,3 +1036,5 @@ Kullanıcı “evet collapse derken bunu kastettim. notlardaki değişiklikleri 
 18 Kasım kapsamı uygulandı; ayrıntılar [1.26.0 kapsamı](SURUM-1.26.0.md) içinde. Geçmiş paragraflardaki kodlama başlamadı/onay bekleniyor durumları tarihsel görüşme aşamasıdır; yukarıdaki son açık talimat bunları bu sürüm kapsamında yürürlüğe aldı. Yeni fikirler tekrar not ve açık uygulama talimatı akışına tabidir.
 
 Yayın kontrolü bulgusu: picomatch 4.0.7 için yamasız GHSA-fc5q-39xc-vjpf bildirimi bulundu. Yalnız güvenilen derleme globlarına ait dar istisna 18 Aralık 2026 sonuna kadar açıkça belgelenir; diğer bulgular denetimi durdurur. Hostingde Node çalışmaz. Ayrıntı: [güvenlik kaydı](GUVENLIK-ISTISNASI-1.26.0.md).
+
+1.26.0 GitHub yayını tamamlandı. Kaynak, hosting ZIP ve checksum repoya eklendi; indirilen Release dosyaları doğrulandı. [Test/yayın sonucu](TEST-RAPORU-1.26.0.md). Yeni fikirler bu sürümün onayına otomatik dahil değildir; önce not ve ardından açık uygulama talimatı gerekir.

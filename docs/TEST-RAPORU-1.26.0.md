@@ -16,3 +16,9 @@ Yerel Firefox'un salt okunur kullanıcı dizini için geçici XDG dizinleri ve b
 Kapsam [SURUM-1.26.0.md](SURUM-1.26.0.md). 1.25.1 canlı boş sayfanın kök nedeni doğrulanmadı; yeni paketin temiz kurulumu, 1.25.0 üzerine dosya yükseltmesi ve eksik modülde kurtarma senaryosu bu nedenin kesin tespiti sayılmaz. Hosting yükleme/inceleme kullanıcıya aittir.
 
 Paket kabulü geçti: hosting/tam arşiv eşliği, temiz kurulum, 1.25.0 üzerine dosya yükseltmesinde config ve eski assets korunması, tüm yeni başlangıç referanslarının bulunması doğrulandı.
+
+## GitHub yayın sonucu
+
+Windows ve Linux kabulü başarılı: [44339941688](https://github.com/emreguler-code/finans-paneli/actions/runs/44339941688). Yayımlanan kaynak `4b20fb2185ad513f33354350788a0a8f6f964a2c`. [GitHub Release](https://github.com/emreguler-code/finans-paneli/releases/tag/v1.26.0) dört varlık içerir. İndirilen ZIP/checksum dosyaları yerel test çıktısıyla birebir eşleşti; hosting ZIP'i ayrıca repo dosyasıyla karşılaştırıldı. Her iki checksum ve tag/kaynak doğrulaması [yayın kaydında](evidence/1.26.0/publication.json).
+
+İlk Linux aday koşusunda testin arka arkaya iki tam yükleme başlatması WebKit'te iptal edilmiş state isteği hatası oluşturdu. Tek temiz doküman yüklemesiyle test kurulumu düzeltildi; hata denetimi kaldırılmadı. Yukarıdaki başarılı koşu bu düzeltmeyi içerir; uygulama/hosting ZIP'i değişmedi.
