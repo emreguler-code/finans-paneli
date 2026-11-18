@@ -43,8 +43,9 @@ module.exports = async function (p, ok, shot, base, original) {
   try {
     await p.setViewportSize({ width: 1920, height: 1080 });
     await p.emulateMedia({ reducedMotion: "no-preference" });
-    await p.goto(base + "/#/cariler/4");
-    await p.reload();
+    // A fresh document installs this fixture once. Two consecutive reloads can
+    // cancel an in-flight state fetch and produce a WebKit document-load error.
+    await p.goto(base + "/?qa126=1#/cariler/4");
     await p.locator(".party-heading-name").waitFor();
     ok(
       "Empty staff week is explicit and hides meaningless legend",
