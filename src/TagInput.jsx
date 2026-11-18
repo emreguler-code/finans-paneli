@@ -1,7 +1,7 @@
 import { useId, useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { FloatingPanel } from "./FloatingPanel";
-export function TagInput({ value, onChange, options }) {
+export function TagInput({ value, onChange, options, selectOnFocus = false }) {
   const [open, setOpen] = useState(false),
     [index, setIndex] = useState(-1),
     [filtering, setFiltering] = useState(false),
@@ -33,6 +33,9 @@ export function TagInput({ value, onChange, options }) {
         }
         value={value}
         maxLength={80}
+        onFocus={(e) => {
+          if (selectOnFocus) e.target.select();
+        }}
         placeholder="Genel"
         onChange={(e) => {
           onChange(e.target.value);

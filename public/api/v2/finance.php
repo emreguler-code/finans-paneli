@@ -274,7 +274,7 @@ function eventInput(PDO $db, array $b, ?array $old): array
     if ($scheduled && !$due) {
         $due = $date;
     }
-    $time = field($b, "time", 8) ?: "12:00:00";
+    $time = field($b, "time", 8) ?: $old["event_time"] ?? date("H:i:s");
     if (!preg_match('/^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$/D', $time)) {
         throw new DomainException("Saat geçersiz.");
     }
@@ -292,8 +292,13 @@ function eventInput(PDO $db, array $b, ?array $old): array
     if ($settled < 0 || $settled > $n) {
         throw new DomainException("Ödenen/tahsil edilen tutar toplamı aşamaz.");
     }
-    if (in_array($op, ["salary", "employee_purchase"])) {
+    if ($op === "employee_purchase") {
         $settled = 0;
+    }
+    if ($op === "salary" && $settled > 0 && $card) {
+        throw new DomainException(
+            "Maaş ödemesi için kasa veya banka hesabı seçin.",
+        );
     }
     if ($op === "employee_expense") {
         $settled = $n;

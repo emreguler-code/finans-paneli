@@ -68,6 +68,7 @@ function fieldsIn(node, fields = [], path = "f", label = "") {
 export function ListTools(props) {
   const {
     query,
+    busy = false,
     setQuery,
     placeholder,
     reset,
@@ -101,6 +102,7 @@ export function ListTools(props) {
     <SmartSearch
       {...{
         query,
+        busy,
         setQuery,
         placeholder,
         reset,

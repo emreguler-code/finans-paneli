@@ -39,6 +39,24 @@ ok('No invented due date',entity('events',id)['due_date'] is None)
 before=entity('accounts','bank')['balance_cents'];balance=entity('parties',person)['balance_cents'];event(operation='salary',partyId=person,amount='5000')
 ok('Salary accrual changes no cash',entity('accounts','bank')['balance_cents']==before)
 ok('Salary creates personnel payable',entity('parties',person)['balance_cents']==balance-500000)
+# A salary with an immediate payment is one entitlement event, not two payments.
+for settled in ['0','5000','1250']:
+ before=entity('accounts','bank')['balance_cents'];balance=entity('parties',person)['balance_cents'];count=len(state()['events'])
+ payload=dict(requestId=str(uuid.uuid4()),operation='salary',partyId=person,amount='5000',settled=settled,date=s['today'],account='bank',time='09:30:42',document='LEGACY')
+ code,r=call('event_save',payload);assert code==200,r;sid=r['id'];value=int(settled)*100
+ code,retry=call('event_save',payload)
+ ok('Salary '+settled+' payment is atomic and idempotent',code==200 and retry['id']==sid and len(state()['events'])==count+1 and entity('accounts','bank')['balance_cents']==before-value and entity('parties',person)['balance_cents']==balance-500000+value)
+ se=entity('events',sid)
+ ok('Salary gross and immediate payment remain distinct',se['amount_cents']==500000 and se['settled_cents']==value)
+ code,r=call('event_save',{**payload,'requestId':str(uuid.uuid4()),'id':sid,'version':se['version'],'settled':'1000','time':'','reason':'Kısmi ödemeyi düzelt'})
+ ok('Salary edit reverses previous cash once and preserves untouched time',code==200 and entity('accounts','bank')['balance_cents']==before-100000 and entity('parties',person)['balance_cents']==balance-400000 and entity('events',sid)['event_time']=='09:30:42' and entity('events',sid)['document_no']=='LEGACY')
+ se=entity('events',sid);code,r=post('event_status',id=sid,version=se['version'],cancelled=True,reason='İptal denemesi')
+ ok('Cancelling a paid salary reverses both entitlement and actual payment',code==200 and entity('accounts','bank')['balance_cents']==before and entity('parties',person)['balance_cents']==balance)
+for changes in [dict(settled='5001'),dict(settled='-1'),dict(settled='5000',account='',cardId=card),dict(settled='5000',account='')]:
+ ok('Invalid salary payment is rejected '+str(changes),post('event_save',operation='salary',partyId=person,amount='5000',date=s['today'],**changes)[0]==422)
+sid=event(operation='salary',partyId=person,time='',amount='1');import datetime
+clock=datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=3))).strftime('%H:%M')
+ok('Untouched new time uses current application clock at save',entity('events',sid)['event_time'].startswith(clock))
 before=entity('accounts','bank')['balance_cents'];balance=entity('parties',person)['balance_cents'];event(operation='employee_expense',partyId=person,amount='300')
 ok('Company payment on behalf creates receivable',entity('parties',person)['balance_cents']==balance+30000)
 ok('Company payment on behalf moves cash once',entity('accounts','bank')['balance_cents']==before-30000)

@@ -1125,7 +1125,10 @@ export function App({ initialData, onLogout }) {
               </span>
             </div>
           </HeaderRegion>
-          <ShellContent motionKey={routeHash(nav.route) + nav.revision}>
+          <ShellContent
+            motionKey={nav.route.page + ":" + nav.route.record}
+            direction={nav.direction}
+          >
             <div id="entry-page-root" />
             {entryPage && (
               <GlobalSearchTools data={fullData} showFilters={false} />

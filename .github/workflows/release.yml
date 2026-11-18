@@ -42,7 +42,7 @@ jobs:
         run: npm ci
       - id: tests
         run: npm test
-      - run: npm audit --audit-level=moderate
+      - run: npm run audit:security
       - name: Check PHP syntax
         id: php
         run: |

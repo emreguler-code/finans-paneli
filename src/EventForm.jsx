@@ -1,3 +1,4 @@
+import { PartyEntryForm } from "./PartyEntryForm";
 import { TagInput } from "./TagInput";
 import { SelectControl } from "./SelectControl";
 import { EntrySurface } from "./EntrySurface";
@@ -56,15 +57,10 @@ export function EventForm({ context, data, onClose, onState, notify }) {
     amount: e.id ? money(e.amount_cents) : formatMoneyInput(init.amount || ""),
     settled: money(e.settled_cents),
     date: init.date || e.event_date || data.today,
-    time:
-      e.event_time ||
-      new Date().toLocaleTimeString("tr-TR", {
-        hour12: false,
-        timeZone: "Europe/Istanbul",
-      }),
+    time: e.event_time || "",
     due: e.due_date || "",
     description: e.description || init.description || "",
-    tag: e.tag || "Genel",
+    tag: e.tag || (context.inline && !e.id ? "" : "Genel"),
     account:
       e.account_id ||
       init.account ||
@@ -210,6 +206,7 @@ export function EventForm({ context, data, onClose, onState, notify }) {
     </label>
   );
   const invoice = isInvoice(f.operation),
+    salary = f.operation === "salary",
     borcland = ["employee_purchase", "employee_expense"].includes(f.operation),
     transfer = [
       "transfer",
@@ -275,7 +272,7 @@ export function EventForm({ context, data, onClose, onState, notify }) {
         lockedPartyId: locked,
         amount: normalizeMoney(f.amount),
         settled:
-          invoice && f.immediate
+          (invoice || salary) && f.immediate
             ? normalizeMoney(paymentMode === "full" ? f.amount : f.settled)
             : "0",
       };
@@ -284,7 +281,7 @@ export function EventForm({ context, data, onClose, onState, notify }) {
         b.lockedPartyId = null;
       }
       if (
-        invoice &&
+        (invoice || salary) &&
         f.immediate &&
         paymentMode === "partial" &&
         decimal(f.settled) > decimal(f.amount)
@@ -326,12 +323,10 @@ export function EventForm({ context, data, onClose, onState, notify }) {
       (c) => String(c.id) === String(f.cardId),
     )?.name;
     if (f.scheduled) return "Plan kaydedilir; şimdi bakiye değişmez.";
-    if (f.operation === "salary")
-      return (
-        "Personele " +
-        text +
-        " maaş hak edişi eklenir; banka/kasadan para çıkmaz."
-      );
+    if (salary)
+      return paid > 0
+        ? `${text} maaş hakedişi · ${fmt(Math.round(paid * 100))} TL ödeme · bu maaştan ${fmt(Math.round((total - paid) * 100))} TL borç kalır. ${account || "Seçilen hesap"} hesabından ödeme çıkar.`
+        : `${text} maaş hakedişi eklenir; ödeme yapılmaz.`;
     if (f.operation === "employee_purchase")
       return "Personelin borcu " + text + " artar; banka/kasadan para çıkmaz.";
     if (f.operation === "transfer")
@@ -410,6 +405,36 @@ export function EventForm({ context, data, onClose, onState, notify }) {
           (party ? " Cari etkisi işlem türüne göre uygulanır." : "")
       : "İşlem hesabını seçin.";
   };
+  if (context.inline && party)
+    return (
+      <PartyEntryForm
+        {...{
+          context,
+          data,
+          party,
+          e,
+          f,
+          formId,
+          ready,
+          place,
+          change,
+          choose,
+          setF,
+          paymentMode,
+          setPaymentMode,
+          save,
+          onClose,
+          busy,
+          error,
+          invoice,
+          invoiceReturn,
+          borcland,
+          needsAccount,
+          opts,
+          effect,
+        }}
+      />
+    );
   return (
     <EntrySurface
       variant={context.inline ? "inline" : "dock"}

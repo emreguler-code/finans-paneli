@@ -10,6 +10,8 @@ export function PartyMonthlySummary({ party, data }) {
   const summary = partyMonthly(party, data, month),
     staff = party.type === "Personel",
     supplier = party.type === "Tedarikçi";
+  const showOuter =
+    summary.outer.filter((d) => d.value > 0).length > (staff ? 1 : 0);
   const colors = supplier
     ? ["var(--status-positive)", "var(--muted)", "var(--status-warning)"]
     : ["var(--status-positive)", "var(--status-warning)"];
@@ -107,15 +109,15 @@ export function PartyMonthlySummary({ party, data }) {
                 .join(". ")
             }
           >
-            <PieChart width={244} height={244} accessibilityLayer={false}>
+            <PieChart width={208} height={208} accessibilityLayer={false}>
               <Pie
                 data={summary.inner.filter((d) => d.value > 0)}
                 dataKey="value"
                 nameKey="name"
                 cx="50%"
                 cy="50%"
-                innerRadius={70}
-                outerRadius={94}
+                innerRadius={60}
+                outerRadius={82}
                 startAngle={90}
                 endAngle={-270}
                 isAnimationActive={false}
@@ -131,15 +133,15 @@ export function PartyMonthlySummary({ party, data }) {
                     />
                   ))}
               </Pie>
-              {summary.outer.some((d) => d.value > 0) && (
+              {showOuter && (
                 <Pie
                   data={summary.outer.filter((d) => d.value > 0)}
                   dataKey="value"
                   nameKey="name"
                   cx="50%"
                   cy="50%"
-                  innerRadius={101}
-                  outerRadius={113}
+                  innerRadius={88}
+                  outerRadius={99}
                   startAngle={90}
                   endAngle={-270}
                   isAnimationActive={false}
@@ -167,34 +169,44 @@ export function PartyMonthlySummary({ party, data }) {
             </div>
           </div>
           <div className="donut-legend">
-            {summary.outer.length > 0 && (
+            {showOuter && (
               <>
                 <h4>
                   {staff ? "Hakediş türü" : "Brüt alış türü · ince halka"}
                 </h4>
-                {summary.outer.map((d, i) => (
-                  <div key={d.name}>
-                    <span>
-                      <i style={{ background: outerColors[i] }} />
-                      {d.name}
-                    </span>
-                    <b>{fmt(d.value)} TL</b>
-                    <small>{ratio(d.value, summary.gross)}</small>
-                  </div>
-                ))}
+                {summary.outer
+                  .filter((d) => d.value > 0)
+                  .map((d) => (
+                    <div key={d.name}>
+                      <span>
+                        <i
+                          style={{
+                            background: outerColors[summary.outer.indexOf(d)],
+                          }}
+                        />
+                        {d.name}
+                      </span>
+                      <b>{fmt(d.value)} TL</b>
+                      <small>{ratio(d.value, summary.gross)}</small>
+                    </div>
+                  ))}
               </>
             )}
             <h4>{staff ? "Ödeme durumu" : "Net tutarın dağılımı"}</h4>
-            {summary.inner.map((d, i) => (
-              <div key={d.name}>
-                <span>
-                  <i style={{ background: colors[i] }} />
-                  {d.name}
-                </span>
-                <b>{fmt(d.value)} TL</b>
-                <small>{ratio(d.value, summary.net)}</small>
-              </div>
-            ))}
+            {summary.inner
+              .filter((d) => d.value > 0)
+              .map((d) => (
+                <div key={d.name}>
+                  <span>
+                    <i
+                      style={{ background: colors[summary.inner.indexOf(d)] }}
+                    />
+                    {d.name}
+                  </span>
+                  <b>{fmt(d.value)} TL</b>
+                  <small>{ratio(d.value, summary.net)}</small>
+                </div>
+              ))}
           </div>
         </>
       ) : (
@@ -221,6 +233,13 @@ export function PartyMonthlySummary({ party, data }) {
           Dönem dışı ödeme / diğer mahsup: {fmt(summary.outsideCoverage)} TL
         </p>
       )}
+      {summary.unassigned > 0 && (
+        <p className="calendar-hint">
+          Ay içinde {fmt(summary.unassigned)} TL ödemenin maaş / yemek
+          bağlantısı tanımlanmamış. Ödeme bağlantılarını personel bilgilerini
+          düzenleyerek belirleyin.
+        </p>
+      )}
       {summary.excess > 0 && (
         <p className="calendar-hint">
           Hakedişi aşan bağlı ödeme: {fmt(summary.excess)} TL
@@ -228,7 +247,7 @@ export function PartyMonthlySummary({ party, data }) {
       )}
       <p className="calendar-hint">
         {staff
-          ? "Yalnız bu aya açıkça bağlanan maaş ve yemek ödemeleri."
+          ? "Maaşla birlikte kaydedilen ödeme ve bu aya açıkça bağlanan diğer maaş / yemek ödemeleri."
           : "Yalnız seçilen aya ait çalışma hacmi. İadeler net tutardan düşülür; geçmiş borç ödemeleri ayrı gösterilir."}
       </p>
     </section>

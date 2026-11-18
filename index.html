@@ -9,7 +9,25 @@
     <title>Finans · Çalışma alanı</title>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <main
+        style="
+          max-width: 480px;
+          margin: 15vh auto;
+          padding: 24px;
+          font: 16px system-ui;
+          color: #203343;
+        "
+      >
+        <h1>Finans</h1>
+        <p id="boot-status" role="status">Çalışma alanı yükleniyor…</p>
+        <button id="boot-retry" hidden>Sayfayı yenile</button
+        ><noscript
+          >Çalışma alanını açmak için JavaScript’i etkinleştirin.</noscript
+        >
+      </main>
+    </div>
+    <script src="./src/boot.js"></script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

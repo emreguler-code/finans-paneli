@@ -193,12 +193,12 @@ test("deferred refund actually received this month reverses the original payment
 test("missing personnel payment mapping is not reported as an unpaid salary", () => {
   const s = partyMonthly(
     { id: 1, type: "Personel", profile: {} },
-    data([event(1, "salary", 30000)]),
+    data([event(1, "salary", 30000), event(2, "payment", 5000)]),
     "2026-11",
   );
   assert.equal(s.net, 30000);
   assert.deepEqual(s.inner, []);
-  assert.match(s.notice, /tanımlanmadı/);
+  assert.match(s.notice, /belirlenmediği/);
 });
 test("earlier advances or opening credits are never relabeled as current cash or unpaid debt", () => {
   const s = partyMonthly(
@@ -236,4 +236,29 @@ test("opening balances paid this month are classified as carried debt, for suppl
     assert.equal(s.inner[0].value, 2000);
     assert.equal(s.inner.at(-1).value, 8000);
   }
+});
+
+test("salary immediate settlement is counted once without a manual mapping", () => {
+  const s = partyMonthly(
+    { id: 1, type: "Personel", profile: {} },
+    data([event(1, "salary", 30000, { settled_cents: 10000 })]),
+    "2026-11",
+  );
+  assert.equal(s.gross, 30000);
+  assert.equal(s.periodTotal, 10000);
+  assert.deepEqual(
+    s.inner.map((x) => x.value),
+    [10000, 20000],
+  );
+});
+test("a salary with no payments is genuinely unpaid even without profile metadata", () => {
+  const s = partyMonthly(
+    { id: 1, type: "Personel", profile: {} },
+    data([event(1, "salary", 30000)]),
+    "2026-11",
+  );
+  assert.deepEqual(
+    s.inner.map((x) => x.value),
+    [0, 30000],
+  );
 });

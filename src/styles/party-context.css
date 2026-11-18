@@ -282,13 +282,13 @@
 }
 .party-donut {
   position: relative;
-  width: 244px;
-  height: 244px;
+  width: 208px;
+  height: 208px;
   margin: 12px auto;
 }
 .donut-center {
   position: absolute;
-  inset: 76px 42px;
+  inset: 64px 26px;
   display: flex;
   flex-direction: column;
   justify-content: center;

@@ -1,3 +1,14 @@
+# 1.26.0 — Kararlı işlem girişi ve personel ödemeleri
+
+- Satır içi giriş ve düzenlemede hizalama, kesintisiz aktif çizgi ve kompakt tarih; etiket yazımı kolaylaştırıldı.
+- Ek bilgiler işlem seçimine ve boş zorunlu alanlara göre açılır. Tarih ve saat aynı pencerede düzenlenir.
+- Maaşla birlikte tam/kısmi kasa veya banka ödemesi; personel aylık özetinde doğru ödeme ayrımı ve kompakt grafik.
+- Yüklemede kararlı cari başlıkları, hareket azaltma destekli 350 ms sayfa geçişi ve modül yükleme hatasında görünür kurtarma ekranı.
+
+Şema 12. Hosting ZIP + SHA-256 `releases/1.26.0/` altında; hosting yükleme/inceleme kullanıcıya aittir. 1.25.1 canlı boş sayfa bildiriminin kök nedeni doğrulanamadı; paket ve hata kurtarma kontrolleri genişletildi. [Kapsam](SURUM-1.26.0.md).
+
+---
+
 # 1.25.1 — Devreden bakiye ödemelerinin aylık ayrımı
 
 1.25.0 kapsamındaki satır içi işlem ekleme/düzenleme, cari takvimleri ve aylık özetler korunur. Seçili ayda açılış bakiyesine karşı yapılan ödeme/tahsilat, “Devreden / önceki dönem borcuna ait” satırına dahil edilir. Ana grafik, finansal kayıtlar ve bakiyeler değişmez. Tedarikçi ve müşteri senaryoları ayrı doğrulandı.

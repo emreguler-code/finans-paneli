@@ -8,6 +8,7 @@ export function NavigationProvider({ children }) {
   const store = useSearchStore(),
     [route, setRoute] = useState(() => readRoute(location.hash)),
     [revision, setRevision] = useState(0),
+    [direction, setDirection] = useState("forward"),
     current = useRef(route),
     snapshots = useRef(new Map()),
     lists = useRef(new Map()),
@@ -111,6 +112,7 @@ export function NavigationProvider({ children }) {
       current.current.record !== target.record ||
       fresh ||
       restoreList;
+    setDirection(restoreList ? "back" : "forward");
     current.current = target;
     setRoute(target);
     if (remount) setRevision((n) => n + 1);
@@ -161,6 +163,11 @@ export function NavigationProvider({ children }) {
         blocker.current(() => navigate(next, { bypass: true }));
         return;
       }
+      setDirection(
+        Number.isInteger(targetPosition) && targetPosition < position.current
+          ? "back"
+          : "forward",
+      );
       if (Number.isInteger(targetPosition)) position.current = targetPosition;
       current.current = next;
       restore(snapshots.current.get(history.state?.finansEntry));
@@ -180,6 +187,7 @@ export function NavigationProvider({ children }) {
       value={{
         route,
         revision,
+        direction,
         navigate,
         setBlocker,
         guard: (action) =>

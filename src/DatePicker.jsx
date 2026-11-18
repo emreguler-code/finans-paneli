@@ -200,6 +200,9 @@ export function DatePicker({
   displayText,
   clearable = !required,
   iconOnly = false,
+  textOnly = false,
+  timeValue,
+  onTimeChange,
 }) {
   const id = useId(),
     [anchor, setAnchor] = useState(null),
@@ -207,7 +210,9 @@ export function DatePicker({
       (range ? from : value)?.slice(0, 7) || today.slice(0, 7),
     ),
     [draft, setDraft] = useState(""),
-    [draftEnd, setDraftEnd] = useState("");
+    [draftEnd, setDraftEnd] = useState(""),
+    [timeDraft, setTimeDraft] = useState(""),
+    [timeChanged, setTimeChanged] = useState(false);
   const CalendarWindow = FloatingPanel;
   const close = React.useCallback(() => setAnchor(null), []);
   function show(e) {
@@ -216,14 +221,25 @@ export function DatePicker({
       return;
     }
     setMonth((range ? from : value)?.slice(0, 7) || today.slice(0, 7));
-    setDraft("");
+    setDraft(onTimeChange ? value : "");
     setDraftEnd("");
+    setTimeDraft(
+      timeValue ||
+        new Date().toLocaleTimeString("tr-TR", {
+          hour12: false,
+          timeZone: "Europe/Istanbul",
+        }),
+    );
+    setTimeChanged(false);
     setAnchor(e.currentTarget);
   }
   function pick(d) {
     if (!range) {
-      onChange(d);
-      close();
+      if (onTimeChange) setDraft(d);
+      else {
+        onChange(d);
+        close();
+      }
     } else if (!draft || draftEnd) {
       setDraft(d);
       setDraftEnd("");
@@ -241,7 +257,13 @@ export function DatePicker({
     : dateLabel(value) || placeholder || "Tarih seç";
   const year = Number(month.slice(0, 4));
   return (
-    <div className={"date-control" + (iconOnly ? " date-icon-only" : "")}>
+    <div
+      className={
+        "date-control" +
+        (iconOnly ? " date-icon-only" : "") +
+        (textOnly ? " date-text-only" : "")
+      }
+    >
       <button
         type="button"
         className="date-trigger"
@@ -253,7 +275,7 @@ export function DatePicker({
         aria-required={required || undefined}
         onClick={show}
       >
-        <CalendarDays size={18} />
+        {!textOnly && <CalendarDays size={18} />}
         <span className={iconOnly ? "sr-only" : undefined} id={id + "-value"}>
           {displayText || text}
         </span>
@@ -378,8 +400,16 @@ export function DatePicker({
               <Month
                 heading={range}
                 month={month}
-                start={range ? draft || from : value}
-                end={range ? draftEnd || (!draft ? to : "") : value}
+                start={
+                  range ? draft || from : onTimeChange ? draft || value : value
+                }
+                end={
+                  range
+                    ? draftEnd || (!draft ? to : "")
+                    : onTimeChange
+                      ? draft || value
+                      : value
+                }
                 onPick={pick}
                 {...{ min, max, today }}
               />
@@ -405,6 +435,26 @@ export function DatePicker({
                   : "Başlangıç ve bitiş tarihini seçin"}
               </p>
             )}
+            {onTimeChange && (
+              <label className="date-time-field">
+                İşlem saati
+                <input
+                  type="time"
+                  step="1"
+                  aria-label="İşlem saati"
+                  value={timeDraft}
+                  onChange={(e) => {
+                    setTimeDraft(e.target.value);
+                    setTimeChanged(true);
+                  }}
+                />
+                <small>
+                  {timeValue || timeChanged
+                    ? "Seçilen saat kullanılır."
+                    : "Değiştirilmezse kaydetme anındaki sistem saati kullanılır."}
+                </small>
+              </label>
+            )}
             <div className="date-footer">
               {clearable && (
                 <button
@@ -428,6 +478,19 @@ export function DatePicker({
                   onClick={() => pick(today)}
                 >
                   Bugün
+                </button>
+              )}
+              {onTimeChange && (
+                <button
+                  type="button"
+                  className="primary-button"
+                  onClick={() => {
+                    onChange(draft || value || today);
+                    if (timeChanged) onTimeChange(timeDraft);
+                    close();
+                  }}
+                >
+                  Uygula
                 </button>
               )}
               {range && (

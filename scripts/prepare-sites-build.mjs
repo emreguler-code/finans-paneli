@@ -4,6 +4,7 @@ import {
   existsSync,
   mkdirSync,
   readdirSync,
+  readFileSync,
   writeFileSync,
 } from "node:fs";
 import path from "node:path";
@@ -44,4 +45,11 @@ writeFileSync(path.join(assets, "fonts.css"), fontCss);
 copyFileSync(
   path.join(root, "src", "styles", "tokens.css"),
   path.join(assets, "design-tokens.css"),
+);
+
+// The classic recovery script must run even when the module bundle is missing.
+copyFileSync(path.join(root, "src", "boot.js"), path.join(assets, "boot.js"));
+writeFileSync(
+  index,
+  readFileSync(index, "utf8").replace("./src/boot.js", "./assets/boot.js"),
 );

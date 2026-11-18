@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useId, useRef, useState } from "react";
-import { Search, X } from "lucide-react";
+import { Search, X, LoaderCircle } from "lucide-react";
 import { FloatingPanel } from "./FloatingPanel";
 import {
   activeField,
@@ -18,6 +18,7 @@ const labelFor = (f, v) =>
       : f.options.find((o) => String(o.value) === String(v))?.label || v;
 export function SmartSearch({
   query = "",
+  busy = false,
   setQuery,
   placeholder = "Hareketlerde ara",
   reset,
@@ -163,7 +164,20 @@ export function SmartSearch({
         onSubmit={submit}
       >
         <div className="smart-search-box">
-          <Search size={18} aria-hidden="true" />
+          {busy ? (
+            <>
+              <LoaderCircle
+                size={18}
+                className="loading-spinner"
+                aria-hidden="true"
+              />
+              <span className="sr-only" role="status">
+                Aranıyor…
+              </span>
+            </>
+          ) : (
+            <Search size={18} aria-hidden="true" />
+          )}
           <div className="smart-search-content">
             {chips.map(({ field: f, value: v, label }) => (
               <button

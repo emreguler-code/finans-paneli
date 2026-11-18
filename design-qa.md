@@ -1,3 +1,13 @@
+# 1.26.0 tasarım kontrolü
+
+Sonuç: çalışan ekranlarda incelendi. Kullanıcının 18 Kasım düzeltmeleri 1.25 tasarım referansına uygulanır. Ana sütun sırası değiştirilmez; aynı hücrenin metin başlangıcı ile giriş metni hizalanır. Aktif çizgi ana ve ek satırda ortak iç gölgeyle çizilir. Yeni tarih 44 px ikon, seçili tarih düz metindir. Ek alanların açılması ana sütunların x/genişliklerini değiştirmez.
+
+1920 px maaş/kısmi ödeme ve zorunlu hesap görünümü; 390 px zorunlu alan görünümü; plan/izin ve kompakt aylık özet ekran görüntüleri incelendi. Zorunlu kaynak alanı açık ve erişilebilir, açıklama alanı ayrı bir kutu kolonuna dönüşmeden alt not olarak kalır. Grafikte sıfır kalemler ve tek türde gereksiz ince halka kaldırılır. Kaydet/iptal 44 px ikon hedefleridir.
+
+Kanıt: [test raporu](docs/TEST-RAPORU-1.26.0.md), `docs/evidence/1.26.0/`. Canlı hosting ve fiziksel iPhone/Safari testi yapılmadı. Aşağıdaki 1.25.1 incelemesi tarihsel tasarım referansıdır.
+
+---
+
 # 1.25.1 tasarım karşılaştırması · 1.25.0 kapsamı
 
 final result: passed

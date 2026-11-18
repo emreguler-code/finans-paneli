@@ -103,7 +103,11 @@ export function WeekCalendar({ party, data }) {
           );
         })}
       </div>
-      {staff ? (
+      {staff && !dates.some((date) => plan[date]) ? (
+        <p className="calendar-hint">
+          Bu haftanın çalışma planı tanımlanmamış.
+        </p>
+      ) : staff ? (
         <div className="week-legend" aria-label="Takvim açıklaması">
           <span>
             <i className="morning" />

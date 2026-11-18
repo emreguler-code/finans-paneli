@@ -33,3 +33,7 @@ Mevcut api/config.php ve özel yedek klasörünü koruyarak hosting ZIP'ini yük
 ## 1.15.0 güncellemesi
 
 Yalnız web dosyaları içeren 1.15.0 hosting ZIP'ini kullanabilirsiniz. Mevcut `api/config.php` ve özel yedek dizinini koruyun. Şema 12 değişmedi; 1.14.0'dan geçişte ek migrasyon yoktur. Daha eski şemalarda `update.php` gereklidir. Yeni fabrika sıfırlama düğmesi yalnız açık parola/yazılı onayla çalışır; güncelleme herhangi bir veriyi kendiliğinden temizlemez. Cron komutu Ayarlar → Hosting cron kurulumu bölümünden alınabilir; sağlayıcınızın PHP CLI yolu/saat dilimini doğrulayın.
+
+## 1.26.0 — Dosyaları eksiksiz yükleme
+
+Mevcut config.php, özel yedekler ve kullanıcı verileri korunur. Yeni assets dosyalarını ve API kaynaklarını eksiksiz yükledikten sonra index.html dosyasını güncelleyin. Yeni paketi eski index veya eksik assets ile karıştırmayın. Önceki hashli assets dosyalarını hemen silmemek, açık tarayıcı sekmelerinin yüklemesini tamamlamasına izin verir. Yükleme sorunu varsa görünen yenileme ekranı tanılama içindir; verileri sıfırlama veya demo kurma gerektirmez.

@@ -254,8 +254,8 @@ const server = http.createServer((req, res) => {
           ),
       );
       ok(
-        "New optional details are initially closed",
-        !(await p.locator(".inline-extra").getAttribute("open")),
+        "No extra information is shown before choosing an operation",
+        (await p.locator(".inline-extra").count()) === 0,
       );
       ok(
         "Save is disabled until operation and positive amount are entered",
@@ -510,6 +510,7 @@ const server = http.createServer((req, res) => {
       );
       await scaled.close();
       await require("./party125-browser.cjs")(p, ok, shot, base, data);
+      await require("./party126-browser.cjs")(p, ok, shot, base, data);
       await p.goto(base + "/?viewer=1#/cariler/1");
       await p.locator(".party-heading-name").waitFor();
       ok(

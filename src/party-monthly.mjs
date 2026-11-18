@@ -83,6 +83,22 @@ export function partyMonthly(party, data, month) {
     const meal = month === cutoff.slice(0, 7) ? s.meal : 0;
     const net = salary + meal,
       paid = Math.min(net, s.paid + s.mealPaid);
+    const assigned = new Set(
+      party.profile?.staff_month === month
+        ? [
+            ...(party.profile?.salary_payments || []),
+            ...(party.profile?.meal_payments || []),
+          ]
+        : [],
+    );
+    const unassigned = current
+      .filter(
+        (e) =>
+          ["payment", "employee_expense"].includes(e.operation) &&
+          e.payment_purpose !== "Diğer" &&
+          !assigned.has(e.id),
+      )
+      .reduce((sum, e) => sum + e.amount_cents, 0);
     return {
       gross: net,
       returns: 0,
@@ -91,17 +107,16 @@ export function partyMonthly(party, data, month) {
         { name: "Maaş", value: salary },
         { name: "Yemek", value: meal },
       ],
-      inner:
-        party.profile?.staff_month === month
-          ? [
-              { name: "Ödenen", value: paid },
-              { name: "Kalan hakediş", value: Math.max(0, net - paid) },
-            ]
-          : [],
-      notice:
-        party.profile?.staff_month !== month
-          ? "Bu ay için maaş ve yemek ödeme bağlantıları tanımlanmadı. Dağılım için personel dönem bilgilerini düzenleyin."
-          : "",
+      inner: unassigned
+        ? []
+        : [
+            { name: "Ödenen", value: paid },
+            { name: "Kalan hakediş", value: Math.max(0, net - paid) },
+          ],
+      notice: unassigned
+        ? "Ödemelerin ait olduğu hakedişler belirlenmediği için oran gösterilmiyor."
+        : "",
+      unassigned,
       excess: Math.max(0, s.paid + s.mealPaid - net),
       periodTotal: s.paid + s.mealPaid,
       old: 0,

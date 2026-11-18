@@ -19,14 +19,6 @@
     transform: translateY(-4px);
   }
 }
-@keyframes quiet-enter {
-  from {
-    opacity: 0.5;
-  }
-  to {
-    opacity: 1;
-  }
-}
 @keyframes busy-turn {
   to {
     transform: rotate(360deg);
@@ -42,10 +34,6 @@
 .ledger-expanded-bar,
 .party-inline-info {
   animation: panel-enter 160ms ease-out;
-}
-.content-frame > .finance-page,
-.content-frame > .page-section {
-  animation: quiet-enter 160ms ease-out;
 }
 .layout-shell[data-layout-motion="true"],
 .layout-shell[data-layout-motion="true"] > .sidebar {

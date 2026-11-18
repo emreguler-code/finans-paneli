@@ -157,13 +157,21 @@ export const HeaderRegion = ({ children }) => (
     <div className="topbar-inner">{children}</div>
   </header>
 );
-export function ShellContent({ children, motionKey }) {
+export function ShellContent({ children, motionKey, direction = "forward" }) {
   const ref = useRef(null);
-  useEffect(() => {
-    if (matchMedia("(prefers-reduced-motion:reduce)").matches) return;
-    const animation = ref.current?.animate?.(
-      [{ opacity: 0.65 }, { opacity: 1 }],
-      { duration: 160, easing: "ease-out" },
+  const prior = useRef(motionKey);
+  useLayoutEffect(() => {
+    const changed = prior.current !== motionKey;
+    prior.current = motionKey;
+    if (!changed || matchMedia("(prefers-reduced-motion:reduce)").matches)
+      return;
+    const offset = direction === "back" ? -20 : 20;
+    const animation = ref.current?.querySelector(".content-frame")?.animate?.(
+      [
+        { opacity: 0.72, transform: `translateX(${offset}px)` },
+        { opacity: 1, transform: "translateX(0)" },
+      ],
+      { duration: 350, easing: "cubic-bezier(0.22, 0.61, 0.36, 1)" },
     );
     return () => animation?.cancel();
   }, [motionKey]);

@@ -1,4 +1,6 @@
-# Finans Paneli 1.25.1
+# Finans Paneli 1.26.0
+
+1.26.0: Hizalı satır içi giriş, zorunlu alanlara göre Ek bilgiler, birleşik tarih/saat, maaşla tam/kısmi ödeme, kararlı liste başlığı ve yumuşak sayfa geçişleri. [Kapsam](docs/SURUM-1.26.0.md).
 
 1.25.1: Aylık özette açılış bakiyesine yapılan ödemeler devreden borç ayrımına dahil edildi. [Düzeltme kapsamı](docs/SURUM-1.25.1.md).
 

@@ -38,6 +38,7 @@
 .ledger-editor-slot input[name="amount"] {
   text-align: right;
   font-variant-numeric: tabular-nums;
+  padding-right: 18px;
 }
 .ledger-editor-slot .compact-date {
   width: auto;
@@ -122,7 +123,7 @@
 .layout-shell .entry-inline {
   width: 100%;
   min-width: 0;
-  padding: 8px 4px;
+  padding: 4px 4px;
   text-align: left;
 }
 .layout-shell .entry-inline .entry-form {
@@ -271,7 +272,7 @@
 }
 .layout-shell .ledger-new-row > td:first-child,
 .layout-shell .ledger-new-details > td {
-  border-left: 2px solid var(--accent);
+  box-shadow: inset 2px 0 var(--accent);
 }
 .ledger-add-row button {
   display: inline-flex;
@@ -410,4 +411,87 @@
   background: var(--surface-raised);
   border: 1px solid var(--line);
   border-radius: 8px;
+}
+
+/* The input's text origin follows the persisted column, not its border. */
+@container ledger (width >= 880px) {
+  .ledger-editor-slot input[name="description"] {
+    transform: translateX(-9px);
+    width: calc(100% + 9px);
+  }
+  .ledger-editor-slot .tag-control {
+    margin-left: -3px;
+    width: calc(100% + 3px);
+  }
+  .ledger-editor-slot .choice-control {
+    margin-left: -1px;
+    width: calc(100% + 1px);
+  }
+}
+.ledger-editor-slot .date-text-only .date-trigger {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  justify-content: flex-start;
+}
+.date-time-field {
+  display: grid;
+  gap: 8px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+}
+.date-time-field input {
+  width: 160px;
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px;
+  background: var(--surface-raised);
+  color: var(--ink);
+  font: inherit;
+}
+.date-time-field small {
+  color: var(--muted);
+  line-height: 1.5;
+}
+@keyframes required-attention {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+  40% {
+    box-shadow: 0 0 0 3px var(--palette-cae4e7);
+    border-color: var(--accent);
+  }
+}
+.cari-field[data-attention="true"] input,
+.cari-field[data-attention="true"] .choice-trigger {
+  animation: required-attention 750ms ease-out 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cari-field[data-attention="true"] input,
+  .cari-field[data-attention="true"] .choice-trigger {
+    animation: none;
+    outline: 1px solid var(--accent);
+  }
+}
+
+.ledger-editor-slot .date-icon-only .date-trigger {
+  width: 44px;
+  min-width: 44px;
+  justify-content: center;
+}
+.ledger-editor-slot .cari-field:has(input[name="amount"]) {
+  position: relative;
+}
+.ledger-editor-slot .cari-field:has(input[name="amount"])::after {
+  content: "TL";
+  position: absolute;
+  right: 0;
+  bottom: 16px;
+  color: var(--muted);
+  font-size: 10px;
+  pointer-events: none;
 }

@@ -97,6 +97,8 @@ module.exports = async function layoutAcceptance(p, ok, shot) {
     .click();
   await p.getByRole("button", { name: "Yeni işlem ekle", exact: true }).click();
   const rowDraft = p.locator(".ledger-new-row");
+  await rowDraft.getByRole("combobox", { name: "İşlem", exact: true }).click();
+  await p.getByRole("option", { name: "Faturalı Alış", exact: true }).click();
   const beforeCells = await rowDraft.locator("td").evaluateAll((es) =>
     es.map((e) => {
       const r = e.getBoundingClientRect();
@@ -133,6 +135,14 @@ module.exports = async function layoutAcceptance(p, ok, shot) {
   await p
     .getByRole("button", { name: "Yeni işlemi iptal et", exact: true })
     .click();
+  if (
+    await p
+      .getByRole("button", { name: "Değişikliklerden vazgeç", exact: true })
+      .isVisible()
+  )
+    await p
+      .getByRole("button", { name: "Değişikliklerden vazgeç", exact: true })
+      .click();
   await p
     .locator(".main-content")
     .evaluate((e) => (e.scrollTop = e.scrollHeight));

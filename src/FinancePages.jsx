@@ -15,7 +15,6 @@ import {
   ArrowUpRight,
   ArrowDownLeft,
   Dot,
-  LoaderCircle,
   Users,
   UserRound,
 } from "lucide-react";
@@ -702,6 +701,7 @@ export function FinancePages({
             placement="inline"
             columnSorting
             resultCount={partyRows.length}
+            busy={searching}
             placeholder="Cari adı veya unvan ara"
             count={
               [type !== "Tümü", balance !== "Tümü", archived].filter(Boolean)
@@ -756,12 +756,6 @@ export function FinancePages({
               Arşiv dahil
             </label>
           </ListTools>
-          {searching && (
-            <p className="cari-loading" role="status">
-              <LoaderCircle size={14} className="loading-spinner" />
-              Aranıyor…
-            </p>
-          )}
           <div className="party-column-head">
             <span>
               <SortLabel

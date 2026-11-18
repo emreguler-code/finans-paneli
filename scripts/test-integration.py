@@ -43,6 +43,23 @@ def main():
     assert 'api/config.php' not in expected and 'api/v2/migrations/002-cari.sql' in expected
     hosting.extractall(web)
    print('PASS hosting-only archive matches complete package; no credentials or extra documents')
+   # Exercise the actual user upgrade path without touching a real configuration.
+   prior=ROOT/'releases/1.25.0/finans-paneli-1.25.0-hosting.zip'
+   if not prior.exists():raise RuntimeError('Missing 1.25.0 upgrade fixture')
+   upgrade=runtime/'upgrade';upgrade.mkdir()
+   with zipfile.ZipFile(prior) as old:old.extractall(upgrade)
+   sentinel=upgrade/'api/config.php';sentinel.write_text('synthetic-existing-config')
+   old_assets=set((upgrade/'assets').iterdir())
+   with zipfile.ZipFile(ROOT/'dist/releases'/f'finans-paneli-{version}-hosting.zip') as new:new.extractall(upgrade)
+   assert sentinel.read_text()=='synthetic-existing-config', 'Upgrade overwrote existing config'
+   assert all(asset.exists() for asset in old_assets), 'Upgrade removed still-cached old assets'
+   import re
+   html=(upgrade/'index.html').read_text()
+   for asset in re.findall(r'(?:src|href)=["\']([^"\']+)["\']',html):
+    assert (upgrade/asset.removeprefix('./')).is_file(), 'Missing startup asset after upgrade: '+asset
+   assert (upgrade/'assets/boot.js').is_file(), 'Missing classic startup recovery'
+   print('PASS 1.25.0 to current ZIP overlay retains config/old assets and resolves every startup reference')
+
   else:
    shutil.copytree(ROOT/'public',web,ignore=shutil.ignore_patterns('config.php'))
    migrations=web/'api/v2/migrations';migrations.mkdir();shutil.copyfile(ROOT/'database/migrations/002-cari.sql',migrations/'002-cari.sql')

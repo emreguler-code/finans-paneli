@@ -20,7 +20,7 @@ jobs:
       - run: npm install --global npm@12.2.2
       - run: npm ci
       - run: npm test
-      - run: npm audit --audit-level=moderate
+      - run: npm run audit:security
       - name: Check PHP syntax
         run: |
           while IFS= read -r -d '' file; do php -l "$file"; done < <(find public -name '*.php' ! -name 'config.php' -print0)

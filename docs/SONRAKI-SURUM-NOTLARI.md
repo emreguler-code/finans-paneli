@@ -836,3 +836,203 @@ Seçili ayda açılış bakiyesine karşı yapılan ödeme/tahsilat, devreden / 
 ### Yayın tamamlandı — 1.25.1
 
 Son onaylı tasarım/not kapsamı 1.25.0 ve doğruluk düzeltmesi 1.25.1 olarak GitHub'da yayımlandı. Son sürüm 1.25.1'dir. Windows/Linux yayın kabulü ve indirilen ZIP/checksum eşliği doğrulandı; hosting paketi `releases/1.25.1/` içindedir. Hosting yüklemesini kullanıcı yapar. Bundan sonraki talepler yeni not olarak toplanır; açık uygulama talimatı olmadan kodlama/yayın başlatılmaz.
+
+## 18 Kasım 2026 — 1.25.1 boş sayfa bildirimi
+
+**Yeni hata kaydı ve analiz aşaması; açık kodlama/yayın talimatı verilmedi.**
+
+- Kullanıcı 1.25.1 yüklemesinde boş sayfa geldiğini, 1.25.0'a dönünce düzeldiğini bildirdi. Kullanıcının çalışan kurulumu şu anda kendi beyanına göre 1.25.0'dır. Önceki test/yayın kabulü bu gerçek kurulum bildirimini geçersiz kılmaz.
+- Yerel repo hosting ZIP'lerinin SHA-256 değerleri kendi checksum dosyalarıyla eşleşiyor. Her iki ZIP'in index.html dosyasındaki JavaScript/CSS referansları ilgili arşivde mevcut. İki sürümün paketlenmiş PHP dosyaları birebir aynı.
+- 1.25.0 JavaScript dosyası `assets/index-CAYi46j4.js`, 1.25.1 dosyası `assets/index-Ej-lEohi.js`; CSS dosyası iki sürümde de `assets/index-DXkARMTf.css`. Kaynak farkı devreden borç sınıflandırması, açıklama metni ve sürüm bilgisidir. Bunlar tek başına boş sayfanın kesin nedenini kanıtlamaz.
+- Kesin teşhis için boş sayfanın giriş ekranından önce mi, girişten sonra mı oluştuğu ve tarayıcı konsolundaki ilk hata metni gerekir. Eksik/engellenen JS yüklemesi, önbellek veya çalışma zamanı hatası henüz ayırt edilmedi; neden kesinmiş gibi sunulmaz.
+- Uygulama kodu, paket ve GitHub yayını değiştirilmez; hosting bağlantısı/yükleme/incelemesi kullanıcıya aittir. Yeni uygulama için açık talimat beklenir.
+
+## 18 Kasım 2026 — Personel ekranı için tasarım değerlendirmesi
+
+**Kullanıcı paylaştığı ekranın görünümü hakkında görüş istedi. Bu bölüm öneridir; tasarım seçimi, kodlama veya yayın onayı değildir. Önceki 1.25.1 boş sayfa bildirimi ayrı ve henüz çözümlenmemiş olarak korunur.**
+
+Kanıt yalnız bu mesajda paylaşılan personel ekranı görüntüsüdür. Canlı hosting'e bağlanılmadı; klavye, odak, menü etkileşimi veya mobil davranış bu görüntüden doğrulanmış sayılmaz. Ekrandaki kişisel bilgiler ve işlem tutarları bu belgeye aktarılmaz.
+
+### Görüntüde görülen sorunlar
+
+- Satır içi girişte ana alanlar ve sağdaki taslak/kaydet/iptal grubu ortak bir görsel çizgi kurmuyor. Ek bilgiler açıldığında büyük boşluklar ve ayrı bloklar ortaya çıkıyor.
+- Maaş işleminin açıklama metni ek alan gridinde bir alan yerini işgal ediyor; vade/saat/belge alanları düzensiz görünüyor. Tarih ve saat gereğinden geniş, belge alanı tek başına alt satırda kalıyor.
+- Takvimde plan gösterilmediği halde çok küçük ve yoğun bir lejant yer kaplıyor; personel bilgileri, plan ve aylık özetin görsel öncelikleri zayıf.
+- Tek hakediş kategorisi ve sıfır değerli ikinci kategoriyle iki halka tekrar yaratıyor; grafik kart içinde baskın görünüyor.
+- Listede ödeme/avans görünmesi ile grafikte ödenen tutarın sıfır görünmesi arasında kullanıcıya açıklanması gereken bir ilişki olabilir. Ekran görüntüsü ödeme bağlantılarını göstermediğinden hesap hatası kesinleştirilemez; otomatik mahsup ya da tahmin önerilmez.
+
+### Henüz onaylanmamış tasarım önerisi
+
+- Satır içi ekleme/düzenleme yapısı ve kayıt sütunları korunur. Ana alanlar aynı yükseklik ve çizgide, tutar ile sağ eylemler dengeli yerleşir. Açıklama alanı esnek; tarih, etiket ve işlem türü ihtiyacına uygun ölçüdedir.
+- Ek bilgiler, ana alanların yerini/ölçüsünü değiştirmeden altta düzenli bir satır açar. Vade ve saat kompakt; belge alanı gerçek metin ihtiyacı kadar geniştir. Maaşla ilgili açıklama tam satırlık kısa yardımcı not olur, gridde bir giriş alanının yerini almaz.
+- Ek bilgiler kapalı başlar; aynı ölçü/kenarlık/yazı dili bütün girişlerde paylaşılır. Okunabilirlik korunarak gereksiz yükseklik ve boşluk azaltılır.
+- Plan olmayan takvimde açık bir boş durum açıklaması önerilir; lejant yalnız anlam taşıdığı durumda gösterilir. Gün bazlı plan ve izinlerin mevcut anlamı korunur.
+- Aylık özette grafik küçültülüp tutar/ödeme bilgileriyle dengelenir. Tek hakediş türünde tek halka, birden fazla türde ince dış halka kullanımı ve sıfır değerli kategori satırlarını gizleme değerlendirilir; önceki iki halka kararı kullanıcı onayı olmadan değiştirilmez.
+- Ödeme bağlantısı eksikse “Ödeme bağlantısı tanımlanmamış” gibi açık bir durum gösterilir; belirsizlik kesin ödenmemiş borç gibi sunulmaz. Mevcut ay/kalem bağlantıları incelenmeden hesaplama kararı alınmaz.
+
+Yalnız not düzenlendi. Uygulama kodu, paket, sürüm ve GitHub yayını değiştirilmedi.
+
+## 18 Kasım 2026 — Satır çizgisi, metin hizası, etiket ve tarih davranışı
+
+**Kullanıcının son tasarım gereksinimleri kaydedildi; kodlamaya başlama/yayın talimatı verilmedi.** Bu mesaj önceki genel tasarım önerilerinin tamamına onay sayılmaz. 1.25.1 boş sayfa kaydı ayrıca açık kalır.
+
+### Aktif satır çizgisi ve yazı hizaları
+
+- Aktif satırın sol vurgu çizgisi, ek bilgiler hizasında kaymadan, kalınlık/konum değiştirmeden kesintisiz devam eder. Ek bilgiler açılıp kapandığında çizgi yer değiştirmez.
+- Veri giriş metinleri, aynı sütundaki kayıtlı metinlerin başlangıç çizgisi ve dikey hizasına oturur. Referans kutunun dış kenarı değil, içindeki metindir. Tutarın sağ hizası ve TL biriminin yerleşimi de birlikte değerlendirilir.
+- Kaynak incelemesinde normal hücrelerin ortak yatay boşluğuna ek olarak girişlerin kendi 8 px iç boşluğu ve 1 px kenarlığı olduğu görüldü. Bu, metinlerin sağa kaymış görünmesi için somut bir etkendir; canlı tarayıcıda ölçülmüş kesin piksel farkı olarak sunulmaz.
+- Sol vurgu şu anda ana satırın ilk hücresine ve ayrı ek bilgi satırının birleşik hücresine ayrı ayrı çiziliyor. Çizgi birleşimi ortak bir referansla düzenlenir; kesin kayma nedeni ve koordinatlar uygulama aşamasında gerçek tarayıcı ölçümüyle doğrulanır.
+- Hizalama düzeltmesi ek bilgiler açılınca ana sütunların yerini/boyutunu değiştirmez. Yeni işlem ve satır içi düzenleme aynı metin hizalarını paylaşır.
+
+### Etiket yazma ve seçim
+
+- Kullanıcı oka basarak seçimde sorun olmadığını; yazmak için tıklayınca hazır Genel metnini önce silmek zorunda kaldığını bildirdi.
+- Yeni işlemde Genel gerçek, silinmesi gereken giriş metni yerine boş alandaki yer tutucu olarak gösterilir. Kullanıcı doğrudan yeni etiketini yazar; girilen metin Genel sözcüğüne eklenmez.
+- Hiç etiket girilmezse mevcut Genel varsayılanı korunur. Açılır listeden seçim çalışmayı sürdürür. Genel açıkça seçilmişse bir seçim olarak korunur.
+- Mevcut bir işlem düzenlenirken kayıtlı etiket odağa girildi diye silinmez. Üzerine yazmayı kolaylaştırmak için ilk odakta metnin tamamını seçme davranışı önerilir; yazmadan çıkılırsa mevcut değer korunur.
+- Yazma, liste seçimi, klavye seçimi ve taslak koruması aynı etiketi yönetir; ek bir silme adımı gerekmez.
+
+### İşlem tarihi — ikonla başla, seçilince metne dönüş
+
+- Yeni işlemde başlangıçta yalnız takvim ikonu görünür; yanında bugünün tarih metni bulunmaz.
+- Kullanıcı takvimden tarihi seçince ikon kaldırılır, tarih üstteki kayıtlı hücreler gibi sade metin görünümünde gösterilir. Tarih bir giriş kutusu/rozet görünümü almaz.
+- Tarih metninin kendisi tıklanabilir ve yeniden takvimi açar. Yeni bir tarih seçilince metin güncellenir. İkon ve tarih aynı anda gösterilmez.
+- Bugün tarihi takvimden açıkça seçilirse de metin görünümüne geçilir. Yalnız takvimi açıp kapatmak veya Escape ile çıkmak seçim yapılmış sayılmaz.
+- Yeni işlemde henüz takvim kullanılmadıysa mevcut uygulama bugünü varsayılan işlem tarihi olarak koruma önerisi geçerlidir; görsel sadeleştirme kendiliğinden işlem tarihini değiştirmez veya alanı zorunlu boş hale getirmez. Bu varsayım kullanıcı başka bir tarih kuralı belirtirse yeniden değerlendirilir.
+- Mevcut işlem düzenlenirken kaydın tarihi zaten seçili olduğundan baştan sade, tıklanabilir tarih metni gösterilir. Tarih biçimi listeyle tutarlı ve okunaklıdır; saat bu alana ayrıca eklenmez.
+- Sade metin görünümü etkileşimi kaldırmaz: klavyeyle erişim, görünür odak, erişilebilir ad ve yeterli tıklama alanı korunur. Takvim alana bağlı açılır; tekrar tıklama kapanışı sürer.
+- Bu karar cari satır içi işlem tarihi alanına aittir; vade ve diğer takvim alanlarına otomatik kapsam genişletme yapılmaz.
+
+Yalnız belge güncellendi. Uygulama kodu, sürüm, paket ve GitHub yayını değiştirilmedi.
+
+## 18 Kasım 2026 — Koşullu ek bilgiler, birleşik tarih/saat ve maaşla ödeme
+
+**Kullanıcının yeni gereksinimleri notlara alındı. Bu, kodlamaya başlama veya GitHub yayın talimatı değildir.** Önceki hizalama/etiket/tarih kararları korunur. 1.25.1 boş sayfa bildirimi ayrıca açık kalır. Paylaşılan ekrandaki kişisel bilgiler ve işlem tutarları belgeye kopyalanmaz.
+
+### İşlem seçilmeden ek bilgiler görünmez
+
+- Yeni işlemde bir işlem türü seçilene kadar Ek bilgiler başlığı, açma/kapatma kontrolü ve içeriği tamamen görünmez. Yalnız pasifleştirilmiş bir bölüm olarak ekranda bırakılmaz; boş alan da ayırmaz.
+- İşlem seçildikten sonra yalnız o işlem türüne ait alanlar kullanılabilir hale gelir. Ek bilgiler önceki karara uygun biçimde kapalı başlar. Türün ek alanı yoksa boş başlık gösterilmez.
+- İşlem seçimi kaldırılırsa ek bilgiler yeniden gizlenir. Tür değiştirilirken artık geçerli olmayan alanların finansal kayda sızması önlenir; ortak geçerli alanlar sebepsiz sıfırlanmaz.
+- İşlem seçilmeden kaydetme etkinleşmez; açıklama/tutar gibi önceden girilmiş ana alanlar sırf bölümün gizlenmesiyle silinmez. Ek bilgiler açılınca ana satırın konumu ve ölçüleri korunur.
+
+### Tarih ve saat aynı takvim penceresinde
+
+- İşlem saati alanı ek bilgilerden kaldırılır; işlem tarihinin açtığı takvim penceresine taşınır. Tarih ve saat aynı yerde düzenlenebilir.
+- Tarih seçiminin pencereyi saat düzenlemeye fırsat vermeden kapatması engellenir; birleşik tarih/saat akışında kullanıcı iki değeri de tamamlayabilir. Kesin onay/kapanış sunumu tasarımda değerlendirilir.
+- Önceki ana satır görünümü korunur: yeni işlemde yalnız takvim ikonu; açık tarih seçiminden sonra yalnız sade, tıklanabilir tarih metni. Saat ana satırda yeni bir metin/kutu olarak eklenmez.
+- Yeni işlemde saat kullanıcı tarafından değiştirilmediyse kayıt anındaki güncel uygulama/sistem saati kullanılır; formun ilk açıldığı saatte donup kalmaz. Uygulamanın mevcut saat dilimi ve zaman hassasiyeti korunur. Seçilen işlem tarihi kendiliğinden değiştirilmez.
+- Kullanıcının açıkça girdiği saat korunur. Mevcut kayıt düzenlenirken saate dokunulmadıysa geçmiş kayıt saati güncel saatle üzerine yazılmaz.
+- Tarih/saat taslağı, odak, klavye, tekrar tıklamayla kapatma ve kaydedilmemiş değişiklik koruması birlikte değerlendirilir.
+
+### Personelde belge / fatura no alanı kaldırılır
+
+- Personel carisinin bütün işlem türlerinde ekleme/düzenleme formundan Belge / fatura no alanı kaldırılır; yalnız Maaş Ekle ile sınırlı değildir.
+- Daha önce kaydedilmiş belge bilgileri bu arayüz değişikliği nedeniyle silinmez. Diğer cari türlerinin belge alanları bu kararla kaldırılmaz.
+
+### Maaş Ekle — ödeme kaynağı ve tutarı
+
+- Maaş Ekle seçildiğinde ek bilgilerde yan yana iki ödeme alanı bulunur: ödeme kaynağı seçimi ve ödenen tutar.
+- Birinci alanın başlangıç seçeneği tam olarak **Ödeme yapılmadı** olur. İkinci alan bu durumda pasiftir; maaş hakedişi kaydedilir, hesaptan para çıkışı ve sıfır tutarlı ödeme kaydı oluşmaz.
+- Birinci alandan uygun ödeme hesabı (kasa/banka) seçilince ikinci alan etkinleşir ve maaş tutarının tamamıyla otomatik dolar. Ödeme yapılmadı tekrar seçilirse ödeme alanı pasife döner; görünmeyen eski tutar kayda gönderilip ödeme oluşturmaz.
+- Ödenen tutar maaşa eşitse tam ödeme; sıfırdan büyük ve maaştan küçükse kısmi ödeme kabul edilir. Sıfır için gerçek ödeme oluşturulmaz; negatif veya maaşı aşan ödeme bu akışta kabul edilmez.
+- Tam ödeme tutarı kullanıcı tarafından ayrıca değiştirilmemişken maaş tutarı değişirse tam ödeme alanı yeni tutarı izler. Kullanıcı kısmi tutarı elle girdiyse maaş alanı değişince bu seçim sessizce ezilmez; sınır doğrulaması yapılır.
+- Maaş hakedişi brüt tutarıyla korunur; seçilen hesaptan yalnız fiilen ödenen tutar çıkar. Bu maaştan kalan borç = hakediş − ödeme. Önceki personel borcu/avansı kendiliğinden bu kayıtla mahsup edilmez.
+- Ödeme bu maaşa ve ilgili hakediş dönemine açıkça bağlanır; aylık özette bir kez sayılır. Yeni maaş içinden girilen ödeme için kullanıcıdan ikinci bir ödeme kaydı veya ayrıca elle bağlantı seçmesi beklenmez. Açıklama metninden maaş ayı tahmin edilmez.
+- Hakediş ve ödeme tek kaydetme eyleminde birlikte tamamlanır; hata halinde yarım kayıt bırakılmaz. Yinelenen gönderim aynı ödeme/hakedişi çoğaltmaz. Kaynak incelemesinde mevcut maaş yolunun peşin ödeme tutarını sıfırladığı görüldü; bu yüzden yalnız iki arayüz alanı eklemek yeterli değildir. Kayıt, hesap etkisi, dönem bağlantısı, aylık özet ve düzenleme/iptal tutarlılığı uygulama sırasında birlikte ele alınmalıdır.
+- Teknik kayıt biçimi bu notta seçilmedi: mevcut modele uygun bağlı ödeme ya da tek işlem içindeki ödeme bilgisi değerlendirilir. Kullanıcıya görünen sonuç bir hakediş ve yalnız bir gerçek ödeme etkisidir. Düzenlemede mevcut ödeme ilişkileri varsayılan alan değerleri yüzünden silinmez veya yeniden oluşturulmaz; finansal değişiklik gerekçesi korunur.
+- Örnek (temsili): 30.000 TL maaş, seçili hesaptan 10.000 TL ödeme → bu maaştan 20.000 TL borç; hesaptan 10.000 TL çıkış; ilgili aylık özette 10.000 TL ödenen. Bu örnek gerçek kayıt verisi değildir.
+
+Yalnız notlar güncellendi. Uygulama kodu, sürüm, ZIP ve GitHub yayını değiştirilmedi.
+
+## 18 Kasım 2026 — Cari dizini sütun başlığının geçişlerde kararsız görünmesi
+
+**Yeni hata/düzeltme gereksinimi kaydedildi; açık kodlamaya başlama ve yayın talimatı verilmedi.**
+
+- Kullanıcı sayfa yenilenirken ve Cari hesaplar bölümüne girip çıkarken Cari / Tür / Net bakiye başlık satırının kaybolup geri göründüğünü bildirdi. Hedef ana sayfa başlığı veya üst bakiye özet kutusu değil, cari listesinin sütun başlıklarıdır.
+- Uygulama/listenin görünür yükleme sürecinde sütun başlığı aynı konum, yükseklik ve genişlikte kalmalı; veri beklenirken ayrıca gizlenip geri gelmemeli. Başlığın kaybolmasıyla alt satırlar ve panel yüksekliği sıçramamalı.
+- Başlık, veri satırlarının yükleme/boş sonuç durumundan ayrılır. Liste yüklenirken, arama yapılırken ve sonuç boşken başlık/sıralama kontrol alanı korunur. Gerçek tarayıcı yenilemesinin belgeyi yeniden yüklemesi ile uygulama içindeki gereksiz görünürlük/yerleşim değişimi ayrıştırılır.
+- Yükleme göstergesi başlığın üstüne sonradan satır ekleyip çıkarmamalı; mevcut arama/araç alanında aynı ölçüler içinde veya baştan ayrılmış bir alanda sunulmalı.
+- Kaynak incelemesinde `.party-column-head` dizin içinde koşulsuz oluşturuluyor. Bunun üzerinde `searching` durumunda ayrı bir Aranıyor satırı eklenip kaldırılıyor; ayrıca başlık için birden fazla responsive görünürlük kuralı var. Bunlar incelenecek somut noktalar; bildirilen kaybolmanın kesin nedeni henüz tarayıcıda yeniden üretilmedi.
+- Bu talep kaydırmada yapışkan başlık ekleme talimatı değildir. Mevcut Cari / Tür / Net bakiye sırası, hizalar, sıralama işlevi ve etkin yön oku korunur.
+- Uygulama aşamasında ilk yükleme, yenileme, liste/detay arasında gidip gelme, geri/ileri gezinme, yavaş ağ, boş sonuç ve mevcut dar ekran/menü durumları izlenerek başlığın görünürlük ve koordinat kararlılığı doğrulanır. Yeni animasyonla sorun örtülmez.
+- Önceki 1.25.1 boş sayfa bildirimiyle aynı nedene dayandığı varsayılmaz; o kayıt ayrıca açık kalır. Paylaşılan görseldeki kişisel bilgiler ve işlem tutarları belgeye aktarılmaz.
+
+Yalnız not belgesi güncellendi. Uygulama kodu, sürüm, ZIP ve GitHub yayını değiştirilmedi.
+
+## 18 Kasım 2026 — iOS hissine yakın yumuşak sayfa geçişleri
+
+**Kullanıcı geçişlerin bir anda değişmek yerine gözle takip edilebilmesini istedi; özellikle cari liste → cari detay geçişini belirtti. iOS yaklaşımının/sürelerinin incelenmesi istendi. Bu, kodlamaya başlama veya yeni yayın talimatı değildir.** Süre ve hareket önerileri aşağıda ayrı belirtilmiştir; kullanıcı tarafından henüz seçilmiş sayılmaz.
+
+### Kaynak kontrolü
+
+18 Kasım 2026 tarihinde Apple'ın resmî dokümantasyonu incelendi:
+
+- [Human Interface Guidelines — Motion](https://developer.apple.com/design/human-interface-guidelines/motion): anlamlı, kısa ve yönü tutarlı hareket; gereksiz tekrar/bekleme eklememe; erişilebilirlik tercihlerini gözetme ve hareketin kullanıcıyı engellememesi öneriliyor. Bu sayfada bütün iOS sayfa geçişlerine uygulanacak tek bir sabit milisaniye değeri verilmiyor.
+- [SwiftUI — Animation.default](https://developer.apple.com/documentation/swiftui/animation/default): güncel varsayılan `spring(response: 0.55, dampingFraction: 1.0, blendDuration: 0.0)` olarak açıklanıyor; iOS 17 öncesinde `easeInOut` olduğu belirtiliyor. Bu genel SwiftUI animasyon tanımıdır; bütün yerel gezinme geçişlerinin süresinin 550 ms olduğu anlamına gelmez.
+- [UIKit — transitionDuration](https://developer.apple.com/documentation/uikit/uiviewcontrollertransitioncoordinatorcontext/transitionduration): ilgili geçişin etkileşimsiz beklenen süresini o geçiş bağlamından veren özelliktir. Web uygulamasında iOS'un gerçek gezinme motoru doğrudan kullanılmış/ölçülmüş sayılmaz.
+- Gerçek iPhone üzerinde süre veya hareket eğrisi ölçülmedi. Aşağıdaki 350 ms değeri Apple'ın zorunlu standardı ya da cihazda ölçülmüş sayı olarak sunulmaz.
+
+### Mevcut kaynak gözlemi
+
+- `src/styles/motion.css` içinde sayfa yüzeyleri için 160 ms `quiet-enter` solması tanımlı. Bu gözlem, her liste/detay değişiminde animasyonun gerçekten yeniden çalıştığını kanıtlamaz; geçişin doğru gezinme olayıyla tetiklenmesi ayrıca değerlendirilmelidir.
+- Menü/panel ve sayfa geçişleri aynı kapsam değildir. Bu talep bütün etkileşim sürelerini topluca artırma talimatı değildir.
+
+### Henüz onaylanmamış başlangıç önerisi
+
+- Cari liste → detay için yaklaşık **350 ms**; küçük yatay hareket (örneğin 16–24 CSS px) ve yumuşak solma. Hızlı başlayan, duruşta yavaşlayan, gözle takip edilebilir bir hareket önerilir. Sallanma/zıplama etkisi eklenmez.
+- Detay → liste dönüşü aynı yaklaşık süre ve ters yönle ilişkiyi anlatır. İleri/geri tarayıcı gezinmesinin yönü de korunur.
+- Sol menü ve üst gezinme çubuğu yerinde kalır; hareket ilgili içerik bölgesinde olur. Satırlar ve kartlar ayrı ayrı geciktirilerek sırayla gelmez.
+- Veri isteği animasyonla birlikte başlayabilir; yalnız süreyi doldurmak için yapay bekleme, boş beyaz kare veya yükleme perdesi eklenmez. Yavaş veri durumunda önceki içerik ya da yerleşimi korunmuş yükleme görünümü kullanımı değerlendirilir.
+- Hızlı tekrar tıklamada animasyonlar kuyruk oluşturmaz; kullanıcı hareket bitene kadar gereksiz kilitlenmez. Çıkmakta olan ekran ikinci bir kayıt işlemi başlatamaz. Taslak terk etme onayı varsa gezinme/geçiş bu onaydan sonra başlar.
+- Kaydırma konumu ve klavye odağı korunur/uygun hedefe aktarılır; geçiş sırasında ekran genişliği ve başlık yükseklikleri sıçramaz.
+- Hareketi azaltma sistem tercihi (`prefers-reduced-motion`) korunur; bu tercihte kaydırma kaldırılır ve mevcut erişilebilir hareketsiz davranış sürer.
+- Arama sonucu, bakiye güncellemesi veya aynı sayfadaki her veri yenilemesi yeniden sayfa geçişi oynatmaz. Sayfa yenilenirken gereksiz ilk açılış animasyonu ayrıca değerlendirilir.
+- Önceki Cari / Tür / Net bakiye başlığı kararsızlığı ayrı düzeltilmelidir. Animasyon bu kaybolmayı/yerleşim sıçramasını örten bir yöntem olarak kullanılmaz.
+- 350 ms ve hareket mesafesi, kodlama yetkisi geldikten sonra çalışan masaüstü/dar ekran akışında değerlendirilip gerekirse ayarlanacak başlangıç önerileridir.
+
+Yalnız araştırma ve not düzenlemesi yapıldı. Uygulama kodu, sürüm, paket ve GitHub yayını değiştirilmedi. Önceki hata ve gereksinim kayıtları korunur.
+
+## 18 Kasım 2026 — Zorunlu alanlara göre ek bilgilerin açılışı ve dikkat vurgusu
+
+**Yeni tasarım gereksinimi kaydedildi; kodlama/yayın talimatı verilmedi. Açık/kapalı davranışındaki terim belirsizliği için kullanıcıdan netlik bekleniyor.**
+
+### Açık kullanıcı talepleri
+
+- Ek bilgilerin başlangıçta açık/kapalı olması seçili işlem türüne bağlı olmalı; bütün işlemlere tek bir başlangıç durumu uygulanmamalı.
+- Seçili işlemin ek bilgilerinde doldurulması gereken zorunlu alan yoksa bölüm kapalı başlamalı.
+- Kullanıcı zorunlu alanların çerçevelerinde kısa süreli bir parlama/vurgu ile hangi alanların doldurulacağını fark etmek istiyor.
+- Önceki karar korunur: işlem türü seçilmeden Ek bilgiler başlığı ve içeriği görünmez.
+
+### Netleştirilecek ifade
+
+Kullanıcı, zorunlu alan varsa “collapse edilmiş olarak gelsin” dedi. Collapse terimi kapalı/daraltılmış anlamına gelir; ancak açıklamanın bütünü zorunlu alanların görünmesi ve dikkat çekmesi yönündedir. Bu nedenle zorunlu alan varken otomatik **açık/genişletilmiş** başlama yorumu henüz kesin onay olarak kaydedilmez. Kullanıcıya bu anlam sorulur. Önceki bütün işlemlerde kapalı başlatma kararı, bu son talebin netleşen kapsamına göre güncellenecektir.
+
+### Netlik sonrasında değerlendirilecek öneri
+
+- İşlem yok → bölüm tamamen gizli.
+- İşlem var, ek alanda doldurulmayı bekleyen zorunlu alan yok → kapalı.
+- İşlem var, ek alanda boş/geçersiz zorunlu alan var → otomatik açık olma önerisi; kullanıcı teyidi beklenir. Örneğin bir ödeme işleminde kaynak hesabı seçilmemişse ilgili alan görünür olmalı.
+- Vurgu, ilgili zorunlu girişlerin kenarına uygulanır; hangi alan olduğu anlaşılmadan yalnız bütün panelin parlamasıyla yetinilmez. Öneri: mevcut turkuaz paletle tek seferlik yaklaşık 600–800 ms yumuşak çerçeve vurgusu, ardından normal görünüm. Süre henüz kullanıcı tarafından seçilmedi.
+- Yıldız/alan adı ve erişilebilir zorunluluk bilgisi kalıcıdır; kısa efekt zorunluluğu anlatan tek araç olmaz. Kırmızı hata görünümü kullanıcı henüz hata yapmadan sırf yönlendirme için kullanılmaz.
+- Sürekli yanıp sönme, ses, titreşim veya her tuşta tekrar vurgu eklenmez. Hareketi azaltma tercihinde parlamanın yerine hareketsiz, okunaklı bir sınır/işaret kullanılır.
+- Başlangıç davranışı işlem seçimiyle değerlendirilir; kullanıcı alanları doldururken bölüm kendiliğinden kapanıp açılmaz. Tamamlanmış alanlar sebepsiz yeniden parlatılmaz.
+- Ana satırın ölçü/hizası ve kullanıcının odağı korunur; zorunlu alana dikkat çekmek otomatik kaydırma/odak çalma anlamına gelmez. Kullanıcının açma/kapatma kontrolü ve mevcut doğrulama mesajları korunur.
+
+Yalnız notlar güncellendi. Uygulama kodu, sürüm, ZIP ve GitHub yayını değiştirilmedi.
+
+## 18 Kasım 2026 — Açık uygulama ve yayın onayı (1.26.0)
+
+Kullanıcı “evet collapse derken bunu kastettim. notlardaki değişiklikleri onaylıyorum, değişikleri kodla ve yayınla” talimatını verdi. 18 Kasım'da biriken notlar 1.26.0 kapsamına alınır. Önceki “öneri/onay bekleniyor/kodlama başlamadı” ifadeleri bu onaydan önceki aşamayı anlatır.
+
+- Netleşen karar: doldurulmayı bekleyen zorunlu ek alan varsa bölüm **açık/genişletilmiş**, yoksa kapalı; işlem seçilmediyse başlık dahil gizli. Zorunlu alanlar tek seferlik yumuşak çerçeve vurgusu alır.
+- Hizalama/tek aktif çizgi, Genel yer tutucusu, tarih ikonundan metne dönüşüm, aynı pencerede saat, personel belge alanının kaldırılması, maaşla tam/kısmi ödeme ve aylık bağlantı birlikte uygulanır.
+- Personel boş plan durumu, küçük/adaptif halka ve belirsiz ödeme bağlantısının açık anlatımı; cari dizini başlık kararlılığı ve yaklaşık 350 ms yönlü sayfa geçişi uygulanır.
+- 1.25.1 boş sayfa bildirimi araştırılır; yeniden üretilemeyen canlı neden kesin çözülmüş gibi raporlanmaz. Paket yükleme/kayıp JS ve beklenmedik çalışma zamanı hatalarına karşı görülebilir hata kurtarma ekranı ve paket yükseltme doğrulaması değerlendirilir.
+- Kullanıcının gerçek verilerine/config'ine dokunulmaz. GitHub kaynak/Release ve repo içindeki hosting ZIP + SHA-256 tamamlanır. Canlı hosting'e yükleme/inceleme kullanıcıya aittir.
+
+### 1.26.0 uygulama karşılığı
+
+18 Kasım kapsamı uygulandı; ayrıntılar [1.26.0 kapsamı](SURUM-1.26.0.md) içinde. Geçmiş paragraflardaki kodlama başlamadı/onay bekleniyor durumları tarihsel görüşme aşamasıdır; yukarıdaki son açık talimat bunları bu sürüm kapsamında yürürlüğe aldı. Yeni fikirler tekrar not ve açık uygulama talimatı akışına tabidir.
+
+Yayın kontrolü bulgusu: picomatch 4.0.7 için yamasız GHSA-fc5q-39xc-vjpf bildirimi bulundu. Yalnız güvenilen derleme globlarına ait dar istisna 18 Aralık 2026 sonuna kadar açıkça belgelenir; diğer bulgular denetimi durdurur. Hostingde Node çalışmaz. Ayrıntı: [güvenlik kaydı](GUVENLIK-ISTISNASI-1.26.0.md).
