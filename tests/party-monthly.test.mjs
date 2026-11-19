@@ -262,3 +262,23 @@ test("a salary with no payments is genuinely unpaid even without profile metadat
     [0, 30000],
   );
 });
+
+test("automated meal accrual replaces legacy meal metadata without double counting", () => {
+  const staff = {
+    id: 1,
+    type: "Personel",
+    profile: {
+      automation_start_month: "2026-11",
+      staff_month: "2026-11",
+      meal_due_cents: 50000,
+    },
+  };
+  const s = partyMonthly(
+    staff,
+    data([event(1, "salary", 450000), event(2, "meal", 50000)]),
+    "2026-11",
+  );
+  assert.equal(s.gross, 500000);
+  assert.equal(s.outer.find((x) => x.name === "Yemek").value, 50000);
+  assert.equal(s.inner.find((x) => x.name === "Ödenen").value, 0);
+});

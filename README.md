@@ -1,4 +1,6 @@
-# Finans Paneli 1.26.0
+# Finans Paneli 1.27.0
+
+1.27.0: Bölümlerde ortak satır içi kayıt, özetlerden kaynak satıra yönlendirme, personel IBAN/kopyalama ve mükerrer kayıt korumalı aylık maaş/yemek hakedişleri. [Kapsam](docs/SURUM-1.27.0.md) · [Test ve yayın sonucu](docs/TEST-RAPORU-1.27.0.md) · [Cron kurulumu](docs/PERSONEL-CRON.md).
 
 1.26.0: Hizalı satır içi giriş, zorunlu alanlara göre Ek bilgiler, birleşik tarih/saat, maaşla tam/kısmi ödeme, kararlı liste başlığı ve yumuşak sayfa geçişleri. [Kapsam](docs/SURUM-1.26.0.md) · [Test ve yayın sonucu](docs/TEST-RAPORU-1.26.0.md).
 
@@ -100,3 +102,7 @@ Yerel Chromium gerekiyorsa `QA_BROWSER_BIN=/usr/bin/chromium` tanımlayın. Dock
 `test:mobile`, aynı izole fixture üzerinde Chromium ve WebKit motorlarıyla mobil açık/kapalı satır, menü, filtre/takvim, tutar ve özet düzenlerini doğrular. Her iki motorun kurulması gerekir. `QA_BROWSER_ENGINES=chromium` yalnız hedefli yerel kontrol içindir; sürüm kabulünde iki motor birlikte çalışır. WebKit emülasyonu fiziksel iPhone testi değildir.
 
 1.18.0 itibarıyla GitHub bağlantısı üzerinden yayın için `release/v<sürüm>` dalına yapılan push da aynı tam kabul iş akışını çalıştırır. Dal adı package.json sürümüyle tam eşleşmelidir. Bütün kontrollerden sonra ilgili commit hedeflenerek sürüm etiketi ve iki ZIP yayımlanır; cPanel'e otomatik dağıtım yapılmaz. `npm run test:party-ui` derlenmiş arayüzü sentetik API üzerinde Chromium ve WebKit ile ayrıca kontrol eder.
+
+## 1.27.0 personel hakedişleri
+
+Personel profilindeki aylık maaş/yemek tutarları ayrı CLI göreviyle dönem başında cari hakediş oluşturur. Hosting görevi kendiliğinden kurulmaz; [personel cron kılavuzunu](docs/PERSONEL-CRON.md) izleyin. Mevcut yedek cron görevi ayrıdır. Satır içi kayıt ve kaynak satıra yönlendirme kapsamı [1.27.0 sürüm belgesindedir](docs/SURUM-1.27.0.md).

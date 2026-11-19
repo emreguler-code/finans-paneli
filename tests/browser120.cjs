@@ -317,7 +317,10 @@ fs.mkdirSync(out, { recursive: true });
           exact: true,
         })
         .click();
-      await p.locator(".persistent-composer").waitFor();
+      await p
+        .getByRole("button", { name: "Yeni işlem ekle", exact: true })
+        .click();
+      await p.locator(".ledger-new-row").waitFor();
       ok(
         "Accounts share the default composer and progressive ledger",
         (await p.locator(".pagination").count()) === 0 &&
@@ -327,24 +330,21 @@ fs.mkdirSync(out, { recursive: true });
             .count()) === 0,
       );
       await p
-        .locator(".persistent-composer")
+        .locator(".ledger-new-row")
         .getByRole("combobox", { name: "İşlem", exact: true })
-        .selectOption("income");
+        .click();
+      await p.getByRole("option", { name: "Tahsilat", exact: true }).click();
       await p
-        .locator(".persistent-composer input[name=description]")
+        .locator(".ledger-new-row input[name=description]")
         .fill("QA120 banka giriş " + engine);
-      await p.locator(".persistent-composer input[name=amount]").fill("25,50");
+      await p.locator(".ledger-new-row input[name=amount]").fill("25,50");
       const accountBefore = (await state()).accounts.find(
         (a) => a.id === account.id,
       ).balance_cents;
       await p
         .getByRole("button", { name: "İşlemi kaydet", exact: true })
         .click();
-      await p.waitForFunction(
-        () =>
-          document.querySelector(".persistent-composer input[name=amount]")
-            ?.value === "",
-      );
+      await p.locator(".ledger-new-row").waitFor({ state: "hidden" });
       after = await state();
       const posted = after.events.find(
         (e) => e.description === "QA120 banka giriş " + engine,
@@ -364,13 +364,20 @@ fs.mkdirSync(out, { recursive: true });
       await p.locator(".entry-inline").waitFor();
       await bankRow
         .getByRole("combobox", { name: "İşlem", exact: true })
-        .selectOption("expense");
+        .click();
+      await p.getByRole("option", { name: "Harcama", exact: true }).click();
       await p.locator(".inline-extra > summary").click();
       await bankRow.locator("input[name=amount]").fill("30");
-      await p
-        .locator(".entry-inline")
-        .getByLabel("İşlem hesabı *", { exact: true })
-        .selectOption(account.id);
+      const bankAccount = p.getByRole("combobox", {
+        name: "İşlem hesabı *",
+        exact: true,
+      });
+      if (await bankAccount.count()) {
+        await bankAccount.click();
+        await p
+          .getByRole("option", { name: account.name, exact: true })
+          .click();
+      }
       await p
         .locator(".entry-inline input[name=reason]")
         .fill("QA120 banka yönünü düzelt");
@@ -392,24 +399,28 @@ fs.mkdirSync(out, { recursive: true });
       await p
         .getByRole("button", { name: card.name + " hareketleri", exact: true })
         .click();
-      await p.locator(".persistent-composer").waitFor();
+      await p
+        .getByRole("button", { name: "Yeni işlem ekle", exact: true })
+        .click();
+      await p.locator(".ledger-new-row").waitFor();
       ok(
         "Credit card composer has the displayed card locked",
         (await p.getByLabel("İşlem hesabı *", { exact: true }).count()) === 0,
       );
       await p
-        .locator(".persistent-composer input[name=description]")
+        .locator(".ledger-new-row")
+        .getByRole("combobox", { name: "İşlem", exact: true })
+        .click();
+      await p.getByRole("option", { name: "Harcama", exact: true }).click();
+      await p
+        .locator(".ledger-new-row input[name=description]")
         .fill("QA120 kart harcaması " + engine);
-      await p.locator(".persistent-composer input[name=amount]").fill("100");
+      await p.locator(".ledger-new-row input[name=amount]").fill("100");
       const cardBefore = await state();
       await p
         .getByRole("button", { name: "İşlemi kaydet", exact: true })
         .click();
-      await p.waitForFunction(
-        () =>
-          document.querySelector(".persistent-composer input[name=amount]")
-            ?.value === "",
-      );
+      await p.locator(".ledger-new-row").waitFor({ state: "hidden" });
       after = await state();
       const cardPost = after.events.find(
         (e) => e.description === "QA120 kart harcaması " + engine,
@@ -482,10 +493,10 @@ fs.mkdirSync(out, { recursive: true });
         await p.locator("input[name=year]").fill("2020");
         await p.locator("input[name=km]").fill("12345");
         await p
-          .locator(".entry-page")
+          .locator(".entry-inline")
           .getByRole("button", { name: "Kaydet", exact: true })
           .click();
-        await p.locator(".entry-page").waitFor({ state: "hidden" });
+        await p.locator(".entry-inline").waitFor({ state: "hidden" });
       }
       ok(
         "Vehicle list and records retain their distinct data model",
@@ -498,13 +509,14 @@ fs.mkdirSync(out, { recursive: true });
           .click();
         await p
           .getByRole("combobox", { name: "Kayıt türü", exact: true })
-          .selectOption("maintenance");
+          .click();
+        await p.getByRole("option", { name: "Bakım", exact: true }).click();
         await p.locator("input[name=title]").fill("QA120 bakım kontrolü");
         await p
-          .locator(".entry-dock")
+          .locator(".entry-inline")
           .getByRole("button", { name: "Kaydet", exact: true })
           .click();
-        await p.locator(".entry-dock").waitFor({ state: "hidden" });
+        await p.locator(".entry-inline").waitFor({ state: "hidden" });
       }
       await p.getByRole("button", { name: "İşlemler", exact: true }).click();
       ok(

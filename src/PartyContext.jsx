@@ -1,5 +1,5 @@
 import { useState, useId } from "react";
-import { MonitorCheck, ChevronRight } from "lucide-react";
+import { MonitorCheck, ChevronRight, Copy, Check } from "lucide-react";
 import { WeekCalendar } from "./WeekCalendar";
 import { PartyMonthlySummary } from "./PartyMonthlySummary";
 import { CheckCircle2, Clock, Info, AlertCircle } from "lucide-react";
@@ -194,11 +194,38 @@ export function PartyContext({ party, data, open }) {
   );
 }
 function CompactInfo({ party, staff = false }) {
+  const [copied, setCopied] = useState("");
+  async function copy(name, value) {
+    try {
+      await navigator.clipboard.writeText(String(value).replace(/\s/g, ""));
+      setCopied(name);
+      setTimeout(() => setCopied(""), 1800);
+    } catch {
+      setCopied("Kopyalanamadı");
+    }
+  }
   const fields = [
     [staff ? "Ad soyad" : "Ünvan", party.title || party.name],
     [staff ? "TCKN" : "TCKN/VKN", party.tax_no],
     ["Adres", party.address],
     ["Telefon", party.phone],
+    ...(staff
+      ? [
+          ["IBAN", party.profile?.iban],
+          [
+            "Aylık maaş",
+            party.profile?.salary_cents
+              ? fmt(party.profile.salary_cents) + " TL"
+              : "",
+          ],
+          [
+            "Aylık yemek",
+            party.profile?.meal_monthly_cents
+              ? fmt(party.profile.meal_monthly_cents) + " TL"
+              : "",
+          ],
+        ]
+      : []),
   ];
   return (
     <section className="context-block">
@@ -207,10 +234,28 @@ function CompactInfo({ party, staff = false }) {
         {fields.map(([name, value]) => (
           <div key={name}>
             <dt>{name}</dt>
-            <dd>{value || "Tanımlanmadı"}</dd>
+            <dd>
+              {value || "Tanımlanmadı"}
+              {staff && value && ["IBAN", "TCKN"].includes(name) && (
+                <button
+                  className="list-icon copy-value"
+                  aria-label={name + " kopyala"}
+                  onClick={() => copy(name, value)}
+                >
+                  {copied === name ? <Check size={14} /> : <Copy size={14} />}
+                </button>
+              )}
+            </dd>
           </div>
         ))}
       </dl>
+      <span className="sr-only" role="status">
+        {copied
+          ? copied === "Kopyalanamadı"
+            ? copied
+            : copied + " kopyalandı"
+          : ""}
+      </span>
     </section>
   );
 }

@@ -1038,3 +1038,204 @@ Kullanıcı “evet collapse derken bunu kastettim. notlardaki değişiklikleri 
 Yayın kontrolü bulgusu: picomatch 4.0.7 için yamasız GHSA-fc5q-39xc-vjpf bildirimi bulundu. Yalnız güvenilen derleme globlarına ait dar istisna 18 Aralık 2026 sonuna kadar açıkça belgelenir; diğer bulgular denetimi durdurur. Hostingde Node çalışmaz. Ayrıntı: [güvenlik kaydı](GUVENLIK-ISTISNASI-1.26.0.md).
 
 1.26.0 GitHub yayını tamamlandı. Kaynak, hosting ZIP ve checksum repoya eklendi; indirilen Release dosyaları doğrulandı. [Test/yayın sonucu](TEST-RAPORU-1.26.0.md). Yeni fikirler bu sürümün onayına otomatik dahil değildir; önce not ve ardından açık uygulama talimatı gerekir.
+
+## 18 Kasım 2026 — Kompakt taslak satırı ve sütunlara bağlı ek bilgiler
+
+**Yeni talep notlara alındı; bu kapsam için henüz açık kodlama/yayın talimatı verilmedi. 1.26.0'ın önceki uygulama onayı bu yeni talebe taşınmaz.** Kullanıcının paylaştığı iki ekran görüntüsü mevcut düzensizliğin referansıdır.
+
+### Taslak ve eylem alanı
+
+- Bakiye hücresindeki tire kaldırılacak; Taslak bilgisi doğrudan tirenin bulunduğu konumda gösterilecek. Bakiye için ayrılan yer korunacak; Taslak için ayrıca ikinci bir satır açılmayacak.
+- Vazgeç ve Kaydet ikonları, ana bilgi girişi satırındaki kutularla aynı yatay hizada olacak. Durum yazısı ikonları aşağı itmeyecek.
+- Taslak satırının altındaki gereksiz boşluk azaltılacak; satır daha kompakt olacak. İkonların kullanılabilir tıklama alanı korunacak.
+
+### Ek bilgilerde ortak sütun hizası
+
+- Ek bilgiler, üstteki tablodan bağımsız eşit genişlikli kutulara bölünmeyecek. Ana tablonun mevcut sütun başlangıç/bitiş çizgileri ek alanların da hizalama çizgileri olacak.
+- Her kutu, içeriğinin okunaklı biçimde sığacağı bir sütunu veya bitişik sütunların birleşimini kaplayacak. Örneğin İşlem sütununun genişliği yeterliyse tek sütun; yetersizse yeni sütun sırasına göre bitişiğindeki Açıklama sütunuyla birlikte kullanılabilecek. (Önceki İşlem + Ekleyen örneği, aşağıdaki yeni sıralama talebiyle güncellendi.)
+- Kutuların sol ve sağ kenarları bu ortak çizgilere oturacak; aradaki boşluklar tutarlı olacak. Alan başlıkları da ilgili kutuyla hizalanacak.
+- Sütunlar ekran/içerik genişliğiyle esnedikçe ek bilgi kutuları da aynı ölçülerle esneyecek. Sabit piksel genişlikleriyle yalnız belirli bir çözünürlükte hizalı görünen bir düzen oluşturulmayacak.
+- Ekran çözünürlüğü veya kullanılabilir içerik genişliği değiştiğinde kutuların kapladığı sütun sayısı da yeniden değerlendirilecek; ilk yerleşimdeki sütun sayısı sabit kalmayacak. Bilgi girişini kısıtlayacak kadar daralan kutu daha fazla bitişik sütuna yayılabilecek; gereksiz genişleyen kutu daha az sütuna çekilebilecek. Her iki durumda da kutunun kenarları mevcut sütun çizgilerine hizalı kalacak.
+- Alanın sığmadığı durumda metni sıkıştırmak veya kesmek yerine uygun bitişik sütunlar birlikte kullanılacak. Dar görünümde de o görünümün sütun düzeni esas alınacak; okunabilirlik ve taşmama korunacak.
+- İşleme göre değişen ek alanların tamamı aynı hizalama kuralını kullanacak. Ek bilgiler açıldığında ana satırın sütun ölçüleri ve eylem hizası değişmeyecek; eylemler için ayrılan alan korunacak.
+- Önceki zorunlu alanlara göre açılma, tek seferlik dikkat vurgusu ve kullanıcı açma/kapatma kontrolü geçerli kalacak. Finansal hesaplama ve kayıt davranışı bu görsel düzenleme talebinin kapsamı değildir.
+
+Yalnız sürüm notları güncellendi. Uygulama kodu, sürüm numarası, ZIP ve GitHub yayını değiştirilmedi.
+
+## 18 Kasım 2026 — Personel IBAN bilgisi ve hızlı kopyalama
+
+**Yeni talep notlara alındı; henüz açık kodlama/yayın talimatı verilmedi.**
+
+- Personel bilgilerine IBAN alanı eklenecek. Personel bilgilerini ekleme/düzenleme sırasında girilebilecek ve personel detayındaki kompakt bilgiler içinde gösterilecek; para gönderirken bilgiyi kolayca kullanmak amaçlanıyor.
+- Personelin IBAN ve T.C. kimlik numarası değerlerinin yanında ayrı birer kopyalama ikonu olacak. Kullanıcı ilgili ikona bastığında yalnız o değer panoya kopyalanacak.
+- Şimdilik yalnız bu iki alan kopyalama kapsamındadır. Diğer personel alanları veya başka cari türlerine yayılım ileride ayrıca değerlendirilecek.
+- Boş/tanımlanmamış değer için kopyalama eylemi sunulmayacak; Tanımlanmadı gibi yer tutucu metinler panoya kopyalanmayacak.
+- Uygulama ayrıntısı önerisi: IBAN okunaklı biçimde aralıklı gösterilebilir; panoya aktarılırken başka platformlara yapıştırmaya uygun, boşluksuz değer kullanılabilir. T.C. kimlik numarası metin olarak korunmalı. Kopyalama sonucu kısa ve anlaşılır bir geri bildirimle belirtilmeli; başarısız işlem başarılı gösterilmemeli. Bu öneriler henüz kodlanmadı.
+
+Yalnız sürüm notları güncellendi. Uygulama kodu, sürüm numarası, ZIP ve GitHub yayını değiştirilmedi.
+
+## 18 Kasım 2026 — Cari hareketlerinde sütun sırası ve otomatik maaş açıklaması
+
+**Yeni talepler notlara alındı; henüz açık kodlama/yayın talimatı verilmedi.**
+
+### Yeni sütun sırası
+
+- Cari hareketleri sütunları **Tarih → İşlem → Açıklama → Etiket → Ekleyen → Tutar → Bakiye** sırasına alınacak. İşlem sütunu Tarih sütununun hemen yanında olacak.
+- Liste satırları, satır içi yeni işlem ve düzenleme alanları aynı sırayı kullanacak. Mevcut sıralama işlevleri ilgili sütunla birlikte korunacak.
+- Ek bilgi kutularının sütun çizgilerine hizalanması ve ekran genişliğine göre kapladığı bitişik sütun sayısını değiştirmesi kuralı bu yeni sıra üzerinden uygulanacak. Önceki sütun sırasına ait örnekler yeni sıraya göre değerlendirilecek.
+
+### Personelde otomatik maaş açıklaması
+
+**Sonraki talep bu akışı değiştirdi:** Maaş Ekle manuel cari işlem seçeneklerinden çıkarılacak. Aşağıdaki açıklama fikri otomatik aylık hakediş kayıtlarında kullanılacak; manuel seçim akışı uygulanmayacak. Güncel karar aşağıdaki personel tahakkuku bölümündedir.
+
+- Personel carisinde yeni işlem için **Maaş Ekle** seçildiğinde açıklama alanına bulunduğumuz ay ve yıl kullanılarak otomatik metin gelecek.
+- Biçim: **kasım 2026 maaşı**. Ay adı Türkçe ve küçük harfli olacak; başka aylarda ilgili ay/yıl kullanılacak.
+- Kullanıcının “hangi ayda isek” talebi gereği ay/yıl uygulamanın Türkiye saatine göre güncel tarihinden alınacak; işlem tarihini geçmişe çekmek kendiliğinden başka bir maaş ayı seçildiği anlamına gelmeyecek.
+- Uygulama önerisi: Otomatik açıklama kullanıcı tarafından düzenlenebilir olmalı; önceden yazılmış özel açıklama veya mevcut bir kaydın açıklaması işlem seçimi nedeniyle sessizce ezilmemeli. Bu ayrıntı öneri olarak kaydedildi; henüz kodlanmadı.
+- Otomatik metin açıklama kolaylığıdır; maaş tutarı, ödeme, hakediş ayı bağlantısı veya başka finansal veri açıklama metninden türetilmeyecek.
+
+Yalnız sürüm notları güncellendi. Uygulama kodu, sürüm numarası, ZIP ve GitHub yayını değiştirilmedi.
+
+## 18 Kasım 2026 — Personelde otomatik aylık maaş/yemek tahakkuku ve tekrarlayan işlemler
+
+**Yeni talep ve değerlendirme kaydedildi; açık kodlama/yayın talimatı verilmedi.** Bu karar önceki manuel Maaş Ekle ve seçimde otomatik açıklama akışını değiştirir. 1.26.0'daki maaşla birlikte peşin ödeme yaklaşımı yeni otomatik akışa kendiliğinden taşınmaz.
+
+### Kullanıcının istediği davranış
+
+- Maaş Ekle, personel carisinin manuel işlem seçeneklerinden çıkarılacak. Önceden kaydedilmiş maaş işlemleri silinmeyecek; geçmiş kayıtlar korunacak.
+- Personel bilgilerinde maaş ve yemek ücreti alanları bulunacak.
+- Tanımlı tutarlar her ayın **1. günü saat 12.00'de**, Türkiye saatiyle (**Europe/Istanbul**), ilgili personelin cari hesabına otomatik hakediş olarak eklenecek.
+- Maaş/yemek bilgisi girilmemiş personelde ilgili otomatik işlem oluşturulmayacak. Her iki alan boşsa hiçbir hakediş oluşturulmayacak.
+- Kaydedilen açıklama ilgili dönemi belirtecek: örneğin **kasım 2026 maaşı** ve **kasım 2026 yemek ücreti**. Geçmiş bir dönem sonradan işlenirse açıklama çalıştırıldığı ayı değil kaydın ait olduğu dönemi gösterecek; önceki güncel ay açıklaması notunun bu istisnası yeni otomatik modelden kaynaklanır.
+
+### Uygulama için önerilen yorum ve korumalar
+
+- Maaş ve yemek tutarları **aylık TL tutarı** olarak ayrı değerlendirilsin. Yalnız maaş girilmişse maaş, yalnız yemek girilmişse yemek işlensin; boş veya sıfır kalem atlanabilsin. Tek alanın boş olmasının diğer tanımlı kalemi de durdurması isteniyorsa bu yorum ayrıca değiştirilebilir. Günlük yemek bedeli/çalışılan gün çarpımı henüz talep edilmedi.
+- Maaş ve yemek iki ayrı, açıkça sınıflandırılmış cari hakediş kaydı olsun. Bu kayıtlar personele olan borcu artırır; otomatik banka/kasa ödemesi veya IBAN'a para transferi oluşturmaz. Gerçek ödeme ayrıca kaydedilir.
+- Mevcut aylık yemek bilgisi yalnız profil/özet metadatasıdır. Yemek gerçek bir finansal hakediş kaydına dönüşürken aylık özetin hem profil tutarını hem yeni kaydı toplaması engellenmeli; mevcut veriler otomatik olarak geçmiş hakedişlere çevrilmemeli.
+- Her personel + dönem + hakediş kalemi için tek üretim kimliği saklansın. Eşzamanlı çalıştırma veya tekrar denemede aynı maaş/yemek ikinci kez eklenmesin. Kimlik tekilliği ve finansal kayıt veritabanında birlikte güvenceye alınsın; sadece açıklama metnine bakarak mükerrerlik aranmasın.
+- Oluşan kayıtta o dönemde kullanılan tutar ve kaynak tanımı saklansın. Personel ücretini sonradan değiştirmek geçmiş kaydı yeniden hesaplamasın. Otomatik kaydın düzenleme/iptal geçmişi korunsun; iptal edilmiş kayıt sıradaki kontrolde sessizce yeniden üretilmesin.
+- Arşivlenmiş/pasif personel için yeni hakediş üretmeme, işe giriş/çıkış tarihleri ve ücret değişikliğinin hangi aydan geçerli olacağı uygulanmadan önce kararlaştırılmalı.
+
+### Zamanında çalıştırma
+
+- Tarayıcı kapalıyken de saat 12.00'de çalışabilmek için sunucu tarafında zamanlanmış görev gerekir. Mevcut projede CLI cron yaklaşımı yedekleme için vardır; bu, maaş görevinin zaten kurulu olduğu anlamına gelmez. Yedekleme görevinin 03.00 kuralı değiştirilmemeli.
+- Öneri: Tekrarlayan işlemler için ayrı bir PHP CLI görev yürütücüsü hazırlansın; hostingde görevi kullanıcı kursun. Hosting bağlantısı, uzaktan cron kurma veya canlı inceleme yapılmayacak.
+- Sunucu görevi kurulmadan tam saatinde çalışacağı vaat edilmesin. Sayfanın açılmasını bekleyen bir kontrol, gerçek zamanlanmış görev yerine sunulmasın.
+- Kesinti/başarısızlık için aynı dönemin ayın 2. ve 3. günü yeniden denenmesi aşağıdaki son taleple netleşti. İlk etkinleştirmenin ayın 1–3 aralığı dışında olması ve daha eski ayların ele alınması henüz kararlaştırılmadı; geçmiş aylar otomatik borçlandırılmamalı.
+
+### Genel tekrarlayan işlemler için taslak öneri
+
+- Personel hakedişi ortak bir tekrarlama altyapısının ilk kullanımı olabilir; kira, abonelik ve benzeri kalemler daha sonra aynı altyapıyı kullanabilir. Bu genişleme henüz uygulama onayı değildir.
+- Tekrarlama tanımı: işlem türü, ilgili cari/hesap, tutar, sıklık, gün/saat, başlangıç/bitiş, aktif/duraklatılmış durumu. Tanım ile üretilen her dönem kaydı ayrı tutulmalı; son/sonraki çalışma ve hata durumu izlenebilmeli.
+- Plan/hatırlatma ile gerçekleşmiş finansal kayıt açıkça ayrılmalı. Personel maaş/yemek tahakkuku belirlenen zamanda hakediş üretir; başka işlemlerde otomatik gerçek kayıt mı, hatırlatma/plan mı üretileceği işlem türüne göre ayrıca seçilmeli. Tekrarlama tanımı eklemek kendiliğinden para çıkışı olmamalı.
+- İlk sürüm için sabit tutarlı aylık tekrar yeterli bir başlangıç önerisidir. Günlük/haftalık tekrar, ayın 29–31'i, iş günü/tatil kaydırması ve değişken tutar daha sonra ayrıca kararlaştırılabilir.
+- Önerilen yönetim görünümü: tutar, sıklık, sonraki tarih ve durumun görüldüğü kompakt liste; düzenle/duraklat ve oluşan kayıtlara git eylemleri. Ayrı bir sayfa mı mevcut Ödeme Planı içinde mi olacağı henüz seçilmedi.
+
+### Netleştirilecek kararlar
+
+- Son yanıttaki “evet”, önceki soruya karşılık yemek tutarının aylık toplam olması olarak kaydedildi. Dolu kalemlerin birbirinden bağımsız işlenmesi önerisi korunur.
+- Otomasyon ayın 1–3 aralığı dışında etkinleştirilirse ilk kaydın ne zaman üretileceği ve daha eski dönemlerin ele alınması; aynı dönem için ilk üç günün yeniden denemesi aşağıda netleşti.
+- Yeni başlayan/ayrılan ve pasif personel için kapsam; ücret değişikliğinin geçerli olacağı dönem ve varsa kıst hesap ihtiyacı.
+
+Yalnız notlar ve taslak öneri hazırlandı. Uygulama kodu, veri modeli, finansal kayıtlar, zamanlanmış görev, sürüm numarası, ZIP ve GitHub yayını değiştirilmedi.
+
+## 18 Kasım 2026 — Üç günlük tahakkuk denemesi, kritik bildirim ve cron kurulum rehberliği
+
+**Yeni gereksinimler notlara alındı. Kullanıcı cron ayarlarını kendisinin yapması için yönlendirme istedi; uygulama kodlama/yayın talimatı verilmedi.** Hosting erişimi veya uzaktan kurulum yapılmayacak. Mevcut yedekleme cron'u kurulabilir; personel tahakkuk cron'u henüz kodlanmış/yayımlanmış değildir.
+
+### Netleşen aylık deneme kuralı
+
+- Yemek ücreti aylık toplam tutar olarak ele alınacak.
+- Aynı ayın maaş/yemek hakedişi için ilk deneme **ayın 1'i saat 12.00**, başarısızsa ikinci deneme **ayın 2'si saat 12.00**, yine başarısızsa son deneme **ayın 3'ü saat 12.00** olacak. Saat dilimi Europe/Istanbul.
+- Başarıyla tamamlanmış dönem sonraki günlerde yeniden üretilmeyecek. Üçüncü günün denemesinden sonra hâlâ tamamlanamayan işlem için sitede **kritik bildirim** gösterilecek.
+- Önerilen cron takvimi İstanbul saat diliminde `0 12 1-3 * *`, UTC saat diliminde `0 9 1-3 * *`. Ayın yalnız 1'inde çalışan bir cron, ertesi gün tekrar denemelerini başlatmaya yetmez. Bunlar henüz oluşturulmamış görevin planıdır; çalışır bir tahakkuk komutu olarak sunulmayacak.
+
+### Mükerrerlik ve kısmi başarının korunması
+
+- Her personel + yıl/ay + maaş/yemek kalemi için veritabanında kalıcı tekillik sağlanacak. Yeniden deneme ve eşzamanlı görevler aynı hakedişi çoğaltmayacak.
+- Kısmen başarılı bir toplu çalışmada yalnız eksik/başarısız kalemler yeniden denenecek; daha önce tamamlanan personel kayıtları geri alınıp tekrar oluşturulmayacak. Kayıt ve tamamlanma işareti atomik saklanacak.
+- Her denemenin zamanı, sonucu ve başarısız kalemleri izlenebilecek. İptal edilmiş otomatik hakediş, cron tekrarlandı diye yeniden yaratılmayacak.
+
+### Kritik site bildirimi
+
+- Üçüncü günün başarısızlığı sonrasında ilgili dönemi ve tamamlanamayan hakedişleri belirten kalıcı bir kritik bildirim oluşturulacak. Başarısız tahakkuk tamamlanmış gibi gösterilmeyecek.
+- Aynı sorun her kontrolde yeni bildirim üretmeyecek; dönem bazında aynı bildirim güncellenecek. Sorun giderilince durum çözüldü olarak izlenebilecek. Üç günden sonraki kurtarma/elle yeniden deneme akışı ayrıca tasarlanacak; sessiz sınırsız otomatik deneme varsayılmayacak.
+- Cron hiç tetiklenmezse de eksik çalışma son başarı/plan kayıtlarından anlaşılmalı. Site ayın 3'ü saat 12.00 sonrasında açıldığında veya sunucu kontrolünde, tamamlanmamış dönem için kritik durum tespit edilebilmeli. Bu kontrol hakedişi tarayıcıdan üretmeyecek. Site/veritabanı tamamen erişilemiyorsa bildirim ancak hizmet yeniden erişilebilir olduğunda gösterilebilir.
+
+### Mevcut yedekleme cron kurulumu
+
+- 1.26.0'da hazır dosya: `api/backup-cron.php`. PHP CLI ile çalışır; HTTP üzerinden çağrılmaz.
+- Uygulamada **Ayarlar → Otomatik yedek al** açık olmalı. **Hosting cron kurulumu** bölümü sunucudaki uygulamaya göre gerçek betik yolunu içeren kopyalanabilir komutu verir; PHP CLI yolu hosting sağlayıcısının PHP 8.3+ yolu olmalı.
+- Her gün Türkiye saatiyle **03.00**: İstanbul saat diliminde `0 3 * * *`, UTC'de `0 0 * * *`.
+- Mevcut bir yedek cron girdisi varsa ikinci bir aynı görev eklemek yerine mevcut giriş kontrol edilecek. İlk doğrulamada görev çıktısı saklanacak; başarılı çalışmadan sonra uygulamanın yedek listesinde otomatik kayıt/zamanı kontrol edilecek.
+- Betik yalnız İstanbul saatiyle 03.00–03.59 aralığında otomatik yedek üretir. Panelden başka saatte Çalıştır demek yeni otomatik yedek üretmeyebilir; bu tek başına kurulumun bozuk olduğu anlamına gelmez. Yedekleme takvimi ve beş kopya saklama kuralı değiştirilmedi.
+- Kesin panel adımları ve komut için kullanıcıdan panel adı, Ayarlar'daki cron komutu ve hosting cron saat dilimi istendi. Hosting parolası veya uzaktan bağlantı gerekmiyor.
+
+Yalnız notlar ve kurulum rehberliği hazırlandı. Uygulama kodu, finansal kayıtlar, sunucudaki cron görevleri, sürüm numarası, ZIP ve GitHub yayını değiştirilmedi.
+
+### 18 Kasım 2026 — cPanel ekranlarıyla kurulum durumu
+
+- Kullanıcı hosting panelinin cPanel olduğunu bildirdi. Görselde `0 3 * * *` zamanlamalı mevcut bir cron girdisi var; komut `/usr/local/bin/php` üzerinden uygulamanın `cron/yedek.php` yolunu çağırıyor.
+- 1.26.0 kaynak/paketindeki resmi yedekleme betiği `api/backup-cron.php`. Görseldeki eski yolun geçerli bir özel sarmalayıcı olup olmadığı veya dosyanın sunucuda bulunup bulunmadığı uzaktan incelenmedi; mevcut girdinin bu uygulamaya ait olduğu ve güncel betik yolu Dosya Yöneticisi / uygulamadaki Hosting cron kurulumu üzerinden doğrulanmalı.
+- PHP Selector görselinde web hesabı sürümü 8.3. Cron'un kullandığı `/usr/local/bin/php` CLI sürümü bununla kesinleşmez; cPanel Terminal varsa `/usr/local/bin/php -v` ile, yoksa hosting sağlayıcısından doğrulanmalı. PHP 8.3+ CLI ve uygulamanın kullandığı pdo_mysql desteği gerekir.
+- Sunucunun cron saat dilimi görsellerde belirtilmiyor. Mevcut saat 3 değerinin Türkiye 03.00'e denk geldiği henüz doğrulanmadı; İstanbul ise saat 3, UTC ise saat 0 kullanılacak. Betik içindeki Europe/Istanbul ayarı, cPanel'in görevi tetiklediği saati kendiliğinden değiştirmez.
+- Yedekleme için yeni bir aynı görev açmak yerine mevcut girdinin Düzenle eylemi kullanılacak; gerçek betik yolu ve PHP CLI doğrulandıktan sonra kaydedilecek. Maaş/yemek görevi henüz hazır olmadığından eklenmeyecek.
+
+Yalnız notlar ve cPanel için manuel yönlendirme hazırlandı; sunucuya bağlanılmadı, cron veya uygulama kodu değiştirilmedi.
+
+### 18 Kasım 2026 — Cron kurulumunun ertelenmesi
+
+- Kullanıcı hosting desteğine şu anda ulaşamadığını ve mevcut bilgiler yeterli değilse cron konusunu sonraya bırakmak istediğini belirtti. Cron kurulum rehberliği bu aşamada ertelendi; yeni bilgi veya doğrulama için kullanıcıya ek işlem yaptırılmayacak.
+- Paylaşılan cPanel ekranları web PHP sürümünü ve mevcut cron girdisini gösteriyor; CLI PHP sürümü, görev saat dilimi ve sunucudaki betik yolu henüz doğrulanmadı. phpMyAdmin'in veritabanı/PHP bilgileri tek başına cron'un çalıştırdığı PHP sürümünü veya cron saat dilimini kesinleştirmez.
+- Önceki komut ve saat önerileri doğrulama bekleyen rehber olarak kalır; tamamlanmış kurulum sayılmaz. Bu aşamada mevcut cron girdisini değiştirme veya yeni görev ekleme yönlendirmesi uygulanmayacak.
+- Yedek cron'unun çalıştığı doğrulanmış değildir. Maaş/yemek otomasyonunun üç günlük deneme, mükerrer kayıt önleme ve kritik bildirim gereksinimleri notlarda korunur; hostingde görevin kurulması daha sonra ele alınacak. Erteleme bu özellikleri uygulamak için kodlama/yayın onayı değildir.
+
+Yalnız notlar güncellendi; uygulama kodu, hosting ayarları ve GitHub yayını değiştirilmedi.
+
+### 18 Kasım 2026 — phpMyAdmin çalışma ortamı bilgisi
+
+- Kullanıcının paylaştığı Web sunucusu ekranı: `cpsrvd 11.138.0.24`, PHP `8.4.27`, veritabanı istemcisi `libmysql - mysqlnd 8.4.27`; listelenen PHP uzantıları mysqli, curl ve mbstring.
+- Bunlar phpMyAdmin'in çalıştığı ortamı gösterir; uygulamanın PHP Selector'daki 8.3 sürümüyle farklı olması tek başına bir çelişki veya hata değildir. Cron'un CLI PHP sürümü ve pdo_mysql desteği bu ekranla doğrulanmaz.
+- mysqlnd 8.4.27 istemci sürümüdür; MySQL/MariaDB sunucu sürümü olarak kaydedilmez. Cron saat dilimi de bu ekranda yoktur.
+- Cron kurulumunun ertelenmesi kararı korunur. Yalnız ortam bilgisi notlara eklendi; uygulama veya hosting yapılandırması değiştirilmedi.
+
+## 18 Kasım 2026 — Satır içi giriş modelini diğer bölümlere yayma önerisi
+
+**Kullanıcı bölüm bazında düşünülmüş notlar ve onayına sunulacak tasarım önerisi istedi; kodlama/yayın talimatı vermedi.** Kaynak üzerinden inceleme yapıldı; yeni çalışan arayüz/hosting testi yapılmış gibi değerlendirilmez.
+
+Ayrıntılı öneri: [Cari tasarımının diğer bölümlere yayılması](SATIR-ICI-YAYILIM-TASLAGI.md).
+
+- Cari hesapların son kararları ortak hedef olacak: yeni satır, Tarih/İşlem komşuluğu, kompakt Taslak ve aynı hizadaki Kaydet/Vazgeç, sütuna bağlı ve genişliğe göre yeniden biçimlenen ek alanlar, zorunluluğa göre açılma, modern alanlar, ortak tarih/saat ve kolay etiket girişi.
+- Tahsilat & Ödeme, banka/kasa/KMH ve kredi kartı hareketlerindeki ayrı sayfa altı ekleme alanları kaldırılıp ilgili listenin sonunda satır içi girişe geçilmesi önerildi. Eski otomatik alt form tetikleyicileri ve boş yer payları da kaldırılmalı; aynı kayıt için iki giriş yolu birlikte açık kalmamalı.
+- Ödeme Planı takvimi korunarak seçili günün listesi; araç ve kampanyalarda kendi liste satırı/kartı referans alınacak. Ortak etkileşim dili paylaşılacak, farklı finansal anlamlara aynı tablo zorlanmayacak.
+- Yeni cari/hesap/kart/araç tanımlama ve kullanıcı yönetimi de kendi listesinde taslak satır/kart olarak öneriye dahil edildi. Bu, eski tam sayfa varlık ekleme kararını da değiştireceğinden tasarım onayına açıkça sunulur.
+- Raporlar ve Genel bakışta her yere yeni finansal kayıt düğmesi eklemek yerine doğru kaynak liste/satırına erişim; normal ayar ve yedekleme ekranlarında kendi işlevine uygun formları koruma önerildi.
+- Taslak toplam/bakiye/CSV'ye katılmayacak; kayıt sonrası filtreler sessizce temizlenmeyecek. Mükerrer kaydetme, taslak kaybı ve kaynak/hedef karışıklığı önlenecek. Plan/gerçekleşen, kart/banka ve araç/kampanya bağlantıları aynı finansal davranışı koruyacak.
+- Bu çalışma geçmiş sürüm onaylarını genişletmez. Tasarım onayından sonra da ayrıca açık uygulama talimatı gelmeden kodlama/yayın başlamayacak. Cron kurulumu ertelenmiş durumda kalır.
+
+Yalnız analiz ve öneri belgeleri hazırlandı; uygulama kodu, sürüm numarası, ZIP ve GitHub yayını değiştirilmedi.
+
+## 18 Kasım 2026 — Yayılım tasarım onayı ve işlem bağlantılarından kaynak satıra yönlendirme
+
+**Kullanıcı önceki satır içi yayılım tasarımını onayladı ve aşağıdaki yeni özelliği kapsama ekledi. Bu tasarım onayıdır; henüz açık kodlama/yayın talimatı verilmedi.** Önceki “onaya sunulan” ifadesi bu onaydan önceki durumu anlatır. Ayrıntılar [onaylı tasarım belgesinde](SATIR-ICI-YAYILIM-TASLAGI.md).
+
+- Genel bakıştaki Dikkat isteyenler ve Son hareketler, cari listesindeki Son 5 işlem ve benzer işlem özetlerine tıklandığında açılan kayıt penceresi kaldırılacak.
+- Kayıt kendi kaynak cari/hesap/kart sayfasında, doğru sekme/ekstre/dönemde açılacak; ilgili satır görünür ve aktif/genişletilmiş gelecek. Başka bölümdeki kayıt araç/kampanya gibi kendi bölümüne gidecek.
+- Aynı kural hesap/kart uyarıları, bildirimler/zil, Ödeme Planı kayıt görüntüleme bağlantıları, rapor/arama sonuçları ve bağlı hareket kısayolları için taranıp uygulanacak. Özetin belli bir hesap/kart/cari bağlamı varsa o bağlam korunacak.
+- Yalnız gezinme yapılacak: otomatik düzenleme, yeni işlem, ödeme veya plan gerçekleştirme tetiklenmeyecek. Ayrı Düzenle/Öde eylemleri kaynak satırda kalacak.
+- Eski/ilk 30 kayıtta olmayan hareket yüklenip seçilecek. Filtre hedefi gizliyorsa kayıt görünür yapılacak ve kapsam değişikliği açık olacak; geri dönüşte eski liste tercihleri ve konum korunacak. Taslak koruması ve yetki denetimi sürecek.
+- Takvim/menü/taslak onayı gibi farklı işlevli pencereler bu taleple kaldırılmayacak; hedef kayıt görüntüleme pencereleridir.
+- Kaynak incelemesinde App içindeki Son hareketler tablosu ve bazı bildirim/Ödeme Planı yollarında kayıt penceresi çağrıları, Ledger içinde ise hedef hareketi yükleyip genişletme altyapısı görüldü. Bu altyapı değerlendirilerek tüm giriş noktalarında tutarlı kaynak yönlendirmesi sağlanacak; kod henüz değiştirilmedi.
+
+Yalnız tasarım ve sürüm notları güncellendi. Uygulama kodu, sürüm numarası, ZIP, hosting ayarları ve GitHub yayını değiştirilmedi.
+
+## 18 Kasım 2026 — Açık kodlama ve GitHub Release talimatı (1.27.0)
+
+Kullanıcı “kodlamaya başla ve yeni sürümü github release olarak yayınla” dedi. Yukarıdaki birikmiş gereksinimler ve onaylı yayılım/yönlendirme tasarımı 1.27.0 için uygulanır. Önceki kodlama başlamadı/onay bekleniyor ifadeleri tarihsel aşamalardır. Personel IBAN/kopyalama, aylık hakediş ve üç günlük deneme/uyarı kuralları da kapsamdadır; hostingde cron kurma ve canlı yükleme ertelenmiş kalır. Genel kira/abonelik tekrarlama ekranı henüz seçilmiş bir tasarım değildir; bu sürümde ortak zamanlama yaklaşımının personel maaş/yemek kullanımı uygulanır.
+
+İlk etkinleştirmede geçmiş aylar üretilmez; ilk uygun başlangıç ayı arayüzde açıkça belirlenir (varsayılan sonraki ay). Pasif personel atlanır; aylık tutarlar bağımsız işlenir. Dönem içi ücret değişikliği daha önce oluşmuş kaydı değiştirmez. İşe giriş/çıkış için kendiliğinden kıst hesap veya günlük yemek hesabı üretilmez. Bunlar uygulama sırasında kullanılan açık başlangıç kararlarıdır; yeni mali varsayım sessizce eklenmez.
+
+### 1.27.0 uygulama sonucu
+
+Yetkilendirilen satır içi yayılım, kaynak satıra yönlendirme, personel IBAN/kopyalama ve dönem planına bağlı maaş/yemek otomasyonu uygulandı. Yerel kabul ve hosting paket kurulumu doğrulandı; yayın sonucu sürüm raporunda tutulur. Hosting yükleme/inceleme ve cron kurulumu kullanıcıya aittir. Bu sürümün onayı, daha sonra eklenecek yeni fikirler için uygulama/yayın yetkisi vermez.

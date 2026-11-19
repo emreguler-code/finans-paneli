@@ -1,3 +1,4 @@
+import { useInlinePlacement } from "./InlineRecords";
 import { DiscardConfirmation } from "./OverlayLayer";
 import {
   Children,
@@ -11,7 +12,7 @@ import {
   useState,
 } from "react";
 import { createPortal } from "react-dom";
-import { X, Plus, SlidersHorizontal } from "lucide-react";
+import { X, Plus, SlidersHorizontal, Check } from "lucide-react";
 import { Sheet } from "./ui";
 import { PageHeading } from "./PageLayout";
 import { useNavigation } from "./Navigation";
@@ -122,6 +123,12 @@ export function EntrySurface({
   resetKey,
   externalFormId,
 }) {
+  const placed = useInlinePlacement();
+  if (placed) {
+    variant = "inline";
+    collapsible = false;
+    autoFocus = false;
+  }
   const anchor = useRef(null),
     collapse = useRef(null);
   const [collapsed, setCollapsed] = useState(false),
@@ -313,6 +320,31 @@ export function EntrySurface({
                 </button>
               </>,
             );
+          if (placed && node.props.className === "sheet-footer")
+            return cloneElement(
+              node,
+              {},
+              Children.map(node.props.children, (button) =>
+                isValidElement(button) && button.type === "button"
+                  ? cloneElement(
+                      button,
+                      {
+                        "aria-label":
+                          button.props.type !== "button" ? "Kaydet" : "Vazgeç",
+                        title:
+                          button.props.type !== "button" ? "Kaydet" : "Vazgeç",
+                        "data-entry-cancel":
+                          button.props.type === "button" || undefined,
+                      },
+                      button.props.type !== "button" ? (
+                        <Check size={18} />
+                      ) : (
+                        <X size={18} />
+                      ),
+                    )
+                  : button,
+              ),
+            );
           if (node.props.className !== "sheet-scroll") return node;
           const content = flat(node.props.children).flatMap((n) =>
             isValidElement(n) &&
@@ -335,6 +367,7 @@ export function EntrySurface({
     <section
       ref={ref}
       data-entry="true"
+      data-record-inline={placed || undefined}
       role={page || collapsible || inline ? "region" : "dialog"}
       aria-modal={page || collapsible || inline ? undefined : "false"}
       aria-label={title}
@@ -384,7 +417,7 @@ export function EntrySurface({
         onClickCapture={(e) => {
           if (
             e.target.closest("[data-entry-cancel]") ||
-            (!inline &&
+            ((!inline || placed) &&
               e.target.closest('.sheet-footer button[type="button"]')
                 ?.textContent === "Vazgeç")
           ) {

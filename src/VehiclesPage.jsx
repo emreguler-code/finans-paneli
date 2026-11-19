@@ -1,3 +1,4 @@
+import { RecordHost } from "./InlineRecords";
 import { matchesChoice, selectedValues } from "./search-query.mjs";
 import { ContentColumns } from "./AppShell";
 import { useRecordState, useRouteTab, useNavigation } from "./Navigation";
@@ -574,6 +575,7 @@ export function VehiclesPage({ data, open, initialRecord, onNotifications }) {
                     }
                     key={record.id}
                   >
+                    <RecordHost entity="vehicle_record" id={record.id} />
                     <button
                       className="vehicle-record-row"
                       aria-expanded={isOpen}
@@ -760,6 +762,8 @@ export function VehiclesPage({ data, open, initialRecord, onNotifications }) {
               )}
             </section>
           )}
+          <RecordHost entity="vehicle" id={vehicle?.id || ""} />
+          <RecordHost entity="vehicle_record" />
         </div>
         <aside className="context-aside">
           <NotificationPreview

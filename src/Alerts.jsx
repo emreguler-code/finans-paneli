@@ -1,3 +1,4 @@
+import { staffAccrualAlerts } from "./staff-automation.mjs";
 import {
   notificationLevels,
   readableAlertDetail,
@@ -38,6 +39,7 @@ export function kmhAlert(a) {
 export function collectAlerts(data) {
   const alerts = [],
     today = data.today;
+  alerts.push(...staffAccrualAlerts(data));
   const soon = (d) =>
     d &&
     d <=
@@ -48,6 +50,7 @@ export function collectAlerts(data) {
     if (soon(c.due))
       alerts.push({
         id: "claim-" + c.id,
+        eventId: c.id,
         date: c.due,
         partyId: c.partyId || c.party_id,
         groupKey: "claim-" + c.type + "-" + (c.partyId || c.party_id || c.name),

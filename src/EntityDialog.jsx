@@ -1,3 +1,4 @@
+import { SelectControl } from "./SelectControl";
 import { EntrySurface } from "./EntrySurface";
 import { BankSelect } from "./BankSelect";
 import { EntryForm, FormSection } from "./EntryForm";
@@ -167,7 +168,9 @@ export function EntityDialog({ context, data, onClose, onState, notify }) {
   const select = (key, label, options) => (
     <label className="cari-field">
       {label}
-      <select
+      <SelectControl
+        modern
+        aria-label={label}
         value={form[key] ?? ""}
         onChange={(e) => change(key, e.target.value)}
       >
@@ -179,7 +182,7 @@ export function EntityDialog({ context, data, onClose, onState, notify }) {
             </option>
           );
         })}
-      </select>
+      </SelectControl>
     </label>
   );
   const err = (

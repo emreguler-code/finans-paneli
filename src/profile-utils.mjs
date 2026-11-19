@@ -53,7 +53,16 @@ export function staffStatus(party, data) {
           (e) => e.operation === "salary" && e.event_date.startsWith(month),
         )
         .reduce((sum, e) => sum + (e.settled_cents || 0), 0),
-    meal: p.staff_month === month ? p.meal_due_cents || 0 : 0,
+    meal:
+      p.automation_start_month && p.automation_start_month <= month
+        ? events
+            .filter(
+              (e) => e.operation === "meal" && e.event_date.startsWith(month),
+            )
+            .reduce((n, e) => n + e.amount_cents, 0)
+        : p.staff_month === month
+          ? p.meal_due_cents || 0
+          : 0,
     mealPaid: sum(p.meal_payments),
     leave:
       p.leave_week === weekStart(data.today) &&

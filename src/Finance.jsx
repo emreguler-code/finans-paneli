@@ -23,6 +23,9 @@ export function FinanceDialog(props) {
     return <TrackingDialog {...props} />;
   if (["view", "history"].includes(mode)) return <RecordDetails {...props} />;
   if (entity === "statement") return <StatementForm {...props} />;
-  if (entity === "event" && mode !== "status") return <EventForm {...props} />;
+  if (entity === "event" && mode !== "status")
+    return (
+      <EventForm {...props} context={{ ...props.context, inline: true }} />
+    );
   return <EntityDialog {...props} />;
 }

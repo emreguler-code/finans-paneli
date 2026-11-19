@@ -138,16 +138,11 @@ const fmt = (n) =>
     .locator(".summary-band")
     .getByRole("button", { name: "Hesap bilgileri", exact: true })
     .click();
-  await p.getByRole("dialog").waitFor();
+  await p.locator(".record-inline-details").waitFor();
   ok(
-    "Account warning destination retains read-only account details",
-    (await p
-      .getByRole("dialog")
-      .getByRole("button", {
-        name: /^(Kaydet|Cariyi ekle|Kartı ekle|İşlemi kaydet)$/,
-        exact: true,
-      })
-      .count()) === 0,
+    "Account details expand read-only in the account page",
+    (await p.locator(".record-inline-details").isVisible()) &&
+      (await p.getByRole("dialog").count()) === 0,
   );
   await close();
   // Account inventory and movement tools are independently usable.
@@ -173,11 +168,24 @@ const fmt = (n) =>
   await p
     .getByRole("button", { name: "Hesaplar arası aktarım", exact: true })
     .click();
-  ok("Transfer opens editable dialog", await p.getByRole("dialog").isVisible());
-  await close();
+  await p.locator(".ledger-new-row").waitFor();
   ok(
-    "Account transaction composer opens by default",
-    await p.locator(".persistent-composer").isVisible(),
+    "Transfer opens an editable source row",
+    await p.locator(".ledger-new-row").isVisible(),
+  );
+  await p
+    .getByRole("button", { name: "Yeni işlemi iptal et", exact: true })
+    .click();
+  const discard = p.getByRole("button", {
+    name: "Değişikliklerden vazgeç",
+    exact: true,
+  });
+  if (await discard.isVisible()) await discard.click();
+  ok(
+    "Account has one inline creation entry and no old bottom composer",
+    (await p
+      .getByRole("button", { name: "Yeni işlem ekle", exact: true })
+      .isVisible()) && (await p.locator(".persistent-composer").count()) === 0,
   );
   await nav("Raporlar");
   async function range(from, to) {
@@ -349,17 +357,23 @@ const fmt = (n) =>
           .click();
         ok(
           c.name + " statement correction opens",
-          await p.getByRole("dialog").isVisible(),
+          await p.locator('[data-record-inline="true"]').isVisible(),
         );
-        await close();
+        await p
+          .locator('[data-record-inline="true"]')
+          .getByRole("button", { name: "Vazgeç", exact: true })
+          .click();
         await p
           .getByRole("button", { name: "Yeni ekstre gir", exact: true })
           .click();
         ok(
           c.name + " new statement opens",
-          await p.getByRole("dialog").isVisible(),
+          await p.locator('[data-record-inline="true"]').isVisible(),
         );
-        await close();
+        await p
+          .locator('[data-record-inline="true"]')
+          .getByRole("button", { name: "Vazgeç", exact: true })
+          .click();
       }
     }
   }
@@ -392,11 +406,12 @@ const fmt = (n) =>
       (await recentRows.nth(i).innerText()).includes(recent[i].description),
     );
   await recentRows.first().click();
+  await p.locator('[data-ledger-id="' + recent[0].id + '"].expanded').waitFor();
   ok(
-    "Overview recent row opens transaction details",
-    await p.getByRole("dialog").isVisible(),
+    "Overview recent row selects the exact source without a popup",
+    (await p.getByRole("dialog").count()) === 0,
   );
-  await close();
+  await nav("Genel bakış");
   await shot("overview-rich-desktop");
   for (const width of [1440, 1100, 768, 390, 320]) {
     await p.setViewportSize({ width, height: 900 });

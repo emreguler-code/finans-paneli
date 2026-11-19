@@ -1,3 +1,5 @@
+import { InlineRecord } from "./InlineRecords";
+import { recordTarget } from "./record-target.mjs";
 import { matchesChoice } from "./search-query.mjs";
 import { LedgerEditingContext } from "./LedgerEditing";
 import {
@@ -5,7 +7,6 @@ import {
   MainShell,
   HeaderRegion,
   ShellContent,
-  ComposerHost,
   ContentColumns,
   PageFooter,
   SidebarControls,
@@ -105,7 +106,7 @@ export function App({ initialData, onLogout }) {
   const nav = useNavigation();
   const [fullData, setFullData] = useState(initialData);
   const [financeContext, setFinanceContext] = useState(null);
-  const [inlineActive, setInlineActive] = useState(false);
+  const [_inlineActive, setInlineActive] = useState(false);
   const [contextKey, setContextKey] = useState(0);
   const returnRoute = useRef(null),
     contextRoute = useRef(null);
@@ -131,76 +132,6 @@ export function App({ initialData, onLogout }) {
       );
     }
   }
-  useEffect(() => {
-    if (nav.route.record === "yeni" && !financeContext) {
-      const entity = Object.keys(createPages).find(
-        (key) => createPages[key] === nav.route.page,
-      );
-      if (entity && can(fullData.user, "create")) {
-        contextRoute.current = routeHash(nav.route);
-        setFinanceContext({ entity });
-        setContextKey((k) => k + 1);
-      } else nav.navigate({ page: nav.route.page }, { replace: true });
-    }
-  }, [nav.route.page, nav.route.record]);
-  useEffect(() => {
-    if (editingParty && !financeContext) {
-      const item = fullData.parties.find(
-        (p) => p.id === Number(nav.route.record),
-      );
-      if (item && can(fullData.user, "edit")) {
-        contextRoute.current = routeHash(nav.route);
-        setFinanceContext({ entity: "party", item });
-        setContextKey((k) => k + 1);
-      } else nav.navigate({ ...nav.route, entry: "" }, { replace: true });
-    }
-  }, [editingParty, nav.route.record]);
-  useEffect(() => {
-    if (
-      financeContext ||
-      inlineActive ||
-      entryPage ||
-      !can(fullData.user, "create")
-    )
-      return;
-    let context;
-    if (["Hesaplar", "Kredi kartları"].includes(nav.route.page)) {
-      const card = nav.route.page === "Kredi kartları",
-        item = (card ? fullData.cards : fullData.accounts).find(
-          (a) => String(a.id) === nav.route.record,
-        );
-      if (item?.active)
-        context = {
-          entity: "event",
-          persistent: true,
-          lockedCardId: card ? item.id : undefined,
-          initial: {
-            account: card ? "" : item.id,
-            cardId: card ? item.id : "",
-            operation: "expense",
-            scheduled: !card && nav.route.tab === "Gelecek dönem hareketleri",
-          },
-        };
-    }
-    if (nav.route.page === "Tahsilat & Ödeme")
-      context = {
-        entity: "event",
-        persistent: true,
-        initial: { operation: "expense" },
-      };
-    if (!context) return;
-    contextRoute.current = routeHash(nav.route);
-    setContextKey((k) => k + 1);
-    setFinanceContext(context);
-  }, [
-    financeContext,
-    inlineActive,
-    entryPage,
-    nav.route.page,
-    nav.route.record,
-    nav.route.tab,
-    fullData.user,
-  ]);
   useEffect(
     () => setInlineActive(false),
     [nav.route.page, nav.route.record, nav.route.tab],
@@ -212,35 +143,75 @@ export function App({ initialData, onLogout }) {
     }
     contextRoute.current = routeHash(nav.route);
     if (
-      createPages[c.entity] &&
+      c.entity === "event" &&
       !c.item?.id &&
-      !["view", "history", "status"].includes(c.mode)
+      ![
+        "Cari hesaplar",
+        "Hesaplar",
+        "Kredi kartları",
+        "Tahsilat & Ödeme",
+        "Raporlar",
+        "Ödeme Planı",
+      ].includes(nav.route.page)
     ) {
-      returnRoute.current = nav.route;
-      contextRoute.current = routeHash({
-        page: createPages[c.entity],
-        record: "yeni",
-      });
-      nav.navigate({ page: createPages[c.entity], record: "yeni" });
+      const target = c.lockedPartyId
+        ? { page: "Cari hesaplar", record: String(c.lockedPartyId) }
+        : { page: "Tahsilat & Ödeme" };
+      contextRoute.current = routeHash(target);
+      nav.navigate(target);
+    }
+    if (c.mode === "view" || c.mode === "history") {
+      const target = recordTarget(c, fullData);
+      if (
+        target &&
+        !(
+          ["account", "card"].includes(c.entity) &&
+          target.page === nav.route.page &&
+          target.record === nav.route.record
+        )
+      ) {
+        setFinanceContext(null);
+        setDrawer(null);
+        setBell(false);
+        nav.navigate(target);
+        return;
+      }
     }
     if (
-      c.entity === "party" &&
-      c.item?.id &&
-      !["view", "history", "status"].includes(c.mode)
+      createPages[c.entity] &&
+      !c.item?.id &&
+      nav.route.page !== createPages[c.entity]
     ) {
-      returnRoute.current = nav.route;
-      const route = {
-        page: "Cari hesaplar",
-        record: String(c.item.id),
-        entry: "duzenle",
-      };
-      contextRoute.current = routeHash(route);
-      nav.navigate(route);
+      const target = { page: createPages[c.entity] };
+      contextRoute.current = routeHash(target);
+      nav.navigate(target);
     }
     setContextKey((k) => k + 1);
     setFinanceContext(c);
     setDrawer(null);
   }
+  useEffect(() => {
+    if (financeContext || !entryPage) return;
+    const entity = editingParty
+      ? "party"
+      : Object.keys(createPages).find(
+          (key) => createPages[key] === nav.route.page,
+        );
+    const item = editingParty
+      ? fullData.parties.find((p) => String(p.id) === nav.route.record)
+      : undefined;
+    const target = {
+      ...nav.route,
+      record: editingParty ? nav.route.record : "",
+      entry: "",
+    };
+    contextRoute.current = routeHash(target);
+    nav.navigate(target, { replace: true });
+    if (entity && can(fullData.user, item ? "edit" : "create")) {
+      setFinanceContext({ entity, ...(item ? { item } : {}) });
+      setContextKey((k) => k + 1);
+    }
+  }, [nav.route.page, nav.route.record, nav.route.entry]);
   useEffect(() => {
     if (
       financeContext &&
@@ -313,6 +284,26 @@ export function App({ initialData, onLogout }) {
   }, [page, fullData.user.role]);
   const notifications = groupAlerts(collectAlerts(fullData), TODAY);
   function openNotification(alert) {
+    if (alert.partyId && !alert.eventId) {
+      nav.navigate({ page: "Cari hesaplar", record: String(alert.partyId) });
+      setBell(false);
+      return;
+    }
+    if (alert.eventId) {
+      const event = fullData.events.find((e) => e.id === alert.eventId);
+      if (event) {
+        openFinance({
+          entity: "event",
+          mode: "view",
+          item: event,
+          accountId: alert.page === "Hesaplar" ? alert.account : undefined,
+          lockedCardId:
+            alert.page === "Kredi kartları" ? alert.account : undefined,
+        });
+        return;
+      }
+    }
+
     setScope("all");
     setSearch("");
     setKind("all");
@@ -351,7 +342,7 @@ export function App({ initialData, onLogout }) {
           ? fullData.campaigns
           : fullData.vehicle_records;
       const item = rows.find((item) => item.id === alert.recordId);
-      if (item) openFinance({ entity: alert.entity, item });
+      if (item) openFinance({ entity: alert.entity, item, mode: "view" });
     }
   }
   const accountName = (id) => accounts.find((a) => a.id === id)?.name;
@@ -809,10 +800,17 @@ export function App({ initialData, onLogout }) {
           className="attention-row"
           key={(c.card ? "card" : "claim") + c.id}
           onClick={() =>
-            setDrawer({
-              type: c.card ? "card" : "claim",
-              item: c,
-            })
+            c.card
+              ? nav.navigate({
+                  page: "Kredi kartları",
+                  record: String(c.id),
+                  tab: "Ekstre",
+                })
+              : openNotification({
+                  partyId: c.partyId || c.party_id,
+                  eventId: c.event_id || c.id,
+                  page: "Cari hesaplar",
+                })
           }
         >
           <span className="due-date">
@@ -876,8 +874,7 @@ export function App({ initialData, onLogout }) {
           className="account-row"
           key={a.id}
           onClick={() => {
-            go("Raporlar");
-            setScope(a.id);
+            nav.navigate({ page: "Hesaplar", record: String(a.id) });
           }}
         >
           <span className="account-icon">
@@ -918,9 +915,7 @@ export function App({ initialData, onLogout }) {
         onState: applyState,
         notify,
         createContext:
-          financeContext?.entity === "event" &&
-          !financeContext.item?.id &&
-          nav.route.page === "Cari hesaplar"
+          financeContext?.entity === "event" && !financeContext.item?.id && true
             ? { ...financeContext, stamp: contextKey }
             : null,
         clearCreate: () => setFinanceContext(null),
@@ -1350,7 +1345,6 @@ export function App({ initialData, onLogout }) {
               </>
             )}
           </ShellContent>
-          <ComposerHost />
           <nav
             inert={!!drawer}
             className="mobile-nav"
@@ -1670,18 +1664,25 @@ export function App({ initialData, onLogout }) {
           !(
             financeContext.entity === "event" &&
             !financeContext.item?.id &&
-            nav.route.page === "Cari hesaplar" &&
-            financeContext.lockedPartyId
+            [
+              "Cari hesaplar",
+              "Hesaplar",
+              "Kredi kartları",
+              "Tahsilat & Ödeme",
+              "Raporlar",
+            ].includes(nav.route.page)
           ) && (
-            <FinanceDialog
-              key={contextKey}
-              context={financeContext}
-              data={fullData}
-              onClose={closeFinance}
-              onState={applyState}
-              notify={notify}
-              replace={openFinance}
-            />
+            <InlineRecord context={financeContext}>
+              <FinanceDialog
+                key={contextKey}
+                context={financeContext}
+                data={fullData}
+                onClose={closeFinance}
+                onState={applyState}
+                notify={notify}
+                replace={openFinance}
+              />
+            </InlineRecord>
           )}
         {toast && (
           <div className="toast" role="status">

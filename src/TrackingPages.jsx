@@ -1,5 +1,7 @@
+import { useNavigation } from "./Navigation";
+import { RecordHost } from "./InlineRecords";
 import { VehiclesPage } from "./VehiclesPage";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus, Pencil, ExternalLink, Link, ChevronDown } from "lucide-react";
 import { ListTools } from "./ListTools";
 import { dateLabel } from "./DatePicker";
@@ -50,6 +52,17 @@ function CampaignsPage({ data, open }) {
           .includes(query.toLocaleLowerCase("tr")),
     )
     .sort((a, b) => a.end_date.localeCompare(b.end_date));
+  const nav = useNavigation();
+  useEffect(() => {
+    if (nav.route.entry) {
+      setSelected(Number(nav.route.entry));
+      requestAnimationFrame(() =>
+        document
+          .querySelector('[data-campaign-id="' + nav.route.entry + '"]')
+          ?.scrollIntoView({ block: "nearest" }),
+      );
+    }
+  }, [nav.route.entry]);
   const current = data.campaigns.find((c) => c.id === selected);
   const purchases = cardPurchases(data);
   const recommendations =
@@ -138,7 +151,13 @@ function CampaignsPage({ data, open }) {
           const progress = campaignProgress(c, data),
             state = campaignStatus(c, data.today);
           return (
-            <article className="campaign-row" key={c.id}>
+            <article
+              className="campaign-row"
+              key={c.id}
+              data-campaign-id={c.id}
+            >
+              <RecordHost entity="campaign" id={c.id} />
+              <RecordHost entity="campaign_entry" id={c.id} />
               <button
                 className="campaign-summary"
                 aria-expanded={selected === c.id}
@@ -193,6 +212,8 @@ function CampaignsPage({ data, open }) {
           );
         })}
         {!list.length && <p className="empty">Bu kapsamda kampanya yok.</p>}
+        <RecordHost entity="campaign" />
+        <RecordHost entity="campaign_entry" />
       </section>
       {current &&
         (() => {

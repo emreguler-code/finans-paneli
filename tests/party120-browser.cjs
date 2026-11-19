@@ -511,6 +511,7 @@ const server = http.createServer((req, res) => {
       await scaled.close();
       await require("./party125-browser.cjs")(p, ok, shot, base, data);
       await require("./party126-browser.cjs")(p, ok, shot, base, data);
+      await require("./inline127-browser.cjs")(p, ok, shot, base, data);
       await p.goto(base + "/?viewer=1#/cariler/1");
       await p.locator(".party-heading-name").waitFor();
       ok(

@@ -1,8 +1,30 @@
-import { Pencil, Archive, RotateCcw } from "lucide-react";
+import { useInlinePlacement } from "./InlineRecords";
+import { Pencil, Archive, RotateCcw, X } from "lucide-react";
 import { Sheet, Badge, can, fmt, tone } from "./ui";
 import { bankName, PROGRAMS } from "./BankCards";
 import { hasMaturity } from "./account-utils.mjs";
 import { AuditHistory } from "./AuditHistory";
+function DetailsShell({ title, onClose, children }) {
+  const inline = useInlinePlacement();
+  return inline ? (
+    <section className="panel record-inline-details" aria-label={title}>
+      <header>
+        <h2>{title}</h2>
+        <button
+          className="list-icon"
+          type="button"
+          aria-label="Paneli kapat"
+          onClick={onClose}
+        >
+          <X size={18} />
+        </button>
+      </header>
+      {children}
+    </section>
+  ) : (
+    <Sheet {...{ title, onClose }}>{children}</Sheet>
+  );
+}
 const day = (d) =>
   d
     ? new Date(d + "T12:00:00").toLocaleDateString("tr-TR", {
@@ -17,15 +39,15 @@ export function RecordDetails({ context, data, onClose: close, replace }) {
   const title = mode === "history" ? "Değişiklik geçmişi" : "Hareket ayrıntısı";
   if (mode === "history")
     return (
-      <Sheet title={title} onClose={close}>
+      <DetailsShell title={title} onClose={close}>
         <div className="sheet-scroll">
           <AuditHistory entity={entity} id={item.id} data={data} />
         </div>
-      </Sheet>
+      </DetailsShell>
     );
   if (mode === "view" && entity === "party")
     return (
-      <Sheet title={item.name + " — Cari bilgileri"} onClose={close}>
+      <DetailsShell title={item.name + " — Cari bilgileri"} onClose={close}>
         <div className="sheet-scroll cari-info">
           <dl>
             {[
@@ -47,11 +69,11 @@ export function RecordDetails({ context, data, onClose: close, replace }) {
           </dl>
           <AuditHistory entity="party" id={item.id} data={data} />
         </div>
-      </Sheet>
+      </DetailsShell>
     );
   if (mode === "view" && ["account", "card"].includes(entity))
     return (
-      <Sheet
+      <DetailsShell
         title={
           item.name +
           (entity === "card" ? " — Kart bilgileri" : " — Hesap bilgileri")
@@ -88,7 +110,7 @@ export function RecordDetails({ context, data, onClose: close, replace }) {
           </dl>
           <AuditHistory entity={entity} id={item.id} data={data} />
         </div>
-      </Sheet>
+      </DetailsShell>
     );
   if (mode === "view") {
     const matches = data.allocations.filter(
@@ -104,7 +126,7 @@ export function RecordDetails({ context, data, onClose: close, replace }) {
       (["Virman", "Kart ödemesi"].includes(item.kind) &&
         context.effect === undefined);
     return (
-      <Sheet title={title} onClose={close}>
+      <DetailsShell title={title} onClose={close}>
         <div className="sheet-scroll">
           <div
             className={"cari-total " + (viewNeutral ? "" : tone(viewEffect))}
@@ -217,7 +239,7 @@ export function RecordDetails({ context, data, onClose: close, replace }) {
           )}
           <AuditHistory entity="event" id={item.id} data={data} />
         </div>
-      </Sheet>
+      </DetailsShell>
     );
   }
 }

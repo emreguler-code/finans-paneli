@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { collectAlerts, AlertNotice } from "./Alerts";
 import {
@@ -7,7 +6,7 @@ import {
   recentEvents,
 } from "./notification-utils.mjs";
 import { dateLabel } from "./DatePicker";
-import { fmt, tone, Sheet } from "./ui";
+import { fmt, tone } from "./ui";
 import { cardEventEffect, operationLabel } from "./operations.mjs";
 export function NotificationPreview({
   data,
@@ -63,7 +62,6 @@ export function RecentActivity({
   title = "Son işlemler",
   open,
 }) {
-  const [group, setGroup] = useState(null);
   const rows = recentEvents(data, { source, partyId, sign });
   const effect = (e) =>
     source === "parties"
@@ -87,12 +85,28 @@ export function RecentActivity({
           className="recent-activity-row"
           onClick={() =>
             e.recent_ids
-              ? setGroup(e)
+              ? open({
+                  entity: "event",
+                  mode: "view",
+                  item:
+                    data.events.find((row) => row.id === e.recent_ids[0]) || e,
+                  ...(source === "cards"
+                    ? { lockedCardId: e.card_id || e.target_card_id }
+                    : source === "accounts"
+                      ? { accountId: e.account_id || e.target_id }
+                      : {}),
+                })
               : open({
                   entity: "event",
                   mode: "view",
                   item: e,
-                  ...(source === "parties" ? { effect: e.party_effect } : {}),
+                  ...(source === "parties"
+                    ? { effect: e.party_effect }
+                    : source === "cards"
+                      ? { lockedCardId: e.card_id || e.target_card_id }
+                      : source === "accounts"
+                        ? { accountId: e.account_id || e.target_id }
+                        : {}),
                 })
           }
         >
@@ -118,40 +132,6 @@ export function RecentActivity({
         </button>
       ))}
       {!rows.length && <p className="empty">Bu kapsamda hareket yok.</p>}
-      {group && (
-        <Sheet title="Taksitli alışveriş" onClose={() => setGroup(null)}>
-          <div className="sheet-scroll">
-            <p>{group.description}</p>
-            <strong>{fmt(group.amount_cents)} TL · toplam</strong>
-            {data.events
-              .filter((e) => group.recent_ids.includes(e.id))
-              .sort(
-                (a, b) =>
-                  (a.period_date || a.event_date).localeCompare(
-                    b.period_date || b.event_date,
-                  ) || a.id - b.id,
-              )
-              .map((e) => (
-                <button
-                  className="recent-activity-row"
-                  key={e.id}
-                  onClick={() => {
-                    setGroup(null);
-                    open({ entity: "event", mode: "view", item: e });
-                  }}
-                >
-                  <span>
-                    {e.description}
-                    <small>
-                      Dönem: {dateLabel(e.period_date || e.event_date)}
-                    </small>
-                  </span>
-                  <span>{fmt(e.amount_cents)} TL</span>
-                </button>
-              ))}
-          </div>
-        </Sheet>
-      )}
     </section>
   );
 }

@@ -186,12 +186,56 @@ function allEvents(PDO $db): array
 }
 // Rebuild allocation projections. Active facts remain immutable in the audit trail.
 // Receivables use collections; payables use payments. Opposite invoice directions never net each other.
+function staffAccrualKey(string $period, int $party, string $op): string
+{
+    $hash = md5("staff-accrual|" . $period . "|" . $party . "|" . $op);
+    return substr($hash, 0, 8) .
+        "-" .
+        substr($hash, 8, 4) .
+        "-" .
+        substr($hash, 12, 4) .
+        "-" .
+        substr($hash, 16, 4) .
+        "-" .
+        substr($hash, 20);
+}
 function v2state(PDO $db): array
 {
     global $actor;
     $db->beginTransaction();
     try {
         $events = allEvents($db);
+        $autoPeriods = [];
+        $staffPlan = null;
+        foreach (
+            $db->query(
+                "SELECT entity_id,after_json FROM audit_log WHERE entity='automation' AND operation='plan'",
+            )
+            as $plan
+        ) {
+            $period = substr($plan["entity_id"], 6);
+            $items = json_decode($plan["after_json"], true) ?: [];
+            if ($period === substr(today($db), 0, 7)) {
+                $staffPlan = $items;
+            }
+            foreach ($items as $item) {
+                $autoPeriods[
+                    staffAccrualKey(
+                        $period,
+                        (int) $item["party"],
+                        $item["operation"],
+                    )
+                ] = $period;
+            }
+        }
+        foreach ($events as &$event) {
+            if (isset($autoPeriods[$event["request_key"]])) {
+                $event["automation_period"] =
+                    $autoPeriods[$event["request_key"]];
+            }
+        }
+        unset($event);
+
         $acc = $db
             ->query("SELECT * FROM accounts ORDER BY sort_order,id")
             ->fetchAll();
@@ -359,6 +403,7 @@ function v2state(PDO $db): array
             "cards" => $cards,
             "parties" => $parties,
             "events" => $events,
+            "staff_accrual_plan" => $staffPlan,
             "claims" => $allocation["open"],
             "allocations" => $allocation["matches"],
             "advances" => $allocation["advances"],

@@ -4,7 +4,8 @@ export const operations = {
   supplier_return: "İade",
   sale: "Satış",
   customer_return: "İade",
-  salary: "Maaş Ekle",
+  salary: "Maaş",
+  meal: "Yemek hakedişi",
   employee_purchase: "Borçlandır",
   employee_expense: "Borçlandır",
   collection: "Tahsilat",
@@ -27,7 +28,7 @@ export const partyOptions = (type) =>
   type === "Tedarikçi"
     ? ["purchase_invoice", "purchase_no_invoice", "supplier_return", "payment"]
     : type === "Personel"
-      ? ["salary", "employee_purchase", "collection", "payment"]
+      ? ["employee_purchase", "collection", "payment"]
       : ["sale", "collection", "customer_return"];
 export const isInvoice = (op) =>
   [

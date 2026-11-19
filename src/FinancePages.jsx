@@ -1,3 +1,4 @@
+import { RecordHost } from "./InlineRecords";
 import { matchesChoice } from "./search-query.mjs";
 import { ContentColumns, PageFooter } from "./AppShell";
 import { useRecordState, useNavigation } from "./Navigation";
@@ -548,11 +549,15 @@ export function FinancePages({
       </label>
     </ListTools>
   );
-  const visibleEvents = events.filter(
+  const targetEvent = data.events.find(
     (e) =>
-      !e.scheduled ||
-      String(e.id) === String(initialEventId || nav.route.event),
+      String(e.id) === String(initialEventId || nav.route.event) &&
+      (!party || e.party_id === party.id),
   );
+  const visibleEvents = [
+    ...events.filter((e) => !e.scheduled || e === targetEvent),
+    ...(targetEvent && !events.includes(targetEvent) ? [targetEvent] : []),
+  ];
   const listScope = party ? (
     <div className="party-list-scope">
       <span>
@@ -586,7 +591,18 @@ export function FinancePages({
       key={party ? "party-" + party.id : "global"}
       onSort={setSort}
       title={party ? "Cari hareketleri" : undefined}
-      scope={listScope}
+      scope={
+        <>
+          {" "}
+          {listScope}
+          {targetEvent && !events.includes(targetEvent) && (
+            <p className="muted" role="status">
+              Bağlantıdaki kayıt, mevcut filtreler korunarak ayrıca
+              gösteriliyor.
+            </p>
+          )}
+        </>
+      }
       sort={sort}
       monthEvents={
         party ? data.events.filter((e) => e.party_id === party.id) : undefined
@@ -834,6 +850,7 @@ export function FinancePages({
               </button>
             ))}
           </div>
+          <RecordHost entity="party" />
           {!partyRows.length && <p className="empty">Cari bulunamadı.</p>}
           <div className="cari-table-footer">
             <span>{partyRows.length} cari</span>
@@ -874,6 +891,7 @@ export function FinancePages({
         </p>
       )}
       {listSummary}
+      {party && <RecordHost entity="party" id={party.id} />}
       {cari && selected && !party && (
         <p className="empty" role="status">
           Bu cari bulunamadı veya erişilemiyor.{" "}

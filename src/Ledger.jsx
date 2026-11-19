@@ -1,3 +1,4 @@
+import { RecordHost } from "./InlineRecords";
 import React, {
   useState,
   useEffect,
@@ -39,6 +40,7 @@ export function Ledger({
   currentBalance,
   lockedCardId,
   lockedPartyId,
+  currentAccount,
 }) {
   const [expanded, setExpanded] = useState(null),
     [bubble, setBubble] = useState(null),
@@ -72,7 +74,7 @@ export function Ledger({
     editor.start(action);
   };
   useEffect(() => {
-    if (editor?.createContext && lockedPartyId) {
+    if (editor?.createContext && !editor.createContext.hosted) {
       beginCreate(editor.createContext.initial || {});
       editor.clearCreate();
     }
@@ -80,7 +82,7 @@ export function Ledger({
   const ascending = sort === "date-asc",
     signature = sort + "|" + events.map((e) => e.id).join(","),
     previous = useRef("");
-  const columns = party ? 7 : 6;
+  const columns = 7;
   const realMonths =
     monthEvents && sort.startsWith("date-")
       ? reconciledMonths(
@@ -177,9 +179,9 @@ export function Ledger({
   }
   const sortColumns = [
     ["date", "Tarih"],
+    ["operation", "İşlem"],
     ["description", "Açıklama"],
     ...(party ? [["tag", "Etiket"]] : []),
-    ["operation", "İşlem"],
     ["creator", "Ekleyen"],
     ...(!party ? [["account", "Hesap"]] : []),
     ["amount", "Tutar"],
@@ -263,6 +265,11 @@ export function Ledger({
             <tr>
               {sortColumns.map(([field, label]) =>
                 header(field, label, ["amount", "balance"].includes(field)),
+              )}
+              {!party && (
+                <th className="inline-status-head">
+                  <span className="sr-only">Durum / Eylemler</span>
+                </th>
               )}
             </tr>
           </thead>
@@ -353,6 +360,26 @@ export function Ledger({
                         />
                       )}
                     </td>
+                    <td data-label="İşlem">
+                      {isEditing ? (
+                        slot("operation")
+                      ) : (
+                        <Badge
+                          kind={operationLabel(e)}
+                          effect={amount(e)}
+                          neutral={Boolean(
+                            e.cancelled ||
+                            e.synthetic ||
+                            (global &&
+                              [
+                                "Virman",
+                                "Kart ödemesi",
+                                "Kart aktarımı",
+                              ].includes(e.kind)),
+                          )}
+                        />
+                      )}
+                    </td>
                     <td data-label="Açıklama">
                       {isEditing ? (
                         slot("description")
@@ -385,33 +412,13 @@ export function Ledger({
                         )}
                       </td>
                     )}
-                    <td data-label="İşlem">
-                      {isEditing ? (
-                        slot("operation")
-                      ) : (
-                        <Badge
-                          kind={operationLabel(e)}
-                          effect={amount(e)}
-                          neutral={Boolean(
-                            e.cancelled ||
-                            e.synthetic ||
-                            (global &&
-                              [
-                                "Virman",
-                                "Kart ödemesi",
-                                "Kart aktarımı",
-                              ].includes(e.kind)),
-                          )}
-                        />
-                      )}
-                    </td>
                     <td data-label="Ekleyen" className="cari-creator">
                       {e.creator || "Önceki kayıt"}
                     </td>
                     {!party && (
                       <td data-label="Hesap" className="account-route">
                         {accountLabel(e)}
-                        {isEditing && slot("tag")}
+                        {isEditing && slot("account")}
                       </td>
                     )}
                     <td data-label="Tutar" className="right cari-number">
@@ -446,10 +453,21 @@ export function Ledger({
                         )}
                       </td>
                     )}
+                    {!party && (
+                      <td className="inline-rail-cell" data-label="Durum">
+                        {isEditing && (
+                          <div className="inline-action-rail">
+                            <small>Düzenleme</small>
+                            <div id={prefix + "-actions"} data-editor-slot />
+                          </div>
+                        )}
+                      </td>
+                    )}
                   </tr>
                   {active && (
                     <tr className="ledger-action-row">
                       <td colSpan={columns}>
+                        <RecordHost entity="event" id={e.id} />
                         {isEditing ? (
                           <EventForm
                             key={e.id}
@@ -461,9 +479,7 @@ export function Ledger({
                               lockedCardId,
                               inline: true,
                               slotPrefix: prefix,
-                              actionSlot: party
-                                ? prefix + "-actions"
-                                : undefined,
+                              actionSlot: prefix + "-actions",
                               onBusy: setEditBusy,
                             }}
                             data={data}
@@ -608,20 +624,28 @@ export function Ledger({
                 </React.Fragment>
               );
             })}
-            {party && lockedPartyId && can(data.user, "create") && (
-              <>
-                {creating ? (
-                  <>
-                    <tr
-                      className="is-editing ledger-new-row"
-                      aria-label="Yeni işlem"
-                    >
-                      {["date", "description", "tag", "operation"].map(
-                        (name, i) => (
+            {(lockedPartyId ||
+              lockedCardId ||
+              global ||
+              balanceMode === "account") &&
+              can(data.user, "create") && (
+                <>
+                  {creating ? (
+                    <>
+                      <tr
+                        className="is-editing ledger-new-row"
+                        aria-label="Yeni işlem"
+                      >
+                        {(party
+                          ? ["date", "operation", "description", "tag"]
+                          : ["date", "operation", "description"]
+                        ).map((name, i) => (
                           <td
                             key={name}
                             data-label={
-                              ["Tarih", "Açıklama", "Etiket", "İşlem"][i]
+                              (party
+                                ? ["Tarih", "İşlem", "Açıklama", "Etiket"]
+                                : ["Tarih", "İşlem", "Açıklama"])[i]
                             }
                           >
                             <div
@@ -630,67 +654,78 @@ export function Ledger({
                               data-editor-slot
                             />
                           </td>
-                        ),
-                      )}
-                      <td data-label="Ekleyen">
-                        {data.user.short_name || data.user.username}
-                      </td>
-                      <td data-label="Tutar" className="right">
-                        <div
-                          id={newPrefix + "-amount"}
-                          className="ledger-editor-slot"
-                          data-editor-slot
-                        />
-                      </td>
-                      <td
-                        data-label="Bakiye"
-                        className="right inline-rail-cell"
-                      >
-                        <div className="inline-action-rail">
-                          <strong>—</strong>
-                          <small>Taslak</small>
-                          <div id={newPrefix + "-actions"} data-editor-slot />
-                        </div>
-                      </td>
-                    </tr>
-                    <tr className="ledger-action-row ledger-new-details">
+                        ))}
+                        <td data-label="Ekleyen">
+                          {data.user.short_name || data.user.username}
+                        </td>
+                        {!party && (
+                          <td data-label="Hesap">
+                            <div
+                              id={newPrefix + "-account"}
+                              className="ledger-editor-slot"
+                              data-editor-slot
+                            />
+                          </td>
+                        )}
+                        <td data-label="Tutar" className="right">
+                          <div
+                            id={newPrefix + "-amount"}
+                            className="ledger-editor-slot"
+                            data-editor-slot
+                          />
+                        </td>
+                        <td
+                          data-label="Bakiye"
+                          className="right inline-rail-cell"
+                        >
+                          <div className="inline-action-rail">
+                            <small>Taslak</small>
+                            <div id={newPrefix + "-actions"} data-editor-slot />
+                          </div>
+                        </td>
+                      </tr>
+                      <tr className="ledger-action-row ledger-new-details">
+                        <td colSpan={columns}>
+                          <EventForm
+                            key={createKey}
+                            context={{
+                              entity: "event",
+                              inline: true,
+                              lockedPartyId,
+                              lockedCardId,
+                              initial: {
+                                account: currentAccount || "",
+                                ...createInitial,
+                              },
+                              slotPrefix: newPrefix,
+                              actionSlot: newPrefix + "-actions",
+                            }}
+                            data={data}
+                            onState={editor.onState}
+                            notify={editor.notify}
+                            onClose={() => {
+                              setCreating(false);
+                              editor.end();
+                            }}
+                          />
+                        </td>
+                      </tr>
+                    </>
+                  ) : (
+                    <tr className="ledger-add-row">
                       <td colSpan={columns}>
-                        <EventForm
-                          key={createKey}
-                          context={{
-                            entity: "event",
-                            inline: true,
-                            lockedPartyId,
-                            initial: createInitial,
-                            slotPrefix: newPrefix,
-                            actionSlot: newPrefix + "-actions",
-                          }}
-                          data={data}
-                          onState={editor.onState}
-                          notify={editor.notify}
-                          onClose={() => {
-                            setCreating(false);
-                            editor.end();
-                          }}
-                        />
+                        <button
+                          className="text-button"
+                          onClick={() => beginCreate()}
+                        >
+                          <Plus size={17} />
+                          Yeni işlem ekle
+                        </button>
                       </td>
                     </tr>
-                  </>
-                ) : (
-                  <tr className="ledger-add-row">
-                    <td colSpan={columns}>
-                      <button
-                        className="text-button"
-                        onClick={() => beginCreate()}
-                      >
-                        <Plus size={17} />
-                        Yeni işlem ekle
-                      </button>
-                    </td>
-                  </tr>
-                )}
-              </>
-            )}
+                  )}
+                </>
+              )}
           </tbody>
         </table>
       </div>

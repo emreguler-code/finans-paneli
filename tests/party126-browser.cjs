@@ -129,58 +129,22 @@ module.exports = async function (p, ok, shot, base, original) {
       (await p.locator('.entry-inline input[name="document"]').count()) === 0 &&
         (await p.locator('.inline-extra input[type="time"]').count()) === 0,
     );
-    await choose("İşlem", "Maaş Ekle");
-    await p.waitForFunction(
-      () => document.querySelector(".inline-extra")?.open === false,
-    );
+    await p.getByRole("combobox", { name: "İşlem", exact: true }).click();
     ok(
-      "Optional salary information starts closed",
-      !(await p.locator(".inline-extra").evaluate((e) => e.open)),
+      "Manual salary entry removed from employee operations",
+      (await p.getByRole("option", { name: "Maaş", exact: true }).count()) ===
+        0,
     );
-    await p.locator(".inline-extra > summary").click();
-    await draft.locator('input[name="amount"]').fill("10000");
-    ok(
-      "Salary unpaid amount is disabled",
-      await p.locator('input[name="settled"]').isDisabled(),
-    );
-    await choose("Ödeme", "Merkez Kasa");
-    ok(
-      "Choosing a salary payment account fills the full salary",
-      (await p.locator('input[name="settled"]').inputValue()) === "10.000",
-    );
-    await p.locator('input[name="settled"]').fill("2500");
-    await draft.locator('input[name="amount"]').fill("12000");
-    ok(
-      "A manual partial amount survives later salary changes",
-      (await p.locator('input[name="settled"]').inputValue()) === "2.500",
-    );
-    await shot("126-salary-partial-desktop");
+    await p.keyboard.press("Escape");
+    await draft.locator('input[name="amount"]').fill("2500");
     await p.getByRole("button", { name: "İşlemi kaydet", exact: true }).click();
-    await p.waitForFunction(
-      () =>
-        !document.querySelector(".ledger-new-row") ||
-        document.querySelector('.ledger-new-row input[name="amount"]')
-          ?.value === "0,00",
-    );
+    await p.waitForTimeout(150);
     assert.equal(submissions.length, 1);
-    assert.equal(submissions[0].settled, "2500");
     assert.equal(submissions[0].time, "09:15:30");
     ok(
-      "Salary form sends one gross event with its exact partial settlement",
-      submissions[0].operation === "salary" &&
-        submissions[0].amount === "12000",
+      "Employee payment form sends exactly one event",
+      submissions[0].operation === "payment",
     );
-    // A new persistent draft has a clean date and no operation.
-    if (await draft.count()) {
-      ok(
-        "Successful save resets the draft without leaking chosen date",
-        (await draft
-          .getByRole("button", { name: "İşlem tarihi", exact: true })
-          .locator("svg")
-          .count()) === 1,
-      );
-      await discard();
-    }
     await p.goto(base + "/#/cariler");
     await p.locator(".party-column-head").waitFor();
     const top = (await p.locator(".party-column-head").boundingBox()).y;

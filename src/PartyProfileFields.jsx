@@ -1,3 +1,5 @@
+import { MoneyInput } from "./MoneyInput";
+import { formatMoneyInput, normalizeMoney } from "./list-utils.mjs";
 import { useState } from "react";
 import { weekDates } from "./party-monthly.mjs";
 import { shiftLabels } from "./WeekCalendar";
@@ -49,155 +51,214 @@ export function PartyProfileFields({ form, change, data }) {
   );
   return (
     <details className="cari-fold">
-      <summary>Personel dönem bilgileri</summary>
-      <fieldset className="profile-fields work-plan-editor">
-        <legend>Çalışma takvimi</legend>
-        <p className="muted">
-          Tarih bazlı plan. Başka haftaya tekrarlanmaz; ücret veya devam kaydı
-          oluşturmaz.
-        </p>
+      <summary>Personel ücret ve dönem bilgileri</summary>
+      <div className="staff-profile-grid">
         <label className="cari-field">
-          Plan haftası
+          IBAN
           <input
-            type="date"
-            value={planWeek}
-            onChange={(e) => {
-              if (e.target.value) setPlanWeek(weekStart(e.target.value));
-            }}
+            name="staffIban"
+            value={p.iban || ""}
+            maxLength={34}
+            placeholder="TR…"
+            onChange={(e) => set("iban", e.target.value)}
           />
         </label>
-        <div className="work-plan-days">
-          {weekDates(planWeek).map((date, i) => (
-            <label className="cari-field" key={date}>
-              {weekdays[i]} · {dateLabel(date)}
-              <select
-                aria-label={weekdays[i] + " planı"}
-                value={p.work_calendar?.[date] || ""}
-                onChange={(e) => {
-                  const plan = { ...(p.work_calendar || {}) };
-                  if (e.target.value) plan[date] = e.target.value;
-                  else delete plan[date];
-                  set("work_calendar", plan);
-                }}
-              >
-                <option value="">Plan yok</option>
-                {Object.entries(shiftLabels).map(([key, label]) => (
-                  <option key={key} value={key}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-            </label>
-          ))}
-        </div>
-      </fieldset>
-      <p className="cari-hint">
-        Maaş hak edişi kayıtlı maaş işlemlerinden gelir. Avans veya diğer
-        ödemeler yalnız burada seçilirse ilgili kaleme sayılır; yeni finansal
-        işlem oluşturulmaz.
-      </p>
-      <label className="cari-field">
-        Ödeme ayı
-        <input
-          type="month"
-          value={month}
-          onChange={(e) =>
-            change("profile", {
-              ...p,
-              staff_month: e.target.value,
-              salary_payments: [],
-              meal_payments: [],
-              meal_due_cents: 0,
-            })
-          }
-        />
-      </label>
-      <label className="cari-field">
-        Aylık yemek ücreti (TL)
-        <input
-          type="number"
-          min="0"
-          step="0.01"
-          value={(p.meal_due_cents || 0) / 100}
-          onChange={(e) =>
-            change("profile", {
-              ...p,
-              staff_month: month,
-              meal_due_cents: Math.round(Number(e.target.value) * 100),
-            })
-          }
-        />
-      </label>
-      {[
-        ["salary_payments", "Maaş / avans ödemeleri"],
-        ["meal_payments", "Yemek ödemeleri"],
-      ].map(([key, label]) => (
-        <fieldset className="profile-fields" key={key}>
-          <legend>{label}</legend>
-          {payments.length ? (
-            payments.map((e) => (
-              <label className="check-label" key={e.id}>
-                <input
-                  type="checkbox"
-                  checked={(p[key] || []).includes(e.id)}
-                  onChange={(event) =>
-                    change("profile", {
-                      ...p,
-                      staff_month: month,
-                      [key]: event.target.checked
-                        ? [...(p[key] || []), e.id]
-                        : (p[key] || []).filter((id) => id !== e.id),
-                    })
-                  }
-                />
-                <span>
-                  {dateLabel(e.event_date)} · {e.description || e.kind}
-                  <small>
-                    {fmt(e.amount_cents)} TL
-                    {e.cancelled ? " · İptal edildi, özete katılmaz" : ""}
-                    {e.party_id !== form.id
-                      ? " · Cari değişmiş, özete katılmaz"
-                      : ""}
-                  </small>
-                </span>
-              </label>
-            ))
-          ) : (
-            <p className="muted">Bu ay seçilebilecek gerçekleşmiş ödeme yok.</p>
-          )}
-        </fieldset>
-      ))}
-      <label className="cari-field">
-        Haftalık izin · hafta başlangıcı
-        <input
-          type="date"
-          value={p.leave_week || weekStart(data.today)}
-          onChange={(e) => set("leave_week", e.target.value)}
-        />
-      </label>
-      <p className="muted">Pazartesi tarihini girin. Yıllık izin değildir.</p>
-      {[
-        ["leave_used", "Kullanılan gün"],
-        ["leave_total", "Haftalık hak (gün)"],
-      ].map(([key, label]) => (
-        <label className="cari-field" key={key}>
-          {label}
+        {[
+          ["salary_cents", "Aylık maaş (TL)"],
+          ["meal_monthly_cents", "Aylık yemek hakedişi (TL)"],
+        ].map(([key, label]) => (
+          <label className="cari-field" key={key}>
+            {label}
+            <MoneyInput
+              aria-label={label}
+              value={formatMoneyInput(
+                String((p[key] || 0) / 100).replace(".", ","),
+              )}
+              onValueChange={(v) =>
+                set(
+                  key,
+                  Math.round(Number(normalizeMoney(v).replace(",", ".")) * 100),
+                )
+              }
+            />
+          </label>
+        ))}
+        <label className="cari-field">
+          Otomatik hakediş başlangıç ayı
           <input
-            type="number"
-            min="0"
-            max="7"
-            step="0.5"
-            value={p[key] ?? ""}
+            type="month"
+            value={
+              p.automation_start_month ||
+              new Date(
+                Date.UTC(
+                  Number(data.today.slice(0, 4)),
+                  Number(data.today.slice(5, 7)),
+                  1,
+                ),
+              )
+                .toISOString()
+                .slice(0, 7)
+            }
+            onChange={(e) => set("automation_start_month", e.target.value)}
+          />
+        </label>
+        <p className="cari-hint">
+          Tanımlı tutarlar ayın 1–3. günlerinde 12.00 cron kontrolüyle, her
+          dönem bir kez hakediş olur. Boş/sıfır kalem atlanır. Hosting cron
+          kurulumu gerekir; para gönderilmez. İlk başlangıç varsayılan olarak
+          sonraki aydır.
+        </p>
+        <fieldset className="profile-fields work-plan-editor">
+          <legend>Çalışma takvimi</legend>
+          <p className="muted">
+            Tarih bazlı plan. Başka haftaya tekrarlanmaz; ücret veya devam kaydı
+            oluşturmaz.
+          </p>
+          <label className="cari-field">
+            Plan haftası
+            <input
+              type="date"
+              value={planWeek}
+              onChange={(e) => {
+                if (e.target.value) setPlanWeek(weekStart(e.target.value));
+              }}
+            />
+          </label>
+          <div className="work-plan-days">
+            {weekDates(planWeek).map((date, i) => (
+              <label className="cari-field" key={date}>
+                {weekdays[i]} · {dateLabel(date)}
+                <select
+                  aria-label={weekdays[i] + " planı"}
+                  value={p.work_calendar?.[date] || ""}
+                  onChange={(e) => {
+                    const plan = { ...(p.work_calendar || {}) };
+                    if (e.target.value) plan[date] = e.target.value;
+                    else delete plan[date];
+                    set("work_calendar", plan);
+                  }}
+                >
+                  <option value="">Plan yok</option>
+                  {Object.entries(shiftLabels).map(([key, label]) => (
+                    <option key={key} value={key}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+        <p className="cari-hint">
+          Maaş hak edişi kayıtlı maaş işlemlerinden gelir. Avans veya diğer
+          ödemeler yalnız burada seçilirse ilgili kaleme sayılır; yeni finansal
+          işlem oluşturulmaz.
+        </p>
+        <label className="cari-field">
+          Ödeme ayı
+          <input
+            type="month"
+            value={month}
             onChange={(e) =>
               change("profile", {
                 ...p,
-                leave_week: p.leave_week || weekStart(data.today),
-                [key]: e.target.value === "" ? null : Number(e.target.value),
+                staff_month: e.target.value,
+                salary_payments: [],
+                meal_payments: [],
+                meal_due_cents: 0,
               })
             }
           />
         </label>
-      ))}
+        <label className="cari-field">
+          Geçmiş dönem yemek bilgisi (TL)
+          <input
+            type="number"
+            min="0"
+            step="0.01"
+            value={(p.meal_due_cents || 0) / 100}
+            onChange={(e) =>
+              change("profile", {
+                ...p,
+                staff_month: month,
+                meal_due_cents: Math.round(Number(e.target.value) * 100),
+              })
+            }
+          />
+        </label>
+        {[
+          ["salary_payments", "Maaş / avans ödemeleri"],
+          ["meal_payments", "Yemek ödemeleri"],
+        ].map(([key, label]) => (
+          <fieldset className="profile-fields" key={key}>
+            <legend>{label}</legend>
+            {payments.length ? (
+              payments.map((e) => (
+                <label className="check-label" key={e.id}>
+                  <input
+                    type="checkbox"
+                    checked={(p[key] || []).includes(e.id)}
+                    onChange={(event) =>
+                      change("profile", {
+                        ...p,
+                        staff_month: month,
+                        [key]: event.target.checked
+                          ? [...(p[key] || []), e.id]
+                          : (p[key] || []).filter((id) => id !== e.id),
+                      })
+                    }
+                  />
+                  <span>
+                    {dateLabel(e.event_date)} · {e.description || e.kind}
+                    <small>
+                      {fmt(e.amount_cents)} TL
+                      {e.cancelled ? " · İptal edildi, özete katılmaz" : ""}
+                      {e.party_id !== form.id
+                        ? " · Cari değişmiş, özete katılmaz"
+                        : ""}
+                    </small>
+                  </span>
+                </label>
+              ))
+            ) : (
+              <p className="muted">
+                Bu ay seçilebilecek gerçekleşmiş ödeme yok.
+              </p>
+            )}
+          </fieldset>
+        ))}
+        <label className="cari-field">
+          Haftalık izin · hafta başlangıcı
+          <input
+            type="date"
+            value={p.leave_week || weekStart(data.today)}
+            onChange={(e) => set("leave_week", e.target.value)}
+          />
+        </label>
+        <p className="muted">Pazartesi tarihini girin. Yıllık izin değildir.</p>
+        {[
+          ["leave_used", "Kullanılan gün"],
+          ["leave_total", "Haftalık hak (gün)"],
+        ].map(([key, label]) => (
+          <label className="cari-field" key={key}>
+            {label}
+            <input
+              type="number"
+              min="0"
+              max="7"
+              step="0.5"
+              value={p[key] ?? ""}
+              onChange={(e) =>
+                change("profile", {
+                  ...p,
+                  leave_week: p.leave_week || weekStart(data.today),
+                  [key]: e.target.value === "" ? null : Number(e.target.value),
+                })
+              }
+            />
+          </label>
+        ))}
+      </div>
     </details>
   );
 }

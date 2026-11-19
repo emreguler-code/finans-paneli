@@ -1,3 +1,4 @@
+import { RecordHost } from "./InlineRecords";
 import { useState } from "react";
 import { Pencil } from "lucide-react";
 import { roleName } from "./ui";
@@ -69,8 +70,10 @@ export function UsersPage({ data, open }) {
           >
             <Pencil size={18} />
           </button>
+          <RecordHost entity="user" id={u.id} />
         </div>
       ))}
+      <RecordHost entity="user" />
       {!users.length && <p className="empty">Kullanıcı bulunamadı.</p>}
     </section>
   );

@@ -111,6 +111,7 @@ export function EventForm({ context, data, onClose, onState, notify }) {
     );
   if (f.operation === "collection" && party?.type === "Tedarikçi" && f.linkedId)
     opts = ["collection"];
+  if (e.id && !opts.includes(e.operation)) opts = [e.operation, ...opts];
   if (f.operation === "return_payment") opts = ["return_payment"];
   if (f.operation === "opening")
     opts = context.inline && party ? ["opening", ...opts] : ["opening"];
@@ -220,7 +221,9 @@ export function EventForm({ context, data, onClose, onState, notify }) {
   const needsAccount =
     (Boolean(f.operation) &&
       !invoice &&
-      !["salary", "employee_purchase", "opening"].includes(f.operation)) ||
+      !["salary", "meal", "employee_purchase", "opening"].includes(
+        f.operation,
+      )) ||
     f.immediate;
   function choose(op) {
     if (
@@ -251,7 +254,7 @@ export function EventForm({ context, data, onClose, onState, notify }) {
       installments: 1,
       ...(context.inline
         ? {
-            account: "",
+            account: init.account || "",
             cardId: fixedCard || "",
             target: "",
             due: s.scheduled ? s.due : "",
@@ -405,7 +408,7 @@ export function EventForm({ context, data, onClose, onState, notify }) {
           (party ? " Cari etkisi işlem türüne göre uygulanır." : "")
       : "İşlem hesabını seçin.";
   };
-  if (context.inline && party)
+  if (context.inline)
     return (
       <PartyEntryForm
         {...{

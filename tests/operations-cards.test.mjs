@@ -102,10 +102,7 @@ test("Transfer target card receives debt reduction, not spending", () => {
   );
 });
 test("Semantic names distinguish salary and returns from sale and purchase", () => {
-  assert.equal(
-    operationLabel({ operation: "salary", kind: "Borç" }),
-    "Maaş Ekle",
-  );
+  assert.equal(operationLabel({ operation: "salary", kind: "Borç" }), "Maaş");
   assert.equal(
     operationLabel({ operation: "supplier_return", kind: "Alacak" }),
     "İade",

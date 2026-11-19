@@ -37,3 +37,7 @@ Yalnız web dosyaları içeren 1.15.0 hosting ZIP'ini kullanabilirsiniz. Mevcut 
 ## 1.26.0 — Dosyaları eksiksiz yükleme
 
 Mevcut config.php, özel yedekler ve kullanıcı verileri korunur. Yeni assets dosyalarını ve API kaynaklarını eksiksiz yükledikten sonra index.html dosyasını güncelleyin. Yeni paketi eski index veya eksik assets ile karıştırmayın. Önceki hashli assets dosyalarını hemen silmemek, açık tarayıcı sekmelerinin yüklemesini tamamlamasına izin verir. Yükleme sorunu varsa görünen yenileme ekranı tanılama içindir; verileri sıfırlama veya demo kurma gerektirmez.
+
+## 1.27.0 — Personel hakedişi ve satır içi kayıt
+
+Şema 12 korunur. Hosting ZIP içindeki yeni `api/staff-cron.php`, `api/v2/staff-automation.php` ve `api/v2/fields.php` dahil tüm API dosyalarını eksiksiz yükleyin; config ve özel yedek dizinini koruyun. Yeni personel tutarları profilde, dönem planı mevcut audit kaydında tutulur. Maaş/yemek otomasyonu için ayrıca cron kurulumu gerekir; dosya yüklemek tek başına zamanlanmış görev kurmaz. Başlangıç ayı varsayılan olarak sonraki aydır. Kurulum adımları tam paketteki `PERSONEL-CRON.md` içindedir. Eski yedekleme cron görevini personel göreviyle değiştirmeyin.

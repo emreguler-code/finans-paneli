@@ -1,3 +1,14 @@
+# 1.27.0 — Satır içi kayıt ve personel otomasyonu
+
+- Yeni kayıt ve düzenleme ilgili liste/kart içinde; banka/kart hareketleri ortak satır içi formda. Sayfa altı otomatik giriş alanları kaldırıldı.
+- Cari sütunları Tarih / İşlem / Açıklama / Etiket / Ekleyen / Tutar / Bakiye; kompakt taslak eylemleri ve çözünürlüğe göre sütunlara hizalanan ek alanlar.
+- Özet ve bildirimlerde işlem tıklaması ilgili sayfada kaynak satırı seçer; görüntüleme penceresi açılmaz.
+- Personel IBAN/TCKN kopyalama; profilden aylık maaş/yemek, üç günlük tekrar ve mükerrer kayıt korumalı CLI hakediş görevi, eksik hakedişte kritik bildirim.
+
+Şema 12. Hosting ZIP + SHA-256 `releases/1.27.0/` altında ve bu Release varlıklarında. Hosting yükleme/inceleme ve cron kurulumu kullanıcıya aittir; kurulum yapılmadı. [Kapsam](SURUM-1.27.0.md) · [Cron kılavuzu](PERSONEL-CRON.md). Güvenlik denetiminde yeni bulgular yayını durdurur; önceki dar picomatch istisna politikası korunur.
+
+---
+
 # 1.26.0 — Kararlı işlem girişi ve personel ödemeleri
 
 - Satır içi giriş ve düzenlemede hizalama, kesintisiz aktif çizgi ve kompakt tarih; etiket yazımı kolaylaştırıldı.

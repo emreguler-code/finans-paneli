@@ -1,3 +1,4 @@
+import { AlignedFields } from "./AlignedFields";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Check, X, LoaderCircle } from "lucide-react";
 import { EntrySurface } from "./EntrySurface";
@@ -43,18 +44,29 @@ export function PartyEntryForm({
     setExpanded(false);
     previousOperation.current = null;
   }, [f.requestId]);
+  const tagInRow = Boolean(
+    ready && document.getElementById(context.slotPrefix + "-tag"),
+  );
+  const accountInRow = Boolean(
+    ready && document.getElementById(context.slotPrefix + "-account"),
+  );
+  const transfer = ["transfer", "card_payment", "cash_advance"].includes(
+    f.operation,
+  );
   const salary = f.operation === "salary",
-    staff = party.type === "Personel",
-    hasDue = invoice || salary || Boolean(f.linkedId),
+    staff = party?.type === "Personel",
+    hasDue = invoice || salary || f.scheduled || Boolean(f.linkedId),
     accountRequired = needsAccount && !salary;
   const partialRequired = invoice && f.immediate && paymentMode === "partial";
   const requiredSignature = [
-    accountRequired ? "account" : "",
+    accountRequired && !accountInRow ? "account" : "",
+    transfer ? "target" : "",
     partialRequired ? "settled" : "",
   ].join("|");
   const missing =
-    (accountRequired && !f.account && !f.cardId) ||
-    (partialRequired && !f.settled);
+    (accountRequired && !accountInRow && !f.account && !f.cardId) ||
+    (partialRequired && !f.settled) ||
+    (transfer && (f.operation === "transfer" ? !f.target : !f.account));
   const hasExtras = Boolean(
     f.operation &&
     (invoice ||
@@ -139,6 +151,25 @@ export function PartyEntryForm({
   const options = opts.filter((op) => op !== "employee_expense");
   if (borcland && !options.includes("employee_purchase"))
     options.push("employee_purchase");
+  const tagControl = (
+    <label className="cari-field">
+      Etiket (isteğe bağlı)
+      <TagInput
+        value={f.tag}
+        selectOnFocus={Boolean(e.id)}
+        onChange={(v) => change("tag", v)}
+        options={[
+          ...new Set([
+            "Genel",
+            "Gıda",
+            "Kırtasiye",
+            "Otomotiv",
+            ...data.events.map((event) => event.tag || "Genel"),
+          ]),
+        ]}
+      />
+    </label>
+  );
   return (
     <EntrySurface
       variant="inline"
@@ -157,7 +188,7 @@ export function PartyEntryForm({
               <DatePicker
                 value={f.date}
                 today={data.today}
-                max={data.today}
+                max={f.scheduled ? undefined : data.today}
                 required
                 label="İşlem tarihi"
                 iconOnly={!dateSelected}
@@ -197,26 +228,7 @@ export function PartyEntryForm({
               />
             </label>,
           )}
-          {place(
-            "tag",
-            <label className="cari-field">
-              Etiket (isteğe bağlı)
-              <TagInput
-                value={f.tag}
-                selectOnFocus={Boolean(e.id)}
-                onChange={(v) => change("tag", v)}
-                options={[
-                  ...new Set([
-                    "Genel",
-                    "Gıda",
-                    "Kırtasiye",
-                    "Otomotiv",
-                    ...data.events.map((event) => event.tag || "Genel"),
-                  ]),
-                ]}
-              />
-            </label>,
-          )}
+          {tagInRow && place("tag", tagControl)}
           {place(
             "operation",
             control(
@@ -241,6 +253,35 @@ export function PartyEntryForm({
               true,
             ),
           )}
+          {accountInRow &&
+            place(
+              "account",
+              context.lockedCardId ? (
+                <span>
+                  {data.cards.find((c) => c.id === context.lockedCardId)?.name}
+                </span>
+              ) : context.initial?.account ? (
+                <span>
+                  {
+                    data.accounts.find((a) => a.id === context.initial.account)
+                      ?.name
+                  }
+                </span>
+              ) : (
+                control(
+                  "İşlem hesabı *",
+                  f.cardId ? "card:" + f.cardId : f.account,
+                  transfer
+                    ? accountOptions.filter(
+                        ([v]) => !String(v).startsWith("card:"),
+                      )
+                    : accountOptions,
+                  setAccount,
+                  Boolean(f.operation && needsAccount),
+                  "account",
+                )
+              ),
+            )}
           {hasExtras && (
             <details
               className="inline-extra"
@@ -248,7 +289,8 @@ export function PartyEntryForm({
               onToggle={(event) => setExpanded(event.currentTarget.open)}
             >
               <summary>Ek bilgiler</summary>
-              <div className="inline-extra-grid">
+              <AlignedFields>
+                {!tagInRow && tagControl}
                 {invoice &&
                   control(
                     invoiceReturn ? "İade bedeli" : "Ödeme / tahsilat",
@@ -339,6 +381,8 @@ export function PartyEntryForm({
                     !f.immediate,
                   )}
                 {accountRequired &&
+                  !accountInRow &&
+                  party &&
                   control(
                     "İşlem hesabı *",
                     f.cardId ? "card:" + f.cardId : f.account,
@@ -411,6 +455,73 @@ export function PartyEntryForm({
                     />
                   </label>
                 )}
+                {!party &&
+                  !context.lockedCardId &&
+                  control(
+                    "Cari (isteğe bağlı)",
+                    f.partyId,
+                    [
+                      ["", "Bağımsız işlem"],
+                      ...data.parties
+                        .filter((p) => p.active)
+                        .map((p) => [p.id, p.name]),
+                    ],
+                    (v) =>
+                      setF((s) => ({
+                        ...s,
+                        partyId: v,
+                        operation: "",
+                        immediate: false,
+                      })),
+                    false,
+                    "partyId",
+                  )}
+                {transfer &&
+                  control(
+                    f.operation === "cash_advance"
+                      ? "Paranın gireceği hesap *"
+                      : f.operation === "card_payment"
+                        ? "Ödeme kaynağı *"
+                        : "Hedef hesap *",
+                    f.operation === "transfer" ? f.target : f.account,
+                    [
+                      ["", "Hesap seçin"],
+                      ...data.accounts
+                        .filter(
+                          (a) =>
+                            a.active &&
+                            (f.operation !== "transfer" || a.id !== f.account),
+                        )
+                        .map((a) => [a.id, a.name]),
+                    ],
+                    (v) =>
+                      change(
+                        f.operation === "transfer" ? "target" : "account",
+                        v,
+                      ),
+                    true,
+                  )}
+                {f.cardId &&
+                  !e.id &&
+                  control(
+                    "Taksit sayısı",
+                    f.installments,
+                    Array.from({ length: 36 }, (_, i) => [
+                      i + 1,
+                      i ? i + 1 + " taksit" : "Tek çekim",
+                    ]),
+                    (v) => change("installments", Number(v)),
+                  )}
+                {!party && !context.lockedCardId && (
+                  <label className="check-label">
+                    <input
+                      type="checkbox"
+                      checked={f.scheduled}
+                      onChange={(e) => change("scheduled", e.target.checked)}
+                    />
+                    Planlı işlem
+                  </label>
+                )}
                 {!staff && (
                   <label className="cari-field">
                     Belge / fatura no
@@ -424,7 +535,7 @@ export function PartyEntryForm({
                     />
                   </label>
                 )}
-              </div>
+              </AlignedFields>
             </details>
           )}
           {f.operation &&

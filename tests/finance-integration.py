@@ -214,4 +214,5 @@ code,r=post('card_save',name='QA Maximum kartı',bank_code='isbank',bank='',prog
 ok('New catalog bank rejects another bank program',post('card_save',name='QA yanlış program',bank_code='isbank',program_code='axess',limit='25000',opening='0',statement='0',statementDate=TODAY,due=TODAY,cutDay=int(TODAY[-2:]))[0]==422)
 ok('Bank metadata never creates financial events',bank_before['events']==state()['events'])
 Path(os.environ['QA_STATE_PATH']).write_text(json.dumps(state(),ensure_ascii=False))
+exec(compile((Path(__file__).with_name('staff-automation-integration.py')).read_text(),'staff-automation-integration.py','exec'))
 print(json.dumps({'passed':len(checks),'failed':0}))

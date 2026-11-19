@@ -186,6 +186,7 @@ function eventInput(PDO $db, array $b, ?array $old): array
         "sale" => "Alacak",
         "customer_return" => "Borç",
         "salary" => "Borç",
+        "meal" => "Borç",
         "employee_purchase" => "Alacak",
         "employee_expense" => "Alacak",
         "collection" => "Tahsilat",
@@ -222,6 +223,7 @@ function eventInput(PDO $db, array $b, ?array $old): array
             ],
             "Personel" => [
                 "salary",
+                "meal",
                 "employee_purchase",
                 "employee_expense",
                 "collection",
@@ -248,6 +250,7 @@ function eventInput(PDO $db, array $b, ?array $old): array
             "sale",
             "customer_return",
             "salary",
+            "meal",
             "employee_purchase",
             "employee_expense",
             "opening",

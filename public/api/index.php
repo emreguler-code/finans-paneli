@@ -69,25 +69,7 @@ if ($method === "POST") {
         }
     }
 }
-function field(
-    array $body,
-    string $key,
-    int $max = 160,
-    bool $required = false,
-): string {
-    if (isset($body[$key]) && !is_string($body[$key])) {
-        fail("Geçersiz alan: " . $key);
-    }
-    $s = trim($body[$key] ?? "");
-    if (
-        !preg_match("//u", $s) ||
-        preg_match_all("/./us", $s) > $max ||
-        ($required && $s === "")
-    ) {
-        fail("Alanı kontrol edin: " . $key);
-    }
-    return $s;
-}
+require __DIR__ . "/v2/fields.php";
 require __DIR__ . "/v2/core.php";
 require __DIR__ . "/v2/finance.php";
 require __DIR__ . "/v2/tracking.php";

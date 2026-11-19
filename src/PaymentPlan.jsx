@@ -1,3 +1,4 @@
+import { RecordHost } from "./InlineRecords";
 import { matchesChoice } from "./search-query.mjs";
 import { ContentColumns } from "./AppShell";
 import { PageHeading, SummaryBar } from "./PageLayout";
@@ -167,6 +168,26 @@ export function PaymentPlan({
     } else setAnchor(dateAdd(anchor, n * (view === "Haftalık" ? 7 : 1)));
   }
   function details(x) {
+    const entity =
+      x.source === "vehicle"
+        ? "vehicle_record"
+        : x.source === "card"
+          ? "card"
+          : x.source === "bill" || x.source === "scheduled"
+            ? "event"
+            : "account";
+    const rows =
+      entity === "vehicle_record"
+        ? data.vehicle_records
+        : entity === "card"
+          ? data.cards
+          : entity === "event"
+            ? data.events
+            : data.accounts;
+    const item = rows.find((r) => String(r.id) === String(x.recordId));
+    if (item) open({ entity, item, mode: "view" });
+  }
+  function settle(x) {
     if (x.source === "vehicle") {
       open({
         entity: "vehicle_record",
@@ -592,7 +613,7 @@ export function PaymentPlan({
                       {x.direction !== 0 && can(data.user, "create") && (
                         <button
                           className="text-button agenda-action"
-                          onClick={() => details(x)}
+                          onClick={() => settle(x)}
                         >
                           {x.source === "vehicle"
                             ? "Ödeme ilişkilendir"
@@ -631,6 +652,8 @@ export function PaymentPlan({
                 </>
               );
             })()}
+            <RecordHost entity="event" />
+            <RecordHost entity="vehicle_record" />
           </section>
         </aside>
       </ContentColumns>

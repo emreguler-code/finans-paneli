@@ -1,3 +1,4 @@
+import { RecordHost } from "./InlineRecords";
 import { matchesChoice } from "./search-query.mjs";
 import { ContentColumns } from "./AppShell";
 import { useNavigation, useRecordState, useRouteTab } from "./Navigation";
@@ -74,26 +75,18 @@ export function AccountPage({
   }
   function openAlert(alert) {
     const event = data.events.find((e) => e.id === alert.eventId);
-    nav.navigate(
-      {
-        page,
-        record: String(alert.account),
-        event: event ? String(event.id) : "",
-        tab: event?.scheduled
-          ? "Gelecek dönem hareketleri"
-          : "Hesap hareketleri",
-      },
-      { fresh: true },
-    );
-    if (!event) {
-      const account = source.find((a) => a.id === alert.account);
-      if (account)
-        open({
-          entity: isCard ? "card" : "account",
-          mode: "view",
-          item: account,
-        });
+    if (event) {
+      openRecord({
+        entity: "event",
+        mode: "view",
+        item: event,
+        ...(isCard
+          ? { lockedCardId: alert.account }
+          : { accountId: alert.account }),
+      });
+      return;
     }
+    nav.navigate({ page, record: String(alert.account) });
   }
   const [tag, setTag] = useScopedState(page + ":tag", "all"),
     [minAmount, setMinAmount] = useScopedState(page + ":minAmount", ""),
@@ -189,7 +182,11 @@ export function AccountPage({
       if (event) {
         setFocusEvent({ id: event.id, stamp: Date.now() });
         setTab(
-          event.scheduled ? "Gelecek dönem hareketleri" : "Hesap hareketleri",
+          isCard
+            ? nav.route.tab || "Dönem içi işlemler"
+            : event.scheduled
+              ? "Gelecek dönem hareketleri"
+              : "Hesap hareketleri",
         );
       }
     }
@@ -306,6 +303,15 @@ export function AccountPage({
         (x.balance_cents ?? Math.round(x.debt * 100)) / 100,
       ]),
     );
+  const targetEvent = data.events.find(
+    (e) =>
+      String(e.id) === String(initialEventId || nav.route.event) &&
+      (isCard
+        ? e.card_id === a?.id || e.target_card_id === a?.id
+        : e.account_id === a?.id || e.target_id === a?.id),
+  );
+  const revealTarget = targetEvent && !rows.includes(targetEvent);
+  if (revealTarget) rows = [...rows, targetEvent];
   rows = sortLedgerEvents(rows, sort, {
     amount,
     accountLabel: (e) =>
@@ -545,6 +551,7 @@ export function AccountPage({
                 {...{ isCard, data, open }}
                 onSelect={select}
               />
+              <RecordHost entity={isCard ? "card" : "account"} />
             </section>
           )}
 
@@ -644,6 +651,14 @@ export function AccountPage({
                   )}
                 </section>
               )}
+              <RecordHost entity={isCard ? "card" : "account"} id={a.id} />
+              {isCard && <RecordHost entity="statement" />}
+              {revealTarget && (
+                <p className="muted" role="status">
+                  Bağlantıdaki kayıt, mevcut filtreler korunarak ayrıca
+                  gösteriliyor.
+                </p>
+              )}
               <Ledger
                 onSort={setSort}
                 sort={sort}
@@ -658,6 +673,7 @@ export function AccountPage({
                       )
                     : undefined
                 }
+                currentAccount={!isCard ? a.id : undefined}
                 lockedCardId={isCard ? a.id : undefined}
                 key={a.id + "-" + tab + "-" + statement?.id}
                 events={rows}

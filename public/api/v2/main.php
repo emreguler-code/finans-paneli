@@ -183,10 +183,48 @@ function partyProfile(PDO $db, array $b, ?array $old): string
         return $old["profile_json"] ?? "{}";
     }
     $p = $b["profile"];
-    if (!is_array($p) || count($p) > 11) {
+    if (!is_array($p) || count($p) > 16) {
         throw new DomainException("Cari bilgi alanlarını kontrol edin.");
     }
     $result = [];
+    $iban = strtoupper(preg_replace("/\s+/u", "", field($p, "iban", 40)));
+    if ($iban !== "") {
+        if (!preg_match('/^TR[0-9]{24}$/D', $iban)) {
+            throw new DomainException("Geçerli bir TR IBAN girin.");
+        }
+        $digits = substr($iban, 4) . "2927" . substr($iban, 2, 2);
+        $mod = 0;
+        foreach (str_split($digits) as $digit) {
+            $mod = ($mod * 10 + (int) $digit) % 97;
+        }
+        if ($mod !== 1) {
+            throw new DomainException("IBAN kontrol numarası geçersiz.");
+        }
+    }
+    $result["iban"] = $iban;
+    foreach (["salary_cents", "meal_monthly_cents"] as $field) {
+        $result[$field] = trackingInteger($p, $field, 1000000000);
+    }
+    $start = field($p, "automation_start_month", 7);
+    if (!$start && ($result["salary_cents"] || $result["meal_monthly_cents"])) {
+        $start = (new DateTimeImmutable(today($db)))
+            ->modify("first day of next month")
+            ->format("Y-m");
+    }
+    if ($start && !preg_match('/^20[0-9]{2}-(0[1-9]|1[0-2])$/D', $start)) {
+        throw new DomainException("Hakediş başlangıç ayını kontrol edin.");
+    }
+    $previous = json_decode($old["profile_json"] ?? "{}", true) ?: [];
+    if (
+        $start &&
+        $start < substr(today($db), 0, 7) &&
+        $start !== ($previous["automation_start_month"] ?? "")
+    ) {
+        throw new DomainException(
+            "Yeni otomasyon geçmiş aylardan başlatılamaz.",
+        );
+    }
+    $result["automation_start_month"] = $start;
     $days = $p["visit_days"] ?? [];
     if (!is_array($days) || !array_is_list($days) || count($days) > 7) {
         throw new DomainException("Ziyaret günlerini kontrol edin.");
