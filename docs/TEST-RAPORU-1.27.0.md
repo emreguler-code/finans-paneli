@@ -17,3 +17,9 @@ Kapsam [SURUM-1.27.0.md](SURUM-1.27.0.md). Hosting yükleme/inceleme ve cron kur
 Kapsamlı demo ve tarayıcı kabulü başarılı. Sütun sırası sonrası banka açıklama genişliği kontrolünün yakaladığı daralma düzeltildi; açıklamalar, ekstre girişleri, kaynak satır seçimi ve 320–1920 px taşma kontrolleri son derlemeyle geçti. Sentetik ekran kanıtları `docs/evidence/1.27.0/` altındadır.
 
 Paket kabulü başarılı: hosting/tam ZIP eşliği, temiz kurulum ve 1.25.0 üzerine dosya yükseltmesinde config/eski assets korunması doğrulandı. Paket içindeki yeni CLI/API modülleri dahil 168 API kontrolü, kapsamlı demo ve iki ardışık demo yenilemesinde yönetici/veri güvenliği kontrolleri geçti. 624 olay, yedi ay ve 29 hafta üzerinde 715 finansal mutabakat kontrolü başarılı; kapsamlı demo tarayıcı kabulü 105 kontroldür. Canlı veri üzerinde yenileme/sıfırlama yapılmadı.
+
+## GitHub yayın sonucu
+
+Windows ve Linux tam kabulü başarılı: [44475407484](https://github.com/emreguler-code/finans-paneli/actions/runs/44475407484). Yayımlanan kaynak `54bac3a3a80e3c2e8f3117fbbca14ea87a7ccb25`. [GitHub Release](https://github.com/emreguler-code/finans-paneli/releases/tag/v1.27.0) dört varlık içerir. İndirilen ZIP ve SHA-256 dosyaları yerel test çıktısıyla birebir eşleşti; hosting ZIP’i ayrıca repo dosyasıyla karşılaştırıldı. Her iki checksum ve tag/kaynak doğrulaması [yayın kaydında](evidence/1.27.0/publication.json).
+
+Son görsel kontrolde kampanya çocuk kaydının sayısal kimliği yerine doğru üst kampanyaya yerleşmesi ve başlığı sıkıştırmadan alt satırda açılması düzeltildi. Bu davranış birim ve tarayıcı kabulüne eklendi; yukarıdaki son başarılı koşu bu düzeltmeyi içerir.

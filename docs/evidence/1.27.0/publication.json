@@ -1,0 +1,13 @@
+{
+  "version": "1.27.0",
+  "source": "54bac3a3a80e3c2e8f3117fbbca14ea87a7ccb25",
+  "run": "https://github.com/emreguler-code/finans-paneli/actions/runs/44475407484",
+  "release": "https://github.com/emreguler-code/finans-paneli/releases/tag/v1.27.0",
+  "publishedAt": "2026-11-19T07:02:41Z",
+  "checksums": {
+    "finans-paneli-1.27.0-hosting.zip": "23db497850464d314344ee0a6f2ea7da83ae18f19e835b15e117a45984c3d684",
+    "finans-paneli-1.27.0.zip": "aa4d146a4e717e31b784cae81a3f64f7910aede2c057551319bb4eecebe79e49"
+  },
+  "downloadedAssetsMatch": true,
+  "repositoryHostingArchiveMatches": true
+}

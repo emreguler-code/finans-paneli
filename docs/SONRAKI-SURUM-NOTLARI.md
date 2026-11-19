@@ -1239,3 +1239,5 @@ Kullanıcı “kodlamaya başla ve yeni sürümü github release olarak yayınla
 ### 1.27.0 uygulama sonucu
 
 Yetkilendirilen satır içi yayılım, kaynak satıra yönlendirme, personel IBAN/kopyalama ve dönem planına bağlı maaş/yemek otomasyonu uygulandı. Yerel kabul ve hosting paket kurulumu doğrulandı; yayın sonucu sürüm raporunda tutulur. Hosting yükleme/inceleme ve cron kurulumu kullanıcıya aittir. Bu sürümün onayı, daha sonra eklenecek yeni fikirler için uygulama/yayın yetkisi vermez.
+
+1.27.0 GitHub Release yayımlandı; Windows/Linux kabulü ve indirilen paketlerin checksum/kaynak eşliği doğrulandı. Ayrıntı docs/TEST-RAPORU-1.27.0.md. Hosting yükleme/inceleme ve cron kurulumu yapılmadı; kullanıcıya aittir. Yeni talepler yine önce notlara alınacak, açık kodlama talimatı beklenecek.
