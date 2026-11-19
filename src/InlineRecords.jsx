@@ -1,3 +1,4 @@
+import { inlineHostId } from "./record-target.mjs";
 import { createContext, useContext, useLayoutEffect, useState } from "react";
 import { createPortal } from "react-dom";
 const Placement = createContext(false);
@@ -19,7 +20,7 @@ export function InlineRecord({ context, children }) {
       hosts.find(
         (n) =>
           n.dataset.formHost === context.entity &&
-          n.dataset.formRecord === String(context.item?.id || ""),
+          n.dataset.formRecord === inlineHostId(context),
       ) || hosts.find((n) => n.dataset.formHost === context.entity);
     setHost(target || null);
     if (target)

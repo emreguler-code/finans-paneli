@@ -65,3 +65,12 @@ export function recordTarget(context, data) {
     return { page: "Kampanyalar", entry: String(e.id) };
   return null;
 }
+
+// Child records belong inside the parent campaign, not a campaign with the same numeric ID.
+export function inlineHostId(context) {
+  return String(
+    context.entity === "campaign_entry"
+      ? context.item?.campaign_id || context.initial?.campaign_id || ""
+      : context.item?.id || "",
+  );
+}

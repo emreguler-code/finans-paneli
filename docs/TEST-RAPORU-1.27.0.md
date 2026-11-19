@@ -2,7 +2,7 @@
 
 Kontroller izole/sentetik verilerle çalıştırılır; canlı hosting ve gerçek kullanıcı verisi kullanılmaz. Node 26.13.1, npm 12.2.2, Python 3.15.2; PHP 8.5.12 / MariaDB 12.3.3.
 
-- `npm test`: ESLint, Stylelint, proje genelinde Prettier, derleme; 85 birim ve 4 Sites worker testi.
+- `npm test`: ESLint, Stylelint, proje genelinde Prettier, derleme; 86 birim ve 4 Sites worker testi.
 - Gerçek API: 168 kontrol. Önceki finansal kabulün yanında IBAN ve ücret doğrulama, eşzamanlı cron, günlük tek deneme, kısmi hata, dönem tutarının korunması, ayrı brüt maaş/yemek, kasa bakiyesinin değişmemesi, iptal edilen kaydın yeniden üretilmemesi ve üç günlük sonuç kaydı.
 - Şema geçişleri: 34; yedekleme/geri yükleme güvenlik kontrolleri: 77.
 - Chromium/WebKit/Firefox sentetik arayüz kontrolleri: 181 kontrol/tarayıcı. Yeni metadata girişleri kendi listesinde, taslak terk etme koruması, modern seçimler, eski oluşturma bağlantısı, IBAN/TCKN kopya başarı/hata bildirimi, Son 5 işlemden tam kaynak satıra yönlendirme ve 390–1920 px sütuna bağlı ek alanlar dahil.

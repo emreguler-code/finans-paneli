@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { recordTarget } from "../src/record-target.mjs";
+import { recordTarget, inlineHostId } from "../src/record-target.mjs";
 import {
   missingAccruals,
   staffAccrualAlerts,
@@ -151,4 +151,16 @@ test("critical missing list uses frozen period fees even after profile changes",
     automation_start_month: "2026-11",
   };
   assert.equal(missingAccruals(d).length, 0);
+});
+
+test("campaign child editors use their parent even when record IDs collide", () => {
+  assert.equal(
+    inlineHostId({ entity: "campaign_entry", item: { id: 1, campaign_id: 2 } }),
+    "2",
+  );
+  assert.equal(
+    inlineHostId({ entity: "campaign_entry", initial: { campaign_id: 2 } }),
+    "2",
+  );
+  assert.equal(inlineHostId({ entity: "campaign", item: { id: 1 } }), "1");
 });
