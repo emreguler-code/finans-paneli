@@ -562,7 +562,8 @@
   }
 }
 
-.finance-due:has(.record-inline-host:not(:empty)) {
+.finance-due:has(.record-inline-host:not(:empty)),
+.campaign-row:has(.record-inline-host:not(:empty)) {
   flex-wrap: wrap;
 }
 

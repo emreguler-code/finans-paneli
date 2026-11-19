@@ -5,7 +5,7 @@ Kontroller izole/sentetik verilerle çalıştırılır; canlı hosting ve gerçe
 - `npm test`: ESLint, Stylelint, proje genelinde Prettier, derleme; 86 birim ve 4 Sites worker testi.
 - Gerçek API: 168 kontrol. Önceki finansal kabulün yanında IBAN ve ücret doğrulama, eşzamanlı cron, günlük tek deneme, kısmi hata, dönem tutarının korunması, ayrı brüt maaş/yemek, kasa bakiyesinin değişmemesi, iptal edilen kaydın yeniden üretilmemesi ve üç günlük sonuç kaydı.
 - Şema geçişleri: 34; yedekleme/geri yükleme güvenlik kontrolleri: 77.
-- Chromium/WebKit/Firefox sentetik arayüz kontrolleri: 181 kontrol/tarayıcı. Yeni metadata girişleri kendi listesinde, taslak terk etme koruması, modern seçimler, eski oluşturma bağlantısı, IBAN/TCKN kopya başarı/hata bildirimi, Son 5 işlemden tam kaynak satıra yönlendirme ve 390–1920 px sütuna bağlı ek alanlar dahil.
+- Chromium/WebKit/Firefox sentetik arayüz kontrolleri: 182 kontrol/tarayıcı. Yeni metadata girişleri kendi listesinde, taslak terk etme koruması, modern seçimler, eski oluşturma bağlantısı, IBAN/TCKN kopya başarı/hata bildirimi, Son 5 işlemden tam kaynak satıra yönlendirme ve 390–1920 px sütuna bağlı ek alanlar dahil.
 - Gerçek API ile Chromium masaüstü ve Chromium/WebKit/Firefox mobil akışları: banka/kart kaydı bir kez, kaynak hesap/kart korunması, düzenleme, takvim, arama, eylem hedefleri ve taşma kontrolleri.
 - Kritik bildirim testleri üçüncü gün 12.00 eşiğini, cron hiç çalışmamasını, iptal edilen kaydın dönem sahipliğini ve güncel ücret değişse bile dönem planının kullanılmasını doğrular.
 - PHP kaynakları sözdizimi denetiminden geçti. `audit:security` son taraması bilinen açık bildirmedi; önceki dar/süreli picomatch istisna politikası korunur, yeni bulgular geçiş izni almaz.

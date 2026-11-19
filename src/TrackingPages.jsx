@@ -156,8 +156,6 @@ function CampaignsPage({ data, open }) {
               key={c.id}
               data-campaign-id={c.id}
             >
-              <RecordHost entity="campaign" id={c.id} />
-              <RecordHost entity="campaign_entry" id={c.id} />
               <button
                 className="campaign-summary"
                 aria-expanded={selected === c.id}
@@ -208,6 +206,8 @@ function CampaignsPage({ data, open }) {
                   </button>
                 )}
               </div>
+              <RecordHost entity="campaign" id={c.id} />
+              <RecordHost entity="campaign_entry" id={c.id} />
             </article>
           );
         })}

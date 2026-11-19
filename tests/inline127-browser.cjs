@@ -14,6 +14,34 @@ module.exports = async function (p, ok, shot, base, original) {
       automation_start_month: "2026-11",
     },
   });
+  data.campaigns = [1, 2].map((id) => ({
+    id,
+    name: "Kampanya " + id,
+    active: true,
+    start_date: "2026-10-01",
+    end_date: "2026-12-31",
+    card_ids: [],
+    party_ids: [],
+    pos_programs: [],
+    tags: [],
+    participation: "not_required",
+    reward_type: "points",
+    reward_mode: "fixed",
+    reward_value: 100,
+    required_count: 1,
+    min_spend: 0,
+  }));
+  data.campaign_entries = [
+    {
+      id: 1,
+      campaign_id: 2,
+      event_id: 1,
+      received: 0,
+      confirmed: false,
+      active: true,
+      version: 1,
+    },
+  ];
   const handler = async (route) => {
     const a = new URL(route.request().url()).searchParams.get("action");
     if (a === "state") return route.fulfill({ json: data });
@@ -182,6 +210,33 @@ module.exports = async function (p, ok, shot, base, original) {
       exact: true,
     });
     if (await confirmation.isVisible()) await confirmation.click();
+    await p.goto(base + "/#/kampanyalar?kayit=2");
+    await p
+      .getByRole("button", { name: "Kampanya işlemini düzenle", exact: true })
+      .click();
+    await p.locator('[data-record-inline="true"]').waitFor();
+    ok(
+      "Campaign child editor stays below the correct parent summary",
+      await p.locator('[data-record-inline="true"]').evaluate((e) => {
+        const host = e.closest("[data-form-host]"),
+          row = host.closest(".campaign-row"),
+          a = row.getBoundingClientRect(),
+          b = e.getBoundingClientRect(),
+          summary = row
+            .querySelector(".campaign-summary")
+            .getBoundingClientRect();
+        return (
+          host.dataset.formRecord === "2" &&
+          b.top >= summary.bottom &&
+          b.width >= a.width - 40 &&
+          b.right <= a.right
+        );
+      }),
+    );
+    await p
+      .locator('[data-record-inline="true"]')
+      .getByRole("button", { name: "Vazgeç", exact: true })
+      .click();
   } finally {
     await p.unroute("**/api/index.php?**", handler);
   }
