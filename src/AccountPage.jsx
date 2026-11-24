@@ -545,13 +545,13 @@ export function AccountPage({
         <div className="account-main">
           {!detail && (
             <section className="panel account-list-panel">
+              <RecordHost entity={isCard ? "card" : "account"} />
               {inventoryActions}
               <AccountGrid
                 items={inventory}
                 {...{ isCard, data, open }}
                 onSelect={select}
               />
-              <RecordHost entity={isCard ? "card" : "account"} />
             </section>
           )}
 

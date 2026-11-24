@@ -1,3 +1,15 @@
+# 1.28.0 — Kompakt formlar ve sade mobil gezinme
+
+- İşlem ekleme ve düzenleme, tablonun üstünde aynı kompakt formda; müşteri/tedarikçi/personel için uygun işlem ve ödeme alanları.
+- Hareketler işlem tarihine göre yeniden eskiye; düzenleme önizlemesi bakiyeye yalnız değişiklik farkını uygular.
+- Cari bilgileri kendi kartında düzenlenir; bakiye yanındaki gereksiz düğmeler kaldırıldı, IBAN/TCKN kopyalama sadeleştirildi.
+- Personel takvimi gerçek İstanbul haftasını gösterir; eski vardiyalar yeni haftaya kopyalanmaz.
+- Mobil alt gezinme tamamen kaldırıldı; hamburger menü ve taslak koruması sürer. Ortak kayıt formlarında yazılı eylemler ve anlamlı alan grupları.
+
+Şema 12. Hostinge hazır ZIP + SHA-256 `releases/1.28.0/` altında ve Release varlıklarında. Hosting yükleme/inceleme ve cron kurulumu kullanıcıya aittir. [Kapsam](SURUM-1.28.0.md) · [Doğrulama](TEST-RAPORU-1.28.0.md).
+
+---
+
 # 1.27.0 — Satır içi kayıt ve personel otomasyonu
 
 - Yeni kayıt ve düzenleme ilgili liste/kart içinde; banka/kart hareketleri ortak satır içi formda. Sayfa altı otomatik giriş alanları kaldırıldı.

@@ -1,3 +1,4 @@
+import { RecordHost } from "./InlineRecords";
 import { useState, useId } from "react";
 import { MonitorCheck, ChevronRight, Copy, Check } from "lucide-react";
 import { WeekCalendar } from "./WeekCalendar";
@@ -184,7 +185,8 @@ export function PartyContext({ party, data, open }) {
               </button>
             )}
           </header>
-          {content}
+          <RecordHost entity="party" id={party.id} />
+          <div className="party-context-content">{content}</div>
         </section>
       </div>
       <div id={tabId + "-month"} className="party-month-view">

@@ -1,3 +1,4 @@
+import { istanbulDay } from "./current-day.mjs";
 import { MoneyInput } from "./MoneyInput";
 import { formatMoneyInput, normalizeMoney } from "./list-utils.mjs";
 import { useState } from "react";
@@ -7,7 +8,7 @@ import { weekdays, weekStart } from "./profile-utils.mjs";
 import { dateLabel } from "./DatePicker";
 import { fmt } from "./ui";
 export function PartyProfileFields({ form, change, data }) {
-  const [planWeek, setPlanWeek] = useState(weekStart(data.today));
+  const [planWeek, setPlanWeek] = useState(weekStart(istanbulDay()));
   const p = form.profile || {},
     set = (key, value) => change("profile", { ...p, [key]: value });
   if (form.type === "Tedarikçi")

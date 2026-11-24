@@ -596,3 +596,284 @@
   max-height: none;
   padding: 12px 0 0;
 }
+
+/* Shared content forms: semantic groups, independent of ledger column geometry. */
+.layout-shell .entry-inline .sheet-footer button {
+  flex: 0 1 auto;
+  width: auto;
+  max-width: none;
+  padding: 10px 16px;
+  gap: 8px;
+}
+.ledger-create-action {
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--line);
+}
+.ledger-composer {
+  padding: 16px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-raised);
+  container-type: inline-size;
+}
+.layout-shell .ledger-composer .entry-inline {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.layout-shell .transaction-form .sheet-scroll {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  gap: 20px;
+  padding: 0;
+  overflow: visible;
+}
+.transaction-main {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.transaction-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+}
+.transaction-heading h2 {
+  font-size: 16px;
+  margin: 0;
+}
+.operation-choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.operation-choices button {
+  min-height: 44px;
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-page);
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+}
+.operation-choices button[aria-pressed="true"] {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--surface-hover);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+.transaction-values {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) minmax(180px, 2fr);
+  gap: 12px;
+}
+.transaction-conditions,
+.transaction-option-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(190px, 100%), 1fr));
+  gap: 12px;
+  align-items: end;
+}
+.transaction-meta {
+  display: flex;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+}
+.transaction-meta > .cari-field {
+  flex: 0 1 180px;
+}
+.transaction-meta > .compact-date {
+  flex: 0 0 auto;
+}
+.transaction-more {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+.transaction-more summary {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  cursor: pointer;
+  color: var(--accent);
+  font-size: 12px;
+}
+.transaction-more[open] summary {
+  margin-bottom: 8px;
+}
+.transaction-preview {
+  border-left: 1px solid var(--line);
+  padding-left: 20px;
+  font-size: 12px;
+  min-width: 0;
+}
+.transaction-preview h3 {
+  margin: 0 0 12px;
+  font-size: 14px;
+}
+.transaction-preview dl,
+.transaction-preview p {
+  margin: 8px 0;
+}
+.transaction-preview dl > div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 8px;
+  margin: 8px 0;
+}
+.transaction-preview dd {
+  margin: 0;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.transaction-preview .preview-result {
+  border-top: 1px solid var(--line);
+  padding-top: 8px;
+}
+.preview-result dd {
+  font-size: 18px;
+  font-weight: 600;
+}
+.layout-shell .transaction-form > .sheet-footer {
+  margin-top: 12px;
+}
+.layout-shell [data-record-inline="true"] .entry-section {
+  display: block;
+  grid-column: 1/-1;
+}
+.layout-shell [data-record-inline="true"] .entry-section > h3 {
+  display: block;
+  font-size: 14px;
+  margin: 0 0 12px;
+}
+.layout-shell [data-record-inline="true"] .entry-section-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr));
+  gap: 12px;
+}
+@container (max-width: 800px) {
+  .layout-shell .transaction-form .sheet-scroll {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+  .transaction-preview {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+    padding: 12px 0 0;
+  }
+  .transaction-preview dl {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+  }
+  .transaction-preview dl > div {
+    margin: 0;
+  }
+  .transaction-preview .preview-result {
+    border: 0;
+    padding: 0;
+  }
+}
+@media (max-width: 760px) {
+  .ledger-composer {
+    padding: 16px 12px;
+  }
+  .transaction-values {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .transaction-form input,
+  .transaction-form .choice-trigger {
+    font-size: 16px;
+  }
+  .layout-shell .transaction-form > .sheet-footer {
+    flex-wrap: wrap;
+  }
+  .transaction-form .sheet-footer .primary-button {
+    flex: 1 1 auto;
+  }
+}
+
+.transaction-meta > .cari-field:has(.tag-control) {
+  flex: 0 1 150px;
+}
+.transaction-meta > .cari-field:has(.choice-control) {
+  flex: 1 1 190px;
+  max-width: 260px;
+}
+.transaction-more[open] {
+  flex-basis: 100%;
+}
+.layout-shell .transaction-preview dl {
+  display: block;
+  width: 100%;
+}
+.layout-shell .transaction-preview dl > div {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  padding-bottom: 4px;
+}
+.layout-shell .transaction-preview dt {
+  flex: 1 1 auto;
+  font-weight: 400;
+}
+.layout-shell .transaction-preview dd {
+  flex: 0 0 auto;
+  text-align: right;
+}
+.layout-shell .transaction-main > .sheet-footer {
+  margin-top: 4px;
+}
+@media (min-width: 361px) and (max-width: 760px) {
+  .transaction-values {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  }
+}
+@media (max-width: 760px) {
+  .transaction-preview > h3,
+  .transaction-preview dl > div:not(.preview-result) {
+    display: none;
+  }
+  .transaction-preview p {
+    margin: 4px 0;
+  }
+  .transaction-preview {
+    padding-top: 8px;
+  }
+}
+
+@container (max-width: 800px) {
+  .layout-shell .transaction-form .sheet-scroll {
+    display: flex;
+    flex-direction: column;
+  }
+  .transaction-main {
+    display: contents;
+  }
+  .transaction-main > .sheet-footer {
+    order: 2;
+  }
+  .transaction-preview {
+    order: 1;
+  }
+}
+
+.layout-shell .entry-inline:has(.transaction-form) {
+  container-type: inline-size;
+}
+
+.layout-shell .transaction-form input {
+  font-size: 14px;
+}
+.layout-shell .transaction-form input[name="amount"] {
+  font-size: 18px;
+  font-weight: 500;
+}
+@media (max-width: 760px) {
+  .layout-shell .transaction-form input {
+    font-size: 16px;
+  }
+}

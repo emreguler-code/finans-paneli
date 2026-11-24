@@ -51,7 +51,6 @@ import {
   X,
   Wallet,
   CalendarDays,
-  MoreHorizontal,
   Settings,
   Settings2,
   Car,
@@ -242,8 +241,7 @@ export function App({ initialData, onLogout }) {
   const setPage = (p) => nav.navigate({ page: p });
   const shell = useShellLayout(),
     compact = shell.mode === "compact";
-  const [mobileMore, setMobileMore] = useState(false),
-    [scope, setScope] = useState("all"),
+  const [scope, setScope] = useState("all"),
     [search, setSearch] = useState(""),
     [kind, setKind] = useState("all"),
     [claimFilter, setClaimFilter] = useState("all"),
@@ -252,8 +250,8 @@ export function App({ initialData, onLogout }) {
     [toast, setToast] = useState(null);
   const bellButton = useRef(null);
   const [cardsMenu, setCardsMenu] = useState(false);
-  const cardPresence = usePresence(cardsMenu),
-    morePresence = usePresence(mobileMore);
+  const cardPresence = usePresence(cardsMenu);
+
   const navigateMenu = (name) => {
     shell.setOpen(false);
     setCardsMenu(["Kredi kartları", "Kampanyalar"].includes(name));
@@ -310,7 +308,6 @@ export function App({ initialData, onLogout }) {
     setClaimFilter("all");
     setDrawer(null);
     setBell(false);
-    setMobileMore(false);
     if (["Kredi kartları", "Kampanyalar"].includes(alert.page))
       setCardsMenu(true);
     nav.navigate(
@@ -349,7 +346,6 @@ export function App({ initialData, onLogout }) {
   const go = (p, fresh = false) => {
     nav.navigate({ page: p }, { fresh });
     setDrawer(null);
-    setMobileMore(false);
     setBell(false);
     setSearch("");
     setKind("all");
@@ -372,7 +368,6 @@ export function App({ initialData, onLogout }) {
       if (e.key === "Escape") {
         setDrawer(null);
         setBell(false);
-        setMobileMore(false);
       }
       if ((e.ctrlKey || e.metaKey) && e.key === "k") {
         e.preventDefault();
@@ -915,7 +910,8 @@ export function App({ initialData, onLogout }) {
         onState: applyState,
         notify,
         createContext:
-          financeContext?.entity === "event" && !financeContext.item?.id && true
+          financeContext?.entity === "event" &&
+          (!financeContext.item?.id || financeContext.mode === "edit")
             ? { ...financeContext, stamp: contextKey }
             : null,
         clearCreate: () => setFinanceContext(null),
@@ -1345,90 +1341,7 @@ export function App({ initialData, onLogout }) {
               </>
             )}
           </ShellContent>
-          <nav
-            inert={!!drawer}
-            className="mobile-nav"
-            aria-label="Mobil navigasyon"
-          >
-            {[
-              ["Genel bakış", "Özet", LayoutDashboard],
-              ["Raporlar", "Raporlar", ChartNoAxesCombined],
-              ["Tahsilat & Ödeme", "Ödeme", ArrowLeftRight],
-            ].map(([p, l, Icon]) => (
-              <button
-                key={p}
-                aria-current={page === p ? "page" : undefined}
-                className={page === p ? "active" : ""}
-                onClick={() => navigateMenu(p)}
-              >
-                <Icon size={20} />
-                {l}
-              </button>
-            ))}
-            <button
-              aria-label="Diğer"
-              aria-expanded={mobileMore}
-              aria-current={
-                !["Genel bakış", "Raporlar", "Tahsilat & Ödeme"].includes(page)
-                  ? "page"
-                  : undefined
-              }
-              className={
-                mobileMore ||
-                !["Genel bakış", "Raporlar", "Tahsilat & Ödeme"].includes(page)
-                  ? "active"
-                  : ""
-              }
-              onClick={() => setMobileMore(!mobileMore)}
-            >
-              <MoreHorizontal size={20} />
-              Diğer
-            </button>
-          </nav>
         </MainShell>
-        {morePresence.mounted && (
-          <div
-            className="mobile-more"
-            data-exiting={!mobileMore || undefined}
-            inert={!mobileMore || undefined}
-            aria-hidden={!mobileMore || undefined}
-          >
-            {navigation
-              .filter(
-                ([name]) =>
-                  ![
-                    "Genel bakış",
-                    "Hareketler",
-                    "Raporlar",
-                    "Tahsilat & Ödeme",
-                  ].includes(name) &&
-                  (!["Kullanıcılar", "Ayarlar"].includes(name) ||
-                    can(fullData.user, "admin")) &&
-                  (name !== "Kampanyalar" || cardsMenu),
-              )
-              .map(([name, Icon]) => (
-                <button
-                  key={name}
-                  className={name === "Kampanyalar" ? "navigation-submenu" : ""}
-                  aria-expanded={
-                    name === "Kredi kartları" ? cardsMenu : undefined
-                  }
-                  onClick={() => navigateMenu(name)}
-                >
-                  <Icon size={20} />
-                  {name}
-                  {name === "Kredi kartları" ? (
-                    <ChevronDown
-                      size={16}
-                      className={cardsMenu ? "rotate-open" : ""}
-                    />
-                  ) : (
-                    <ChevronRight size={16} />
-                  )}
-                </button>
-              ))}
-          </div>
-        )}
         {drawer && (
           <div className="drawer-layer">
             <button
@@ -1663,7 +1576,7 @@ export function App({ initialData, onLogout }) {
         {financeContext &&
           !(
             financeContext.entity === "event" &&
-            !financeContext.item?.id &&
+            (!financeContext.item?.id || financeContext.mode === "edit") &&
             [
               "Cari hesaplar",
               "Hesaplar",

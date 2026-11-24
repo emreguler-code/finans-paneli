@@ -1,3 +1,4 @@
+import { useCurrentDay } from "./useCurrentDay";
 import { CalendarDays } from "lucide-react";
 import { weekDates } from "./party-monthly.mjs";
 import { weekdays } from "./profile-utils.mjs";
@@ -12,7 +13,9 @@ export const shiftLabels = {
 export function WeekCalendar({ party, data }) {
   const staff = party.type === "Personel",
     supplier = party.type === "Tedarikçi";
-  const dates = weekDates(data.today),
+  const actualDay = useCurrentDay();
+  const today = staff ? actualDay : data.today;
+  const dates = weekDates(today),
     plan = party.profile?.work_calendar || {};
   const posted = new Set(
     data.events
@@ -74,7 +77,7 @@ export function WeekCalendar({ party, data }) {
             <div
               key={date}
               className={
-                "week-day " + status + (date === data.today ? " is-today" : "")
+                "week-day " + status + (date === today ? " is-today" : "")
               }
               title={weekdays[i] + ": " + label}
               aria-label={
@@ -83,7 +86,7 @@ export function WeekCalendar({ party, data }) {
                 date +
                 " · " +
                 label +
-                (date === data.today ? " · Bugün" : "")
+                (date === today ? " · Bugün" : "")
               }
             >
               <span>{short[i]}</span>

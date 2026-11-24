@@ -147,6 +147,8 @@ function CampaignsPage({ data, open }) {
       </ListTools>
 
       <section className="panel campaign-list">
+        <RecordHost entity="campaign" />
+        <RecordHost entity="campaign_entry" />
         {list.map((c) => {
           const progress = campaignProgress(c, data),
             state = campaignStatus(c, data.today);
@@ -212,8 +214,6 @@ function CampaignsPage({ data, open }) {
           );
         })}
         {!list.length && <p className="empty">Bu kapsamda kampanya yok.</p>}
-        <RecordHost entity="campaign" />
-        <RecordHost entity="campaign_entry" />
       </section>
       {current &&
         (() => {

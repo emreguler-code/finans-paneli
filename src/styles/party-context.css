@@ -445,3 +445,20 @@
     min-height: 44px;
   }
 }
+
+.party-context:has(.record-inline-host:not(:empty)) .party-context-content,
+.party-context:has(.record-inline-host:not(:empty)) > header > button {
+  display: none;
+}
+.party-context .record-inline-host [data-record-inline="true"] {
+  padding: 12px 0 0;
+  border: 0;
+  background: transparent;
+}
+.party-compact-info .copy-value {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  min-width: 44px;
+  min-height: 44px;
+}

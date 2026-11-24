@@ -1241,3 +1241,188 @@ Kullanıcı “kodlamaya başla ve yeni sürümü github release olarak yayınla
 Yetkilendirilen satır içi yayılım, kaynak satıra yönlendirme, personel IBAN/kopyalama ve dönem planına bağlı maaş/yemek otomasyonu uygulandı. Yerel kabul ve hosting paket kurulumu doğrulandı; yayın sonucu sürüm raporunda tutulur. Hosting yükleme/inceleme ve cron kurulumu kullanıcıya aittir. Bu sürümün onayı, daha sonra eklenecek yeni fikirler için uygulama/yayın yetkisi vermez.
 
 1.27.0 GitHub Release yayımlandı; Windows/Linux kabulü ve indirilen paketlerin checksum/kaynak eşliği doğrulandı. Ayrıntı docs/TEST-RAPORU-1.27.0.md. Hosting yükleme/inceleme ve cron kurulumu yapılmadı; kullanıcıya aittir. Yeni talepler yine önce notlara alınacak, açık kodlama talimatı beklenecek.
+
+## 19 Kasım 2026 — Personel çalışma takviminde gerçek güncel hafta
+
+Kullanıcı, çalışma takviminin içinde bulunduğumuz haftayı göstermesini istedi. Bu yeni bir gereksinim notudur; henüz kodlama veya yeni yayın talimatı değildir. Önceki 1.27.0 onayı bu talebe taşınmaz.
+
+- Personel carisindeki Çalışma takvimi, Europe/Istanbul saat dilimindeki gerçek güncel tarihin pazartesi–pazar haftasını gösterecek.
+- Sabit demo tarihi, seçili cari hareketi veya Aylık Özet için seçilen ay bu takvimin haftasını belirlemeyecek. Bugün vurgusu da aynı gerçek güncel tarihe dayanacak; hafta değiştiğinde gösterilen hafta güncellenecek.
+- Paylaşılan ekranın üstündeki uygulama tarihi 13 Ekim 2026, çalışma takvimi ise 12–18 Ekim 2026. Kaynak incelemesinde WeekCalendar'ın haftayı data.today üzerinden hesapladığı görüldü. Güncel hafta için örnek: 19 Kasım 2026 tarihinde 16–22 Kasım 2026 gösterilmeli.
+- Gösterilen günlerde o tarihlere kaydedilmiş vardiya ve izin planları kullanılacak. Eski haftanın planı yeni haftaya kendiliğinden kopyalanmayacak.
+- Bu talep personel çalışma takviminin tarih dayanağıyla sınırlıdır; finansal işlem tarihlerini veya diğer rapor dönemlerini değiştirme talimatı değildir.
+
+Yalnız sürüm notları güncellendi. Uygulama kodu ve yayımlanan sürüm değiştirilmedi; açık kodlama talimatı beklenecek.
+
+## 19 Kasım 2026 — Cari bilgilerinde yerinde düzenleme ve sade eylemler
+
+Kullanıcı, güncel bakiye yanındaki açılır ok ve düzenleme ikonunun işlevsiz/tekrarlı kaldığını; Durum ve bilgiler bölümünün ayrı bir satır içi form açmak yerine kendi yerinde düzenlenmesini istedi. Bu yeni gereksinimler notlara alınır; açık kodlama/yayın talimatı henüz yoktur.
+
+- Cari kimlik/güncel bakiye alanındaki açılır ok ve kalem ikonu kaldırılacak. Durum ve bilgiler başlığındaki Düzenle bağlantısı düzenlemeye giriş noktası olacak.
+- Düzenle, sağ sütundaki ilgili bilgi kartını kendi konumunda düzenlenebilir hale getirecek. Alanlar görüntülendikleri bölümde düzenlenecek; cari hareketleri listesinde veya başka bir alanda ayrı profil formu açılmayacak.
+- Yerinde düzenleme yaklaşımı personel, müşteri ve tedarikçinin kendi bilgi alanlarına uygulanacak; türlerine özgü bilgiler korunacak. Mobilde aynı kartın bulunduğu konumda düzenleme yapılacak.
+- Kaydet ve Vazgeç ilgili bilgi kartında kalacak. Vazgeç kaydedilmemiş değişiklikleri uygulamayacak; mevcut doğrulama, yetki ve taslak koruması sürdürülecek.
+- Bu karar, Durum ve bilgiler düzenlemesinde 1.27.0'daki ayrı satır içi profil formunun yerini alır. Finansal hareketlerin kendi satırında eklenmesi/düzenlenmesi kuralı devam eder.
+- IBAN ve TCKN kopyalama düğmelerindeki kutu/çerçeve kaldırılacak; yalnız minimal kopyalama ikonu görünecek. Kopyalama işlevi, erişilebilir ad, klavye odağı, yeterli tıklama alanı ve başarı/hata geri bildirimi korunacak.
+
+Yalnız sürüm notları güncellendi. Uygulama kodu, sürüm, ZIP ve GitHub yayını değiştirilmedi; açık kodlama talimatı beklenecek.
+
+## 21 Kasım 2026 — Sidebar kaydırma çubuğu için çözüm önerisi
+
+Kullanıcı sidebar'da görünen kaydırma çubuğunun nasıl çözülebileceğini sordu. Bu bölüm çözüm önerisidir; tasarım veya kodlama/yayın onayı verilmiş sayılmaz.
+
+Kaynak incelemesinde sidebar'ın logo, esnek ana navigasyon ve sabit alt eylemlerden oluştuğu; navigasyonda overflow-y: auto ve scrollbar-width: thin kullanıldığı görüldü. Alt eylemler küçülmediği için kullanılabilir yükseklik azaldığında menü kendi içinde kayar. Ekran görüntüsündeki taşmanın tam miktarı ölçülmedi; küçük yükseklik farkı, tarayıcı ölçeği veya açılan alt menü etkisi çalışan arayüzde doğrulanmalı.
+
+Önerilen yaklaşım:
+
+- İçerik sığıyorsa kaydırma çubuğu görünmeyecek. Gerekli olmayan dikey taşma/padding ve alt piksel yuvarlaması kontrol edilecek.
+- Yükseklik daraldığında önce logo çevresi ve bölüm/öğe aralarındaki boşluklar ölçülü azaltılacak; yazı boyutu ve en az 44 px etkileşim alanı korunacak.
+- Gerçek taşma kısa pencere, yakınlaştırma veya açık alt menü nedeniyle sürüyorsa ana navigasyon kaydırılabilir kalacak. İnce ve zemine uyumlu çubuk, üzerine gelme, klavye odağı veya kaydırma etkileşiminde belirginleşecek; görünürlük değişimi menü genişliğini/hizasını oynatmayacak.
+- Logo ve alt eylemler mevcut konumlarını koruyacak. Son menü öğesi, Ayarlar ve Görünüm ve bilgiler erişilebilir kalacak; kaydırmayı tamamen kapatarak içerik kesilmeyecek.
+- Windows, macOS ve tarayıcının kalıcı kaydırma çubuğu/erişilebilirlik tercihleri dikkate alınacak. Tam/kompakt menü, mobil drawer, kısa pencere ve açık Kredi kartları alt menüsüyle kontrol edilecek.
+
+Yalnız öneri ve sürüm notları yazıldı. Uygulama kodu, sürüm, ZIP ve GitHub yayını değiştirilmedi; açık uygulama talimatı beklenecek.
+
+## 24 Kasım 2026 — Düzenleme satırında tutar/bakiye çakışması
+
+Kullanıcı, paylaştığı görselde işlem düzenlenirken tutar ve bakiye rakamlarının üst üste geldiğini doğruladı; yeni kayıtta giriş satırına hizalanan Kaydet/Vazgeç ikonlarının düzenleme durumunda da düzgün yerleşmesi için çözüm önerisi istedi. Bu bölüm hata kaydı ve tasarım önerisidir; açık kodlama/yayın talimatı değildir.
+
+Kaynak incelemesi: Ledger'ın düzenleme durumundaki Bakiye hücresinde Önceki bakiye etiketi, kayıtlı satır bakiyesi ve iki eylem aynı inline-action-rail içinde tutuluyor. Dar hücreye sayısal bakiye ve ikonlar birlikte sığmadığında tutar sütununa taşma oluşuyor. Kullanılan e.party_balance, ilgili hareketten sonraki kayıtlı satır bakiyesidir; işlem öncesi bakiye gibi adlandırılmamalı.
+
+Önerilen çözüm:
+
+- Tutar giriş alanı yalnız Tutar sütununda kalacak; aynı rakam başka bir alanda üstüne bindirilmeyecek.
+- Düzenleme sırasında Bakiye hücresinde yalnız Kaydet/Vazgeç ikonları bulunacak; yeni kayıttaki gibi ana giriş alanlarıyla aynı hizada kalacak. Küçük üst durum metni Düzenleniyor olacak.
+- Bu hücredeki sayısal kayıtlı bakiye, alttaki mevcut işlem etkisi/bilgi alanına Kayıtlı satır bakiyesi etiketiyle taşınacak. Bu değer kaydedilmiş hareketin tarihsel bakiyesi olarak gösterilecek; güncel cari bakiye veya henüz kaydedilmemiş yeni bakiye gibi sunulmayacak.
+- Kaydet veya Vazgeç sonrası satır normal görünümüne döndüğünde sayısal bakiye tekrar kendi Bakiye sütununda gösterilecek. Finansal hesaplama modeli değişmeyecek.
+- Sütun genişletme, yazıyı küçültme veya taşmayı kesme yoluyla sorunun üzeri örtülmeyecek. Eylemler için ayrılan hücre ve bilgi metni birbirinden ayrılacak; ana sütun hizaları korunacak.
+- Uzun/negatif TL değerleri, yeni kayıt ve mevcut kayıt düzenlemesi, ek bilgilerin açık/kapalı durumu ve dar ekranlarda çakışma olmaması kontrol edilecek.
+
+Yalnız hata/öneri notları güncellendi. Uygulama kodu, sürüm, ZIP ve GitHub yayını değiştirilmedi; açık uygulama talimatı beklenecek.
+
+## 24 Kasım 2026 — Yeni hareketlerin ve yeni işlem formunun üstte olduğu düzen denemesi
+
+Kullanıcı, varsayılan hareket sıralamasının yeni tarihten eskiye çevrildiği ve yeni işlem girişinin cari hareketlerinin ilk satırına taşındığı bir senaryoyu birlikte kapsamlı değerlendirmek istedi. Amaç günlük kayıt ve son hareketlere erişimde sayfanın altına gitme ihtiyacını azaltmak, daha düzenli bir form tasarlamak. Bu bir varsayım ve tasarım incelemesidir; henüz kesin tasarım, kodlama veya yayın onayı değildir. Önceki liste sonunda ekleme kararını şu anda uygulamada değiştirmez.
+
+Mevcut kaynak: cari hareket varsayılanı date-asc; Ledger yeni işlem satırını kaydedilmiş satırların arkasında oluşturuyor. Son 30 kayıt ve hedef kaydı açma altyapısı var. Yeni varsayılanın kapsamı cari hareketleridir; cari isim listesinin alfabetik sıralaması ayrı kalmalı.
+
+Önerilen akış:
+
+- Sayfa/cari kimliği, arama ve tablo başlıklarından sonra ilk içerik satırı yeni işlem alanı olacak. Kapalıyken kompakt Yeni işlem eylemi, açıldığında aynı konumda taslak satır yer alacak. Form veri satırlarının sıralama/filtre hesabına dahil edilmeyecek.
+- Ana alan sırası Tarih / İşlem / Açıklama / Etiket / Ekleyen / Tutar / Bakiye olarak korunacak. Açıklama esnek, tarih ve etiket kompakt; Ekleyen sabit metin olacak. Yeni kayıtta tarih ilk başta ikon, açık seçimden sonra düz metin kuralı devam edecek.
+- Taslağın Bakiye hücresi durum ve Vazgeç/Kaydet ikonlarına ayrılacak; uydurma bakiye gösterilmeyecek. Mevcut kaydı düzenlerken de aynı hizalama, kayıtlı satır bakiyesini alttaki bilgi alanında gösterme önerisi geçerli olacak.
+- Zorunlu eksik ek alan varsa Ek bilgiler üstteki formun hemen altında açılacak; zorunlu eksik yoksa kapalı başlayacak. Alanlar mevcut sütun çizgilerine oturacak ve gerektiğinde bitişik sütunları kaplayacak. Açılma ana alanların yatay konumunu değiştirmeyecek; üstteki form genişlediğinde aşağıdaki hareketler doğal akışta yer açacak.
+- İşlem listesi formun altında en yeni hareketten eskiye akacak. Son 30 kayıt üstte, daha eski kayıtları yükleme eylemi altta olacak; eski kayıtlar alttan eklenecek ve okuma konumu korunacak. Formun yeri başlıktan seçilen farklı sıralamalarda da üstte kalacak. Form ekranın üstüne sabitlenen yeni bir dock olmayacak.
+- Başarılı kayıt sonrası üstteki form yeni giriş için temizlenebilecek; cari/hesap bağlamı korunacak. İlgili kayıt gerçek sıralama yerine yerleşecek ve görünür olduğunda seçili gösterilecek. Kayıt başarısızsa taslak korunacak. Filtre dışında kalan yeni kayıt için filtreler sessizce değiştirilmeyecek; kullanıcıya açık bilgi verilecek.
+- Mevcut hareket düzenlemesi kendi satırında kalacak; üstteki yeni işlem alanına taşınmayacak. Aynı anda iki değişmiş taslak açılmayacak; mevcut terk etme koruması sürdürülecek.
+- Bakiye, her hareketin gerçekleştiği andan sonraki kayıtlı bakiyesidir. Ekrandaki sıralama tersine döndüğünde üstten aşağı yeni kümülatif bakiye hesaplanmayacak. Aylık devreden/artış/azalış/net hesapları ve toplamlar aynı kalacak.
+- Günlük kayıt ekleme/son hareketleri okuma için aşağı kaydırma azalır; eski kaydı inceleme ve kaynağa yönlendirme hâlâ kaydırma gerektirebilir. Tüm kaydırmanın ortadan kalktığı iddia edilmeyecek. Dar ekranda ana alanlar okunabilir satırlara yerleşecek; ek alanların yüksekliği ve alttaki son hareketin görünürlüğü ayrıca değerlendirilecek.
+
+Netleştirilecek kararlar:
+
+- Sıralamada esas alınacak tarih: işlemin gerçekleşme tarihi/saati mi, sisteme kayıt giriş zamanı mı? Bugün geçmiş tarihli eklenen hareket, işlem tarihine göre sıralanırsa en üstte kalmaz. Aynı tarih/saatte yeni kayıt için kararlı bir son eşitleme sırası gerekir.
+- Üst form sayfaya girişte açık mı, kompakt Yeni işlem satırı olarak kapalı mı başlayacak; kayıt sonrası açık kalıp seri girişe devam mı edilecek?
+- Yeni varsayılan, daha önce kaydedilmiş kullanıcı sıralama tercihlerini zorla sıfırlayacak mı? Mevcut tercihlerin korunması ile yeni varsayılan ayrı ele alınmalı.
+
+Bu çalışma mevcut kaynak ve kullanıcının paylaştığı ekranlar üzerinden senaryo değerlendirmesidir; yeni yerleşim için çalışan prototip, yeni ekran yakalama veya etkileşim testi yapılmadı. Yalnız notlar güncellendi; uygulama kodu, sürüm, paket ve GitHub yayını değiştirilmedi. Açık kodlama talimatı beklenecek.
+
+### 24 Kasım 2026 — Sıralama ölçütü netleşti, tek görsel istendi
+
+Kullanıcı üstte kalacak hareketlerin işlem tarihine göre sıralanacağını açıkça belirtti ve bu senaryo için bir görsel hazırlanmasını istedi. Yukarıdaki işlem tarihi/kayıt giriş zamanı sorusu kapanmıştır: esas işlem tarihi ve saatidir, sisteme giriş zamanı değildir. Geçmiş tarihli girilen hareket kendi tarihindeki sırasına yerleşecek.
+
+- Yeni tarihten eskiye sıralama ve tablo başlıklarının hemen altında yeni işlem alanı, tek görsel tasarım çalışmasında gösterilecek.
+- Görsel, mevcut Sade Netlik stilini ve Tarih / İşlem / Açıklama / Etiket / Ekleyen / Tutar / Bakiye sütunlarını koruyacak; açık ek bilgiler sütunlara hizalanacak. Taslak durumundaki eylemlerle sayısal tutarlar çakışmayacak.
+- Görseldeki örnek tarihler 24 Kasım 2026 gününe dayanacak. Sayısal örnekler sentetik olacak; kaydedilmemiş taslak mevcut bakiyeye dahil edilmeyecek.
+- Bu talimat yalnız görsel hazırlanmasını yetkilendirir. Formun ilk açılışta açık/kapalı olması, kayıt sonrası seri giriş davranışı ve mevcut kullanıcı sıralama tercihleri henüz kesinleşmiş değildir. Tasarım seçimi de ayrıca açık kodlama talimatı olmadan uygulama/yayın izni sayılmayacak.
+
+Yalnız sıralama açıklaması ve görsel hazırlama notları güncellendi; uygulama kodu, sürüm, ZIP ve GitHub yayını değiştirilmedi.
+
+### 24 Kasım 2026 — Üstteki satır formu reddedildi, bağımsız giriş taslağı istendi
+
+Kullanıcı son görseli beğenmediğini; yeni işlem girişinin yeterince pratik ve düzenli olmadığını belirtti. Önceki yeni işlem tasarımlarını bu çalışma için bir kenara bırakarak yeni bir taslak ve asistanın öngörüsünü istedi. Önceki görsel seçilmiş/onaylanmış sayılmaz. Bu istek yalnız tasarım çalışmasıdır; uygulama veya yayın onayı değildir.
+
+Yeni görselde değerlendirilecek öneri:
+
+- Yeni işlem, hareket tablosunun yedi sütununa sıkıştırılmadan, cari bağlamında kendine ait sade bir giriş yüzeyi olarak ele alınacak.
+- İşlem türü, cariye uygun kısa ve doğrudan seçeneklerle başlayacak; müşteri örneğinde Satış / Tahsilat / İade. Ayrı adımlara bölünmüş bir sihirbaz olmayacak.
+- Tutar ve açıklama ana alanlar olacak; ekleyen gibi zaten bilinen bilgiler için gereksiz giriş kutusu gösterilmeyecek. Tarih ve etiket kompakt erişimlerle sunulacak.
+- Tahsilat/ödeme seçenekleri seçilen işleme göre gelecek. Açık hesapta kaynak hesabı istenmeyecek; anında veya kısmi ödeme seçilirse gereken hesap/tutar alanları ana alanların yerini değiştirmeden açılabilecek.
+- Vade/belge gibi isteğe bağlı ayrıntılar başlangıçta kapalı kalabilecek. Düzenli alan grupları, yeterli giriş genişliği ve tek belirgin kaydet eylemi öncelikli olacak.
+- Ayrı bir işlem etkisi özeti mevcut bakiye, taslağın etkisi ve kayıt sonrası önizlemeyi açıkça ayırabilecek. Taslak kaydedilmiş hareket/bakiye gibi gösterilmeyecek.
+- Örnek görsel 24 Kasım 2026 tarihine ve sentetik verilere dayanacak. Mevcut Sade Netlik renkleri/typografisi korunacak; önceki form geometrisi bu taslak için bağlayıcı olmayacak.
+
+Ürün tarihi/finansal anlamlar ve açık kodlama talimatı kuralı bu tasarım denemesiyle iptal edilmez. Yalnız notlar ve görsel taslak hazırlanacak; kod, sürüm, ZIP ve GitHub yayını değiştirilmeyecek.
+
+### 24 Kasım 2026 — Bağımsız işlem formu tasarım onayı, ortak düzenleme ve kompakt yükseklik
+
+Kullanıcı son bağımsız işlem giriş taslağını beğendiğini ve yeni sürümde denenmesini istedi. Hareket düzenlemesini de satır içinde yapmaktan vazgeçerek aynı forma uyarlamayı, özellikle küçük ekranlarda hareket listesi çok aşağıda kalmasın diye form yüksekliğini azaltmayı istedi. Bu tasarım onayı ve revizyon talebidir; açık kodlama/yayın talimatı henüz değildir.
+
+- Yeni işlem ve mevcut hareket düzenleme, tablo sütunlarından bağımsız aynı üst formun iki modu olacak. Mevcut hareketin kendi tablo satırında giriş kutuları açılması kuralı bu tasarım için kaldırılır.
+- Düzenle seçilince mevcut hareketin değerleri ortak forma yüklenecek; başlık İşlemi düzenle olacak. Hangi hareketin düzenlendiği açık kalacak, listedeki kayıt seçili/read-only olarak korunacak. Aynı anda ikinci yeni işlem taslağı açılmayacak.
+- Yeni işlem ve düzenleme için aynı temel alanlar, doğrudan işlem türü seçimleri, koşullu tahsilat/ödeme bilgileri ve kompakt tarih/etiket/belge-vade erişimleri kullanılacak.
+- Yüksekliği azaltmak için başlık/işlem seçenekleri gruplanacak; büyük dikey boşluklar ve tekrarlı açıklamalar azaltılacak. Tutar ve açıklama ortak satırda, kısa tahsilat seçimi kompakt satırda yer alabilecek. Etki özeti daha küçük bir yan alan veya kısa özet halinde sunulacak.
+- Alanların okunabilirliği ve yeterli etkileşim boyutları korunacak; zorunlu alanlar gizlenmeyecek. İsteğe bağlı ayrıntılar kapalı başlayacak, gerekli ek alanlar seçime göre ana alanları yerinden oynatmadan açılacak. Kapalı ana formun masaüstünde yaklaşık 220–260 px yüksekliğe inmesi bir görsel hedeftir; kesin ölçüler responsive uygulama aşamasında doğrulanacak.
+- Düzenleme gerekçesi ve id/version/taslak koruması korunacak. Gerekçe, yalnız düzenleme modunda kompakt tek satırlık zorunlu bir alan olarak değerlendirilecek; gereksiz büyük boş bir metin kutusu olmayacak.
+- Düzenleme önizlemesi, zaten bakiyeye dahil edilmiş eski hareketi ikinci kez eklemeyecek. Mevcut cari bakiye üzerine eski ve yeni etkinin farkı uygulanarak kayıt sonrası önizleme verilecek. Örneğin 14.000 TL mevcut alacakta 5.500 TL'lik satışı 4.500 TL yapmak −1.000 TL değişikliktir; önizleme 13.000 TL olur.
+- Küçük ekranlarda da amaç cari hareketlerini erişilebilir tutmak; formun veya eylemlerin listeyi gereksiz aşağı itmesi ve yatay taşma önlenecek. Açılan zorunlu seçeneklerin doğal olarak ek yer gerektirebileceği açık kalacak.
+- Cari kimlik/profilinin Durum ve bilgiler kartında kendi yerinde düzenlenmesi kararı ayrıdır ve korunur. Bu ortak form kararı finansal hareket ekleme/düzenleme akışına aittir.
+
+Önce kompakt görsel revizyon hazırlanır. Tasarımın beğenilmesi otomatik kodlama/yayın izni değildir; açık uygulama talimatı beklenecek. Uygulama kodu, sürüm, ZIP ve GitHub yayını değiştirilmedi.
+
+## 24 Kasım 2026 — Global form sistemi kapsamı ve önce mobil tasarım
+
+Kullanıcı, müşteri/tedarikçi/personel için ayrı Product Design çalışmaları istedi. Hizalamaların yalnız geometrik değil işlevsel anlam taşımasını, yeni hesap/cari/kart/kart işlemi/araç/araç işlemi dahil tüm uygun bölümlerde ortak form düzeninin uygulanmasını hedeflediğini belirtti. Öncelik mobil öneridir. Bu kapsam/tasarım talimatıdır; henüz kodlama veya yayın talimatı değildir.
+
+Ortak sistem önerisi:
+
+- Ortak form kabuğu, alan ölçüleri, tipografi, boşluk, doğrulama, taslak koruması ve eylem yerleşimi kullanılacak. Her kayıt türüne aynı alanlar veya yedi tablo sütunu zorlanmayacak.
+- İşlevsel gruplar: işlem/kimlik türü; ana değer ve açıklama; kaynak/karşı hesap veya ödeme amacı; tarih/etiket/isteğe bağlı ayrıntılar; işleme uygun etki özeti ve tek birincil eylem. Alan komşuluğu veri ilişkisine dayanacak.
+- İşlem türü azsa doğrudan seçenekler kullanılabilecek; fazla/uzun seçenekler mobilde ezilmeyecek. Tedarikçi Alış seçiminin faturalı/faturasız alt ayrımı açık kalacak; mali anlam birleştirilmeyecek.
+- Müşteri: Satış / Tahsilat / İade. Satış tutarı ile anında tahsil edilen tutar farklı alanlar olacak; açık hesapta gereksiz tahsilat hesabı sorulmayacak.
+- Tedarikçi: Faturalı/Faturasız alış ayrımı, ödeme ve iade. Kısmi ödemede brüt alış, şimdi ödenen, ödeme kaynağı ve açık kalan borç net ayrılacak. Ana toplam ile ödeme tutarı karıştırılmayacak.
+- Personel: Ödeme / Tahsilat / Borçlandır; ödeme amacı ve kaynak hesabı ilgili grupta bulunacak. Maaş Ekle manuel işlem olarak geri getirilmeyecek; aylık maaş/yemek otomasyonu korunacak.
+- Düzenleme, aynı ortak formun düzenleme modu olacak. Kayıtlı tarih/değerler, zorunlu değişiklik gerekçesi, id/version/yetki ve taslak koruması sürecek; bakiye önizlemesi eski ve yeni etkinin farkına dayanacak.
+
+Bölüm bazında yayılım haritası:
+
+| Bölüm/kayıt                       | Anlamlı ana gruplar ve sınırlar                                                                                                                                               |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Yeni cari / cari kimliği          | Cari türü ve ad; türe özel kimlik/iletişim/ücret alanları. Açılış bakiyesi varsa mevcut modelin açık ayrı işlemi olarak kalır.                                                |
+| Yeni hesap / hesap düzenleme      | Hesap türü/adı; banka/IBAN; türe göre KMH/vade ayrıntıları. Limit, kullanılabilir nakit ve açılış bakiyesi ayrıdır.                                                           |
+| Banka/kasa/KMH işlemleri          | İşlem türü, tutar/açıklama, kaynak-hedef hesap, tarih ve koşullu bilgiler. Aktarımda iki hesap ve yön açık gösterilir.                                                        |
+| Yeni kredi kartı / kart düzenleme | Banka/program, kimlik, limit; hesap kesim/son ödeme bilgileri ve isteğe bağlı bağlı hesap. Limit borç veya nakit sayılmaz.                                                    |
+| Kart işlemi / ekstre              | Harcama/iade/kart ödemesi/nakit avans bağlamları ayrıdır; kart, kaynak hesap, dönem ve taksit bilgileri yalnız gerektiğinde görünür. Ekstre girişi alışverişi tekrar üretmez. |
+| Yeni araç / araç düzenleme        | Plaka ve marka/model; yıl, km ve kimlik ayrıntıları. Araç kimliği için yapay bakiye/finansal etki özeti gösterilmez.                                                          |
+| Araç takip/işlem kaydı            | Kayıt türü ve tarihler; türüne göre km, poliçe, maliyet ve gerçek ödeme bağlantısı. Takip kaydı aynı ödemeyi ikinci kez üretmez.                                              |
+| Kampanya / kampanya ilişkisi      | Geçerlilik ve koşullar; uygun kaynak işlem ve kazanç. Puan tutarları TL/nakit gibi gösterilmez.                                                                               |
+| Kullanıcı                         | Kimlik/erişim bilgileri ve rol; finansal form alanları eklenmez, mevcut yetkiler korunur.                                                                                     |
+| Ödeme Planı / planlanan kayıt     | Plan tarihi ve gerçekleştirme ayrımı korunur; gerçekleşmeden bakiyeye girmez.                                                                                                 |
+| Rapor ve salt okunur özetler      | Kaynağa yönlendirme korunur; sırf global form sistemi var diye bu ekranlara yeni finansal kayıt üretme yeteneği eklenmez.                                                     |
+
+Mobil önerinin ilkeleri:
+
+- Önce müşteri, tedarikçi ve personel için üç ayrı mobil görsel; bunlar alternatif tema değil aynı sistemin farklı mali bağlamlarıdır. Görseller 390 × 844 oranında, OS/telefon çerçevesiz ve 24 Kasım 2026'ya dayanan sentetik verilerle hazırlanacak.
+- Masaüstündeki geniş sağ etki paneli mobilde form içinde kısa, açık bir önizlemeye dönüşecek. Mevcut kayıtlı bakiye ile kaydedilmemiş taslağın sonucu ayrılacak.
+- Tutar/ana açıklama, kısmi ödeme/kaynak hesap gibi gerçekten ilişkili alanlar yeterli genişlik olduğunda yan yana; uzun veya karmaşık alanlar tam genişlikte olacak. Sırf simetri için dar kutular yapılmayacak.
+- Zorunlu boş alanlar görünür, isteğe bağlı detaylar kapalı başlayacak. Ana alanların konumu ek seçenek seçildiğinde korunacak; gereken yeni satırlar altında açılacak.
+- Dokunma alanı en az 44 px, para girişi Türkçe biçim ve uygun sayısal klavye ile ele alınacak. Klavye açıldığında aktif alan ve kaydet erişilebilir kalmalı; form alanları veya liste alttaki gezinmenin arkasında kaybolmamalı.
+- Kapalı form çok küçük yer tutacak; açık temel form da kompakt olacak. Gerçekten zorunlu ödeme alanlarının ek yükseklik gerektirmesi tasarımda dürüstçe gösterilecek; hareketlerin okunabilirliği uğruna bu alanlar kesilmeyecek.
+
+Yalnız analiz/not ve mobil görsel önerileri hazırlanır. Global kod güncellemesi, yeni sürüm veya GitHub yayını başlatılmaz; açık uygulama talimatı beklenecek.
+
+## 24 Kasım 2026 — Mobil alt gezinmenin tamamen kaldırılması
+
+Kullanıcı mobil sürümlerde alt gezinme menüsünü tamamen kaldırmak istediğini; sol üstteki hamburger navigasyonun yeterli olduğunu belirtti. Bu yeni tasarım gereksinimidir; henüz açık kodlama/yayın talimatı değildir.
+
+- Mobil alt gezinmedeki Özet / Raporlar / Ödeme / Diğer çubuğu tüm mobil ekranlardan kaldırılacak. Yalnız bazı sayfalarda gizleme veya başka bir alt menüyle değiştirme yapılmayacak.
+- Bölümler arası gezinme sol üstteki hamburger düğmesinin açtığı sol menü üzerinden sağlanacak. Alt çubuğun kaldırılması hiçbir bölümü erişilemez bırakmayacak; mevcut yetkiye göre görünen menü öğeleri korunacak.
+- Alt gezinme için ayrılan kabuk satırı, içerik alt boşluğu ve ofsetler de kaldırılacak; kazanılan yükseklik içerik ve hareket listesine verilecek. Cihazın gerçek güvenli alan ihtiyacı korunacak, eski menü yüksekliği kadar boşluk bırakılmayacak.
+- Bu karar önceki mobil görsellerdeki alt çubuğun ve dört düğmeli mobil gezinme kuralının yerini alır. Sonraki mobil taslaklarda alt gezinme çizilmeyecek.
+- Form içindeki Kaydet/Vazgeç eylemleri bölüm navigasyonu değildir; form kapsamındaki yerlerinde kalacak. Hamburger menüyle gezinirken mevcut taslak koruması, menü kapatma ve klavye/odak davranışı korunacak.
+- Masaüstü menü davranışı bu taleple değiştirilmez.
+
+Yalnız sürüm notları güncellendi. Uygulama kodu, sürüm, ZIP ve GitHub yayını değiştirilmedi; açık uygulama talimatı beklenecek.
+
+## 24 Kasım 2026 — 1.28.0 açık uygulama ve yayın talimatı
+
+Kullanıcı “kodla ve githuba yükle release yayınla” diyerek yukarıdaki güncel kapsamı uygulama, test, GitHub kaynağı ve Release yayını için açıkça yetkilendirdi. Yeni ortak kompakt form önceki satır içi finansal giriş kararlarının yerini alır. Mobil alt gezinme kaldırılır. Hosting ZIP ve SHA-256 depoya/Release’e eklenir; canlı hosting ve cron kurulumu yapılmaz. Form kapalı bir yeni işlem eylemiyle başlar; başarılı kayıt formu kapatır. Oturum içindeki açık sıralama tercihi korunur, yeni oturum varsayılanı işlem tarihi azalandır.

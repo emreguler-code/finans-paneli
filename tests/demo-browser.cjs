@@ -168,10 +168,10 @@ const fmt = (n) =>
   await p
     .getByRole("button", { name: "Hesaplar arası aktarım", exact: true })
     .click();
-  await p.locator(".ledger-new-row").waitFor();
+  await p.locator(".ledger-composer").waitFor();
   ok(
     "Transfer opens an editable source row",
-    await p.locator(".ledger-new-row").isVisible(),
+    await p.locator(".ledger-composer").isVisible(),
   );
   await p
     .getByRole("button", { name: "Yeni işlemi iptal et", exact: true })

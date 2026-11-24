@@ -52,6 +52,7 @@ body:has(.layout-shell) {
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
   padding: 0 0 8px;
 }
 
@@ -126,7 +127,7 @@ body:has(.layout-shell) {
   height: 100%;
   min-height: 0;
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  grid-template-rows: auto minmax(0, 1fr);
 }
 
 .layout-shell .topbar {
@@ -402,16 +403,6 @@ body:has(.layout-shell) {
   min-width: 0;
 }
 
-.layout-shell .mobile-nav {
-  grid-row: 4;
-  position: static;
-  inset: auto;
-  width: 100%;
-  display: none;
-  height: calc(var(--shell-nav-height) + env(safe-area-inset-bottom));
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
 .composer-open .layout-shell .toast {
   bottom: calc(var(--composer-height, 0px) + 24px);
 }
@@ -661,10 +652,6 @@ body:has(.layout-shell) {
   .layout-shell .content-frame {
     padding: 16px var(--shell-gutter);
   }
-  .layout-shell .mobile-nav {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
   .layout-shell .entry-dock {
     max-height: min(52dvh, calc(var(--visible-height, 100dvh) - 130px));
     padding: 8px 12px;
@@ -697,18 +684,11 @@ body:has(.layout-shell) {
     padding-bottom: 8px;
   }
   .layout-shell .entry-page {
-    padding-bottom: 90px;
+    padding-bottom: env(safe-area-inset-bottom);
   }
   .layout-shell .summary-fields {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .layout-shell .mobile-more {
-    bottom: calc(var(--shell-nav-height) + env(safe-area-inset-bottom) + 8px);
-  }
-}
-
-.keyboard-open .layout-shell .mobile-nav {
-  display: none;
 }
 
 .keyboard-open .layout-shell .entry-dock {
@@ -868,4 +848,21 @@ body:has(.layout-shell) {
 .layout-shell .attention-row:not(.late) {
   padding-top: 10px;
   padding-bottom: 10px;
+}
+
+.layout-shell > .sidebar nav:hover,
+.layout-shell > .sidebar nav:focus-within {
+  scrollbar-color: var(--muted) transparent;
+}
+@media (max-height: 800px) {
+  .layout-shell > .sidebar {
+    padding-top: 16px;
+  }
+  .layout-shell .sidebar .brand {
+    margin-bottom: 12px;
+  }
+  .layout-shell .sidebar nav button {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
 }

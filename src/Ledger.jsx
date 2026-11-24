@@ -1,11 +1,5 @@
 import { RecordHost } from "./InlineRecords";
-import React, {
-  useState,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useId,
-} from "react";
+import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { Pencil, History, Trash2, RotateCcw, Plus, Minus } from "lucide-react";
 import { Popover, dateLabel } from "./DatePicker";
 import { Badge, can, fmt, tone } from "./ui";
@@ -33,7 +27,7 @@ export function Ledger({
   focusEvent = null,
   title,
   scope,
-  sort = "date-asc",
+  sort = "date-desc",
   onSort,
   monthEvents,
   balanceMode,
@@ -46,7 +40,7 @@ export function Ledger({
     [bubble, setBubble] = useState(null),
     [limit, setLimit] = useState(30),
     [editing, setEditing] = useState(null),
-    [editBusy, setEditBusy] = useState(false),
+    [editInitial, setEditInitial] = useState({}),
     [creating, setCreating] = useState(false),
     [createInitial, setCreateInitial] = useState({}),
     [createKey, setCreateKey] = useState(0);
@@ -54,10 +48,8 @@ export function Ledger({
     nav = useNavigation(),
     root = useRef(null),
     anchor = useRef(null),
-    editingRef = useRef(null),
-    prefix = useId();
+    editingRef = useRef(null);
   editingRef.current = editing || creating;
-  const newPrefix = prefix + "-new";
   const beginCreate = (initial = {}) => {
     const action = () => {
       setEditing(null);
@@ -67,7 +59,7 @@ export function Ledger({
       setCreateKey((k) => k + 1);
       requestAnimationFrame(() =>
         root.current
-          ?.querySelector(".ledger-new-row")
+          ?.querySelector(".ledger-composer")
           ?.scrollIntoView({ block: "nearest" }),
       );
     };
@@ -75,7 +67,12 @@ export function Ledger({
   };
   useEffect(() => {
     if (editor?.createContext && !editor.createContext.hosted) {
-      beginCreate(editor.createContext.initial || {});
+      if (editor.createContext.item?.id)
+        startEditing(
+          editor.createContext.item,
+          editor.createContext.initial || {},
+        );
+      else beginCreate(editor.createContext.initial || {});
       editor.clearCreate();
     }
   }, [editor?.createContext?.stamp]);
@@ -150,13 +147,19 @@ export function Ledger({
       };
     setLimit((n) => n + 30);
   }
-  function startEditing(e) {
+  function startEditing(e, initial = {}) {
     const action = () => {
       setCreating(false);
       setExpanded(e.id);
       setEditing(e);
+      setEditInitial(initial);
+      setCreateKey((k) => k + 1);
       setBubble(null);
-      setEditBusy(false);
+      requestAnimationFrame(() =>
+        root.current
+          ?.querySelector(".ledger-composer")
+          ?.scrollIntoView({ block: "nearest" }),
+      );
     };
     editor
       ? editor.start(action)
@@ -164,7 +167,8 @@ export function Ledger({
   }
   function finish() {
     setEditing(null);
-    setEditBusy(false);
+
+    setCreating(false);
     editor?.end();
   }
   function toggle(e) {
@@ -219,13 +223,6 @@ export function Ledger({
       </button>
     </div>
   );
-  const slot = (name) => (
-    <div
-      data-editor-slot="true"
-      className="ledger-editor-slot"
-      id={prefix + "-" + name}
-    />
-  );
   return (
     <section
       ref={root}
@@ -233,6 +230,41 @@ export function Ledger({
         "panel cari-list ledger-view " + (party ? "party-ledger-view" : "")
       }
     >
+      {creating || editing ? (
+        <div className="ledger-composer">
+          <EventForm
+            key={(editing ? "edit-" + editing.id : "new") + "-" + createKey}
+            context={{
+              entity: "event",
+              inline: true,
+              mode: editing ? "edit" : "new",
+              item: editing || undefined,
+              lockedPartyId: editing?.party_id || lockedPartyId,
+              lockedCardId,
+              initial: editing
+                ? editInitial
+                : { account: currentAccount || "", ...createInitial },
+            }}
+            data={data}
+            onClose={finish}
+            onState={editor.onState}
+            notify={editor.notify}
+          />
+        </div>
+      ) : (
+        (lockedPartyId ||
+          lockedCardId ||
+          global ||
+          balanceMode === "account") &&
+        can(data.user, "create") && (
+          <div className="ledger-create-action">
+            <button className="text-button" onClick={() => beginCreate()}>
+              <Plus size={17} />
+              Yeni işlem ekle
+            </button>
+          </div>
+        )
+      )}
       {title ? (
         <div className="ledger-section-heading">
           <h2>{title}</h2>
@@ -275,25 +307,19 @@ export function Ledger({
           </thead>
           <tbody>
             {pageEvents.map((e, i) => {
-              const active = expanded === e.id,
-                isEditing = editing?.id === e.id;
+              const active = expanded === e.id;
               return (
                 <React.Fragment key={e.id}>
                   <tr
                     data-ledger-id={e.id}
-                    tabIndex={isEditing ? -1 : 0}
-                    inert={(isEditing && editBusy) || undefined}
+                    tabIndex={0}
                     aria-expanded={active}
                     className={
                       (e.cancelled ? "cancelled " : "") +
-                      (active ? "expanded " : "") +
-                      (isEditing ? "is-editing" : "")
+                      (active ? "expanded " : "")
                     }
                     onClick={(ev) => {
-                      if (
-                        !isEditing &&
-                        !ev.target.closest("input,button,select,textarea")
-                      )
+                      if (!ev.target.closest("input,button,select,textarea"))
                         toggle(e);
                     }}
                     onKeyDown={(ev) => {
@@ -350,20 +376,16 @@ export function Ledger({
                       )}
                     </td>
                     <td data-label="Tarih" className="cari-date">
-                      {isEditing ? (
-                        slot("date")
-                      ) : (
+                      {
                         <MovementDate
                           event={e}
                           today={data.today}
                           active={active}
                         />
-                      )}
+                      }
                     </td>
                     <td data-label="İşlem">
-                      {isEditing ? (
-                        slot("operation")
-                      ) : (
+                      {
                         <Badge
                           kind={operationLabel(e)}
                           effect={amount(e)}
@@ -378,12 +400,10 @@ export function Ledger({
                               ].includes(e.kind)),
                           )}
                         />
-                      )}
+                      }
                     </td>
                     <td data-label="Açıklama">
-                      {isEditing ? (
-                        slot("description")
-                      ) : party ? (
+                      {party ? (
                         e.description
                       ) : (
                         <>
@@ -403,13 +423,11 @@ export function Ledger({
                     </td>
                     {party && (
                       <td data-label="Etiket">
-                        {isEditing ? (
-                          slot("tag")
-                        ) : (
+                        {
                           <span className="expense-tag">
                             {e.tag || "Genel"}
                           </span>
-                        )}
+                        }
                       </td>
                     )}
                     <td data-label="Ekleyen" className="cari-creator">
@@ -418,18 +436,15 @@ export function Ledger({
                     {!party && (
                       <td data-label="Hesap" className="account-route">
                         {accountLabel(e)}
-                        {isEditing && slot("account")}
                       </td>
                     )}
                     <td data-label="Tutar" className="right cari-number">
-                      {isEditing ? (
-                        slot("amount")
-                      ) : (
+                      {
                         <SignedAmount
                           value={amount(e)}
                           inactive={e.cancelled}
                         />
-                      )}
+                      }
                     </td>
                     {party && (
                       <td
@@ -439,55 +454,23 @@ export function Ledger({
                           tone(e.party_balance)
                         }
                       >
-                        {isEditing ? (
-                          <div className="inline-action-rail">
-                            <small>Önceki bakiye</small>
-                            <span>{fmt(e.party_balance)} TL</span>
-                            <div id={prefix + "-actions"} data-editor-slot />
-                          </div>
-                        ) : (
+                        {
                           <>
                             {fmt(e.party_balance)}{" "}
                             <span className="unit">TL</span>
                           </>
-                        )}
+                        }
                       </td>
                     )}
                     {!party && (
-                      <td className="inline-rail-cell" data-label="Durum">
-                        {isEditing && (
-                          <div className="inline-action-rail">
-                            <small>Düzenleme</small>
-                            <div id={prefix + "-actions"} data-editor-slot />
-                          </div>
-                        )}
-                      </td>
+                      <td className="inline-rail-cell" data-label="Durum"></td>
                     )}
                   </tr>
                   {active && (
                     <tr className="ledger-action-row">
                       <td colSpan={columns}>
                         <RecordHost entity="event" id={e.id} />
-                        {isEditing ? (
-                          <EventForm
-                            key={e.id}
-                            context={{
-                              entity: "event",
-                              mode: "edit",
-                              item: e,
-                              lockedPartyId: e.party_id,
-                              lockedCardId,
-                              inline: true,
-                              slotPrefix: prefix,
-                              actionSlot: prefix + "-actions",
-                              onBusy: setEditBusy,
-                            }}
-                            data={data}
-                            onClose={finish}
-                            onState={editor.onState}
-                            notify={editor.notify}
-                          />
-                        ) : (
+                        {
                           <div className="ledger-expanded-bar">
                             <EffectDetails
                               event={e}
@@ -608,7 +591,7 @@ export function Ledger({
                               )}
                             </div>
                           </div>
-                        )}
+                        }
                       </td>
                     </tr>
                   )}
@@ -624,108 +607,6 @@ export function Ledger({
                 </React.Fragment>
               );
             })}
-            {(lockedPartyId ||
-              lockedCardId ||
-              global ||
-              balanceMode === "account") &&
-              can(data.user, "create") && (
-                <>
-                  {creating ? (
-                    <>
-                      <tr
-                        className="is-editing ledger-new-row"
-                        aria-label="Yeni işlem"
-                      >
-                        {(party
-                          ? ["date", "operation", "description", "tag"]
-                          : ["date", "operation", "description"]
-                        ).map((name, i) => (
-                          <td
-                            key={name}
-                            data-label={
-                              (party
-                                ? ["Tarih", "İşlem", "Açıklama", "Etiket"]
-                                : ["Tarih", "İşlem", "Açıklama"])[i]
-                            }
-                          >
-                            <div
-                              id={newPrefix + "-" + name}
-                              className="ledger-editor-slot"
-                              data-editor-slot
-                            />
-                          </td>
-                        ))}
-                        <td data-label="Ekleyen">
-                          {data.user.short_name || data.user.username}
-                        </td>
-                        {!party && (
-                          <td data-label="Hesap">
-                            <div
-                              id={newPrefix + "-account"}
-                              className="ledger-editor-slot"
-                              data-editor-slot
-                            />
-                          </td>
-                        )}
-                        <td data-label="Tutar" className="right">
-                          <div
-                            id={newPrefix + "-amount"}
-                            className="ledger-editor-slot"
-                            data-editor-slot
-                          />
-                        </td>
-                        <td
-                          data-label="Bakiye"
-                          className="right inline-rail-cell"
-                        >
-                          <div className="inline-action-rail">
-                            <small>Taslak</small>
-                            <div id={newPrefix + "-actions"} data-editor-slot />
-                          </div>
-                        </td>
-                      </tr>
-                      <tr className="ledger-action-row ledger-new-details">
-                        <td colSpan={columns}>
-                          <EventForm
-                            key={createKey}
-                            context={{
-                              entity: "event",
-                              inline: true,
-                              lockedPartyId,
-                              lockedCardId,
-                              initial: {
-                                account: currentAccount || "",
-                                ...createInitial,
-                              },
-                              slotPrefix: newPrefix,
-                              actionSlot: newPrefix + "-actions",
-                            }}
-                            data={data}
-                            onState={editor.onState}
-                            notify={editor.notify}
-                            onClose={() => {
-                              setCreating(false);
-                              editor.end();
-                            }}
-                          />
-                        </td>
-                      </tr>
-                    </>
-                  ) : (
-                    <tr className="ledger-add-row">
-                      <td colSpan={columns}>
-                        <button
-                          className="text-button"
-                          onClick={() => beginCreate()}
-                        >
-                          <Plus size={17} />
-                          Yeni işlem ekle
-                        </button>
-                      </td>
-                    </tr>
-                  )}
-                </>
-              )}
           </tbody>
         </table>
       </div>

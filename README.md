@@ -1,4 +1,6 @@
-# Finans Paneli 1.27.0
+# Finans Paneli 1.28.0
+
+1.28.0: Üstte ortak kompakt işlem ekleme/düzenleme formu, yeniden eskiye işlem sırası, kart içinde cari bilgisi düzenleme, gerçek hafta personel takvimi ve yalnız hamburger ile mobil gezinme. [Kapsam](docs/SURUM-1.28.0.md) · [Doğrulama](docs/TEST-RAPORU-1.28.0.md).
 
 1.27.0: Bölümlerde ortak satır içi kayıt, özetlerden kaynak satıra yönlendirme, personel IBAN/kopyalama ve mükerrer kayıt korumalı aylık maaş/yemek hakedişleri. [Kapsam](docs/SURUM-1.27.0.md) · [Test ve yayın sonucu](docs/TEST-RAPORU-1.27.0.md) · [Cron kurulumu](docs/PERSONEL-CRON.md).
 

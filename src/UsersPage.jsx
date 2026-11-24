@@ -53,6 +53,7 @@ export function UsersPage({ data, open }) {
           </select>
         </label>
       </ListTools>
+      <RecordHost entity="user" />
       {users.map((u) => (
         <div className="finance-due" key={u.id}>
           <div>
@@ -73,7 +74,6 @@ export function UsersPage({ data, open }) {
           <RecordHost entity="user" id={u.id} />
         </div>
       ))}
-      <RecordHost entity="user" />
       {!users.length && <p className="empty">Kullanıcı bulunamadı.</p>}
     </section>
   );

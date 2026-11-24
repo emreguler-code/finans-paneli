@@ -192,3 +192,9 @@ Ayrıntılı bölüm bazlı analiz SURUM-1.20.0.md içindedir. Arama/filtre ayn�
 ## 1.21.0 — Yerleşim ve bileşen sahipliği
 
 Ana/yardımcı sütun dönüşümü, ana tablonun okunabilir minimumunu birlikte karşılar. 1,9:1 masaüstü oranı korunur; yeterli alan yoksa yardımcı bölge tam genişlikte alta iner. Arama ikonları dikey merkezlidir; filtre metinleri kelime/harf bazında parçalanmaz, etiket kendi bütünlüğünde sarılır. Ek işlem alanları yatay alanı kullanır; gereksiz iç içe açılır bölümler kaldırılır. Form eylemleri içerik genişliğiyle büyümez; mobil dokunma hedefleri korunur. Yerleşim hataları viewport ve bileşen geometri testleriyle denetlenir. Tipografi/renk/ikon dili ve finansal anlamlar değişmez.
+
+## 1.28.0 — Ortak kompakt formlar ve mobil gezinme
+
+Finansal ekleme ve düzenleme, hareket tablosunun üstünde aynı formun iki modudur; tablo satırı salt okunur kalır. Alanlar sütun çizgilerine zorlanmaz, mali ilişkilerine göre gruplanır. Müşteri/tedarikçi/personel farklı işlem seçeneklerini korur. Zorunlu ödeme alanları doğrudan görünür; isteğe bağlı ayrıntılar kapalıdır. Düzenleme gerekçesi ve taslak koruması korunur. Bakiye önizlemesi eski etkiyi çıkarıp yenisini uygular.
+
+Varsayılan hareket sırası işlem tarihi/saatine göre azalandır. Cari bilgileri kendi Durum ve bilgiler kartında düzenlenir. Personel takvimi gerçek İstanbul haftasına dayanır. Mobil alt gezinme kaldırılır; bölüm erişimi yalnız hamburger menüyle, form eylemleri kendi formunda sağlanır. Önceki satır içi finansal editör, liste sonu yeni işlem ve dört düğmeli alt gezinme kararları bu kapsamda geçersizdir.

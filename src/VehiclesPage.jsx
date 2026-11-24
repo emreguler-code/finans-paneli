@@ -444,6 +444,9 @@ export function VehiclesPage({ data, open, initialRecord, onNotifications }) {
       )}
       <ContentColumns className="vehicle-workspace">
         <div className="vehicle-main">
+          <RecordHost entity="vehicle" id={vehicle?.id || ""} />
+          <RecordHost entity="vehicle_record" />
+
           {!vehicle ? (
             <>
               <div className="vehicle-grid">
@@ -762,8 +765,6 @@ export function VehiclesPage({ data, open, initialRecord, onNotifications }) {
               )}
             </section>
           )}
-          <RecordHost entity="vehicle" id={vehicle?.id || ""} />
-          <RecordHost entity="vehicle_record" />
         </div>
         <aside className="context-aside">
           <NotificationPreview

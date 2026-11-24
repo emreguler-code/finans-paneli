@@ -12,7 +12,7 @@ import {
   useState,
 } from "react";
 import { createPortal } from "react-dom";
-import { X, Plus, SlidersHorizontal, Check } from "lucide-react";
+import { X, Plus, SlidersHorizontal } from "lucide-react";
 import { Sheet } from "./ui";
 import { PageHeading } from "./PageLayout";
 import { useNavigation } from "./Navigation";
@@ -319,31 +319,6 @@ export function EntrySurface({
                   <X size={18} />
                 </button>
               </>,
-            );
-          if (placed && node.props.className === "sheet-footer")
-            return cloneElement(
-              node,
-              {},
-              Children.map(node.props.children, (button) =>
-                isValidElement(button) && button.type === "button"
-                  ? cloneElement(
-                      button,
-                      {
-                        "aria-label":
-                          button.props.type !== "button" ? "Kaydet" : "Vazgeç",
-                        title:
-                          button.props.type !== "button" ? "Kaydet" : "Vazgeç",
-                        "data-entry-cancel":
-                          button.props.type === "button" || undefined,
-                      },
-                      button.props.type !== "button" ? (
-                        <Check size={18} />
-                      ) : (
-                        <X size={18} />
-                      ),
-                    )
-                  : button,
-              ),
             );
           if (node.props.className !== "sheet-scroll") return node;
           const content = flat(node.props.children).flatMap((n) =>

@@ -87,7 +87,7 @@ export function FinancePages({
     ),
     [movementSort, setMovementSort] = useScopedState(
       page + ":movementSort",
-      page === "Cari hesaplar" ? "date-asc" : "date-desc",
+      "date-desc",
     );
   const sort =
       page === "Cari hesaplar" && !selected ? directorySort : movementSort,
@@ -174,7 +174,7 @@ export function FinancePages({
     setDuePresence("all");
     setDueClosure("all");
     setSelectedDay(null);
-    setSort(cari && !party ? "name-asc" : party ? "date-asc" : "date-desc");
+    setSort(cari && !party ? "name-asc" : "date-desc");
   }
   function select(id) {
     setSelected(id);
@@ -772,6 +772,7 @@ export function FinancePages({
               Arşiv dahil
             </label>
           </ListTools>
+          <RecordHost entity="party" />
           <div className="party-column-head">
             <span>
               <SortLabel
@@ -850,7 +851,6 @@ export function FinancePages({
               </button>
             ))}
           </div>
-          <RecordHost entity="party" />
           {!partyRows.length && <p className="empty">Cari bulunamadı.</p>}
           <div className="cari-table-footer">
             <span>{partyRows.length} cari</span>
@@ -891,7 +891,7 @@ export function FinancePages({
         </p>
       )}
       {listSummary}
-      {party && <RecordHost entity="party" id={party.id} />}
+
       {cari && selected && !party && (
         <p className="empty" role="status">
           Bu cari bulunamadı veya erişilemiyor.{" "}
