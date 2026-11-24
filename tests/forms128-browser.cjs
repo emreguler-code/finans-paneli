@@ -302,6 +302,26 @@ const server = http.createServer((req, res) => {
               .getByRole("combobox", { name: "Ödeme amacı", exact: true })
               .isVisible(),
           );
+          await form
+            .getByRole("button", { name: "Borçlandır", exact: true })
+            .click();
+          await choose("Borçlandırma şekli", "Personel adına ödeme");
+          ok(
+            "Personnel expense keeps its parent operation selected",
+            (await form
+              .getByRole("button", { name: "Borçlandır", exact: true })
+              .getAttribute("aria-pressed")) === "true",
+          );
+          ok(
+            "Personnel expense requires a real payment source",
+            await form
+              .getByRole("combobox", { name: "İşlem hesabı *", exact: true })
+              .isVisible(),
+          );
+          await form
+            .getByRole("button", { name: "Ödeme", exact: true })
+            .click();
+          await choose("İşlem hesabı *", "Merkez Kasa");
           const dates = await p
             .locator(".week-day")
             .evaluateAll((nodes) =>

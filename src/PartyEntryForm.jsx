@@ -334,6 +334,7 @@ export function PartyEntryForm({
                       type="button"
                       aria-pressed={
                         f.operation === op ||
+                        (op === "employee_purchase" && borcland) ||
                         (op === "purchase_invoice" &&
                           f.operation === "purchase_no_invoice")
                       }
