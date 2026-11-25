@@ -12,4 +12,6 @@ Kontroller yalnız sentetik/izole verilerle yapılır. Node 26.13.1, npm 12.2.2,
 
 Chromium/WebKit/Firefox sentetik arayüz kabulü tarayıcı başına 79 kontrolle başarılı. Gerçek API ile üç motorlu mobil kabulü ve kapsamlı demo başarılı; 624 olay, 29 hafta ve 715 mutabakat kontrolü. Paket kurulumu, hosting/tam ZIP eşliği ve eski kurulum üzerine config/eski assets koruması doğrulandı. Ekranlar ve sentetik PDF örneği `docs/evidence/1.29.0/` altındadır. Aktif satırın çalışan Chromium ölçümünde son metin/ikon boşluğu yaklaşık 10,2 px, ikon/alt sınır boşluğu 8,5 px; görünür yazı kutusu farkı 2 px altındadır.
 
-GitHub yayın sonucu doğrulandıktan sonra bu belgeye eklenir. Hosting yükleme/inceleme ve cron kurulumu kullanıcıya aittir.
+## GitHub yayın sonucu
+
+[Windows/Linux kabulü](https://github.com/emreguler-code/finans-paneli/actions/runs/45632961497) başarılı. [v1.29.0 Release](https://github.com/emreguler-code/finans-paneli/releases/tag/v1.29.0) kaynak `34b7ef5a266fe4f1ab3e65f03407237f45346bd7` için yayımlandı. Dört varlık indirildi; hosting/tam ZIP ve SHA-256 dosyaları yerel test çıktısıyla birebir eşleşti. Hosting ZIP ayrıca repo dosyasıyla karşılaştırıldı. Her iki checksum ve tag/kaynak eşliği [yayın kaydında](evidence/1.29.0/publication.json) doğrulandı. Hosting yükleme/inceleme ve cron kurulumu kullanıcıya aittir.
