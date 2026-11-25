@@ -215,4 +215,5 @@ ok('New catalog bank rejects another bank program',post('card_save',name='QA yan
 ok('Bank metadata never creates financial events',bank_before['events']==state()['events'])
 Path(os.environ['QA_STATE_PATH']).write_text(json.dumps(state(),ensure_ascii=False))
 exec(compile((Path(__file__).with_name('staff-automation-integration.py')).read_text(),'staff-automation-integration.py','exec'))
+exec(compile((Path(__file__).with_name('excess-payment-integration.py')).read_text(),'excess-payment-integration.py','exec'))
 print(json.dumps({'passed':len(checks),'failed':0}))

@@ -636,8 +636,8 @@
 .transaction-heading {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
   gap: 12px 20px;
+  align-items: end;
 }
 .transaction-heading h2 {
   font-size: 16px;
@@ -666,8 +666,8 @@
 }
 .transaction-values {
   display: grid;
-  grid-template-columns: minmax(150px, 1fr) minmax(180px, 2fr);
   gap: 12px;
+  grid-template-columns: minmax(0, 1fr);
 }
 .transaction-conditions,
 .transaction-option-fields {
@@ -815,6 +815,10 @@
   flex-direction: row;
   align-items: baseline;
   padding-bottom: 4px;
+  margin: 6px 0;
+  padding: 0;
+  min-height: 0;
+  gap: 4px 8px;
 }
 .layout-shell .transaction-preview dt {
   flex: 1 1 auto;
@@ -876,4 +880,114 @@
   .layout-shell .transaction-form input {
     font-size: 16px;
   }
+}
+
+.transaction-heading > .cari-field {
+  margin-left: auto !important;
+  flex: 0 1 180px;
+}
+.transaction-preview > .sheet-footer {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+}
+.settlement-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  font-size: 12px;
+}
+.settlement-switch input {
+  appearance: none;
+  width: 36px;
+  min-width: 36px;
+  height: 22px;
+  min-height: 22px;
+  border: 1px solid var(--control-border);
+  border-radius: 14px;
+  background: var(--surface-page);
+  position: relative;
+}
+.settlement-switch input::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  left: 3px;
+  top: 3px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+.settlement-switch input:checked {
+  background: var(--accent);
+}
+.settlement-switch input:checked::after {
+  left: 18px;
+  background: var(--surface-raised);
+}
+.installment-access > summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  border: 1px solid var(--control-border);
+  border-radius: 8px;
+  cursor: pointer;
+}
+.installment-access > div {
+  margin-top: 8px;
+  max-width: 240px;
+}
+.installment-access[open] {
+  flex: 1 0 100%;
+}
+@container (max-width: 800px) {
+  .transaction-main {
+    display: flex;
+  }
+  .transaction-preview {
+    order: initial;
+  }
+}
+
+.record-inline-host:not(:empty):not(.party-context .record-inline-host):not(
+    .ledger-action-row .record-inline-host
+  ) {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-raised);
+  padding: 16px;
+  margin-bottom: var(--shell-section-gap);
+}
+.layout-shell
+  .record-inline-host:not(.ledger-action-row .record-inline-host)
+  > [data-record-inline="true"] {
+  border-left: 0;
+  padding: 0;
+  background: transparent;
+}
+
+.layout-shell .transaction-heading > .cari-field {
+  margin-left: auto !important;
+}
+.layout-shell .transaction-form .transaction-values {
+  grid-template-columns: minmax(0, 1fr);
+}
+.layout-shell .transaction-preview dt,
+.layout-shell .transaction-preview dd {
+  margin: 0;
+  min-width: 0;
+  padding: 0;
+}
+.layout-shell .transaction-preview .sheet-footer button {
+  padding: 8px 10px;
+}
+
+.layout-shell .ledger-view .ledger-action-row:has(.status-form) > td {
+  padding: 4px 12px 8px !important;
+}
+.ledger-action-row:has(.status-form) .ledger-expanded-bar {
+  display: none;
 }

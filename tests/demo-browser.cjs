@@ -270,10 +270,8 @@ const fmt = (n) =>
   await p.locator(".party-row").click();
   ok(
     "Compact invoice badge preserves full tooltip",
-    (await p
-      .locator('.cari-badge[title="Faturalı Alış"]')
-      .first()
-      .innerText()) === "Fat. Alış",
+    (await p.locator('.cari-badge[title="Alış"]').first().innerText()) ===
+      "Alış",
   );
   await shot("party-history-desktop");
   await nav("Kredi kartları");

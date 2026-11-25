@@ -55,7 +55,9 @@ export function EventForm({ context, data, onClose, onState, notify }) {
     partyId: initialParty,
     operation: e.operation || init.operation || (context.inline ? "" : guessed),
     amount: e.id ? money(e.amount_cents) : formatMoneyInput(init.amount || ""),
-    settled: money(e.settled_cents),
+    settled: money(
+      Number(e.settled_cents || 0) + Number(e.excess_payment_cents || 0),
+    ),
     date: init.date || e.event_date || data.today,
     time: e.event_time || "",
     due: e.due_date || "",
@@ -93,7 +95,10 @@ export function EventForm({ context, data, onClose, onState, notify }) {
   const [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
     [paymentMode, setPaymentMode] = useState(
-      e.settled_cents && e.settled_cents < e.amount_cents ? "partial" : "full",
+      e.excess_payment_cents ||
+        (e.settled_cents && e.settled_cents < e.amount_cents)
+        ? "partial"
+        : "full",
     );
   useEffect(() => {
     context.onBusy?.(busy);
@@ -270,6 +275,11 @@ export function EventForm({ context, data, onClose, onState, notify }) {
     try {
       let b = {
         ...f,
+        applyExcess: [
+          "sale",
+          "purchase_invoice",
+          "purchase_no_invoice",
+        ].includes(f.operation),
         ...(fixedCard ? { cardId: fixedCard, lockedCardId: fixedCard } : {}),
         partyId: locked || f.partyId,
         lockedPartyId: locked,
@@ -287,6 +297,9 @@ export function EventForm({ context, data, onClose, onState, notify }) {
         (invoice || salary) &&
         f.immediate &&
         paymentMode === "partial" &&
+        !["sale", "purchase_invoice", "purchase_no_invoice"].includes(
+          f.operation,
+        ) &&
         decimal(f.settled) > decimal(f.amount)
       ) {
         setError("Kısmi ödeme işlem tutarını aşamaz.");
@@ -325,6 +338,12 @@ export function EventForm({ context, data, onClose, onState, notify }) {
     const card = data.cards.find(
       (c) => String(c.id) === String(f.cardId),
     )?.name;
+    if (
+      invoice &&
+      paid > total &&
+      ["sale", "purchase_invoice", "purchase_no_invoice"].includes(f.operation)
+    )
+      return `${fmt(Math.round(total * 100))} TL bu işlemi kapatır; ${fmt(Math.round((paid - total) * 100))} TL eski açık kayıtlara uygulanır, kalan avans olarak izlenir. Toplam ödeme/tahsilat: ${fmt(Math.round(paid * 100))} TL.`;
     if (f.scheduled) return "Plan kaydedilir; şimdi bakiye değişmez.";
     if (salary)
       return paid > 0

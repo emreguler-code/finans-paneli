@@ -1,3 +1,4 @@
+import { FileText } from "lucide-react";
 import { SmartSearch } from "./SmartSearch";
 import { Children, isValidElement, useLayoutEffect, useState } from "react";
 import { createPortal } from "react-dom";
@@ -157,6 +158,7 @@ export function ListActions({
         <SortFields {...{ sort, options: sortOptions }} onSort={setSort} />
       )}
       <div className="cari-toolbar-actions">
+        {csv?.pdf && <PdfDownload action={csv.pdf} />}
         {csv && (
           <button
             type="button"
@@ -170,5 +172,35 @@ export function ListActions({
         )}
       </div>
     </div>
+  );
+}
+
+function PdfDownload({ action }) {
+  const [busy, setBusy] = useState(false),
+    [error, setError] = useState("");
+  return (
+    <>
+      <button
+        type="button"
+        className="list-icon"
+        aria-label="PDF indir"
+        title="PDF indir"
+        disabled={busy}
+        onClick={async () => {
+          setBusy(true);
+          setError("");
+          try {
+            await action();
+          } catch (e) {
+            setError(e.message);
+          } finally {
+            setBusy(false);
+          }
+        }}
+      >
+        <FileText size={18} />
+      </button>
+      {error && <span role="alert">{error}</span>}
+    </>
   );
 }

@@ -178,11 +178,30 @@ function versionCheck(array $old, array $b): void
 }
 function allEvents(PDO $db): array
 {
-    return $db
+    $events = $db
         ->query(
             "SELECT e.*,COALESCE(NULLIF(u.short_name,''),u.username,'Önceki kayıt') creator,p.name party_name,a.name account_name,t.name target_name,c.name card_name FROM fin_events e LEFT JOIN users u ON u.id=e.created_by LEFT JOIN parties p ON p.id=e.party_id LEFT JOIN accounts a ON a.id=e.account_id LEFT JOIN accounts t ON t.id=e.target_id LEFT JOIN cards c ON c.id=e.card_id ORDER BY e.event_date,e.event_time,e.id",
         )
         ->fetchAll();
+    $excess = [];
+    foreach ($events as &$event) {
+        if (str_starts_with($event["request_key"], "settlement-excess-")) {
+            $event["managed_parent_id"] = (int) substr(
+                $event["request_key"],
+                strlen("settlement-excess-"),
+            );
+            if (!$event["cancelled"]) {
+                $excess[$event["managed_parent_id"]] =
+                    (int) $event["amount_cents"];
+            }
+        }
+    }
+    unset($event);
+    foreach ($events as &$event) {
+        $event["excess_payment_cents"] = $excess[$event["id"]] ?? 0;
+    }
+    unset($event);
+    return $events;
 }
 // Rebuild allocation projections. Active facts remain immutable in the audit trail.
 // Receivables use collections; payables use payments. Opposite invoice directions never net each other.

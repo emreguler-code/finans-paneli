@@ -1,3 +1,8 @@
+import {
+  movementReport,
+  reportRows,
+  downloadReportPdf,
+} from "./movement-report.mjs";
 import { RecordHost } from "./InlineRecords";
 import { matchesChoice } from "./search-query.mjs";
 import { ContentColumns } from "./AppShell";
@@ -280,28 +285,45 @@ export function AccountPage({
           ),
         ),
   );
-  const csv = () =>
+  const exportReport = () =>
+    movementReport({
+      title: isCard ? "Kredi Kartı Hareketleri" : "Hesap Hareketleri",
+      subject: a?.name || "",
+      events: rows,
+      period: isCard,
+      amount,
+      balance: a ? (isCard ? Math.round(a.debt * 100) : a.balance_cents) : null,
+      balanceLabel: isCard ? "Güncel kart borcu" : "Güncel hesap bakiyesi",
+      scope: `${rows.length} kayıt · ${tab} · ${from || "Başlangıç açık"} – ${to || "Bitiş açık"} · ${queryScope === "movements" ? searchQuery : ""}`,
+    });
+  const csv = () => {
+    const report = exportReport();
     exportRows(
       "hesap-hareketleri",
-      ["Tarih", "Dönem", "Açıklama", "Etiket", "İşlem", "Tutar TL"],
-      rows.map((e) => [
-        e.event_date,
-        e.period_date || "",
-        e.description,
-        e.tag || "Genel",
-        operationLabel(e),
-        amount(e) / 100,
-      ]),
+      report.csv.columns,
+      reportRows(report, true),
     );
+  };
+  csv.pdf = () => downloadReportPdf("hesap-hareketleri", exportReport());
   const inventoryCsv = () =>
     exportRows(
       "hesaplar",
       ["Ad", "Tür", "Bakiye TL"],
-      inventory.map((x) => [
-        x.name,
-        x.type || "Kart",
-        (x.balance_cents ?? Math.round(x.debt * 100)) / 100,
-      ]),
+      [
+        ...inventory.map((x) => [
+          x.name,
+          x.type || "Kart",
+          (x.balance_cents ?? Math.round(x.debt * 100)) / 100,
+        ]),
+        [
+          isCard ? "Toplam kart borcu" : "Toplam bakiye",
+          "",
+          inventory.reduce(
+            (n, x) => n + (x.balance_cents ?? Math.round(x.debt * 100)),
+            0,
+          ) / 100,
+        ],
+      ],
     );
   const targetEvent = data.events.find(
     (e) =>
@@ -544,15 +566,17 @@ export function AccountPage({
       <ContentColumns className="account-workspace">
         <div className="account-main">
           {!detail && (
-            <section className="panel account-list-panel">
+            <>
               <RecordHost entity={isCard ? "card" : "account"} />
-              {inventoryActions}
-              <AccountGrid
-                items={inventory}
-                {...{ isCard, data, open }}
-                onSelect={select}
-              />
-            </section>
+              <section className="panel account-list-panel">
+                {inventoryActions}
+                <AccountGrid
+                  items={inventory}
+                  {...{ isCard, data, open }}
+                  onSelect={select}
+                />
+              </section>
+            </>
           )}
 
           {tools}

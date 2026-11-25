@@ -35,6 +35,7 @@ for name in filter(None, tracked):
         if name.startswith("database/migrations/"):
             files["hosting/api/v2/migrations/" + source.name] = source
 files["licenses/Inter-OFL.txt"] = ROOT / "src/assets/fonts/OFL.txt"
+files["licenses/PDF-LISANSLARI.txt"] = ROOT / "docs/PDF-LISANSLARI.txt"
 def write_archive(path, entries):
     with zipfile.ZipFile(path, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as z:
         for name, source in sorted(entries.items()):
@@ -51,5 +52,5 @@ def write_archive(path, entries):
 write_archive(archive, files)
 # Ready to extract directly into the web root. Keep runtime migrations and font license.
 hosting_files = {name.removeprefix("hosting/"): source for name, source in files.items() if name.startswith("hosting/")}
-hosting_files["licenses/Inter-OFL.txt"] = files["licenses/Inter-OFL.txt"]
+hosting_files.update({name: source for name, source in files.items() if name.startswith("licenses/")})
 write_archive(output / f"finans-paneli-{version}-hosting.zip", hosting_files)

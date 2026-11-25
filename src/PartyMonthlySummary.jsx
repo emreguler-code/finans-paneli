@@ -10,6 +10,10 @@ export function PartyMonthlySummary({ party, data }) {
   const summary = partyMonthly(party, data, month),
     staff = party.type === "Personel",
     supplier = party.type === "Tedarikçi";
+  if (supplier)
+    summary.outer = [
+      { name: "Alış", value: summary.outer.reduce((n, r) => n + r.value, 0) },
+    ];
   const showOuter =
     summary.outer.filter((d) => d.value > 0).length > (staff ? 1 : 0);
   const colors = supplier

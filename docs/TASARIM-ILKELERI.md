@@ -198,3 +198,7 @@ Ana/yardımcı sütun dönüşümü, ana tablonun okunabilir minimumunu birlikte
 Finansal ekleme ve düzenleme, hareket tablosunun üstünde aynı formun iki modudur; tablo satırı salt okunur kalır. Alanlar sütun çizgilerine zorlanmaz, mali ilişkilerine göre gruplanır. Müşteri/tedarikçi/personel farklı işlem seçeneklerini korur. Zorunlu ödeme alanları doğrudan görünür; isteğe bağlı ayrıntılar kapalıdır. Düzenleme gerekçesi ve taslak koruması korunur. Bakiye önizlemesi eski etkiyi çıkarıp yenisini uygular.
 
 Varsayılan hareket sırası işlem tarihi/saatine göre azalandır. Cari bilgileri kendi Durum ve bilgiler kartında düzenlenir. Personel takvimi gerçek İstanbul haftasına dayanır. Mobil alt gezinme kaldırılır; bölüm erişimi yalnız hamburger menüyle, form eylemleri kendi formunda sağlanır. Önceki satır içi finansal editör, liste sonu yeni işlem ve dört düğmeli alt gezinme kararları bu kapsamda geçersizdir.
+
+## 1.29.0 — Ayrı form kartı ve kısa kayıt geçmişi
+
+İşlem formu ve hareket listesi ortak çerçeveden ayrılır; ikisi de yuvarlatılmış karttır, ortak bölüm boşluğu korunur. Tutar üst işlem satırının sağındadır, eylemler İşlemin etkisi bölümündedir. Diğer uygun kayıt formları da listeyle aynı çerçevede sıkıştırılmaz. Geçmişte yalnız değişen alanların önce/sonra değerleri gösterilir. Silme yerinde kompakt gerekçe/eylem satırıdır; üstü çizili önizleme kaydetmeden mali etki doğurmaz. Kopyalama ikonlarının dokunma alanı bilgi satırının görünür yüksekliğini büyütmez.

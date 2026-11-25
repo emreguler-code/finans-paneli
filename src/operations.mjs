@@ -1,6 +1,6 @@
 export const operations = {
-  purchase_invoice: "Faturalı Alış",
-  purchase_no_invoice: "Faturasız Alış",
+  purchase_invoice: "Alış",
+  purchase_no_invoice: "Alış (eski faturasız)",
   supplier_return: "İade",
   sale: "Satış",
   customer_return: "İade",
@@ -26,7 +26,7 @@ export const operationLabel = (e) =>
   e.kind;
 export const partyOptions = (type) =>
   type === "Tedarikçi"
-    ? ["purchase_invoice", "purchase_no_invoice", "supplier_return", "payment"]
+    ? ["purchase_invoice", "supplier_return", "payment"]
     : type === "Personel"
       ? ["employee_purchase", "collection", "payment"]
       : ["sale", "collection", "customer_return"];

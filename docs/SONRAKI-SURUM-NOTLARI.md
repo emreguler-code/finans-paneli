@@ -1426,3 +1426,137 @@ Yalnız sürüm notları güncellendi. Uygulama kodu, sürüm, ZIP ve GitHub yay
 ## 24 Kasım 2026 — 1.28.0 açık uygulama ve yayın talimatı
 
 Kullanıcı “kodla ve githuba yükle release yayınla” diyerek yukarıdaki güncel kapsamı uygulama, test, GitHub kaynağı ve Release yayını için açıkça yetkilendirdi. Yeni ortak kompakt form önceki satır içi finansal giriş kararlarının yerini alır. Mobil alt gezinme kaldırılır. Hosting ZIP ve SHA-256 depoya/Release’e eklenir; canlı hosting ve cron kurulumu yapılmaz. Form kapalı bir yeni işlem eylemiyle başlar; başarılı kayıt formu kapatır. Oturum içindeki açık sıralama tercihi korunur, yeni oturum varsayılanı işlem tarihi azalandır.
+
+## 25 Kasım 2026 — Yeni not dönemi: kompakt işlem formu ve birleşik alış
+
+Kullanıcı yeni sürüm için not toplamaya başladı. Aşağıdaki talepler taslak kapsamıdır; açık kodlama veya yayın talimatı değildir. Önceki 1.28.0 uygulama onayı bu yeni taleplere taşınmaz.
+
+### Form yerleşimi
+
+- Vazgeç ve Kaydet eylemleri, ana giriş alanından İşlemin etkisi bölümüne taşınacak. Eylemler önizlemeyle aynı bölgede, birbirini veya sayısal değerleri sıkıştırmadan yerleşecek. Mobilde aynı bölümün akışında erişilebilir kalacak.
+- Tutar alanı, Yeni işlem başlığı ve Satış / Tahsilat / İade seçeneklerinin bulunduğu üst satıra alınacak ve sağa yaslanacak. Diğer cari türlerinin işlem seçeneklerinde de aynı düzen kullanılacak. Dar ekranda alanlar okunamayacak kadar küçültülmeyecek; duyarlı yerleşim ayrıntısı uygulama öncesi tasarımda ele alınacak.
+- İşlem tarihi, vade tarihi ve taksit seçenekleri üç kompakt ikon olarak aynı satırda yan yana sunulacak. İşlem tarihi mevcut normal takvim ikonunu koruyacak. Kullanıcının eklediği iki ikon referans alınacak: saat işaretli takvim vade tarihi, tekrarlama/ok işaretli takvim taksitli işlem erişimi için kullanılacak. İkonların erişilebilir adları ve açıklayıcı ipuçları olacak.
+
+### Tedarikçide tek Alış işlemi
+
+- Yeni tedarikçi işlemlerinde Faturalı Alış / Faturasız Alış ayrımı kaldırılacak; tek seçenek ve kısa işlem etiketi Alış olacak. Kullanıcı artık tüm yeni alışların faturalı olduğunu belirtti.
+- Bu karar, önceki notlardaki faturalı/faturasız alt seçimin korunması gereğini yeni girişler için değiştirir. Yalnız iki düğmenin gizlenmesi değil; ilgili işlem adları, filtreler, raporlar ve aylık özetlerdeki ayrımın da tutarlı biçimde ele alınması gerekir.
+- Geçmiş faturasız kayıtlar silinmeyecek veya kendiliğinden faturalı olarak yeniden sınıflandırılmayacak. Geçmiş tür bilgisinin korunarak birleşik Alış sunumuna nasıl dahil edileceği ve alış halkası/lejantının yeni biçimi uygulama öncesi netleştirilecek. Mali tutarlar ve geçmiş bakiyeler değiştirilmeyecek.
+
+### Ödeme / tahsilat anahtarı ve tutar davranışı
+
+- Mevcut Ödeme / tahsilat seçimi yerine bir aç/kapat anahtarı kullanılacak. Yeni işlemde varsayılan kapalı olacak; bu durumda anında ödeme/tahsilat kaydedilmeyecek.
+- Anahtar açıldığında uygun ödeme/tahsilat hesabı veya kredi kartı seçimi gösterilecek. Kaynak seçilince yanındaki tutar alanı işlem tutarının tamamıyla otomatik dolacak ve düzenlenebilir olacak.
+- Tutar değiştirilmeden kaydedilirse tam ödeme/tahsilat, işlem tutarından düşükse kısmi ödeme/tahsilat sayılacak. İşlem tutarı ile gerçekten ödenen/tahsil edilen tutar ayrı değerler olarak korunacak.
+- Girilen tutar işlem tutarını aşarsa fazlalık ilgili carinin eski açık borcuna uygulanacak. Tedarikçi örneği: 10.000 TL alış için 12.500 TL ödeme girilirse yeni alışın 10.000 TL'si kapanır, 2.500 TL eski borçtan düşer; kaynaktaki toplam çıkış yalnız 12.500 TL olur.
+- Bu istek mevcut işlem bedelini aşmayan peşin ödeme sınırını değiştirir; yalnız arayüz düzenlemesi değildir. Uygulamada yeni işlemin kapanan kısmı ve eski borca uygulanan fazlalık açıkça ayrılmalı; toplam para hareketi ikinci kez üretilmemeli. Önizleme, aylık raporlar, düzenleme/iptal ve tekrar istekte mükerrer kayıt koruması aynı dağılımı izlemeli.
+- Kayıt düzenlenirken mevcut ödeme/kaynak/dağılım bilgisi korunmalı; yeni işlemdeki kapalı varsayılanı eski ödemenin sessizce kaldırılmasına yol açmamalı.
+
+### Sonraki görüşmede netleştirilecek mali ayrıntılar
+
+- Fazlalığın hangi eski açık kayıtlara hangi sırayla dağıtılacağı; eski borç yoksa veya fazlalığı karşılamıyorsa kalan kısmın avans/alacak olarak tutulması ya da girişin sınırlandırılması.
+- Müşteride fazla tahsilatın eski alacaklara, personelde fazla ödemenin eski hakedişlere uygulanması; iadeler ve zaten doğrudan ödeme/tahsilat olan işlemlerde anahtarın hangi anlamla kullanılacağı. Bunlar tek bir varsayımla bütün cari türlerine uygulanmayacak.
+- Kaynak seçildikten sonra ana işlem tutarı değişirse otomatik doldurulan tutarın takibi ile kullanıcının elle değiştirdiği tutarın korunması; kredi kartı için taksitlerin hangi tutarı kapsayacağı.
+
+Yalnız bu not dosyası güncellendi. Uygulama kodu, sürüm, ZIP, GitHub veya hosting üzerinde işlem yapılmadı. Kullanıcının yeni fikirleri toplanmaya devam edilecek; açık kodlama talimatı beklenecek.
+
+## 25 Kasım 2026 — Kompakt formun hareket listesinden ayrı kart olması
+
+Kullanıcı, son yerleşim değişikliklerinin amacının yeni işlem girişini daha kompakt hale getirmek olduğunu netleştirdi. Form ve hareket listesi ortak tek çerçevede kalmayacak.
+
+- Yeni işlem formu kendi kenarlığı, yuvarlatılmış köşeleri ve mevcut tasarım diliyle uyumlu iç boşlukları olan bağımsız bir kartta yer alacak. İşlem etkisi ve ona taşınacak Vazgeç/Kaydet eylemleri bu form kartının içinde kalacak.
+- Cari hareketler başlığı ve arama kutusunun bulunduğu satırdan itibaren ayrı bir hareket kartı başlayacak; arama, liste araçları, tablo ve liste alt bilgileri bu ikinci kartın kapsamında olacak.
+- İki kart arasında projenin benzer içerik kartlarında kullandığı standart bölüm boşluğu korunacak. Yeni bir boşluk ölçeği veya bitişik/ortak kenarlık kullanılmayacak; masaüstü ve mobilde mevcut duyarlı boşluk kurallarına uyulacak.
+- Kompaktlık öncelikle gereksiz yükseklik ve boşlukların azaltılmasıyla sağlanacak. Alanların okunabilirliği, dokunma hedefleri ve zorunlu ödeme bilgilerinin görünürlüğü korunacak; yeni kart ayrımı ilave büyük başlıklar veya yüksek iç boşluklarla formu büyütmeyecek.
+- İşlem düzenleme de aynı bağımsız kompakt form kartını kullanacak; seçili hareket kendi listesinde kalacak. Yeni kayıt ve düzenleme için farklı görsel sistemler oluşturulmayacak.
+- Bu yaklaşım diğer bölümlerin uygun ekleme/düzenleme akışlarına da taşınacak: form kendi kartında, ilişkili liste veya ana içerik ayrı kartında; aralarında ortak standart boşluk olacak. Cari/hesap/kart/araç ve diğer kayıt türlerinin alanları kendi işlevine göre korunacak.
+- Cari profil bilgilerinin kendi Durum ve bilgiler kartında düzenlenmesi kararı korunur; bu yayılım bilgiyi başka bir konuma taşıma veya tekrar satır içi tablo editörüne dönme anlamına gelmez.
+
+Bu ek açıklama önceki kompakt form, üst satırdaki tutar, işlem etkisindeki eylemler, birleşik Alış ve ödeme/tahsilat anahtarı notlarını tamamlar. Yalnız sürüm notları güncellendi; uygulama kodu, sürüm, paket ve GitHub yayını değiştirilmedi. Açık kodlama talimatı beklenecek.
+
+## 25 Kasım 2026 — Anlaşılır ve kompakt değişiklik geçmişi
+
+Kullanıcı, mevcut geçmiş penceresindeki uzun alan/değer dökümünün yerine gönderdiği zaman çizelgesi örneğine benzer, kısa ve anlaşılır bir geçmiş sunumu istedi. Bu istek not/tasarım kapsamıdır; kodlama veya yayın talimatı değildir.
+
+- Geçmiş, ince bir dikey çizgi ve olay noktalarıyla birbirine bağlanan kompakt bir zaman çizelgesi olarak sunulacak. Referansın zaman çizelgesi fikri kullanılacak; örnekteki mavi renkler, büyük yıl kutuları veya kurumsal görsel stil projeye taşınmayacak. Mevcut Sade Netlik dili korunacak.
+- Oluşturma kaydı, tüm başlangıç alanlarını tek tek sıralamak yerine kısa bir olay olacak: **13 Ekim, 16:57 · Oluşturuldu · Emre**.
+- Düzenleme kaydı, tarih/saat, değişen anlamlı bilgi ve eski → yeni değerle özetlenecek: **27 Ekim, 17:20 · Değiştirildi · Emre**; altında **Satış · 5.000,00 TL → 5.500,00 TL** ve **Gerekçe: Eksik ürün girilmiş** gibi kullanıcının gerçek değişiklik gerekçesi yer alacak. Bu metinler temsili örnektir; gerekçe uydurulmayacak.
+- Kullanıcının son netleştirmesi: düzenleme geçmişinde yalnız gerçekten değişen alanlar, **alan adı · önceki değer → sonraki değer** biçiminde gösterilecek. Değişmeyen bilgiler hiçbir değişiklik satırında listelenmeyecek; tüm alan dökümü yapılmayacak. Örneğin yalnız tutar değişmişse içerik satırı **Tutar · 5.000,00 TL → 5.500,00 TL** olacak; değişmeyen Satış türü, hesap, tarih veya etiket tekrar edilmeyecek. Birden fazla alan değişmişse her biri aynı olay altında kendi önce → sonra satırında yer alacak. Olayın tarih/saati, işlemi yapan kişi ve gerçek değişiklik gerekçesi korunacak.
+- `collection`, `offset`, `0/1` gibi iç sistem kodları kullanıcıya doğrudan gösterilmeyecek; ilgili bağlamın anlaşılır Türkçe karşılığı kullanılacak. Aynı anlamı yineleyen teknik alanlar gereksiz tekrar oluşturmayacak.
+- İptal ve geri açma gibi durum değişiklikleri de kısa, açık olay adlarıyla ve varsa gerçek gerekçesiyle gösterilecek. İşlemi yapan kişi bilgisi kompakt biçimde korunacak.
+- Gösterilen zaman, işlemin muhasebe tarihi değil geçmiş olayının gerçek oluşturulma/değiştirilme zamanı olacak ve Europe/Istanbul saat diliminde biçimlendirilecek. Örnekteki gün/ay ve saat formatı kullanılacak; farklı yılların karışabileceği durumda yıl da açık olacak.
+- Sadeleştirme sunum katmanına aittir: mevcut ayrıntılı denetim kayıtları, eski/yeni değerler, kullanıcı ve zaman bilgileri silinmeyecek veya yeniden yazılmayacak. Kısa özet önemli bir farkı gizlememeli; gerektiğinde ayrıntıya erişim biçimi tasarımda ele alınabilecek.
+- Mobilde okunabilir kısa satırlar ve kontrollü metin kaydırma kullanılacak; geçmiş erişimi mevcut ilgili kayıt bağlamında kalacak. Uygulamanın ortak geçmiş bileşenini kullanan diğer uygun kayıt türlerinde de aynı anlatım dili korunacak.
+
+Yalnız sürüm notları güncellendi. Uygulama kodu, sürüm, paket, GitHub ve hosting üzerinde işlem yapılmadı. Yeni notlar toplanmaya devam edilecek; açık kodlama talimatı beklenecek.
+
+### 25 Kasım 2026 — Yalnız değişen içerik için önce / sonra kuralı
+
+Kullanıcı değişmeyen bilgilerin listelenmemesini açıkça tekrar belirtti. Yukarıdaki geçmiş sunumu kuralı buna göre netleştirildi: yalnız değişen içeriğin ne olduğu ve neye dönüştüğü gösterilir; değişmeyen alanlar özet veya ayrıntı adı altında tekrar dökülmez. Oluşturma olayı kısa Oluşturuldu kaydı olarak kalır. Saklanan ayrıntılı denetim verileri korunur. Bu açıklama yalnız not güncellemesidir; kodlama veya yayın talimatı değildir.
+
+## 25 Kasım 2026 — Kompakt silme önizlemesi ve tek vurgu çizgisi
+
+Kullanıcı silme/iptal ekranının ilgili satırın yerinde sadeleştirilmesini istedi. Bu istek yeni sürüm notudur; uygulama veya yayın talimatı değildir.
+
+- Silme eylemine tıklanınca hedef hareketin üzeri hemen çizilerek iptal sonrası görünüm önizlenecek. Önizleme kalıcı iptal değildir: Kaydet başarılı olmadan hesap etkisi, toplamlar veya kayıt durumu değişmeyecek. Vazgeç seçilirse satırın önceki görünümü geri gelecek; kayıt hatasında iptal edilmiş gibi gösterilmeyecek.
+- Mevcut uzun açıklama ve yüksek form alanı kaldırılacak. Gerekçe için kompakt tek satırlık giriş alanı, hemen yanında Vazgeç ve Kaydet düğmeleri bulunacak. Gerekçe zorunluluğu korunacak. Dar ekranda erişilebilir alan ölçülerini koruyacak şekilde sarılabilecek; geniş ekranda gereksiz alt satır veya büyük boşluk oluşturmayacak.
+- Gerekçe ve eylem satırının hemen altında şu kısa açıklama yer alacak: **Kayıtlar tamamen ortadan kaldırılmaz; yalnızca hesaba etkisi kaldırılır ve üstü çizili olarak görünmeye devam eder.** Açıklama gerekçe alanının üstünde uzun bir blok olarak sunulmayacak.
+- Silme paneli açılırken sayfa otomatik olarak aşağı kaydırılmayacak; seçili satır ve gerekçe/eylemler mevcut bağlamlarında kalacak. Formun doğal yüksekliği dışında ek boşluk veya ekranı aşağı sürükleyen bir bilgi alanı oluşturulmayacak.
+- Kaydet sonrasında mevcut iptal modeli kullanılacak: kayıt fiziksel olarak silinmeyecek, hesap etkisi kaldırılacak ve üstü çizili görünmeye devam edecek. Ayrı ilişkili ödeme/fatura kayıtları kendiliğinden topluca iptal edilmeyecek; mevcut mali ilişki kuralları korunacak. Düzenleme gerekçesi ve denetim geçmişi kaybolmayacak.
+- Satırın başındaki vurgu çizgisi iki kez çizilmeyecek. Seçili hareket ve açılan kompakt silme alanı boyunca tek, kesintisiz vurgu çizgisi bulunacak; iç formda ikinci, içeriden başlayan çizgi olmayacak.
+- Bu kompakt silme/onay alanı, yeni işlem ve düzenleme için not edilen bağımsız form kartından farklı olarak hedef hareketin kendi satır bağlamında kalacak. Mevcut silme erişimi ve yetkileri korunacak.
+
+Yalnız sürüm notları güncellendi. Uygulama kodu, sürüm, ZIP, GitHub ve hosting değiştirilmedi; açık kodlama talimatı beklenecek.
+
+## 25 Kasım 2026 — TCKN ve IBAN satırlarında yükseklik ve hizalama
+
+Kullanıcı, Personel bilgileri içinde TCKN ve IBAN satırlarının diğer alanlara göre kaydığını ve gereğinden yüksek boşluk oluşturduğunu ekran görüntüsüyle bildirdi. Kopyalama ikonunun yerleşimi olası neden olarak değerlendirilecek; neden henüz kod üzerinden doğrulanmadı.
+
+- TCKN/IBAN başlıkları ve değerleri aynı satır hizasında olacak; mevcut etiket ve değer sütunlarının ortak başlangıçları korunacak.
+- Kopyalama ikonu ilgili değerin yanında metinle dikey olarak ortalanacak; metni aşağı itmeyecek ve tek başına satırın yüksekliğini artırmayacak.
+- Tek satırlık TCKN ve IBAN alanlarının görünür satır yüksekliği ve üst/alt boşluğu, ad soyad, telefon ve ücret gibi diğer tek satırlık bilgi alanlarıyla tutarlı olacak. Uzun adresin doğal çok satırlı akışı korunacak.
+- İkonlar önceki karara uygun biçimde çerçevesiz ve minimal kalacak. Klavye odağı, erişilebilir ad ve yeterli dokunma alanı korunurken görünmez düğme kutusunun metin hizasını bozması önlenecek.
+- Dar ekranda uzun IBAN değeri kart dışına taşmayacak veya kopyalama ikonuyla çakışmayacak; gerektiğinde kontrollü satır sarma kullanılacak. Kopyalanan tam değer ve mevcut kopyalama davranışı değişmeyecek.
+
+Yalnız sürüm notları güncellendi; uygulama kodu, sürüm, paket ve GitHub yayını değiştirilmedi. Açık kodlama talimatı beklenecek.
+
+## 25 Kasım 2026 — CSV toplam bakiye ve PDF ekstre önerisi
+
+Kullanıcı indirilen CSV dosyasına toplam bakiye satırı eklenmesini istedi; PDF indirme olanağını sordu ve PDF için şablon önerisi talep etti. CSV isteği yeni sürüm notudur; PDF şablonu aşağıda henüz seçilmemiş tasarım önerisidir. Kodlama/yayın talimatı verilmedi.
+
+### CSV toplam bakiye
+
+- Hareket satırlarının sonunda açıkça adlandırılmış toplam bakiye/özet satırı bulunacak; tutar ilgili sayısal sütunda, mevcut Türkçe karakter ve Excel uyumlu CSV biçimi korunarak gösterilecek.
+- Satır satır işlem sonrası bakiyeleri toplamak yanlış sonuç verir; toplam bakiye bu değerlerin toplamı olmayacak. Cari bakiyesi gerçekleşmiş ve iptal edilmemiş işlemlerin net cari etkisine dayanacak; brüt işlem tutarları ve nakit/kart hareketleriyle karıştırılmayacak.
+- Filtre uygulanmışsa dışa aktarılan kayıt kapsamı ile tüm cari hesabın güncel bakiyesi ayrı ve açık etiketlerle belirtilecek. Öneri: kapsam uygunsa Devreden bakiye / Seçili kapsam net etkisi / Kapanış bakiyesi; ayrıca gerekiyorsa Güncel cari bakiye. Kesintili filtrelerde yanıltıcı bir devreden-kapanış eşitliği kurulmayacak; Seçili kayıtların net etkisi ile Güncel cari bakiye ayrı verilecek. Kesin satır adları tasarımda netleştirilecek.
+- Dışa aktarma yalnız ekrana yüklenmiş ilk 30 kaydı değil, seçili kapsamın tüm kayıtlarını esas alacak. İptal veya planlı kayıtlar görünür kapsamda yer alsa dahi gerçekleşmiş toplamı artırmayacak; durumları açık olacak.
+- Aynı dışa aktarma yaklaşımının kullanıldığı diğer bölümlerde toplam, ilgili hesap/kart/rapor bağlamının anlamına göre değerlendirilecek; karışık hesap raporlarına yapay tek bakiye eklenmeyecek.
+
+### Önerilen PDF şablonu: sade hesap ekstresi
+
+- A4 dikey, beyaz zemin, Inter yazı tipi ve mevcut turkuaz vurgu. Yazdırılabilir ince çizgiler, sınırlı renk; arayüz menüleri ve düğmeleri PDF'ye alınmayacak. Geniş raporlarda okunabilirlik için yatay yerleşim ayrıca değerlendirilebilecek.
+- Üst bölüm: uygulama/işletme adı ve **Cari Hesap Ekstresi** başlığı. İşletme bilgileri yalnız mevcut gerçek yapılandırmadan alınacak; eksik bilgi uydurulmayacak.
+- Kimlik/kapsam: cari adı/unvanı ve türü, seçili tarih aralığı, varsa diğer filtreler; sağda rapor oluşturulma tarihi ve saati. Her kimlik/iletişim alanını sırf mevcut diye başlığa doldurmadan kompakt kimlik kullanılacak.
+- Kısa özet: dönem başı bakiye, dönem içi net cari etki ve dönem sonu bakiye; yalnız kapsam bu mutabakata uygunsa. Filtreli veya karışık raporda uygun etiketlerle gerçek kapsam belirtilecek. Güncel cari bakiye dönem sonu bakiyesinden farklıysa ayrı adlandırılacak.
+- Hareket tablosu: **Tarih | İşlem | Açıklama | Etiket | Tutar (TL) | Bakiye (TL)**. Açıklama en geniş alan, tutar/bakiye sağa hizalı; Türkçe sayı biçimi ve para yönleri korunacak. Ekleyen bilgisi gerekli rapor bağlamında eklenebilir; okunabilirliği bozacak sıkışıklık yaratılmayacak.
+- Tablo altında CSV ile aynı kayıtlara ve mali kurallara dayanan toplam/sonuç alanı. Satır bakiyeleri toplanmayacak. İptal edilmiş kayıtlar dahilse üstü çizili ve açık durum bilgisiyle, toplam etkileri hariç gösterilecek.
+- Alt bilgi: **Tutarlar Türk lirasıdır (TL)**, oluşturulma bilgisi ve **Sayfa X / Y**. Çok sayfalı belgede sütun başlıkları tekrarlanacak; metinler kesilmeyecek, uzun açıklamalar sarılacak ve toplam alanı okunabilir kalacak.
+- PDF dosyası olarak indirme teknik olarak mümkün; üretim yöntemi ve gerekirse kullanılacak kütüphane uygulama aşamasında değerlendirilecek. Bu not yeni bağımlılık ekleme veya PDF üretimini başlatma onayı değildir. Türkçe karakterler, seçilebilir metin, çok sayfa ve CSV/PDF toplam eşliği kabul ölçütü olacak.
+
+Yalnız notlar ve PDF şablon önerisi hazırlandı. Uygulama kodu, sürüm, ZIP, GitHub ve hosting üzerinde değişiklik yapılmadı; açık kodlama talimatı beklenecek.
+
+## 25 Kasım 2026 — Aktif hareket satırının dikey boşluğunu azaltma
+
+Kullanıcı, seçili hareketin bilgileri ile düzenle/geçmiş/sil ikonları arasında fazla dikey boşluk olduğunu ekran görüntüsüyle belirtti. Amaç aktif satırı belirgin biçimde daha kompakt hale getirmektir; bu açıklama not kapsamındadır, kodlama talimatı değildir.
+
+- Eylem ikonlarının üst kenarıyla üstteki son görünür metin satırı arasındaki mesafe, ikonların alt kenarıyla aktif satırın alt sınırı arasındaki mevcut mesafeye eşitlenecek. Kullanıcının istediği ölçü bu iki görünür boşluğun eşitliğidir; ekran görüntüsünden kesin piksel değeri uydurulmayacak, uygulamada gerçek yerleşim üzerinden ölçülecek.
+- Referans metin, tarih/saat gibi çok satırlı hücreler dahil bilgi alanının en alttaki görünür metni olacak; ikonlar bu metinlerle çakışmayacak. Gereksiz üst padding, margin veya min-height kaynaklı boşluk giderilecek.
+- Mevcut alt kenar boşluğu referans alınacak; eşitliği sağlamak için alt boşluğu büyütüp satırı yeniden yükseltmek yerine üstteki fazlalık azaltılacak. İkon boyutları, okunabilirlik ve yeterli dokunma alanı korunacak.
+- Açılan satırda gerçekten ek bilgi varsa bu içerik korunacak ve doğal yüksekliği kadar yer kullanacak. İçeriği kırpan sabit yükseklik uygulanmayacak; masaüstü ve dar görünümde gereksiz boşluk önlenecek.
+- Seçili satırın ortak arka planı ve baştan sona tek, kesintisiz vurgu çizgisi korunacak. Bu ölçü kuralı, aynı aktif hareket/eylem bileşenini kullanan diğer uygun bölümlerde de tutarlı olacak.
+
+Yalnız sürüm notları güncellendi. Uygulama kodu, sürüm, paket, GitHub ve hosting üzerinde değişiklik yapılmadı; açık kodlama talimatı beklenecek.
+
+## 25 Kasım 2026 — 1.29.0 açık kodlama ve yayın talimatı
+
+Kullanıcı “kodla ve yayınla” diyerek biriken 25 Kasım notlarının uygulanmasını ve GitHub Release yayınını yetkilendirdi. PDF için önerilen sade ekstre bu kapsamda uygulanır. Fazla ödeme mevcut dağıtım sırasını (vade, işlem tarihi, kimlik) kullanarak eski açık borca uygulanır; karşılanmayan fazlalık mevcut avans modelinde kalır. Yeni işlem kapanışı ile fazla ödeme ayrı, atomik bağlı kayıtlardır; düzenleme/iptal birlikte yürütülür. İadelerde işlem bedelini aşan ödeme kabul edilmez. Doğrudan ödeme/tahsilatta kaynak her zaman zorunludur; anahtar yalnız işlemle birlikte anlık ödeme seçimi içindir. Elle değiştirilmemiş ödeme ana tutarı izler, elle değiştirilen tutar korunur. Geçmiş faturasız kayıtlar korunur; yeni alış tek Faturalı Alış koduyla, Alış etiketiyle kaydedilir. Hosting/cron kurulumu yapılmaz. Bu talimat sonraki yeni taleplere taşınmaz.

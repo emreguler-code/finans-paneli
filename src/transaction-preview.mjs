@@ -20,14 +20,24 @@ export function transactionPreview(party, event, form, paymentMode) {
         ? amount
         : cents(form.settled)
       : 0;
-  if (!Number.isSafeInteger(paid) || paid < 0 || paid > amount) return null;
+  if (
+    !Number.isSafeInteger(paid) ||
+    paid < 0 ||
+    (paid > amount &&
+      !["sale", "purchase_invoice", "purchase_no_invoice"].includes(
+        form.operation,
+      ))
+  )
+    return null;
   const next = form.scheduled
     ? 0
     : operationDirection(form.operation, true, form.direction) *
       (amount - paid);
   const old =
     event.id && !event.cancelled && !event.scheduled
-      ? Number(event.party_effect) || 0
+      ? (Number(event.party_effect) || 0) -
+        operationDirection(event.operation, true, event.direction) *
+          (Number(event.excess_payment_cents) || 0)
       : 0;
   const delta = next - old;
   return { delta, balance: Number(party.balance_cents) + delta };

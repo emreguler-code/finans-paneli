@@ -1,13 +1,13 @@
 import { fmt } from "./ui";
 import { transactionPreview } from "./transaction-preview.mjs";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Check, LoaderCircle } from "lucide-react";
+import { Check, LoaderCircle, CalendarClock, CalendarSync } from "lucide-react";
 import { EntrySurface } from "./EntrySurface";
 import { EntryForm } from "./EntryForm";
 import { SelectControl } from "./SelectControl";
 import { TagInput } from "./TagInput";
 import { MoneyInput } from "./MoneyInput";
-import { DatePicker } from "./DatePicker";
+import { DatePicker, Popover } from "./DatePicker";
 import { operations } from "./operations.mjs";
 export function PartyEntryForm({
   context,
@@ -39,6 +39,7 @@ export function PartyEntryForm({
       Boolean(e.id || context.initial?.date),
     );
   const previousOperation = useRef(null);
+  const [installmentAnchor, setInstallmentAnchor] = useState(null);
   useEffect(() => {
     setDateSelected(Boolean(e.id || context.initial?.date));
     setExpanded(false);
@@ -51,7 +52,7 @@ export function PartyEntryForm({
     staff = party?.type === "Personel",
     hasDue = invoice || salary || f.scheduled || Boolean(f.linkedId),
     accountRequired = needsAccount && !salary;
-  const partialRequired = invoice && f.immediate && paymentMode === "partial";
+  const partialRequired = invoice && f.immediate;
   const requiredSignature = [
     accountRequired ? "account" : "",
     transfer ? "target" : "",
@@ -137,6 +138,7 @@ export function PartyEntryForm({
       ...s,
       account: value.startsWith("card:") ? "" : value,
       cardId: value.startsWith("card:") ? Number(value.slice(5)) : "",
+      settled: paymentMode === "full" ? s.amount : s.settled,
     }));
   const rank = [
     "payment",
@@ -228,8 +230,11 @@ export function PartyEntryForm({
           f.operation === "sale" || f.operation === "supplier_return"
             ? "Şimdi tahsil edilen (TL) *"
             : "Şimdi ödenen (TL) *",
-          f.settled,
-          (v) => change("settled", v),
+          paymentMode === "full" ? f.amount : f.settled,
+          (v) => {
+            setPaymentMode("partial");
+            change("settled", v);
+          },
           true,
         )}
       {borcland &&
@@ -343,35 +348,7 @@ export function PartyEntryForm({
                       {op === "purchase_invoice" ? "Alış" : operations[op]}
                     </button>
                   ))}
-              </div>
-            </div>
-            {["purchase_invoice", "purchase_no_invoice"].includes(
-              f.operation,
-            ) && (
-              <div
-                className="operation-choices purchase-type"
-                role="group"
-                aria-label="Alış türü"
-              >
-                {["purchase_invoice", "purchase_no_invoice"].map((op) => (
-                  <button
-                    key={op}
-                    type="button"
-                    aria-pressed={f.operation === op}
-                    onClick={() => choose(op)}
-                  >
-                    {operations[op]}
-                  </button>
-                ))}
-              </div>
-            )}
-            <input
-              type="hidden"
-              name="operation"
-              value={f.operation}
-              data-draft-value={f.operation}
-            />
-            <div className="transaction-values">
+              </div>{" "}
               {money(
                 "amount",
                 "Tutar (TL)",
@@ -379,6 +356,14 @@ export function PartyEntryForm({
                 (v) => change("amount", v),
                 true,
               )}
+            </div>
+            <input
+              type="hidden"
+              name="operation"
+              value={f.operation}
+              data-draft-value={f.operation}
+            />
+            <div className="transaction-values">
               <label className="cari-field">
                 Açıklama (isteğe bağlı)
                 <input
@@ -406,54 +391,27 @@ export function PartyEntryForm({
                 true,
               )}
             <div className="transaction-meta">
-              {invoice &&
-                control(
-                  invoiceReturn ? "İade bedeli" : "Ödeme / tahsilat",
-                  f.immediate
-                    ? paymentMode
-                    : invoiceReturn && f.returnMode === "later"
-                      ? "later"
-                      : "open",
-                  [
-                    [
-                      "open",
-                      invoiceReturn ? "Cari hesaptan düş" : "Açık hesaba ekle",
-                    ],
-                    [
-                      "full",
-                      f.operation === "sale" ||
-                      f.operation === "supplier_return"
-                        ? "Tamamını tahsil et"
-                        : "Tamamını öde",
-                    ],
-                    [
-                      "partial",
-                      f.operation === "sale" ||
-                      f.operation === "supplier_return"
-                        ? "Kısmen tahsil et"
-                        : "Kısmen öde",
-                    ],
-                    ...(invoiceReturn
-                      ? [
-                          [
-                            "later",
-                            f.operation === "supplier_return"
-                              ? "Sonra tahsil et"
-                              : "Sonra geri öde",
-                          ],
-                        ]
-                      : []),
-                  ],
-                  (value) => {
-                    setPaymentMode(value === "partial" ? "partial" : "full");
-                    setF((s) => ({
-                      ...s,
-                      immediate: ["full", "partial"].includes(value),
-                      returnMode: value === "later" ? "later" : "offset",
-                      settled: value === "partial" ? "" : "0",
-                    }));
-                  },
-                )}
+              {invoice && (
+                <label className="settlement-switch">
+                  <input
+                    type="checkbox"
+                    role="switch"
+                    aria-label="Ödeme / tahsilat"
+                    checked={f.immediate}
+                    onChange={(ev) => {
+                      setPaymentMode("full");
+                      setF((v) => ({
+                        ...v,
+                        immediate: ev.target.checked,
+                        settled: v.amount,
+                        account: "",
+                        cardId: context.lockedCardId || "",
+                      }));
+                    }}
+                  />
+                  Ödeme / tahsilat
+                </label>
+              )}
 
               <div className="cari-field compact-date">
                 <DatePicker
@@ -462,8 +420,8 @@ export function PartyEntryForm({
                   max={f.scheduled ? undefined : data.today}
                   required
                   label="İşlem tarihi"
-                  iconOnly={!dateSelected}
-                  textOnly={dateSelected}
+                  iconOnly
+                  textOnly={false}
                   displayText={
                     dateSelected
                       ? new Date(f.date + "T12:00:00Z").toLocaleDateString(
@@ -484,6 +442,56 @@ export function PartyEntryForm({
                   }}
                 />
               </div>
+              {hasDue && (
+                <DatePicker
+                  value={f.due}
+                  today={data.today}
+                  label="Vade"
+                  iconOnly
+                  icon={CalendarClock}
+                  onChange={(v) => change("due", v)}
+                />
+              )}
+              <button
+                type="button"
+                className="list-icon"
+                aria-label="Taksitli işlem"
+                title="Taksitli işlem"
+                aria-expanded={Boolean(installmentAnchor)}
+                data-draft-value={f.installments}
+                onClick={(ev) =>
+                  setInstallmentAnchor(
+                    installmentAnchor ? null : ev.currentTarget,
+                  )
+                }
+              >
+                <CalendarSync size={18} />
+              </button>
+              {installmentAnchor && (
+                <Popover
+                  anchor={installmentAnchor}
+                  onClose={() => setInstallmentAnchor(null)}
+                  label="Taksitli işlem"
+                >
+                  {f.cardId && !party && !e.id ? (
+                    control(
+                      "Taksit sayısı",
+                      f.installments,
+                      Array.from({ length: 36 }, (_, i) => [
+                        i + 1,
+                        i ? `${i + 1} taksit` : "Tek çekim",
+                      ]),
+                      (v) => change("installments", Number(v)),
+                    )
+                  ) : (
+                    <p className="cari-hint">
+                      Taksit ayrıntıları yeni kredi kartı harcama/iade kaydında
+                      girilir. Cari ödeme tek kayıttır.
+                    </p>
+                  )}
+                </Popover>
+              )}
+
               {tagControl}
               {hasExtras && (
                 <details
@@ -493,17 +501,6 @@ export function PartyEntryForm({
                 >
                   <summary>Diğer bilgiler</summary>
                   <div className="transaction-option-fields">
-                    {hasDue && (
-                      <label className="cari-field compact-date">
-                        Vade (isteğe bağlı)
-                        <DatePicker
-                          value={f.due}
-                          today={data.today}
-                          label="Vade"
-                          onChange={(v) => change("due", v)}
-                        />
-                      </label>
-                    )}
                     {f.cardId && invoice && (
                       <label className="cari-field compact-date">
                         Kart dönem tarihi
@@ -515,17 +512,6 @@ export function PartyEntryForm({
                         />
                       </label>
                     )}
-                    {f.cardId &&
-                      !e.id &&
-                      control(
-                        "Taksit sayısı",
-                        f.installments,
-                        Array.from({ length: 36 }, (_, i) => [
-                          i + 1,
-                          i ? i + 1 + " taksit" : "Tek çekim",
-                        ]),
-                        (v) => change("installments", Number(v)),
-                      )}
                     {!party && !context.lockedCardId && (
                       <label className="check-label">
                         <input
@@ -538,6 +524,17 @@ export function PartyEntryForm({
                         Planlı işlem
                       </label>
                     )}
+                    {invoiceReturn &&
+                      !f.immediate &&
+                      control(
+                        "İade yöntemi",
+                        f.returnMode,
+                        [
+                          ["offset", "Cari hesaptan düş"],
+                          ["later", "Sonra öde / tahsil et"],
+                        ],
+                        (v) => change("returnMode", v),
+                      )}
                     {!staff && (
                       <label className="cari-field">
                         Belge / fatura no
@@ -573,38 +570,6 @@ export function PartyEntryForm({
                 {error}
               </p>
             )}{" "}
-            <div className="sheet-footer">
-              <button
-                type="button"
-                data-entry-cancel
-                className="secondary-button"
-                aria-label={
-                  e.id ? "Düzenlemeyi iptal et" : "Yeni işlemi iptal et"
-                }
-                disabled={busy}
-                onClick={onClose}
-              >
-                Vazgeç
-              </button>
-              <button
-                type="submit"
-                form={formId}
-                className="primary-button"
-                disabled={
-                  busy ||
-                  !f.operation ||
-                  !f.amount ||
-                  Number(f.amount.replaceAll(".", "").replace(",", ".")) <= 0
-                }
-              >
-                {busy ? (
-                  <LoaderCircle className="loading-spinner" size={16} />
-                ) : (
-                  <Check size={18} />
-                )}
-                {e.id ? "Değişiklikleri kaydet" : "İşlemi kaydet"}
-              </button>
-            </div>
           </div>
           <aside
             className="transaction-preview"
@@ -621,7 +586,40 @@ export function PartyEntryForm({
               />
             )}
             <p>{f.operation ? effect() : "Başlamak için işlem seçin."}</p>
-            <small>Önizleme · Kaydedilmedi</small>
+            <small>Önizleme · Kaydedilmedi</small>{" "}
+            <div className="sheet-footer">
+              <button
+                type="button"
+                data-entry-cancel
+                className="secondary-button"
+                aria-label={
+                  e.id ? "Düzenlemeyi iptal et" : "Yeni işlemi iptal et"
+                }
+                disabled={busy}
+                onClick={onClose}
+              >
+                Vazgeç
+              </button>
+              <button
+                type="submit"
+                aria-label={e.id ? "Değişiklikleri kaydet" : "İşlemi kaydet"}
+                form={formId}
+                className="primary-button"
+                disabled={
+                  busy ||
+                  !f.operation ||
+                  !f.amount ||
+                  Number(f.amount.replaceAll(".", "").replace(",", ".")) <= 0
+                }
+              >
+                {busy ? (
+                  <LoaderCircle className="loading-spinner" size={16} />
+                ) : (
+                  <Check size={18} />
+                )}
+                {e.id ? "Güncelle" : "Kaydet"}
+              </button>
+            </div>
           </aside>
         </div>
       </EntryForm>

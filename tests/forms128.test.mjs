@@ -31,7 +31,12 @@ test("Editing applies only delta, settled purchases preserve open balance", () =
     transactionPreview(
       party,
       {},
-      { operation: "sale", amount: "100", immediate: true, settled: "101" },
+      {
+        operation: "customer_return",
+        amount: "100",
+        immediate: true,
+        settled: "101",
+      },
       "partial",
     ),
     null,

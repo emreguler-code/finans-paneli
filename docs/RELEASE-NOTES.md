@@ -1,3 +1,14 @@
+# 1.29.0 — Kompakt işlem kartı ve PDF ekstre
+
+- İşlem formu ve hareket listesi ayrı kartlarda; tutar üst satırda sağda, eylemler İşlemin etkisi bölümünde. Tarih/vade/taksit için kompakt ikonlar.
+- Yeni tedarikçi alışında tek Alış seçeneği. Ödeme anahtarı, otomatik tam tutar, kısmi ödeme ve eski borca kontrollü fazla ödeme/avans dağıtımı.
+- Kısa önce → sonra geçmişi; satırda kompakt silme önizlemesi, tek vurgu çizgisi ve daha dar aktif satır.
+- TCKN/IBAN kopyalama hizası; mevcut alanları koruyan toplamlı CSV ve Türkçe, çok sayfalı PDF ekstre.
+
+Şema 12. Hosting ZIP + SHA-256 `releases/1.29.0/` altında ve Release varlıklarında. Hosting yükleme/inceleme ve cron kurulumu kullanıcıya aittir. [Kapsam](SURUM-1.29.0.md) · [Doğrulama](TEST-RAPORU-1.29.0.md).
+
+---
+
 # 1.28.0 — Kompakt formlar ve sade mobil gezinme
 
 - İşlem ekleme ve düzenleme, tablonun üstünde aynı kompakt formda; müşteri/tedarikçi/personel için uygun işlem ve ödeme alanları.

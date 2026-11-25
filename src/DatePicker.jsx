@@ -200,6 +200,7 @@ export function DatePicker({
   displayText,
   clearable = !required,
   iconOnly = false,
+  icon: Icon = CalendarDays,
   textOnly = false,
   timeValue,
   onTimeChange,
@@ -275,7 +276,7 @@ export function DatePicker({
         aria-required={required || undefined}
         onClick={show}
       >
-        {!textOnly && <CalendarDays size={18} />}
+        {!textOnly && <Icon size={18} />}
         <span className={iconOnly ? "sr-only" : undefined} id={id + "-value"}>
           {displayText || text}
         </span>

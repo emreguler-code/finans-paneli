@@ -23,7 +23,7 @@ export function InlineRecord({ context, children }) {
           n.dataset.formRecord === inlineHostId(context),
       ) || hosts.find((n) => n.dataset.formHost === context.entity);
     setHost(target || null);
-    if (target)
+    if (target && context.mode !== "status")
       requestAnimationFrame(() => target.scrollIntoView({ block: "nearest" }));
   }, [context]);
   return host

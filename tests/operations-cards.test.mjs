@@ -10,7 +10,6 @@ import {
 test("Cari options are scoped and never contain transfers or Other", () => {
   assert.deepEqual(partyOptions("Tedarikçi"), [
     "purchase_invoice",
-    "purchase_no_invoice",
     "supplier_return",
     "payment",
   ]);
@@ -107,10 +106,7 @@ test("Semantic names distinguish salary and returns from sale and purchase", () 
     operationLabel({ operation: "supplier_return", kind: "Alacak" }),
     "İade",
   );
-  assert.equal(
-    operationLabel({ operation: "purchase_invoice" }),
-    "Faturalı Alış",
-  );
+  assert.equal(operationLabel({ operation: "purchase_invoice" }), "Alış");
 });
 
 test("Post-cut transfer is new debt for source and statement repayment for destination", () => {

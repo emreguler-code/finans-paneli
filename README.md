@@ -1,4 +1,6 @@
-# Finans Paneli 1.28.0
+# Finans Paneli 1.29.0
+
+1.29.0: Bağımsız kompakt işlem kartı, ödeme anahtarı ve fazla ödeme dağıtımı; sade geçmiş/iptal, hizalı kimlik bilgileri ve toplamlı CSV/PDF ekstre. [Kapsam](docs/SURUM-1.29.0.md) · [Doğrulama](docs/TEST-RAPORU-1.29.0.md).
 
 1.28.0: Üstte ortak kompakt işlem ekleme/düzenleme formu, yeniden eskiye işlem sırası, kart içinde cari bilgisi düzenleme, gerçek hafta personel takvimi ve yalnız hamburger ile mobil gezinme. [Kapsam](docs/SURUM-1.28.0.md) · [Doğrulama](docs/TEST-RAPORU-1.28.0.md).
 

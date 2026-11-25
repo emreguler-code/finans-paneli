@@ -1,3 +1,4 @@
+import { EventStatusForm } from "./EventStatusForm";
 import { TrackingPages } from "./TrackingPages";
 import { TrackingDialog } from "./TrackingDialog";
 import { FinancePages } from "./FinancePages";
@@ -21,6 +22,8 @@ export function FinanceDialog(props) {
     ["vehicle", "vehicle_record", "campaign", "campaign_entry"].includes(entity)
   )
     return <TrackingDialog {...props} />;
+  if (entity === "event" && mode === "status")
+    return <EventStatusForm {...props} />;
   if (["view", "history"].includes(mode)) return <RecordDetails {...props} />;
   if (entity === "statement") return <StatementForm {...props} />;
   if (entity === "event" && mode !== "status")

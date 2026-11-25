@@ -890,6 +890,17 @@ try {
         $result["duplicate"] = true;
     } else {
         if ($action === "event_save") {
+            if (
+                !empty($body["id"]) &&
+                str_starts_with(
+                    row($db, "fin_events", (int) $body["id"])["request_key"],
+                    "settlement-excess-",
+                )
+            ) {
+                throw new DomainException(
+                    "Bu ödeme bağlı olduğu işlemden düzenlenir.",
+                );
+            }
             if (($body["operation"] ?? "") === "card_transfer") {
                 throw new DomainException(
                     "Karttan karta aktarım yapılamaz. Kart ödemesi için kasa veya banka hesabı seçin.",
@@ -906,6 +917,11 @@ try {
         } elseif ($action === "event_status") {
             $id = (int) ($body["id"] ?? 0);
             $old = row($db, "fin_events", $id);
+            if (str_starts_with($old["request_key"], "settlement-excess-")) {
+                throw new DomainException(
+                    "Bu ödeme bağlı olduğu işlemden iptal edilir veya geri açılır.",
+                );
+            }
             versionCheck($old, $body);
             $cancelled = (int) (bool) ($body["cancelled"] ?? true);
             $reason = field($body, "reason", 1000, true);
@@ -921,6 +937,41 @@ try {
                 row($db, "fin_events", $id),
                 $reason,
             );
+            $q = $db->prepare("SELECT * FROM fin_events WHERE request_key=?");
+            $q->execute(["settlement-excess-" . $id]);
+            $child = $q->fetch();
+            // Restore only a child that this parent's status operation cancelled.
+            if (
+                $child &&
+                (($cancelled && !$child["cancelled"]) ||
+                    (!$cancelled && $old["cancelled"] && $child["cancelled"]))
+            ) {
+                $last = $db->prepare(
+                    "SELECT operation,reason FROM audit_log WHERE entity='event' AND entity_id=? ORDER BY id DESC LIMIT 1",
+                );
+                $last->execute([(string) $child["id"]]);
+                $lastLog = $last->fetch();
+                $marker = "Bağlı işlem #" . $id . ": ";
+                if (
+                    $cancelled ||
+                    ($lastLog &&
+                        $lastLog["operation"] === "cancel" &&
+                        str_starts_with($lastLog["reason"], $marker))
+                ) {
+                    $db->prepare(
+                        "UPDATE fin_events SET cancelled=?,version=version+1 WHERE id=?",
+                    )->execute([$cancelled, $child["id"]]);
+                    audit(
+                        $db,
+                        "event",
+                        (string) $child["id"],
+                        $cancelled ? "cancel" : "restore",
+                        $child,
+                        row($db, "fin_events", $child["id"]),
+                        $marker . mb_substr($reason, 0, 900),
+                    );
+                }
+            }
             $result = ["id" => $id];
         } elseif (
             in_array(

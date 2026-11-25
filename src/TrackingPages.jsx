@@ -146,9 +146,9 @@ function CampaignsPage({ data, open }) {
         </label>
       </ListTools>
 
+      <RecordHost entity="campaign" />
+      <RecordHost entity="campaign_entry" />
       <section className="panel campaign-list">
-        <RecordHost entity="campaign" />
-        <RecordHost entity="campaign_entry" />
         {list.map((c) => {
           const progress = campaignProgress(c, data),
             state = campaignStatus(c, data.today);

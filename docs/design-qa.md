@@ -1,9 +1,7 @@
-# 1.28.0 tasarım kontrolü
+# 1.29.0 tasarım kontrolü
 
-Seçilen bağımsız kompakt form, mevcut Inter/Lucide ve Sade Netlik renkleriyle uygulandı. Yeni/düzenleme aynı üst formu kullanır; hücre içi giriş ve bakiye/eylem çakışması kaldırıldı. Finansal ve metadata formları ortak alan/eylem ölçülerini paylaşır, alan içerikleri kendi anlamlarını korur.
+Çalışan uygulamada üç cari türü ve ilgili kayıt formları incelendi. İşlem kartı ile hareket kartı ortak bölüm boşluğuyla ayrıldı; tutar üst satırın sağında, eylemler işlem etkisi alanında. 320/390/760/1100 px ve masaüstü kontrollerinde taşma yok. Kopyalama ikonları satır yüksekliğini büyütmüyor. Silme önizlemesi, tek vurgu çizgisi ve gerekçe/eylem satırı yerinde kalıyor. Geçmiş yalnız değişen değerleri gösteriyor.
 
-Çalışan ekranlar Chromium, WebKit ve Firefox ile 320–1440 px aralığında kontrol edildi. İlk görsel inceleme sonrasında metadata erişimleri tek satıra toplandı, mobil tutar/açıklama uygun genişlikte eşlendi, ödeme seçimi bağlı tutar/kaynak alanlarından önce yerleştirildi ve mobil önizleme kısaltıldı. Kaynak ve kısmi tutar gibi zorunlu alanlar görünür bırakıldı; gereken ek yüksekliği kesen sabit ölçü uygulanmadı. Form kapalıyken yalnız Yeni işlem ekle satırı yer kaplar.
+PDF gerçek tarayıcı indirmesiyle üretildi; Türkçe metin çıkarımı ve üç sayfalı görsel inceleme yapıldı. Yeni mali alanlar zorunlu olduğunda doğal ek yükseklik kullanılır; içerik kırpılmaz. Fiziksel iPhone/klavye testi yapılmadı.
 
-Personel ve tedarikçide gerekli alan sayısı temel müşteri formundan fazladır; bütün formları aynı yüksekliğe zorlamak yerine doğal genişleme kullanılır. Fiziksel cihaz/klavye testi yapılmadı; motor emülasyonu fiziksel iOS kabulü sayılmaz.
-
-Çalışan ekran kanıtları [evidence/1.28.0](evidence/1.28.0/), kapsam [SURUM-1.28.0.md](SURUM-1.28.0.md).
+Kanıtlar [evidence/1.29.0](evidence/1.29.0/), kapsam [SURUM-1.29.0.md](SURUM-1.29.0.md).

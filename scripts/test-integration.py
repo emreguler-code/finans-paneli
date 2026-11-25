@@ -37,7 +37,7 @@ def main():
    version=json.loads((ROOT/'package.json').read_text())['version']
    with zipfile.ZipFile(ROOT/'dist/releases'/f'finans-paneli-{version}.zip') as full, zipfile.ZipFile(ROOT/'dist/releases'/f'finans-paneli-{version}-hosting.zip') as hosting:
     expected={name.removeprefix('hosting/'):full.read(name) for name in full.namelist() if name.startswith('hosting/')}
-    expected['licenses/Inter-OFL.txt']=full.read('licenses/Inter-OFL.txt')
+    expected.update({name:full.read(name) for name in full.namelist() if name.startswith('licenses/')})
     assert set(hosting.namelist())==set(expected), 'Hosting archive has missing or extra files'
     assert all(hosting.read(name)==content for name,content in expected.items()), 'Hosting archive differs from full package'
     assert 'api/config.php' not in expected and 'api/v2/migrations/002-cari.sql' in expected

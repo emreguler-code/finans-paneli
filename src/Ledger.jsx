@@ -224,14 +224,12 @@ export function Ledger({
     </div>
   );
   return (
-    <section
+    <div
       ref={root}
-      className={
-        "panel cari-list ledger-view " + (party ? "party-ledger-view" : "")
-      }
+      className={"ledger-workspace " + (party ? "party-ledger-workspace" : "")}
     >
       {creating || editing ? (
-        <div className="ledger-composer">
+        <div className="panel ledger-composer">
           <EventForm
             key={(editing ? "edit-" + editing.id : "new") + "-" + createKey}
             context={{
@@ -265,369 +263,388 @@ export function Ledger({
           </div>
         )
       )}
-      {title ? (
-        <div className="ledger-section-heading">
-          <h2>{title}</h2>
-          {toolbar}
-        </div>
-      ) : (
-        toolbar
-      )}
-      {scope}
-      {ascending && olderButton}
-      {onSort && (
-        <SortFields
-          className="ledger-mobile-sort"
-          sort={sort}
-          onSort={changeSort}
-          options={sortColumns.flatMap(([key, label]) => [
-            [key + "-asc", label],
-            [key + "-desc", label],
-          ])}
-        />
-      )}
-      <div className="cari-table-scroll">
-        <table
-          role="table"
-          className={
-            "cari-table finance-table " + (party ? "party-ledger" : "")
-          }
-        >
-          <thead>
-            <tr>
-              {sortColumns.map(([field, label]) =>
-                header(field, label, ["amount", "balance"].includes(field)),
-              )}
-              {!party && (
-                <th className="inline-status-head">
-                  <span className="sr-only">Durum / Eylemler</span>
-                </th>
-              )}
-            </tr>
-          </thead>
-          <tbody>
-            {pageEvents.map((e, i) => {
-              const active = expanded === e.id;
-              return (
-                <React.Fragment key={e.id}>
-                  <tr
-                    data-ledger-id={e.id}
-                    tabIndex={0}
-                    aria-expanded={active}
-                    className={
-                      (e.cancelled ? "cancelled " : "") +
-                      (active ? "expanded " : "")
-                    }
-                    onClick={(ev) => {
-                      if (!ev.target.closest("input,button,select,textarea"))
-                        toggle(e);
-                    }}
-                    onKeyDown={(ev) => {
-                      if (
-                        ev.target === ev.currentTarget &&
-                        ["Enter", " "].includes(ev.key)
-                      ) {
-                        ev.preventDefault();
-                        toggle(e);
+      <section
+        className={
+          "panel cari-list ledger-view " + (party ? "party-ledger-view" : "")
+        }
+      >
+        {title ? (
+          <div className="ledger-section-heading">
+            <h2>{title}</h2>
+            {toolbar}
+          </div>
+        ) : (
+          toolbar
+        )}
+        {scope}
+        {ascending && olderButton}
+        {onSort && (
+          <SortFields
+            className="ledger-mobile-sort"
+            sort={sort}
+            onSort={changeSort}
+            options={sortColumns.flatMap(([key, label]) => [
+              [key + "-asc", label],
+              [key + "-desc", label],
+            ])}
+          />
+        )}
+        <div className="cari-table-scroll">
+          <table
+            role="table"
+            className={
+              "cari-table finance-table " + (party ? "party-ledger" : "")
+            }
+          >
+            <thead>
+              <tr>
+                {sortColumns.map(([field, label]) =>
+                  header(field, label, ["amount", "balance"].includes(field)),
+                )}
+                {!party && (
+                  <th className="inline-status-head">
+                    <span className="sr-only">Durum / Eylemler</span>
+                  </th>
+                )}
+              </tr>
+            </thead>
+            <tbody>
+              {pageEvents.map((e, i) => {
+                const active = expanded === e.id;
+                return (
+                  <React.Fragment key={e.id}>
+                    <tr
+                      data-ledger-id={e.id}
+                      tabIndex={0}
+                      aria-expanded={active}
+                      className={
+                        (e.cancelled ? "cancelled " : "") +
+                        (active ? "expanded " : "")
                       }
-                    }}
-                  >
-                    <td className="mobile-ledger-cell" colSpan={columns}>
-                      <div className="mobile-txn-top">
-                        <div>
-                          <span className="mobile-txn-kind">
-                            <Badge
-                              kind={operationLabel(e)}
-                              effect={amount(e)}
-                              neutral={Boolean(e.cancelled)}
+                      onClick={(ev) => {
+                        if (!ev.target.closest("input,button,select,textarea"))
+                          toggle(e);
+                      }}
+                      onKeyDown={(ev) => {
+                        if (
+                          ev.target === ev.currentTarget &&
+                          ["Enter", " "].includes(ev.key)
+                        ) {
+                          ev.preventDefault();
+                          toggle(e);
+                        }
+                      }}
+                    >
+                      <td className="mobile-ledger-cell" colSpan={columns}>
+                        <div className="mobile-txn-top">
+                          <div>
+                            <span className="mobile-txn-kind">
+                              <Badge
+                                kind={operationLabel(e)}
+                                effect={amount(e)}
+                                neutral={Boolean(e.cancelled)}
+                              />
+                            </span>
+                            <MovementDate
+                              event={e}
+                              today={data.today}
+                              active={active}
                             />
-                          </span>
+                          </div>
+                          <strong className="money-nowrap">
+                            <SignedAmount
+                              value={amount(e)}
+                              inactive={e.cancelled}
+                            />
+                          </strong>
+                        </div>
+                        <p className="mobile-txn-description">
+                          {e.description || operationLabel(e)}
+                        </p>
+                        {active && (
+                          <div className="mobile-txn-details">
+                            <span>
+                              {e.tag || "Genel"} · {e.creator || "Önceki kayıt"}
+                              {!party && (
+                                <small>
+                                  {accountLabel(e)}
+                                  {e.party_name ? " · " + e.party_name : ""}
+                                  {e.period_date &&
+                                  e.period_date !== e.event_date
+                                    ? " · Dönem " + dateLabel(e.period_date)
+                                    : ""}
+                                </small>
+                              )}
+                            </span>
+                          </div>
+                        )}
+                      </td>
+                      <td data-label="Tarih" className="cari-date">
+                        {
                           <MovementDate
                             event={e}
                             today={data.today}
                             active={active}
                           />
-                        </div>
-                        <strong className="money-nowrap">
+                        }
+                      </td>
+                      <td data-label="İşlem">
+                        {
+                          <Badge
+                            kind={operationLabel(e)}
+                            effect={amount(e)}
+                            neutral={Boolean(
+                              e.cancelled ||
+                              e.synthetic ||
+                              (global &&
+                                [
+                                  "Virman",
+                                  "Kart ödemesi",
+                                  "Kart aktarımı",
+                                ].includes(e.kind)),
+                            )}
+                          />
+                        }
+                      </td>
+                      <td data-label="Açıklama">
+                        {party ? (
+                          e.description
+                        ) : (
+                          <>
+                            {e.description || operationLabel(e)}
+                            <small>
+                              {e.party_name || ""}
+                              {e.tag && (
+                                <span className="expense-tag">{e.tag}</span>
+                              )}
+                              {e.period_date &&
+                                e.period_date !== e.event_date && (
+                                  <span>
+                                    {" "}
+                                    · Dönem {dateLabel(e.period_date)}
+                                  </span>
+                                )}
+                            </small>
+                          </>
+                        )}
+                      </td>
+                      {party && (
+                        <td data-label="Etiket">
+                          {
+                            <span className="expense-tag">
+                              {e.tag || "Genel"}
+                            </span>
+                          }
+                        </td>
+                      )}
+                      <td data-label="Ekleyen" className="cari-creator">
+                        {e.creator || "Önceki kayıt"}
+                      </td>
+                      {!party && (
+                        <td data-label="Hesap" className="account-route">
+                          {accountLabel(e)}
+                        </td>
+                      )}
+                      <td data-label="Tutar" className="right cari-number">
+                        {
                           <SignedAmount
                             value={amount(e)}
                             inactive={e.cancelled}
                           />
-                        </strong>
-                      </div>
-                      <p className="mobile-txn-description">
-                        {e.description || operationLabel(e)}
-                      </p>
-                      {active && (
-                        <div className="mobile-txn-details">
-                          <span>
-                            {e.tag || "Genel"} · {e.creator || "Önceki kayıt"}
-                            {!party && (
-                              <small>
-                                {accountLabel(e)}
-                                {e.party_name ? " · " + e.party_name : ""}
-                                {e.period_date && e.period_date !== e.event_date
-                                  ? " · Dönem " + dateLabel(e.period_date)
-                                  : ""}
-                              </small>
-                            )}
-                          </span>
-                        </div>
+                        }
+                      </td>
+                      {party && (
+                        <td
+                          data-label="Bakiye"
+                          className={
+                            "right cari-number party-running-value " +
+                            tone(e.party_balance)
+                          }
+                        >
+                          {
+                            <>
+                              {fmt(e.party_balance)}{" "}
+                              <span className="unit">TL</span>
+                            </>
+                          }
+                        </td>
                       )}
-                    </td>
-                    <td data-label="Tarih" className="cari-date">
-                      {
-                        <MovementDate
-                          event={e}
-                          today={data.today}
-                          active={active}
-                        />
-                      }
-                    </td>
-                    <td data-label="İşlem">
-                      {
-                        <Badge
-                          kind={operationLabel(e)}
-                          effect={amount(e)}
-                          neutral={Boolean(
-                            e.cancelled ||
-                            e.synthetic ||
-                            (global &&
-                              [
-                                "Virman",
-                                "Kart ödemesi",
-                                "Kart aktarımı",
-                              ].includes(e.kind)),
-                          )}
-                        />
-                      }
-                    </td>
-                    <td data-label="Açıklama">
-                      {party ? (
-                        e.description
-                      ) : (
-                        <>
-                          {e.description || operationLabel(e)}
-                          <small>
-                            {e.party_name || ""}
-                            {e.tag && (
-                              <span className="expense-tag">{e.tag}</span>
-                            )}
-                            {e.period_date &&
-                              e.period_date !== e.event_date && (
-                                <span> · Dönem {dateLabel(e.period_date)}</span>
-                              )}
-                          </small>
-                        </>
+                      {!party && (
+                        <td
+                          className="inline-rail-cell"
+                          data-label="Durum"
+                        ></td>
                       )}
-                    </td>
-                    {party && (
-                      <td data-label="Etiket">
-                        {
-                          <span className="expense-tag">
-                            {e.tag || "Genel"}
-                          </span>
-                        }
-                      </td>
-                    )}
-                    <td data-label="Ekleyen" className="cari-creator">
-                      {e.creator || "Önceki kayıt"}
-                    </td>
-                    {!party && (
-                      <td data-label="Hesap" className="account-route">
-                        {accountLabel(e)}
-                      </td>
-                    )}
-                    <td data-label="Tutar" className="right cari-number">
-                      {
-                        <SignedAmount
-                          value={amount(e)}
-                          inactive={e.cancelled}
-                        />
-                      }
-                    </td>
-                    {party && (
-                      <td
-                        data-label="Bakiye"
-                        className={
-                          "right cari-number party-running-value " +
-                          tone(e.party_balance)
-                        }
-                      >
-                        {
-                          <>
-                            {fmt(e.party_balance)}{" "}
-                            <span className="unit">TL</span>
-                          </>
-                        }
-                      </td>
-                    )}
-                    {!party && (
-                      <td className="inline-rail-cell" data-label="Durum"></td>
-                    )}
-                  </tr>
-                  {active && (
-                    <tr className="ledger-action-row">
-                      <td colSpan={columns}>
-                        <RecordHost entity="event" id={e.id} />
-                        {
-                          <div className="ledger-expanded-bar">
-                            <EffectDetails
-                              event={e}
-                              gross={amount(e)}
-                              party={party}
-                            />
-                            <div className="ledger-actions">
-                              {e.synthetic ? (
-                                <span className="muted">
-                                  {e.operation === "statement_carry"
-                                    ? "Önceki ekstrenin devreden bakiyesi."
-                                    : "Ekstre toplamı ile tanımlı kalemlerin farkı."}
-                                </span>
-                              ) : (
-                                <>
-                                  {e.scheduled && can(data.user, "create") && (
-                                    <button
-                                      className="text-button"
-                                      onClick={() =>
-                                        open({
-                                          entity: "event",
-                                          mode: "edit",
-                                          item: e,
-                                          initial: {
-                                            scheduled: false,
-                                            date: data.today,
-                                          },
-                                        })
-                                      }
-                                    >
-                                      Gerçekleşti
-                                    </button>
-                                  )}
-                                  {can(data.user, "edit") && !e.cancelled && (
+                    </tr>
+                    {active && (
+                      <tr className="ledger-action-row">
+                        <td colSpan={columns}>
+                          <RecordHost entity="event" id={e.id} />
+                          {
+                            <div className="ledger-expanded-bar">
+                              <EffectDetails
+                                event={e}
+                                gross={amount(e)}
+                                party={party}
+                              />
+                              <div className="ledger-actions">
+                                {e.synthetic ? (
+                                  <span className="muted">
+                                    {e.operation === "statement_carry"
+                                      ? "Önceki ekstrenin devreden bakiyesi."
+                                      : "Ekstre toplamı ile tanımlı kalemlerin farkı."}
+                                  </span>
+                                ) : (
+                                  <>
+                                    {e.scheduled &&
+                                      can(data.user, "create") && (
+                                        <button
+                                          className="text-button"
+                                          onClick={() =>
+                                            open({
+                                              entity: "event",
+                                              mode: "edit",
+                                              item: e,
+                                              initial: {
+                                                scheduled: false,
+                                                date: data.today,
+                                              },
+                                            })
+                                          }
+                                        >
+                                          Gerçekleşti
+                                        </button>
+                                      )}
+                                    {can(data.user, "edit") &&
+                                      !e.cancelled &&
+                                      !e.managed_parent_id && (
+                                        <button
+                                          className="icon-button"
+                                          aria-label="İşlemi düzenle"
+                                          title="Düzenle"
+                                          onClick={() => startEditing(e)}
+                                        >
+                                          <Pencil size={16} />
+                                        </button>
+                                      )}
                                     <button
                                       className="icon-button"
-                                      aria-label="İşlemi düzenle"
-                                      title="Düzenle"
-                                      onClick={() => startEditing(e)}
-                                    >
-                                      <Pencil size={16} />
-                                    </button>
-                                  )}
-                                  <button
-                                    className="icon-button"
-                                    aria-label="İşlem geçmişi"
-                                    title="Log"
-                                    onClick={(ev) =>
-                                      setBubble({
-                                        event: e,
-                                        anchor: ev.currentTarget,
-                                      })
-                                    }
-                                  >
-                                    <History size={16} />
-                                  </button>
-                                  {can(data.user, "admin") && (
-                                    <button
-                                      className="icon-button danger-text"
-                                      aria-label={
-                                        e.cancelled
-                                          ? "İşlemi geri aç"
-                                          : "İşlemi sil"
-                                      }
-                                      title={e.cancelled ? "Geri aç" : "Sil"}
-                                      onClick={() =>
-                                        open({
-                                          entity: "event",
-                                          mode: "status",
-                                          item: e,
+                                      aria-label="İşlem geçmişi"
+                                      title="Log"
+                                      onClick={(ev) =>
+                                        setBubble({
+                                          event: e,
+                                          anchor: ev.currentTarget,
                                         })
                                       }
                                     >
-                                      {e.cancelled ? (
-                                        <RotateCcw size={16} />
-                                      ) : (
-                                        <Trash2 size={16} />
-                                      )}
+                                      <History size={16} />
                                     </button>
-                                  )}
-                                  {(data.claims || []).some(
-                                    (c) => c.id === e.id,
-                                  ) &&
-                                    can(data.user, "create") && (
-                                      <button
-                                        className="icon-button"
-                                        title="Ödeme / tahsilat"
-                                        aria-label="Ödeme veya tahsilat kaydet"
-                                        onClick={() => {
-                                          const claim = data.claims.find(
-                                            (c) => c.id === e.id,
-                                          );
-                                          open({
-                                            entity: "event",
-                                            lockedPartyId: e.party_id,
-                                            initial: {
-                                              partyId: e.party_id,
-                                              operation:
-                                                e.operation ===
-                                                "customer_return"
-                                                  ? "return_payment"
-                                                  : claim.type === "alacak"
-                                                    ? "collection"
-                                                    : "payment",
-                                              linkedId: e.id,
-                                              amount: String(
-                                                claim.amount_cents / 100,
-                                              ).replace(".", ","),
-                                              description: e.description,
-                                            },
-                                          });
-                                        }}
-                                      >
-                                        <Plus size={16} />
-                                      </button>
-                                    )}
-                                </>
-                              )}
+                                    {can(data.user, "admin") &&
+                                      !e.managed_parent_id && (
+                                        <button
+                                          className="icon-button danger-text"
+                                          aria-label={
+                                            e.cancelled
+                                              ? "İşlemi geri aç"
+                                              : "İşlemi sil"
+                                          }
+                                          title={
+                                            e.cancelled ? "Geri aç" : "Sil"
+                                          }
+                                          onClick={() =>
+                                            open({
+                                              entity: "event",
+                                              mode: "status",
+                                              item: e,
+                                            })
+                                          }
+                                        >
+                                          {e.cancelled ? (
+                                            <RotateCcw size={16} />
+                                          ) : (
+                                            <Trash2 size={16} />
+                                          )}
+                                        </button>
+                                      )}
+                                    {(data.claims || []).some(
+                                      (c) => c.id === e.id,
+                                    ) &&
+                                      can(data.user, "create") && (
+                                        <button
+                                          className="icon-button"
+                                          title="Ödeme / tahsilat"
+                                          aria-label="Ödeme veya tahsilat kaydet"
+                                          onClick={() => {
+                                            const claim = data.claims.find(
+                                              (c) => c.id === e.id,
+                                            );
+                                            open({
+                                              entity: "event",
+                                              lockedPartyId: e.party_id,
+                                              initial: {
+                                                partyId: e.party_id,
+                                                operation:
+                                                  e.operation ===
+                                                  "customer_return"
+                                                    ? "return_payment"
+                                                    : claim.type === "alacak"
+                                                      ? "collection"
+                                                      : "payment",
+                                                linkedId: e.id,
+                                                amount: String(
+                                                  claim.amount_cents / 100,
+                                                ).replace(".", ","),
+                                                description: e.description,
+                                              },
+                                            });
+                                          }}
+                                        >
+                                          <Plus size={16} />
+                                        </button>
+                                      )}
+                                  </>
+                                )}
+                              </div>
                             </div>
-                          </div>
-                        }
-                      </td>
-                    </tr>
-                  )}
-                  {realMonths &&
-                    e.event_date?.slice(0, 7) !==
-                      pageEvents[i + 1]?.event_date?.slice(0, 7) &&
-                    realMonths.has(e.event_date.slice(0, 7)) && (
-                      <MonthSummary
-                        month={realMonths.get(e.event_date.slice(0, 7))}
-                        columns={columns}
-                      />
+                          }
+                        </td>
+                      </tr>
                     )}
-                </React.Fragment>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-      {!events.length && <p className="empty">Bu kapsamda işlem yok.</p>}
-      {!ascending && olderButton}
-      <div className="cari-table-footer">
-        <span>
-          {Math.min(limit, events.length)} / {events.length} hareket
-        </span>
-      </div>
-      {bubble && (
-        <Popover
-          anchor={bubble.anchor}
-          onClose={() => setBubble(null)}
-          label="İşlem geçmişi"
-          className="log-bubble"
-        >
-          <AuditHistory entity="event" id={bubble.event.id} data={data} />
-        </Popover>
-      )}
-    </section>
+                    {realMonths &&
+                      e.event_date?.slice(0, 7) !==
+                        pageEvents[i + 1]?.event_date?.slice(0, 7) &&
+                      realMonths.has(e.event_date.slice(0, 7)) && (
+                        <MonthSummary
+                          month={realMonths.get(e.event_date.slice(0, 7))}
+                          columns={columns}
+                        />
+                      )}
+                  </React.Fragment>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        {!events.length && <p className="empty">Bu kapsamda işlem yok.</p>}
+        {!ascending && olderButton}
+        <div className="cari-table-footer">
+          <span>
+            {Math.min(limit, events.length)} / {events.length} hareket
+          </span>
+        </div>
+        {bubble && (
+          <Popover
+            anchor={bubble.anchor}
+            onClose={() => setBubble(null)}
+            label="İşlem geçmişi"
+            className="log-bubble"
+          >
+            <AuditHistory entity="event" id={bubble.event.id} data={data} />
+          </Popover>
+        )}
+      </section>
+    </div>
   );
 }
 export function SignedAmount({ value, inactive = false }) {
@@ -669,6 +686,15 @@ function EffectDetails({ event: e, gross, party }) {
           {e.cancelled
             ? "İptal edilmiş işlem"
             : "Planlanan işlem · Bakiyeye dahil değil"}
+        </span>
+      )}
+      {party && !inactive && Number(e.excess_payment_cents) > 0 && (
+        <span>
+          Eski borca ek ödeme: <strong>{fmt(e.excess_payment_cents)} TL</strong>{" "}
+          · Toplam kaynak:{" "}
+          <strong>
+            {fmt(Number(e.settled_cents) + Number(e.excess_payment_cents))} TL
+          </strong>
         </span>
       )}
       {party && !inactive && Number(e.settled_cents) > 0 && (

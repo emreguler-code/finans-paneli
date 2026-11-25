@@ -292,7 +292,16 @@ function eventInput(PDO $db, array $b, ?array $old): array
         throw new DomainException("Bu form başka karta kaydedilemez.");
     }
     $settled = in_array($kind, ["Alacak", "Borç"]) ? cents($b, "settled") : 0;
-    if ($settled < 0 || $settled > $n) {
+    if (
+        $settled < 0 ||
+        ($settled > $n &&
+            (empty($b["applyExcess"]) ||
+                !in_array($op, [
+                    "sale",
+                    "purchase_invoice",
+                    "purchase_no_invoice",
+                ])))
+    ) {
         throw new DomainException("Ödenen/tahsil edilen tutar toplamı aşamaz.");
     }
     if ($op === "employee_purchase") {
@@ -441,7 +450,7 @@ function eventInput(PDO $db, array $b, ?array $old): array
         "kind" => $kind,
         "operation" => $op,
         "amount_cents" => $n,
-        "settled_cents" => $op === "employee_expense" ? 0 : $settled,
+        "settled_cents" => $op === "employee_expense" ? 0 : min($settled, $n),
         "event_date" => $date,
         "event_time" => $time,
         "period_date" => $period,
@@ -462,6 +471,89 @@ function eventInput(PDO $db, array $b, ?array $old): array
         "return_mode" => $returnMode,
     ];
 }
+// A controlled child carries only the excess. Parent settlement never exceeds gross.
+// Both records are written inside the caller's locked/idempotent transaction.
+function excessPaymentAmount(PDO $db, int $id): int
+{
+    $q = $db->prepare(
+        "SELECT amount_cents FROM fin_events WHERE request_key=? AND cancelled=0",
+    );
+    $q->execute(["settlement-excess-" . $id]);
+    return (int) ($q->fetchColumn() ?: 0);
+}
+function syncExcessPayment(PDO $db, int $id, array $body, string $reason): void
+{
+    global $actor;
+    $parent = row($db, "fin_events", $id);
+    $key = "settlement-excess-" . $id;
+    $q = $db->prepare("SELECT * FROM fin_events WHERE request_key=?");
+    $q->execute([$key]);
+    $old = $q->fetch() ?: null;
+    if ($old && !array_key_exists("applyExcess", $body)) {
+        throw new DomainException(
+            "Ödeme dağılımını düzenlemek için sayfayı yenileyin.",
+        );
+    }
+    $excess =
+        !empty($body["applyExcess"]) &&
+        in_array($parent["operation"], [
+            "sale",
+            "purchase_invoice",
+            "purchase_no_invoice",
+        ])
+            ? max(0, cents($body, "settled") - $parent["amount_cents"])
+            : 0;
+    if (!$old && !$excess) {
+        return;
+    }
+    $v = [
+        "kind" => $parent["operation"] === "sale" ? "Tahsilat" : "Ödeme",
+        "operation" =>
+            $parent["operation"] === "sale" ? "collection" : "payment",
+        "amount_cents" => $excess ?: $old["amount_cents"] ?? 0,
+        "settled_cents" => 0,
+        "party_id" => $parent["party_id"],
+        "account_id" => $parent["account_id"],
+        "card_id" => $parent["card_id"],
+        "event_date" => $parent["event_date"],
+        "event_time" => $parent["event_time"],
+        "period_date" => $parent["period_date"],
+        "linked_id" => $id,
+        "description" => mb_substr(
+            "Önceki borca ödeme · " . $parent["description"],
+            0,
+            1000,
+        ),
+        "tag" => $parent["tag"],
+        "cancelled" => $excess ? 0 : 1,
+    ];
+    if ($old) {
+        $db->prepare(
+            "UPDATE fin_events SET " .
+                implode(",", array_map(fn($k) => "$k=?", array_keys($v))) .
+                ",version=version+1 WHERE id=?",
+        )->execute([...array_values($v), $old["id"]]);
+        $child = $old["id"];
+    } else {
+        $db->prepare(
+            "INSERT INTO fin_events(request_key," .
+                implode(",", array_keys($v)) .
+                ",created_by) VALUES(" .
+                implode(",", array_fill(0, count($v) + 2, "?")) .
+                ")",
+        )->execute([$key, ...array_values($v), $actor["id"]]);
+        $child = (int) $db->lastInsertId();
+    }
+    audit(
+        $db,
+        "event",
+        (string) $child,
+        $old ? ($excess ? "edit" : "cancel") : "create",
+        $old,
+        row($db, "fin_events", $child),
+        $reason ?: "İşlemle birlikte fazla ödeme dağıtımı",
+    );
+}
 function saveOperation(PDO $db, array $b): array
 {
     global $actor;
@@ -469,6 +561,11 @@ function saveOperation(PDO $db, array $b): array
     permit($id ? "edit" : "create");
     $old = $id ? row($db, "fin_events", $id) : null;
     if ($old) {
+        if (str_starts_with($old["request_key"], "settlement-excess-")) {
+            throw new DomainException(
+                "Bu ödeme bağlı olduğu işlemden düzenlenir.",
+            );
+        }
         versionCheck($old, $b);
         if ($old["cancelled"]) {
             throw new DomainException("İptal edilen kaydı önce geri açın.");
@@ -477,18 +574,22 @@ function saveOperation(PDO $db, array $b): array
     $v = eventInput($db, $b, $old);
     $reason = $id ? field($b, "reason", 1000, true) : "";
     if ($id) {
+        $beforeExcess = excessPaymentAmount($db, $id);
         $db->prepare(
             "UPDATE fin_events SET " .
                 implode(",", array_map(fn($k) => "$k=?", array_keys($v))) .
                 ",version=version+1 WHERE id=?",
         )->execute([...array_values($v), $id]);
+        syncExcessPayment($db, $id, $b, $reason);
         audit(
             $db,
             "event",
             (string) $id,
             "edit",
-            $old,
-            row($db, "fin_events", $id),
+            $old + ["excess_payment_cents" => $beforeExcess],
+            row($db, "fin_events", $id) + [
+                "excess_payment_cents" => excessPaymentAmount($db, $id),
+            ],
             $reason,
         );
         return ["id" => $id];
@@ -563,6 +664,7 @@ function saveOperation(PDO $db, array $b): array
             row($db, "fin_events", $new),
         );
     }
+    syncExcessPayment($db, $ids[0], $b, "");
     return ["id" => $ids[0], "ids" => $ids];
 }
 function saveStatement(PDO $db, array $b): array

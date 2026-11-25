@@ -1,9 +1,15 @@
+import { operations } from "./operations.mjs";
+import { dateLabel } from "./DatePicker";
 import { useState, useEffect } from "react";
 import { api } from "./api";
 import { vehicleTypes, rewardTypes } from "./tracking-utils.mjs";
 import { fmt, roleName } from "./ui";
 import { bankName, PROGRAMS, POS_PROGRAMS } from "./BankCards";
 const fieldLabels = {
+  salary_cents: "Aylık maaş",
+  meal_monthly_cents: "Aylık yemek",
+  automation_start_month: "Hakediş başlangıç ayı",
+  visit_days: "Ziyaret günleri",
   plate: "Plaka",
   owner: "Ruhsat sahibi",
   vin: "Şasi numarası",
@@ -45,6 +51,7 @@ const fieldLabels = {
   operation: "İşlem",
   tag: "Etiket",
   settled_cents: "Peşin tutar",
+  excess_payment_cents: "Eski borca ek ödeme",
   period_date: "Kart dönemi",
   scheduled: "Planlanan işlem",
   payment_purpose: "Ödeme amacı",
@@ -97,6 +104,39 @@ const fieldLabels = {
   password_changed: "Parola değiştirildi",
 };
 function auditValue(k, v, data) {
+  if (k.startsWith("work_calendar:"))
+    return (
+      {
+        morning: "Sabah",
+        evening: "Akşam",
+        weekly_leave: "Haftalık izin",
+        annual_leave: "Yıllık izin",
+        sick_leave: "Hastalık izni",
+      }[v] || "Plan yok"
+    );
+  if (k === "visit_days")
+    return (
+      (v || [])
+        .map(
+          (n) =>
+            [
+              "Pazartesi",
+              "Salı",
+              "Çarşamba",
+              "Perşembe",
+              "Cuma",
+              "Cumartesi",
+              "Pazar",
+            ][n - 1],
+        )
+        .join(", ") || "Tanımlanmadı"
+    );
+  if (k === "operation") return operations[v] || "Diğer işlem";
+  if (k === "return_mode")
+    return v === "later" ? "Sonra öde / tahsil et" : "Cari hesaptan düş";
+  if (k === "scheduled") return Number(v) ? "Planlı" : "Gerçekleşmiş";
+  if (["event_date", "period_date", "due_date", "date"].includes(k))
+    return dateLabel(v) || "—";
   if (k === "type" && vehicleTypes[v]) return vehicleTypes[v];
   if (k === "reward_type") return rewardTypes[v] || v;
   if (k === "participation")
@@ -199,7 +239,18 @@ export function AuditHistory({ entity, id, data }) {
       {logs?.map((l) => {
         const expand = (raw) => {
           const value = JSON.parse(raw) || {};
+          const profile = value.profile_json
+            ? JSON.parse(value.profile_json)
+            : {};
+          const calendar = Object.fromEntries(
+            Object.entries(profile.work_calendar || {}).map(([date, shift]) => [
+              "work_calendar:" + date,
+              shift,
+            ]),
+          );
           return {
+            ...profile,
+            ...calendar,
             ...(value.data_json ? JSON.parse(value.data_json) : {}),
             ...value,
           };
@@ -211,32 +262,57 @@ export function AuditHistory({ entity, id, data }) {
             <strong>
               {{
                 create: "Oluşturuldu",
-                edit: "Düzenlendi",
+                edit: "Değiştirildi",
                 cancel: "İptal edildi",
                 restore: "Geri açıldı",
               }[l.operation] || l.operation}{" "}
               · {l.actor_name}
             </strong>
-            <small>{l.created_at} · Türkiye saati</small>
+            <small>
+              {new Date(
+                l.created_at.replace(" ", "T") +
+                  (/[Z+]$|[+-]\d\d:\d\d$/.test(l.created_at) ? "" : "+03:00"),
+              ).toLocaleString("tr-TR", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                timeZone: "Europe/Istanbul",
+              })}
+            </small>
             {l.reason && <p>Gerekçe: {l.reason}</p>}
-            <dl>
-              {Object.keys({ ...before, ...after })
-                .filter(
-                  (k) =>
-                    fieldLabels[k] &&
-                    JSON.stringify(before[k] ?? "") !==
-                      JSON.stringify(after[k] ?? ""),
-                )
-                .map((k) => (
-                  <div key={k}>
-                    <dt>{fieldLabels[k]}</dt>
-                    <dd>
-                      <span>{auditValue(k, before[k], data)}</span> →{" "}
-                      <strong>{auditValue(k, after[k], data)}</strong>
-                    </dd>
-                  </div>
-                ))}
-            </dl>
+            {l.operation !== "create" && (
+              <dl>
+                {Object.keys({ ...before, ...after })
+                  .filter(
+                    (k) =>
+                      (fieldLabels[k] || k.startsWith("work_calendar:")) &&
+                      !(k === "kind" && before.operation === after.operation) &&
+                      !(k === "category" && after.tag) &&
+                      !(
+                        k === "period_date" &&
+                        before.period_date === before.event_date &&
+                        after.period_date === after.event_date
+                      ) &&
+                      JSON.stringify(before[k] ?? "") !==
+                        JSON.stringify(after[k] ?? ""),
+                  )
+                  .map((k) => (
+                    <div key={k}>
+                      <dt>
+                        {fieldLabels[k] ||
+                          "Çalışma · " +
+                            dateLabel(k.slice("work_calendar:".length))}
+                      </dt>
+                      <dd>
+                        <span>{auditValue(k, before[k], data)}</span> →{" "}
+                        <strong>{auditValue(k, after[k], data)}</strong>
+                      </dd>
+                    </div>
+                  ))}
+              </dl>
+            )}
           </section>
         );
       })}

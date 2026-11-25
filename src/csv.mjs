@@ -2,7 +2,7 @@ export function csvText(columns, rows) {
   const cell = (value) =>
     '"' +
     String(value ?? "")
-      .replace(/^[=+@\-\t\r\n]/, "'$&")
+      .replace(/^[=+@\-\t\r\n]/, typeof value === "number" ? "$&" : "'$&")
       .replaceAll('"', '""') +
     '"';
   return (

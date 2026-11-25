@@ -1,3 +1,8 @@
+import {
+  movementReport,
+  reportRows,
+  downloadReportPdf,
+} from "./movement-report.mjs";
 import { RecordHost } from "./InlineRecords";
 import { matchesChoice } from "./search-query.mjs";
 import { ContentColumns, PageFooter } from "./AppShell";
@@ -234,30 +239,57 @@ export function FinancePages({
       (e) => e.event_date >= selectedDay.from && e.event_date <= selectedDay.to,
     );
   events = sortLedgerEvents(events, sort, { amount, accountLabel });
-  const csv = () =>
+  const exportReport = () =>
+    movementReport({
+      title: party ? "Cari Hesap Ekstresi" : "Hesap Hareketleri",
+      subject: party ? `${party.title || party.name} · ${party.type}` : page,
+      events,
+      accountLabel,
+      allEvents: party
+        ? data.events.filter((e) => e.party_id === party.id)
+        : null,
+      from,
+      to,
+      amount,
+      party: Boolean(party),
+      balance: party ? party.balance_cents : null,
+      balanceLabel: "Güncel cari bakiye",
+      scope: [
+        from && "Başlangıç: " + from,
+        to && "Bitiş: " + to,
+        query && "Arama: " + query,
+        kind !== "Tümü" && "İşlem: " + kind,
+        tag !== "all" && "Etiket: " + tag,
+        person !== "Tümü" && "Ekleyen: " + person,
+        dueFilter !== "all" &&
+          "Vade filtresi: " +
+            (Array.isArray(dueFilter) ? dueFilter : [dueFilter])
+              .map(
+                (value) =>
+                  ({
+                    soon: "Vadesi yaklaşan (7 gün)",
+                    today: "Vadesi bugün",
+                    late: "Gecikmiş",
+                  })[value] || "Seçili vade",
+              )
+              .join(", "),
+        minAmount && "En az: " + minAmount + " TL",
+        maxAmount && "En çok: " + maxAmount + " TL",
+        cancelled && "İptal kayıtları dahil",
+        `${events.length} kayıt · Seçili filtreler`,
+      ]
+        .filter(Boolean)
+        .join(" · "),
+    });
+  const csv = () => {
+    const report = exportReport();
     exportCSV(
       "finans-hareketleri",
-      [
-        "Tarih",
-        "Saat",
-        "Açıklama",
-        "İşlem",
-        "Ekleyen",
-        "Hesap",
-        "Tutar TL",
-        "Durum",
-      ],
-      events.map((e) => [
-        e.event_date,
-        e.event_time,
-        e.description,
-        operationLabel(e),
-        e.creator,
-        accountLabel(e),
-        amount(e) / 100,
-        e.cancelled ? "İptal" : "Aktif",
-      ]),
+      report.csv.columns,
+      reportRows(report, true),
     );
+  };
+  csv.pdf = () => downloadReportPdf("finans-hareketleri", exportReport());
   const summary = party
     ? party.balance_cents
     : data.parties.reduce((s, p) => s + p.balance_cents, 0);
@@ -703,159 +735,169 @@ export function FinancePages({
           initialDate={initialDate}
         />
       ) : cari && !party ? (
-        <section
-          className="panel cari-list party-directory"
-          aria-busy={loading}
-        >
-          <GlobalSearchTools
-            data={data}
-            showActions={false}
-            showFilters={false}
-          />
-          <ListTools
-            {...controls}
-            placement="inline"
-            columnSorting
-            resultCount={partyRows.length}
-            busy={searching}
-            placeholder="Cari adı veya unvan ara"
-            count={
-              [type !== "Tümü", balance !== "Tümü", archived].filter(Boolean)
-                .length
-            }
-            csv={() =>
-              exportCSV(
-                "cari-hesaplar",
-                ["Cari", "Unvan", "Tür", "Bakiye TL"],
-                partyRows.map((p) => [
-                  p.name,
-                  p.title,
-                  p.type,
-                  p.balance_cents / 100,
-                ]),
-              )
-            }
-            sortOptions={[
-              ["name-asc", "Ad: A–Z"],
-              ["name-desc", "Ad: Z–A"],
-              ["balance-desc", "Bakiye: yüksekten düşüğe"],
-              ["balance-asc", "Bakiye: düşükten yükseğe"],
-              ["recent", "Son hareket"],
-            ]}
-          >
-            <label>
-              Tür
-              <select value={type} onChange={(e) => setType(e.target.value)}>
-                <option>Tümü</option>
-                {TYPES.map((t) => (
-                  <option key={t}>{t}</option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Bakiye
-              <select
-                value={balance}
-                onChange={(e) => setBalance(e.target.value)}
-              >
-                {["Tümü", "Alacak", "Borç", "Sıfır"].map((v) => (
-                  <option key={v}>{v}</option>
-                ))}
-              </select>
-            </label>
-            <label className="check-label">
-              <input
-                type="checkbox"
-                checked={archived}
-                onChange={(e) => setArchived(e.target.checked)}
-              />
-              Arşiv dahil
-            </label>
-          </ListTools>
+        <>
           <RecordHost entity="party" />
-          <div className="party-column-head">
-            <span>
-              <SortLabel
-                label="Cari"
-                field="name"
-                sort={sort}
-                onSort={setSort}
-              />
-            </span>
-            <span>
-              <SortLabel
-                label="Tür"
-                field="type"
-                sort={sort}
-                onSort={setSort}
-              />
-            </span>
-            <span>
-              <SortLabel
-                label="Net bakiye"
-                field="balance"
-                sort={sort}
-                onSort={setSort}
-              />
-            </span>
-            <span />
-          </div>
-          <div className="party-rows">
-            {partyRows.map((p) => (
-              <button
-                className="party-row"
-                key={p.id}
-                onClick={() => select(p.id)}
-              >
-                <span className="cari-avatar">
-                  {p.type === "Personel" ? (
-                    <UserRound size={20} />
-                  ) : (
-                    <Users size={20} />
-                  )}
-                </span>
-                <span className="party-name">
-                  <strong>{p.name}</strong>
-                  <small className="mobile-party-type">{p.type}</small>
-                  {p.title && p.title !== p.name && <small>{p.title}</small>}
-                </span>
-                <span className="cari-type party-type" data-type={p.type}>
-                  {p.type}
-                  {!p.active ? " · Arşiv" : ""}
-                </span>
-                <span
-                  className={
-                    "cari-number party-list-balance " + tone(p.balance_cents)
-                  }
-                  aria-label={
-                    (p.balance_cents > 0
-                      ? "Alacak"
-                      : p.balance_cents < 0
-                        ? "Borç"
-                        : "Dengede") +
-                    " " +
-                    fmt(Math.abs(p.balance_cents)) +
-                    " TL"
-                  }
+          <section
+            className="panel cari-list party-directory"
+            aria-busy={loading}
+          >
+            <GlobalSearchTools
+              data={data}
+              showActions={false}
+              showFilters={false}
+            />
+            <ListTools
+              {...controls}
+              placement="inline"
+              columnSorting
+              resultCount={partyRows.length}
+              busy={searching}
+              placeholder="Cari adı veya unvan ara"
+              count={
+                [type !== "Tümü", balance !== "Tümü", archived].filter(Boolean)
+                  .length
+              }
+              csv={() =>
+                exportCSV(
+                  "cari-hesaplar",
+                  ["Cari", "Unvan", "Tür", "Bakiye TL"],
+                  [
+                    ...partyRows.map((p) => [
+                      p.name,
+                      p.title,
+                      p.type,
+                      p.balance_cents / 100,
+                    ]),
+                    [
+                      "Toplam bakiye",
+                      "",
+                      "",
+                      partyRows.reduce((n, p) => n + p.balance_cents, 0) / 100,
+                    ],
+                  ],
+                )
+              }
+              sortOptions={[
+                ["name-asc", "Ad: A–Z"],
+                ["name-desc", "Ad: Z–A"],
+                ["balance-desc", "Bakiye: yüksekten düşüğe"],
+                ["balance-asc", "Bakiye: düşükten yükseğe"],
+                ["recent", "Son hareket"],
+              ]}
+            >
+              <label>
+                Tür
+                <select value={type} onChange={(e) => setType(e.target.value)}>
+                  <option>Tümü</option>
+                  {TYPES.map((t) => (
+                    <option key={t}>{t}</option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Bakiye
+                <select
+                  value={balance}
+                  onChange={(e) => setBalance(e.target.value)}
                 >
-                  {p.balance_cents > 0 ? (
-                    <ArrowUpRight size={16} aria-hidden="true" />
-                  ) : p.balance_cents < 0 ? (
-                    <ArrowDownLeft size={16} aria-hidden="true" />
-                  ) : (
-                    <Dot size={16} aria-hidden="true" />
-                  )}
-                  {fmt(Math.abs(p.balance_cents))} TL
-                </span>
-                <ChevronRight size={16} />
-              </button>
-            ))}
-          </div>
-          {!partyRows.length && <p className="empty">Cari bulunamadı.</p>}
-          <div className="cari-table-footer">
-            <span>{partyRows.length} cari</span>
-          </div>
-        </section>
+                  {["Tümü", "Alacak", "Borç", "Sıfır"].map((v) => (
+                    <option key={v}>{v}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="check-label">
+                <input
+                  type="checkbox"
+                  checked={archived}
+                  onChange={(e) => setArchived(e.target.checked)}
+                />
+                Arşiv dahil
+              </label>
+            </ListTools>
+            <div className="party-column-head">
+              <span>
+                <SortLabel
+                  label="Cari"
+                  field="name"
+                  sort={sort}
+                  onSort={setSort}
+                />
+              </span>
+              <span>
+                <SortLabel
+                  label="Tür"
+                  field="type"
+                  sort={sort}
+                  onSort={setSort}
+                />
+              </span>
+              <span>
+                <SortLabel
+                  label="Net bakiye"
+                  field="balance"
+                  sort={sort}
+                  onSort={setSort}
+                />
+              </span>
+              <span />
+            </div>
+            <div className="party-rows">
+              {partyRows.map((p) => (
+                <button
+                  className="party-row"
+                  key={p.id}
+                  onClick={() => select(p.id)}
+                >
+                  <span className="cari-avatar">
+                    {p.type === "Personel" ? (
+                      <UserRound size={20} />
+                    ) : (
+                      <Users size={20} />
+                    )}
+                  </span>
+                  <span className="party-name">
+                    <strong>{p.name}</strong>
+                    <small className="mobile-party-type">{p.type}</small>
+                    {p.title && p.title !== p.name && <small>{p.title}</small>}
+                  </span>
+                  <span className="cari-type party-type" data-type={p.type}>
+                    {p.type}
+                    {!p.active ? " · Arşiv" : ""}
+                  </span>
+                  <span
+                    className={
+                      "cari-number party-list-balance " + tone(p.balance_cents)
+                    }
+                    aria-label={
+                      (p.balance_cents > 0
+                        ? "Alacak"
+                        : p.balance_cents < 0
+                          ? "Borç"
+                          : "Dengede") +
+                      " " +
+                      fmt(Math.abs(p.balance_cents)) +
+                      " TL"
+                    }
+                  >
+                    {p.balance_cents > 0 ? (
+                      <ArrowUpRight size={16} aria-hidden="true" />
+                    ) : p.balance_cents < 0 ? (
+                      <ArrowDownLeft size={16} aria-hidden="true" />
+                    ) : (
+                      <Dot size={16} aria-hidden="true" />
+                    )}
+                    {fmt(Math.abs(p.balance_cents))} TL
+                  </span>
+                  <ChevronRight size={16} />
+                </button>
+              ))}
+            </div>
+            {!partyRows.length && <p className="empty">Cari bulunamadı.</p>}
+            <div className="cari-table-footer">
+              <span>{partyRows.length} cari</span>
+            </div>
+          </section>
+        </>
       ) : isUsers ? (
         <UsersPage data={data} open={open} />
       ) : (
