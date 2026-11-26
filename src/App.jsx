@@ -1,3 +1,4 @@
+import { SelectControl } from "./SelectControl";
 import { InlineRecord } from "./InlineRecords";
 import { recordTarget } from "./record-target.mjs";
 import { matchesChoice } from "./search-query.mjs";
@@ -498,7 +499,7 @@ export function App({ initialData, onLogout }) {
         onChange={setOverviewRange}
       />
       <label className="select-wrap">
-        <select
+        <SelectControl
           aria-label="Hesap kapsamı"
           value={scope}
           onChange={(e) => setScope(e.target.value)}
@@ -509,7 +510,7 @@ export function App({ initialData, onLogout }) {
               {a.name}
             </option>
           ))}
-        </select>
+        </SelectControl>
         <ChevronDown size={16} />
       </label>
     </div>
@@ -1140,7 +1141,8 @@ export function App({ initialData, onLogout }) {
               >
                 <label>
                   Hesap
-                  <select
+                  <SelectControl
+                    aria-label="Hesap"
                     value={scope}
                     onChange={(e) => setScope(e.target.value)}
                   >
@@ -1150,7 +1152,7 @@ export function App({ initialData, onLogout }) {
                         {a.name}
                       </option>
                     ))}
-                  </select>
+                  </SelectControl>
                 </label>
                 <label>
                   Tarih aralığı
@@ -1172,7 +1174,8 @@ export function App({ initialData, onLogout }) {
                 </label>
                 <label>
                   İşlem
-                  <select
+                  <SelectControl
+                    aria-label="İşlem"
                     value={kind}
                     onChange={(e) => setKind(e.target.value)}
                   >
@@ -1180,7 +1183,7 @@ export function App({ initialData, onLogout }) {
                     {[...new Set(tx.map((t) => t.kind))].map((k) => (
                       <option key={k}>{k}</option>
                     ))}
-                  </select>
+                  </SelectControl>
                 </label>
               </GlobalSearchTools>
             )}

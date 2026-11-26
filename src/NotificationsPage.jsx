@@ -1,3 +1,4 @@
+import { SelectControl } from "./SelectControl";
 import { useState } from "react";
 import { PageHeading } from "./PageLayout";
 import { ListTools, ListActions } from "./ListTools";
@@ -80,7 +81,8 @@ export function NotificationsPage({
       >
         <label>
           Bölüm
-          <select
+          <SelectControl
+            aria-label="Bölüm"
             value={source}
             onChange={(e) => {
               setSource(e.target.value);
@@ -94,29 +96,37 @@ export function NotificationsPage({
                 {label}
               </option>
             ))}
-          </select>
+          </SelectControl>
         </label>
         <label>
           İlgili kayıt
-          <select value={subject} onChange={(e) => setSubject(e.target.value)}>
+          <SelectControl
+            aria-label="İlgili kayıt"
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
+          >
             <option value="all">Tüm kayıtlar</option>
             {options.map(([value, label]) => (
               <option key={value} value={value}>
                 {label}
               </option>
             ))}
-          </select>
+          </SelectControl>
         </label>
         <label>
           Önem
-          <select value={level} onChange={(e) => setLevel(e.target.value)}>
+          <SelectControl
+            aria-label="Önem"
+            value={level}
+            onChange={(e) => setLevel(e.target.value)}
+          >
             <option value="all">Tümü</option>
             {Object.entries(notificationLevels).map(([value, label]) => (
               <option key={value} value={value}>
                 {label}
               </option>
             ))}
-          </select>
+          </SelectControl>
         </label>
         <label>
           Tarih aralığı

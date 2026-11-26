@@ -847,3 +847,11 @@ button:disabled {
   justify-content: center;
   padding: 4px;
 }
+
+.select-wrap:has(.choice-control) {
+  border: 0;
+  padding: 0;
+}
+.select-wrap:has(.choice-control) > svg {
+  display: none;
+}

@@ -1,3 +1,4 @@
+import { SelectControl } from "./SelectControl";
 import {
   movementReport,
   reportRows,
@@ -114,14 +115,15 @@ export function AccountPage({
   const scopeControl = (
     <label>
       Arama kapsamı
-      <select
+      <SelectControl
+        aria-label="Arama kapsamı"
         data-filter-default={detail ? "movements" : "accounts"}
         value={queryScope}
         onChange={(e) => setQueryScope(e.target.value)}
       >
         <option value="accounts">{isCard ? "Kartlar" : "Hesaplar"}</option>
         <option value="movements">Seçili kaydın hareketleri</option>
-      </select>
+      </SelectControl>
     </label>
   );
   const inventory = source
@@ -411,23 +413,31 @@ export function AccountPage({
       </label>
       <label>
         İşlem
-        <select value={kind} onChange={(e) => setKind(e.target.value)}>
+        <SelectControl
+          aria-label="İşlem"
+          value={kind}
+          onChange={(e) => setKind(e.target.value)}
+        >
           <option>Tümü</option>
           {[...new Set(data.events.map(operationLabel))].map((k) => (
             <option key={k}>{k}</option>
           ))}
-        </select>
+        </SelectControl>
       </label>
       <label>
         Etiket
-        <select value={tag} onChange={(e) => setTag(e.target.value)}>
+        <SelectControl
+          aria-label="Etiket"
+          value={tag}
+          onChange={(e) => setTag(e.target.value)}
+        >
           <option value="all">Tümü</option>
           {[...new Set(data.events.map((e) => e.tag || "Genel"))]
             .sort()
             .map((value) => (
               <option key={value}>{value}</option>
             ))}
-        </select>
+        </SelectControl>
       </label>
       <label>
         En az tutar (TL)
@@ -453,7 +463,11 @@ export function AccountPage({
       </label>
       <label>
         Ekleyen kişi
-        <select value={person} onChange={(e) => setPerson(e.target.value)}>
+        <SelectControl
+          aria-label="Ekleyen kişi"
+          value={person}
+          onChange={(e) => setPerson(e.target.value)}
+        >
           <option>Tümü</option>
           <option value="">Önceki kayıt</option>
           {data.users.map((u) => (
@@ -461,7 +475,7 @@ export function AccountPage({
               {u.short_name || u.username}
             </option>
           ))}
-        </select>
+        </SelectControl>
       </label>
       <label>
         Tarih
@@ -600,7 +614,8 @@ export function AccountPage({
                   <div className="statement-controls">
                     <label>
                       Ekstre
-                      <select
+                      <SelectControl
+                        aria-label="Ekstre"
                         value={statement?.id || ""}
                         onChange={(e) => setStatementId(e.target.value)}
                       >
@@ -614,7 +629,7 @@ export function AccountPage({
                             {s.cut_date}
                           </option>
                         ))}
-                      </select>
+                      </SelectControl>
                     </label>
                     {can(data.user, "edit") && (
                       <>

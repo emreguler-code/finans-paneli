@@ -1,3 +1,4 @@
+import { SelectControl } from "./SelectControl";
 import { RecordHost } from "./InlineRecords";
 import { useState } from "react";
 import { Pencil } from "lucide-react";
@@ -37,22 +38,30 @@ export function UsersPage({ data, open }) {
         >
           <label>
             Rol
-            <select value={role} onChange={(e) => setRole(e.target.value)}>
+            <SelectControl
+              aria-label="Rol"
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+            >
               <option>Tümü</option>
               {Object.entries(roleName).map(([key, label]) => (
                 <option key={key} value={key}>
                   {label}
                 </option>
               ))}
-            </select>
+            </SelectControl>
           </label>
           <label>
             Durum
-            <select value={status} onChange={(e) => setStatus(e.target.value)}>
+            <SelectControl
+              aria-label="Durum"
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+            >
               <option>Tümü</option>
               <option value="active">Aktif</option>
               <option value="inactive">Pasif</option>
-            </select>
+            </SelectControl>
           </label>
         </ListTools>
         {users.map((u) => (

@@ -219,9 +219,8 @@ const fmt = (n) =>
     await totals(row, month);
   }
   await shot("reports-october-desktop");
-  await p
-    .getByRole("combobox", { name: "Grafik dönemi", exact: true })
-    .selectOption("Haftalık");
+  await p.getByRole("combobox", { name: "Grafik dönemi", exact: true }).click();
+  await p.getByRole("option", { name: "Haftalık", exact: true }).click();
   ok(
     "Weekly chart renders",
     (await p.locator(".report-chart .recharts-bar-rectangle").count()) > 0,
@@ -337,12 +336,12 @@ const fmt = (n) =>
             ),
         );
         const options = await p
-          .locator(".statement-controls select option")
+          .locator(".statement-controls select.choice-validation option")
           .count();
         ok(c.name + " historical statements available", options >= 7);
         await shot("statement-" + c.id);
         await p
-          .locator(".statement-controls select")
+          .locator(".statement-controls select.choice-validation")
           .selectOption(String(c.statements[0].id));
         ok(
           c.name + " historical statement opens",

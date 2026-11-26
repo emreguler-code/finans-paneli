@@ -680,6 +680,7 @@ export function EventForm({ context, data, onClose, onState, notify }) {
                   <label className="cari-field">
                     Aktarım türü
                     <SelectControl
+                      aria-label="Aktarım türü"
                       modern={context.inline && Boolean(party)}
                       value={f.operation}
                       onChange={(ev) => change("operation", ev.target.value)}

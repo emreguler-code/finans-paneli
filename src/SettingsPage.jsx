@@ -1,3 +1,4 @@
+import { SelectControl } from "./SelectControl";
 import { ContentColumns } from "./AppShell";
 import { useEffect, useRef, useState } from "react";
 import { DatabaseBackup, Download, Upload, RotateCcw } from "lucide-react";
@@ -142,14 +143,18 @@ export function SettingsPage({ data, notify }) {
       >
         <label>
           Yedek türü
-          <select value={kind} onChange={(e) => setKind(e.target.value)}>
+          <SelectControl
+            aria-label="Yedek türü"
+            value={kind}
+            onChange={(e) => setKind(e.target.value)}
+          >
             <option value="all">Tümü</option>
             {Object.entries(kinds).map(([value, label]) => (
               <option key={value} value={value}>
                 {label}
               </option>
             ))}
-          </select>
+          </SelectControl>
         </label>
         <label>
           Tarih aralığı

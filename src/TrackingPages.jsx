@@ -1,3 +1,4 @@
+import { SelectControl } from "./SelectControl";
 import { useNavigation } from "./Navigation";
 import { RecordHost } from "./InlineRecords";
 import { VehiclesPage } from "./VehiclesPage";
@@ -118,7 +119,11 @@ function CampaignsPage({ data, open }) {
       >
         <label>
           Durum
-          <select value={status} onChange={(e) => setStatus(e.target.value)}>
+          <SelectControl
+            aria-label="Durum"
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+          >
             {[
               ["all", "Tümü"],
               ["active", "Aktif"],
@@ -131,18 +136,22 @@ function CampaignsPage({ data, open }) {
                 {label}
               </option>
             ))}
-          </select>
+          </SelectControl>
         </label>
         <label>
           Kart
-          <select value={card} onChange={(e) => setCard(e.target.value)}>
+          <SelectControl
+            aria-label="Kart"
+            value={card}
+            onChange={(e) => setCard(e.target.value)}
+          >
             <option value="all">Tüm kartlar</option>
             {data.cards.map((c) => (
               <option value={c.id} key={c.id}>
                 {c.name}
               </option>
             ))}
-          </select>
+          </SelectControl>
         </label>
       </ListTools>
 
@@ -375,7 +384,11 @@ function CampaignsPage({ data, open }) {
         <div className="tracking-recommendation-fields">
           <label>
             Tedarikçi
-            <select value={party} onChange={(e) => setParty(e.target.value)}>
+            <SelectControl
+              aria-label="Tedarikçi"
+              value={party}
+              onChange={(e) => setParty(e.target.value)}
+            >
               <option value="">Seçin</option>
               {data.parties
                 .filter((p) => p.type === "Tedarikçi")
@@ -384,7 +397,7 @@ function CampaignsPage({ data, open }) {
                     {p.name}
                   </option>
                 ))}
-            </select>
+            </SelectControl>
           </label>
           <label>
             Harcama tutarı (TL)
@@ -398,7 +411,11 @@ function CampaignsPage({ data, open }) {
           </label>
           <label>
             İşlem etiketi
-            <select value={tag} onChange={(e) => setTag(e.target.value)}>
+            <SelectControl
+              aria-label="İşlem etiketi"
+              value={tag}
+              onChange={(e) => setTag(e.target.value)}
+            >
               {[
                 ...new Set([
                   "Genel",
@@ -408,7 +425,7 @@ function CampaignsPage({ data, open }) {
               ].map((t) => (
                 <option key={t}>{t}</option>
               ))}
-            </select>
+            </SelectControl>
           </label>
         </div>
         <p className="muted">

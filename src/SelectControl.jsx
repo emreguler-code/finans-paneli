@@ -13,7 +13,7 @@ export function SelectControl({ modern = true, children, ...props }) {
     )
     .filter((child) => child?.type === "option")
     .map((child) => ({
-      value: String(child.props.value ?? ""),
+      value: String(child.props.value ?? child.props.children ?? ""),
       label: child.props.children,
       disabled: child.props.disabled,
     }));
@@ -21,7 +21,11 @@ export function SelectControl({ modern = true, children, ...props }) {
   const change = (value) =>
     props.onChange?.({ target: { value }, currentTarget: { value } });
   return (
-    <span className="choice-control" data-modern={modern}>
+    <span
+      className={"choice-control " + (props.className || "")}
+      style={props.style}
+      data-modern={modern}
+    >
       <Select.Root
         value={":" + value}
         onValueChange={(next) => change(next.slice(1))}

@@ -1,3 +1,4 @@
+import { SelectControl } from "./SelectControl";
 import {
   movementReport,
   reportRows,
@@ -400,7 +401,11 @@ export function FinancePages({
     >
       <label>
         İşlem
-        <select value={kind} onChange={(e) => setKind(e.target.value)}>
+        <SelectControl
+          aria-label="İşlem"
+          value={kind}
+          onChange={(e) => setKind(e.target.value)}
+        >
           <option>Tümü</option>
           {[
             "Faturalı Alış",
@@ -419,23 +424,28 @@ export function FinancePages({
           ].map((k) => (
             <option key={k}>{k}</option>
           ))}
-        </select>
+        </SelectControl>
       </label>
       <label>
         Etiket
-        <select value={tag} onChange={(e) => setTag(e.target.value)}>
+        <SelectControl
+          aria-label="Etiket"
+          value={tag}
+          onChange={(e) => setTag(e.target.value)}
+        >
           <option value="all">Tümü</option>
           {[...new Set(data.events.map((e) => e.tag || "Genel"))]
             .sort()
             .map((value) => (
               <option key={value}>{value}</option>
             ))}
-        </select>
+        </SelectControl>
       </label>
       {!party && (
         <label>
           Cari
-          <select
+          <SelectControl
+            aria-label="Cari"
             value={filterParty}
             onChange={(e) => setFilterParty(e.target.value)}
           >
@@ -445,7 +455,7 @@ export function FinancePages({
                 {p.name}
               </option>
             ))}
-          </select>
+          </SelectControl>
         </label>
       )}
       <label>
@@ -472,7 +482,11 @@ export function FinancePages({
       </label>
       <label>
         Ekleyen kişi
-        <select value={person} onChange={(e) => setPerson(e.target.value)}>
+        <SelectControl
+          aria-label="Ekleyen kişi"
+          value={person}
+          onChange={(e) => setPerson(e.target.value)}
+        >
           <option>Tümü</option>
           <option value="">Önceki kayıt</option>
           {data.users.map((u) => (
@@ -480,11 +494,15 @@ export function FinancePages({
               {u.short_name || u.username}
             </option>
           ))}
-        </select>
+        </SelectControl>
       </label>
       <label>
         Hesap
-        <select value={account} onChange={(e) => setAccount(e.target.value)}>
+        <SelectControl
+          aria-label="Hesap"
+          value={account}
+          onChange={(e) => setAccount(e.target.value)}
+        >
           <option>Tümü</option>
           {data.accounts.map((a) => (
             <option key={a.id} value={a.id}>
@@ -496,7 +514,7 @@ export function FinancePages({
               {c.name} · Kart
             </option>
           ))}
-        </select>
+        </SelectControl>
       </label>
       <label>
         Tarih aralığı
@@ -517,7 +535,8 @@ export function FinancePages({
         <>
           <label>
             Vade
-            <select
+            <SelectControl
+              aria-label="Vade"
               value={duePresence}
               onChange={(e) => setDuePresence(e.target.value)}
             >
@@ -530,11 +549,12 @@ export function FinancePages({
                   {l}
                 </option>
               ))}
-            </select>
+            </SelectControl>
           </label>
           <label>
             Kapama durumu
-            <select
+            <SelectControl
+              aria-label="Kapama durumu"
               value={dueClosure}
               onChange={(e) => setDueClosure(e.target.value)}
             >
@@ -548,11 +568,12 @@ export function FinancePages({
                   {l}
                 </option>
               ))}
-            </select>
+            </SelectControl>
           </label>
           <label>
             Vade durumu
-            <select
+            <SelectControl
+              aria-label="Vade durumu"
               value={dueFilter}
               onChange={(e) => setDueFilter(e.target.value)}
             >
@@ -566,7 +587,7 @@ export function FinancePages({
                   {l}
                 </option>
               ))}
-            </select>
+            </SelectControl>
           </label>
         </>
       )}
@@ -787,23 +808,28 @@ export function FinancePages({
             >
               <label>
                 Tür
-                <select value={type} onChange={(e) => setType(e.target.value)}>
+                <SelectControl
+                  aria-label="Tür"
+                  value={type}
+                  onChange={(e) => setType(e.target.value)}
+                >
                   <option>Tümü</option>
                   {TYPES.map((t) => (
                     <option key={t}>{t}</option>
                   ))}
-                </select>
+                </SelectControl>
               </label>
               <label>
                 Bakiye
-                <select
+                <SelectControl
+                  aria-label="Bakiye"
                   value={balance}
                   onChange={(e) => setBalance(e.target.value)}
                 >
                   {["Tümü", "Alacak", "Borç", "Sıfır"].map((v) => (
                     <option key={v}>{v}</option>
                   ))}
-                </select>
+                </SelectControl>
               </label>
               <label className="check-label">
                 <input

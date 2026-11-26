@@ -1,3 +1,4 @@
+import { SelectControl } from "./SelectControl";
 import { RecordHost } from "./InlineRecords";
 import { matchesChoice } from "./search-query.mjs";
 import { ContentColumns } from "./AppShell";
@@ -285,7 +286,11 @@ export function PaymentPlan({
           >
             <label>
               Tür
-              <select value={type} onChange={(e) => setType(e.target.value)}>
+              <SelectControl
+                aria-label="Tür"
+                value={type}
+                onChange={(e) => setType(e.target.value)}
+              >
                 {[
                   "Tümü",
                   "Cari ödeme",
@@ -298,11 +303,15 @@ export function PaymentPlan({
                 ].map((v) => (
                   <option key={v}>{v}</option>
                 ))}
-              </select>
+              </SelectControl>
             </label>
             <label>
               Kart / hesap
-              <select value={scope} onChange={(e) => setScope(e.target.value)}>
+              <SelectControl
+                aria-label="Kart / hesap"
+                value={scope}
+                onChange={(e) => setScope(e.target.value)}
+              >
                 <option>Tümü</option>
                 {data.accounts
                   .filter((x) => x.active)
@@ -318,18 +327,22 @@ export function PaymentPlan({
                       {x.name} · Kart
                     </option>
                   ))}
-              </select>
+              </SelectControl>
             </label>
             <label>
               Cari
-              <select value={party} onChange={(e) => setParty(e.target.value)}>
+              <SelectControl
+                aria-label="Cari"
+                value={party}
+                onChange={(e) => setParty(e.target.value)}
+              >
                 <option value="all">Tüm cariler ve diğer kaynaklar</option>
                 {data.parties.map((p) => (
                   <option key={p.id} value={p.id}>
                     {p.name}
                   </option>
                 ))}
-              </select>
+              </SelectControl>
             </label>
           </ListTools>
           <div className="plan-controls">

@@ -1,3 +1,4 @@
+import { SelectControl } from "./SelectControl";
 import { useEffect, useState } from "react";
 import { ListTools } from "./ListTools";
 import { FloatingPanel } from "./FloatingPanel";
@@ -208,7 +209,8 @@ export function GlobalSearchPage({ data }) {
       >
         <label>
           Kategori
-          <select
+          <SelectControl
+            aria-label="Kategori"
             value={category}
             onChange={(e) =>
               nav.navigate({ ...nav.route, category: e.target.value })
@@ -220,7 +222,7 @@ export function GlobalSearchPage({ data }) {
                 {label} ({results[key].length})
               </option>
             ))}
-          </select>
+          </SelectControl>
         </label>
         <label className="check-label">
           <input

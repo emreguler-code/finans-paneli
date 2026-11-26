@@ -17,6 +17,8 @@ Birlikte açılıp incelenen karşılaştırmalar: docs/evidence/1.30.0/form-com
 
 - P2: son ek kontrolde boş grafiğin flex-basis değeri height değerini eziyordu. Boş duruma özel 160 px flex-basis tanımlandı; yüksekliği 180 px altında tutan kabul testi eklendi. Yeni 01-overview.png boş grafik yüksekliğini doğrular.
 
+- P2: metadata form kartı hem kendi alt marjını hem kabuk aralığını alarak çift boşluk üretiyordu. Kendi gap değerini yöneten cari/hesap/kart sütunlarında fazladan kart alt marjı kaldırıldı; normal blok akışındaki araç kartı tek standart aralığını korur. Yeni hesap/kart/araç/cari kabulüne gerçek kartlar arası mesafe ölçümü eklendi. Tüm form yüzeyleri kendi inline-size container'ı üzerinden daralır; 19-profile-wide.png dar yardımcı sütunda alanların okunabilir kaldığını gösterir.
+
 ## Beş zorunlu yüzey
 
 - Font/tipografi: yerel Inter ve mevcut metin hiyerarşisi korunmuş; tutar/etiketler okunuyor. Mobil giriş ölçüsü sözleşmeye uygun; uzun metin kontrollü sarılıyor.

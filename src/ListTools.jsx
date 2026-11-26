@@ -1,3 +1,4 @@
+import { SelectControl } from "./SelectControl";
 import { FileText } from "lucide-react";
 import { SmartSearch } from "./SmartSearch";
 import { Children, isValidElement, useLayoutEffect, useState } from "react";
@@ -27,7 +28,7 @@ function fieldsIn(node, fields = [], path = "f", label = "") {
           ? p.checked
           : p.value;
       const options =
-        child.type === "select"
+        child.type === "select" || child.type === SelectControl
           ? Children.toArray(p.children).flatMap((x) =>
               isValidElement(x) && x.type === "option"
                 ? [

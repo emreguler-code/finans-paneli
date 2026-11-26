@@ -121,6 +121,7 @@
   color: var(--accent);
 }
 .layout-shell .entry-inline {
+  container-type: inline-size;
   width: 100%;
   min-width: 0;
   padding: 0;
@@ -929,14 +930,21 @@
   }
 }
 
-.record-inline-host:not(:empty):not(.party-context .record-inline-host):not(
-    .ledger-action-row .record-inline-host
+.record-inline-host:not(:empty):not(
+    :where(
+      .party-context .record-inline-host,
+      .ledger-action-row .record-inline-host
+    )
   ) {
   border: 1px solid var(--line);
   border-radius: 12px;
   background: var(--surface-raised);
   padding: 16px;
   margin-bottom: var(--shell-section-gap);
+}
+.party-main > .record-inline-host:not(:empty),
+.account-main > .record-inline-host:not(:empty) {
+  margin-bottom: 0;
 }
 .layout-shell
   .record-inline-host:not(.ledger-action-row .record-inline-host)

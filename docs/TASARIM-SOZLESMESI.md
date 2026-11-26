@@ -26,7 +26,7 @@ Finansal formda üstte Yeni işlem/İşlemi düzenle ve doğrudan işlem seçene
 
 Sağdaki İşlemin etkisi alanında etiket solda, para sağda, sonuç bakiye daha belirgindir. İç yatay bölücüler yoktur; ana formdan tek ayırıcıyla ayrılabilir. Vazgeç ve Kaydet burada yer alır. Mobilde etki/eylem kısa alt gruptur. Metadata formlarına sahte finansal etki eklenmez; aynı düğmeler ve alan sistemi kullanılır. Oluşturmada Kaydet, finansal düzenlemede Güncelle, beklerken Kaydediliyor…; bağlam başlıkta açıklanır.
 
-Radix Select ortak seçim altyapısıdır; görünümü ortak tokenlarla oluşturulur. Yerel FormData/doğrulama korunur. Serbest etiket ve banka araması gerçek combobox görevini korur; bunlar basit seçim menüsüyle karıştırılmaz. Klavye, odak dönüşü, Escape ve ekran sınırlarına bağlı portal davranışı doğrulanır.
+Radix Select form ve sayfa araçlarındaki ortak seçim altyapısıdır; takvimin kendi iç ay/yıl denetimleri bileşene özgü native kontroller olarak kalır. Görünümü ortak tokenlarla oluşturulur. Yerel FormData/doğrulama korunur. Serbest etiket ve banka araması gerçek combobox görevini korur; bunlar basit seçim menüsüyle karıştırılmaz. Klavye, odak dönüşü, Escape ve ekran sınırlarına bağlı portal davranışı doğrulanır.
 
 İşlem seçilmeden işlem ek bilgileri gösterilmez. Zorunlu boş alan ana akışta görünür veya ilgili bölüm açık gelir; kısa vurgu reduced-motion tercihini gözetir. İsteğe bağlı ayrıntı varsayılan kapalıdır; düzenlemede mevcut ilgili veri gizlenerek kaybolmaz. İşlem tarihi başlangıçta ikon, seçim sonrası kısa tarih olabilir; saat aynı pencerededir. Dokunulmamış yeni saat kayıt anındaki uygulama saati; düzenlemede eski saat korunur. Aynı takvim tetikleyicisi tekrar tıklanınca kapanır.
 

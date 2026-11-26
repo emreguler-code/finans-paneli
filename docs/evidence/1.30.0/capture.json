@@ -5,10 +5,6 @@
     "url": "http://127.0.0.1:4320/#/ozet",
     "controls": [
       {
-        "text": "Kredi kartları",
-        "height": 45
-      },
-      {
         "text": "Araçlarım",
         "height": 45
       },
@@ -58,6 +54,10 @@
       },
       {
         "text": "1 Kas 2026 – 30 Kas 2026",
+        "height": 44
+      },
+      {
+        "text": "Tüm hesaplar",
         "height": 44
       },
       {
@@ -1365,10 +1365,6 @@
     "url": "http://127.0.0.1:4320/#/raporlar",
     "controls": [
       {
-        "text": "Kredi kartları",
-        "height": 45
-      },
-      {
         "text": "Araçlarım",
         "height": 45
       },
@@ -1407,6 +1403,10 @@
       {
         "text": "Bildirimleri aç",
         "height": 32
+      },
+      {
+        "text": "Günlük",
+        "height": 44
       },
       {
         "text": "Yeni işlem ekle",

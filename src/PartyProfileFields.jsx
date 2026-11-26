@@ -1,3 +1,4 @@
+import { SelectControl } from "./SelectControl";
 import { istanbulDay } from "./current-day.mjs";
 import { MoneyInput } from "./MoneyInput";
 import { formatMoneyInput, normalizeMoney } from "./list-utils.mjs";
@@ -129,7 +130,7 @@ export function PartyProfileFields({ form, change, data }) {
             {weekDates(planWeek).map((date, i) => (
               <label className="cari-field" key={date}>
                 {weekdays[i]} · {dateLabel(date)}
-                <select
+                <SelectControl
                   aria-label={weekdays[i] + " planı"}
                   value={p.work_calendar?.[date] || ""}
                   onChange={(e) => {
@@ -145,7 +146,7 @@ export function PartyProfileFields({ form, change, data }) {
                       {label}
                     </option>
                   ))}
-                </select>
+                </SelectControl>
               </label>
             ))}
           </div>

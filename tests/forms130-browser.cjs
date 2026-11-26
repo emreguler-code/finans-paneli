@@ -703,6 +703,24 @@ const server = http.createServer((req, res) => {
                 .innerText()
             ).trim().length > 2,
         );
+        ok(
+          entity + " form spacing is owned once by the shared shell",
+          await metadata.evaluate((node) => {
+            const host = node.closest(".record-inline-host");
+            if (!host) return false;
+            let next = host.nextElementSibling;
+            while (next && next.getBoundingClientRect().height < 1)
+              next = next.nextElementSibling;
+            return (
+              next &&
+              Math.abs(
+                next.getBoundingClientRect().top -
+                  host.getBoundingClientRect().bottom -
+                  24,
+              ) < 2
+            );
+          }),
+        );
         await p.setViewportSize({ width: 390, height: 844 });
         ok(
           entity + " metadata fits mobile",

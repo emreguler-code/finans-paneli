@@ -6,7 +6,7 @@
 
 Tarihsel belgeler birbiriyle çelişen tasarım kuralları taşıyor, formlar aynı ölçüleri farklı hizalarda kullanıyordu. Geçerli kurallar TASARIM-SOZLESMESI.md içinde tekleştirildi. Eski iki tasarım belgesi bu kaynağa yönlenir; önceki içerikleri ve AGENTS sürüm tarihçesi docs/tarihce altında korunur. AGENTS güncel çalışma/güvenlik/doğrulama kurallarını taşır.
 
-Ortak SelectControl Radix UI Select kullanır. Klavye, typeahead, portal ve odak dönüşü kütüphaneden gelir; yerel select aynası FormData ve zorunluluk doğrulamasını korur. Radix'in iç form kontrolü taslak karşılaştırmasına ikinci kayıt olarak alınmaz. Doğrulama görünür tetikleyiciyi işaretler/odaklar; Escape açık menüyü kapatırken taslağı korur.
+Ortak SelectControl form ve sayfa araçlarında Radix UI Select kullanır; genel bakış, rapor, hesap/kart, kullanıcı, bildirim ve ayar seçimleri aynı altyapıya taşınır. Takvimin kendi ay/yıl denetimleri özel bileşen olarak korunur. Klavye, typeahead, portal ve odak dönüşü kütüphaneden gelir; yerel select aynası FormData ve zorunluluk doğrulamasını korur. Radix'in iç form kontrolü taslak karşılaştırmasına ikinci kayıt olarak alınmaz. Doğrulama görünür tetikleyiciyi işaretler/odaklar; Escape açık menüyü kapatırken taslağı korur.
 
 Finansal işlem formunda başlık/işlem seçenekleri merkezlenir; Açıklama → Etiket → Tutar ortak giriş satırıdır. Etiket ve kontrol hatları, 44 px yükseklik ve CSS Grid/subgrid paylaşılır. Ek bilgiler, kaynak ve finansal anlamlar korunur. Etki özetindeki iç yatay çizgiler kaldırılır; rakamlar sağa hizalıdır. Mobilde tekrarlanan mevcut bakiye gizlenir, sonuç varsa korunur; kimlik ve form daha kompakt olur.
 

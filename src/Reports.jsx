@@ -1,3 +1,4 @@
+import { SelectControl } from "./SelectControl";
 import { SummaryBar } from "./PageLayout";
 import { useState } from "react";
 import {
@@ -90,14 +91,14 @@ export function Reports({ events, data, onDay, selectedDay, onClearDay }) {
             <h2>Nakit akışı</h2>
             <p>Bir sütuna tıklayarak hareketleri incele.</p>
           </div>
-          <select
+          <SelectControl
             aria-label="Grafik dönemi"
             value={group}
             onChange={(e) => setGroup(e.target.value)}
           >
             <option>Günlük</option>
             <option>Haftalık</option>
-          </select>
+          </SelectControl>
         </div>
         {chart.length ? (
           <div className="report-chart">

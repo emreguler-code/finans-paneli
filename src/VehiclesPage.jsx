@@ -1,3 +1,4 @@
+import { SelectControl } from "./SelectControl";
 import { RecordHost } from "./InlineRecords";
 import { matchesChoice, selectedValues } from "./search-query.mjs";
 import { ContentColumns } from "./AppShell";
@@ -352,7 +353,8 @@ export function VehiclesPage({ data, open, initialRecord, onNotifications }) {
           <>
             <label>
               Kayıt türü
-              <select
+              <SelectControl
+                aria-label="Kayıt türü"
                 value={type}
                 onChange={(e) => {
                   setType(e.target.value);
@@ -366,7 +368,7 @@ export function VehiclesPage({ data, open, initialRecord, onNotifications }) {
                     {label}
                   </option>
                 ))}
-              </select>
+              </SelectControl>
             </label>
             <label>
               Tarih aralığı
