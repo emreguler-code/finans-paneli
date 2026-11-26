@@ -405,6 +405,7 @@
 
 /* Empty content uses one compact rhythm across charts and previews. */
 .layout-shell .chart.is-empty {
+  flex: 0 0 160px;
   height: 160px;
   min-height: 160px;
 }

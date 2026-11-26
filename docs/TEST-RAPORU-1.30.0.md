@@ -6,7 +6,7 @@
 
 - Node 26.13.1 / npm 12.2.2 ile npm test: lint, proje genelinde Prettier, üretim derlemesi, 92 birim ve 4 worker testi başarılı.
 - Finansal API 206, migrasyon 34, yedekleme 77 kontrol başarılı.
-- forms130-browser: Chromium ve WebKit'te 87'şer kontrol başarılı. Alan sırası/hattı/yüksekliği, çizgisiz özet, zorunlu kaynak odağı, Radix Escape davranışı, taslak, profil ve mobil metadata kapsanır.
+- forms130-browser: Chromium ve WebKit'te 88'er kontrol başarılı. Alan sırası/hattı/yüksekliği, çizgisiz özet, zorunlu kaynak odağı, Radix Escape davranışı, taslak, profil ve mobil metadata kapsanır.
 - Yerel geniş browser koşusu Chromium'da başarılı. Demo uzlaştırması 715 kontrol ve tarayıcı kontrolleriyle başarılı.
 - Paketli kurulum: 1.25.0 üzerine ZIP bindirme, config/eski varlıkların korunması ve başlangıç referansları başarılı.
 - Mobil geniş koşu Chromium/WebKit aşamaları başarılı; yerel Firefox profil sınırı aşağıdadır.

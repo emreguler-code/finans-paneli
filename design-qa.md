@@ -15,6 +15,8 @@ Birlikte açılıp incelenen karşılaştırmalar: docs/evidence/1.30.0/form-com
 - P2: boş/tekrarlanan mobil önizleme ve büyük kimlik listeyi aşağı itiyordu. Kimlik sadeleştirildi, etiket/tutar aynı satıra alındı, sonuç yokken tekrarlanan mevcut bakiye kaldırıldı; boş koşul grubu yer ayırmıyor. Son kanıt mobile-comparison.png: Kaydet ve hareket listesinin başlangıcı aynı viewport'ta erişilebilir.
 - P2: üç metrikli özet iki satırda boş hücre bırakıyordu. Özet kırılımı yardımcı sütundan ayrıldı; 18-plan.png içinde üç metrik bir satırda.
 
+- P2: son ek kontrolde boş grafiğin flex-basis değeri height değerini eziyordu. Boş duruma özel 160 px flex-basis tanımlandı; yüksekliği 180 px altında tutan kabul testi eklendi. Yeni 01-overview.png boş grafik yüksekliğini doğrular.
+
 ## Beş zorunlu yüzey
 
 - Font/tipografi: yerel Inter ve mevcut metin hiyerarşisi korunmuş; tutar/etiketler okunuyor. Mobil giriş ölçüsü sözleşmeye uygun; uzun metin kontrollü sarılıyor.

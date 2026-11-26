@@ -716,6 +716,14 @@ const server = http.createServer((req, res) => {
           .click();
         await p.setViewportSize({ width: 1440, height: 1000 });
       }
+      await p.goto(base + "/#/ozet");
+      await p.locator(".chart.is-empty").waitFor();
+      ok(
+        "Empty cashflow chart stays compact despite flex sizing",
+        await p
+          .locator(".chart.is-empty")
+          .evaluate((node) => node.getBoundingClientRect().height <= 180),
+      );
       await p.clock.install({ time: new Date("2026-11-29T20:59:50Z") });
       await p.goto(base + "/#/cariler/4");
       await p.locator(".week-day").first().waitFor();
