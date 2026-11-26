@@ -1,150 +1,85 @@
-import { Children, useId, useRef, useState, useEffect } from "react";
-import { Check, ChevronDown } from "lucide-react";
-import { FloatingPanel } from "./FloatingPanel";
-// Native form participation plus an anchored, keyboard-operated listbox.
-export function SelectControl({ modern = false, children, ...props }) {
-  const [open, setOpen] = useState(false),
-    [index, setIndex] = useState(0),
-    anchor = useRef(null),
-    id = useId();
-  useEffect(() => {
-    if (open)
-      document
-        .getElementById(id + "-" + index)
-        ?.scrollIntoView({ block: "nearest" });
-  }, [open, index, id]);
-  if (!modern) return <select {...props}>{children}</select>;
+import { Children } from "react";
+import * as Select from "@radix-ui/react-select";
+import { Check, ChevronDown, ChevronUp } from "lucide-react";
+
+// The native mirror preserves FormData and browser constraint validation.
+// Radix owns keyboard navigation, typeahead, focus return and portal positioning.
+export function SelectControl({ modern = true, children, ...props }) {
   const options = Children.toArray(children)
     .flatMap((child) =>
       child?.type === "optgroup"
         ? Children.toArray(child.props.children)
         : [child],
     )
-    .filter((c) => c?.type === "option")
-    .map((c) => ({
-      value: String(c.props.value ?? ""),
-      label: c.props.children,
-      disabled: c.props.disabled,
+    .filter((child) => child?.type === "option")
+    .map((child) => ({
+      value: String(child.props.value ?? ""),
+      label: child.props.children,
+      disabled: child.props.disabled,
     }));
-  const selected = options.findIndex(
-    (o) => o.value === String(props.value ?? ""),
-  );
-  const choose = (i) => {
-    const option = options[i];
-    if (!option || option.disabled) return;
-    props.onChange?.({
-      target: { value: option.value },
-      currentTarget: { value: option.value },
-    });
-    setOpen(false);
-    anchor.current?.focus({ preventScroll: true });
-  };
-  const label =
-    props["aria-label"] ||
-    (typeof props.children === "string" ? props.children : undefined);
+  const value = String(props.value ?? props.defaultValue ?? "");
+  const change = (value) =>
+    props.onChange?.({ target: { value }, currentTarget: { value } });
   return (
-    <span className="choice-control">
-      <button
-        ref={anchor}
-        type="button"
-        role="combobox"
-        className="choice-trigger"
-        aria-label={label}
-        aria-expanded={open}
-        aria-haspopup="listbox"
-        aria-controls={open ? id : undefined}
-        aria-activedescendant={open ? id + "-" + index : undefined}
+    <span className="choice-control" data-modern={modern}>
+      <Select.Root
+        value={":" + value}
+        onValueChange={(next) => change(next.slice(1))}
         disabled={props.disabled}
-        onClick={() => {
-          setIndex(Math.max(0, selected));
-          setOpen(!open);
-        }}
-        onKeyDown={(e) => {
-          if (["ArrowDown", "ArrowUp", "Home", "End"].includes(e.key)) {
-            e.preventDefault();
-            setOpen(true);
-            setIndex((i) =>
-              e.key === "Home"
-                ? 0
-                : e.key === "End"
-                  ? options.length - 1
-                  : Math.max(
-                      0,
-                      Math.min(
-                        options.length - 1,
-                        open
-                          ? i + (e.key === "ArrowDown" ? 1 : -1)
-                          : Math.max(0, selected),
-                      ),
-                    ),
-            );
-          } else if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            if (open) choose(index);
-            else {
-              setIndex(Math.max(0, selected));
-              setOpen(true);
-            }
-          } else if (e.key === "Tab") {
-            setOpen(false);
-          } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
-            const i = options.findIndex((o) =>
-              String(o.label)
-                .toLocaleLowerCase("tr")
-                .startsWith(e.key.toLocaleLowerCase("tr")),
-            );
-            if (i >= 0) {
-              e.preventDefault();
-              setIndex(i);
-              setOpen(true);
-            }
-          }
-        }}
       >
-        <span>{options[selected]?.label || "Seçin"}</span>
-        <ChevronDown size={14} />
-      </button>
+        <Select.Trigger
+          className="choice-trigger"
+          aria-label={props["aria-label"]}
+          aria-invalid={props["aria-invalid"]}
+          aria-describedby={props["aria-describedby"]}
+          title={props.title}
+        >
+          <Select.Value placeholder="Seçin" />
+          <Select.Icon>
+            <ChevronDown size={14} />
+          </Select.Icon>
+        </Select.Trigger>
+        <Select.Portal>
+          <Select.Content
+            data-floating-panel="true"
+            className="choice-menu"
+            position="popper"
+            sideOffset={6}
+            collisionPadding={12}
+          >
+            <Select.ScrollUpButton className="choice-scroll">
+              <ChevronUp size={16} />
+            </Select.ScrollUpButton>
+            <Select.Viewport>
+              {options.map((option) => (
+                <Select.Item
+                  className="choice-option"
+                  key={option.value}
+                  value={":" + option.value}
+                  disabled={option.disabled}
+                >
+                  <Select.ItemText>{option.label}</Select.ItemText>
+                  <Select.ItemIndicator>
+                    <Check size={16} />
+                  </Select.ItemIndicator>
+                </Select.Item>
+              ))}
+            </Select.Viewport>
+            <Select.ScrollDownButton className="choice-scroll">
+              <ChevronDown size={16} />
+            </Select.ScrollDownButton>
+          </Select.Content>
+        </Select.Portal>
+      </Select.Root>
       <select
         {...props}
+        value={props.value}
         className="choice-validation"
         aria-hidden="true"
         tabIndex={-1}
       >
         {children}
       </select>
-      {open && (
-        <FloatingPanel
-          anchor={anchor.current}
-          title={label || "Seçenekler"}
-          onClose={() => setOpen(false)}
-          autoFocus={false}
-          width={Math.max(
-            220,
-            anchor.current?.getBoundingClientRect().width || 0,
-          )}
-          maxPanelHeight={300}
-          className="choice-panel"
-        >
-          <div id={id} role="listbox" aria-label={label || "Seçenekler"}>
-            {options.map((o, i) => (
-              <button
-                id={id + "-" + i}
-                type="button"
-                key={o.value}
-                role="option"
-                aria-selected={i === selected}
-                disabled={o.disabled}
-                className={i === index ? "is-active" : ""}
-                onPointerMove={() => setIndex(i)}
-                onClick={() => choose(i)}
-              >
-                <span>{o.label}</span>
-                {i === selected && <Check size={16} />}
-              </button>
-            ))}
-          </div>
-        </FloatingPanel>
-      )}
     </span>
   );
 }

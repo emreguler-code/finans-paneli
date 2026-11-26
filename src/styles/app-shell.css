@@ -866,3 +866,26 @@ body:has(.layout-shell) {
     margin-bottom: 0;
   }
 }
+
+/* Summary density follows its content width, independently of the side column. */
+@container workspace (min-width: 900px) {
+  .layout-shell .summary-fields {
+    grid-template-columns: repeat(var(--summary-count, 4), minmax(0, 1fr));
+  }
+  .layout-shell .summary-field {
+    padding: 4px 20px;
+    border-left: 1px solid var(--line);
+  }
+  .layout-shell .summary-field:first-child {
+    padding-left: 0;
+    border-left: 0;
+  }
+  .layout-shell .summary-field:last-child {
+    padding-right: 0;
+  }
+}
+@container workspace (min-width: 600px) and (max-width: 899px) {
+  .layout-shell .summary-fields > .summary-field:nth-child(3):last-child {
+    grid-column: 1 / -1;
+  }
+}

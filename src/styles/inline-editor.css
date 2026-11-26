@@ -622,7 +622,7 @@
 }
 .layout-shell .transaction-form .sheet-scroll {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 220px;
+  grid-template-columns: minmax(0, 1fr) 250px;
   gap: 20px;
   padding: 0;
   overflow: visible;
@@ -749,11 +749,6 @@
   font-size: 14px;
   margin: 0 0 12px;
 }
-.layout-shell [data-record-inline="true"] .entry-section-fields {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr));
-  gap: 12px;
-}
 @container (max-width: 800px) {
   .layout-shell .transaction-form .sheet-scroll {
     grid-template-columns: minmax(0, 1fr);
@@ -809,24 +804,6 @@
 .layout-shell .transaction-preview dl {
   display: block;
   width: 100%;
-}
-.layout-shell .transaction-preview dl > div {
-  display: flex;
-  flex-direction: row;
-  align-items: baseline;
-  padding-bottom: 4px;
-  margin: 6px 0;
-  padding: 0;
-  min-height: 0;
-  gap: 4px 8px;
-}
-.layout-shell .transaction-preview dt {
-  flex: 1 1 auto;
-  font-weight: 400;
-}
-.layout-shell .transaction-preview dd {
-  flex: 0 0 auto;
-  text-align: right;
 }
 .layout-shell .transaction-main > .sheet-footer {
   margin-top: 4px;
@@ -972,15 +949,6 @@
 .layout-shell .transaction-heading > .cari-field {
   margin-left: auto !important;
 }
-.layout-shell .transaction-form .transaction-values {
-  grid-template-columns: minmax(0, 1fr);
-}
-.layout-shell .transaction-preview dt,
-.layout-shell .transaction-preview dd {
-  margin: 0;
-  min-width: 0;
-  padding: 0;
-}
 .layout-shell .transaction-preview .sheet-footer button {
   padding: 8px 10px;
 }
@@ -989,5 +957,136 @@
   padding: 4px 12px 8px !important;
 }
 .ledger-action-row:has(.status-form) .ledger-expanded-bar {
+  display: none;
+}
+
+/* Shared form contract: controls align independently of wrapped labels. */
+.layout-shell [data-record-inline="true"] .entry-section-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+  gap: 12px;
+  align-items: end;
+  column-gap: 12px;
+}
+.layout-shell [data-record-inline="true"] .entry-section-fields > label,
+.layout-shell [data-record-inline="true"] .entry-row > label {
+  display: grid;
+  grid-template-rows: subgrid;
+  grid-row: span 2;
+  align-self: stretch;
+  gap: 6px;
+}
+.layout-shell [data-record-inline="true"] .entry-row {
+  display: contents;
+}
+.layout-shell .transaction-heading {
+  align-items: center;
+  gap: 12px;
+}
+.layout-shell .transaction-form .transaction-values {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(140px, 180px) minmax(
+      140px,
+      180px
+    );
+  align-items: end;
+  gap: 12px;
+}
+.layout-shell .transaction-values > .cari-field {
+  display: grid;
+  grid-template-rows: subgrid;
+  grid-row: span 2;
+  gap: 6px;
+}
+.layout-shell .transaction-form input:not([type="checkbox"]),
+.layout-shell .transaction-form .tag-control,
+.layout-shell .transaction-form .choice-trigger {
+  height: var(--control-size);
+  min-height: var(--control-size);
+  box-sizing: border-box;
+}
+.layout-shell .transaction-main {
+  gap: 12px;
+}
+.layout-shell .transaction-preview dl > div {
+  display: grid;
+  grid-template-columns: minmax(100px, 1fr) auto;
+  border: 0;
+  padding: 0;
+  gap: 8px;
+  margin: 8px 0;
+}
+.layout-shell .transaction-preview .preview-result {
+  border: 0;
+  padding-top: 8px;
+}
+.layout-shell .transaction-preview dt {
+  margin: 0;
+  padding: 0;
+  font-weight: 400;
+}
+.layout-shell .transaction-preview dd {
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+  text-align: right;
+  white-space: nowrap;
+}
+.layout-shell .transaction-preview > .sheet-footer {
+  gap: 8px;
+  justify-content: flex-end;
+}
+@container (max-width: 760px) {
+  .layout-shell .transaction-form .transaction-values {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .layout-shell .transaction-values > .cari-field:first-child {
+    grid-column: 1 / -1;
+  }
+  .layout-shell [data-record-inline="true"] .entry-row {
+    grid-column: 1 / -1;
+  }
+}
+
+@container (max-width: 760px) {
+  .layout-shell .transaction-preview dl:not(:has(.preview-result)),
+  .layout-shell .transaction-preview dl > div:not(.preview-result) {
+    display: none;
+  }
+  .layout-shell .transaction-preview > .sheet-footer {
+    margin-top: 8px;
+  }
+}
+
+@container (min-width: 800px) {
+  .layout-shell [data-record-inline="true"] .entry-section-fields {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+  }
+  .layout-shell [data-record-inline="true"] .entry-section-fields > *,
+  .layout-shell [data-record-inline="true"] .entry-row > label {
+    grid-column: span 2;
+  }
+  .layout-shell
+    [data-record-inline="true"]
+    .entry-section-fields
+    > [data-field-width="wide"],
+  .layout-shell
+    [data-record-inline="true"]
+    .entry-row
+    > [data-field-width="wide"] {
+    grid-column: span 3;
+  }
+  .layout-shell
+    [data-record-inline="true"]
+    .entry-section-fields
+    > [data-field-width="short"] {
+    grid-column: span 1;
+  }
+  .layout-shell [data-record-inline="true"] .entry-section-fields > .cari-hint {
+    grid-column: 1 / -1;
+  }
+}
+
+.transaction-conditions:empty {
   display: none;
 }

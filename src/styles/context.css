@@ -402,3 +402,17 @@
 .account-grid-item {
   width: 100%;
 }
+
+/* Empty content uses one compact rhythm across charts and previews. */
+.layout-shell .chart.is-empty {
+  height: 160px;
+  min-height: 160px;
+}
+.layout-shell .notification-preview.is-empty .empty,
+.layout-shell .recent-activity > .empty {
+  min-height: 64px;
+  padding: 16px 0;
+}
+.layout-shell .notification-preview.is-empty {
+  min-height: 0;
+}

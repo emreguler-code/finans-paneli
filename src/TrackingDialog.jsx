@@ -105,7 +105,16 @@ export function TrackingDialog({ context, data, onClose, onState, notify }) {
     [tagText, setTagText] = useState((item.tags || []).join(", "));
   const change = (key, value) => setForm((f) => ({ ...f, [key]: value }));
   const field = (key, label, type = "text", required = false) => (
-    <label className="cari-field">
+    <label
+      className="cari-field"
+      data-field-width={
+        ["name", "holder", "title", "owner", "vin"].includes(key)
+          ? "wide"
+          : ["year", "km", "lastFour", "cut"].includes(key)
+            ? "short"
+            : "normal"
+      }
+    >
       {label}
       <input
         name={key}
@@ -264,7 +273,7 @@ export function TrackingDialog({ context, data, onClose, onState, notify }) {
                   {field("year", "Model yılı", "number")}
                   {field("km", "Güncel kilometre", "number")}
                 </FormSection>
-                <FormSection title="Araç ayrıntıları" optional open={!editing}>
+                <FormSection title="Araç ayrıntıları" optional>
                   {field("owner", "Ruhsat sahibi")}
                   {field("vin", "Şasi numarası")}
                 </FormSection>

@@ -132,7 +132,16 @@ export function EntityDialog({ context, data, onClose, onState, notify }) {
   const moneyKeys = ["opening", "limit", "statement", "creditLimit"];
   const field = (key, label, opts = {}) =>
     opts.type === "date" ? (
-      <label className="cari-field">
+      <label
+        className="cari-field"
+        data-field-width={
+          ["name", "holder", "title", "owner", "vin"].includes(key)
+            ? "wide"
+            : ["year", "km", "lastFour", "cut"].includes(key)
+              ? "short"
+              : "normal"
+        }
+      >
         {label}
         <DatePicker
           name={key}
@@ -146,7 +155,16 @@ export function EntityDialog({ context, data, onClose, onState, notify }) {
         />
       </label>
     ) : (
-      <label className="cari-field">
+      <label
+        className="cari-field"
+        data-field-width={
+          ["name", "holder", "title", "owner", "vin"].includes(key)
+            ? "wide"
+            : ["year", "km", "lastFour", "cut"].includes(key)
+              ? "short"
+              : "normal"
+        }
+      >
         {label}
         {moneyKeys.includes(key) ? (
           <MoneyInput
@@ -568,7 +586,7 @@ export function EntityDialog({ context, data, onClose, onState, notify }) {
               <FormSection
                 title="Kart ayrıntıları"
                 optional
-                open={!editing}
+                open={Boolean(form.holder || form.lastFour)}
                 summary={
                   [form.lastFour && "•••• " + form.lastFour, form.holder]
                     .filter(Boolean)
@@ -691,11 +709,7 @@ export function EntityDialog({ context, data, onClose, onState, notify }) {
                   : "İptali uygula"
                 : editing
                   ? "Kaydet"
-                  : entity === "party"
-                    ? "Cariyi ekle"
-                    : entity === "card"
-                      ? "Kartı ekle"
-                      : "Kaydet"}
+                  : "Kaydet"}
           </button>
         </div>
       </EntryForm>

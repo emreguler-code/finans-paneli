@@ -329,8 +329,7 @@ export function EventForm({ context, data, onClose, onState, notify }) {
         : decimal(f.settled)
       : 0;
   const effect = () => {
-    if (!Number.isFinite(total) || total <= 0)
-      return "Tutarı ve ilgili hesabı seçtiğinizde işlem etkisi burada gösterilir.";
+    if (!Number.isFinite(total) || total <= 0) return "İşlem tutarını girin.";
     const text = fmt(Math.round(total * 100)) + " TL";
     const account = data.accounts.find(
       (a) => String(a.id) === String(f.account),
@@ -423,8 +422,7 @@ export function EventForm({ context, data, onClose, onState, notify }) {
           (["income", "refund", "collection"].includes(f.operation)
             ? "giriş"
             : "çıkış") +
-          " oluşur." +
-          (party ? " Cari etkisi işlem türüne göre uygulanır." : "")
+          " oluşur."
       : "İşlem hesabını seçin.";
   };
   if (context.inline)

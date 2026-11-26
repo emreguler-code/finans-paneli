@@ -153,6 +153,11 @@ export function EntrySurface({
       ]
         .filter((n) => ["INPUT", "SELECT", "TEXTAREA"].includes(n.tagName))
         .filter(
+          (n) =>
+            !n.closest(".choice-control") ||
+            n.classList.contains("choice-validation"),
+        )
+        .filter(
           (n) => n.type !== "hidden" || n.hasAttribute("data-draft-value"),
         )
         .map((n) => [

@@ -159,7 +159,7 @@ export function PartyEntryForm({
     options.push("employee_purchase");
   const tagControl = (
     <label className="cari-field">
-      <span className="sr-only">Etiket (isteğe bağlı)</span>
+      <span>Etiket</span>
       <TagInput
         value={f.tag}
         selectOnFocus={Boolean(e.id)}
@@ -349,13 +349,6 @@ export function PartyEntryForm({
                     </button>
                   ))}
               </div>{" "}
-              {money(
-                "amount",
-                "Tutar (TL)",
-                f.amount,
-                (v) => change("amount", v),
-                true,
-              )}
             </div>
             <input
               type="hidden"
@@ -375,6 +368,14 @@ export function PartyEntryForm({
                   onChange={(ev) => change("description", ev.target.value)}
                 />
               </label>
+              {tagControl}
+              {money(
+                "amount",
+                "Tutar (TL)",
+                f.amount,
+                (v) => change("amount", v),
+                true,
+              )}
             </div>
             {!invoice && conditions}
             {f.operation === "card_transfer" &&
@@ -492,7 +493,6 @@ export function PartyEntryForm({
                 </Popover>
               )}
 
-              {tagControl}
               {hasExtras && (
                 <details
                   className="transaction-more"

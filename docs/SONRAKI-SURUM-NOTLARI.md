@@ -1,3 +1,5 @@
+> Tasarımın tek geçerli kaynağı [TASARIM-SOZLESMESI.md](TASARIM-SOZLESMESI.md). Bu dosya karar/izin tarihçesidir; uygulanmış eski maddeler güncel sözleşmeye paralel talimat değildir. Yeni talepler açık uygulama talimatına kadar taslak kalır.
+
 # 1.9.0 / 1.9.1 — uygulanan onaylı tasarım notları
 
 1.9.1 bakım eki: detay ekranındaki liste kapsamlı arama eşleşen kaydı seçer; boş sonuçta geri dönüş ve tüm hesap uyarıları korunur. Şema 10 değişmez.
@@ -1564,3 +1566,43 @@ Kullanıcı “kodla ve yayınla” diyerek biriken 25 Kasım notlarının uygul
 ## 25 Kasım 2026 — 1.29.0 tamamlandı ve yayımlandı
 
 Bu not döneminin yetkilendirilen kapsamı uygulandı; Windows/Linux tam kabulü sonrası GitHub v1.29.0 yayımlandı. Kapsam docs/SURUM-1.29.0.md, doğrulama docs/TEST-RAPORU-1.29.0.md, indirilen dört varlığın checksum/kaynak eşliği docs/evidence/1.29.0/publication.json içindedir. Hosting ZIP ve SHA-256 releases/1.29.0 altında ve Release varlıklarında bulunur. Canlı hosting/cron kurulumu yapılmadı. Bu sonuç yeni taleplere sürekli uygulama yetkisi vermez; sonraki fikirler önce yeni notlara alınacak, yeniden açık kodlama talimatı beklenecek.
+
+## 26 Kasım 2026 — Yeni işlem formunun tasarım incelemesi
+
+Kullanıcı, paylaştığı ödeme formu görüntüsünde Yeni işlem başlığının ortalanmamasını, İşlemin etkisi alanındaki gereksiz bölücü çizgileri ve kontrollerin oransız boyut/hizalamalarını incelememizi istedi. Product Design audit yönergeleri ve tasarım inceleme çerçevesi okundu. Bu değerlendirme kullanıcının tek ekran görüntüsüyle sınırlıdır; çalışan arayüzde mobil, klavye, açılır menü ve hata durumları test edilmiş sayılmaz.
+
+- Gözlem: Yeni işlem başlığı işlem düğmelerine göre aşağıda kalıyor. Kaynakta başlık grubunun `align-items: end` kullanması ortak dikey merkez kurmuyor. Öneri: etiketleri ayrı üst hatta, başlık/işlem düğmeleri/tutar kontrolünü ortak kontrol hattında ortalamak.
+- Gözlem: Etki özetindeki yatay çizgiler ve metin tekrarları küçük alanı parçalıyor. Öneri: içerideki yatay çizgileri kaldırmak; açıklamaları solda, tutarları sağda tutarlı iki sütuna yerleştirmek; kayıt sonrası bakiyeyi yalnız tipografik ağırlıkla öne çıkarmak. Ana form ile özet arasındaki tek dikey ayrım yeterli olabilir.
+- Gözlem: Tutar, hesap, açıklama ve yardımcı kontroller ortak ölçü/referans çizgileri taşımıyor. Öneri: formun kendi ortak ızgarasını kurmak; alanları içerik ihtiyacına göre bir veya birkaç tam sütuna yaymak. Hesap seçimi bütün genişliği otomatik doldurmamalı; uzun hesap adları için yeterli alan korunmalı.
+- Önerilen ölçü başlangıcı: görünür kontrol yüksekliği 44 px, ikon düğmeleri 44 × 44 px, köşe 8 px, aralıklar 8/12/16 px. Tutar yazısı büyük olsa bile kutu yüksekliği aynı kalmalı. Bunlar kullanıcı tarafından ayrıca onaylanmamış tasarım önerileridir; nihai ölçüler çalışan arayüzde doğrulanmalıdır.
+- Öneri: “Günlük hesap hesabında” ve “Cari etkisi işlem türüne göre uygulanır” gibi tekrar/genel açıklamaları işlem bağlamını anlatan kısa metinle değiştirmek. Örnekte ödeme 500,00 TL, kalan borç 1.250,00 TL; hesaplama ve işaret kuralları korunur.
+- Korunacak önceki kararlar: yeni işlem/düzenleme alanının ayrı yuvarlatılmış kartı, sağ üst tutar, etki bölümündeki Vazgeç/Kaydet, mevcut renkler ve finansal model. Aynı ortak ölçü düzeni diğer kayıt formlarına taşınmalı; dar genişlikte sütun sayısı değişirken alan sırası ve opsiyon açıldığında ana kontrollerin konumu olabildiğince korunmalı.
+
+Yalnız inceleme ve sürüm notu hazırlanmıştır. Uygulama kodu, sürüm, ZIP veya GitHub yayını değiştirilmez. Tasarım önerileri uygulama onayı sayılmaz; yeni açık kodlama talimatı beklenir.
+
+## 26 Kasım 2026 — Tasarım incelemesinin görsel taslağı
+
+Kullanıcı önce bir imaj hazırlanmasını istedi. Mevcut ödeme formu referans alınarak ortak hizalama, eşit kontrol yüksekliği, sade çizgisiz etki özeti ve kompakt ayrı kart düzenini gösteren tek görsel hazırlanacak. Bu talep görsel çalışma kapsamındadır; uygulama kodlama veya yayın yetkisi vermez.
+
+## 26 Kasım 2026 — Radix UI + CSS Grid tasarım tercihi
+
+İlk görselde tutarın etiketinin bağımsız üstte kalması ve açıklamanın bütün satırı kaplaması kullanıcı tarafından uygun bulunmadı. Alternatif görselde açıklama, tutar ve etiket aynı giriş satırında, ortak etiket ve kontrol hizasında sunuldu; hesap seçimi açıklama sütunuyla hizalandı. Kullanıcı bu yaklaşım için Radix UI + CSS Grid ikilisine şans vermeyi ve tutarla etiketin yer değiştirmesini istedi.
+
+- Seçilen alan sırası **Açıklama → Etiket → Tutar** olacak; tutar ana form satırının sağında kalacak. Bu karar önceki tutarı başlık satırında gösterme önerisinin yerini alır.
+- Radix UI etkileşim bileşenleri için tercih edildi; görünüm mevcut tasarım dilimize göre oluşturulacak. CSS Grid ortak sütun ve satır referanslarını sağlayacak. Görsel, çalışan Radix bileşenlerinin ekran görüntüsü değildir.
+- Ortak etiket hattı, eşit kontrol yüksekliği, kompakt ayrı kart, çizgisiz etki özeti ve etki alanındaki Vazgeç/Kaydet korunacak. Diğer kayıt formları için de ortak düzen hedeflenecek.
+- Bu mesaj tasarım/kütüphane tercihi olarak kaydedildi. Kullanıcının sürekli çalışma kuralı uyarınca açık kodlama talimatı beklenir; bağımlılık kurulumu, uygulama kodu veya yayın başlatılmaz.
+
+## 26 Kasım 2026 — Tasarım kriterlerinin birlikte gözden geçirilmesi
+
+Kullanıcı daha önce belirlenen tasarım kurallarının hatırlatılmasını ve birlikte gözden geçirilmesini istedi. AGENTS.md, global yerleşim sözleşmesi ve sonraki tarihli form kararları birlikte okunarak güncel ilkeler özetlenir. Tarihsel alt işlem çubuğu, finansal hareketi tablo satırında düzenleme, mobil alt gezinme ve başlık satırındaki tutar yerleşimi son kararlar tarafından değiştirilmiştir. 44 px kontrol, 8 px köşe ve 8/12/16 px aralık değerleri henüz kesinleştirilmiş genel standart olarak sunulmaz; bunlar 26 Kasım önerileridir. Bu görüşme yeni tasarım veya kodlama onayı değildir; uygulama değiştirilmez.
+
+## 26 Kasım 2026 — Ekran envanteri ve tutarlılık analizine başlama talimatı
+
+Kullanıcı önerilen analize başlanmasını ve sonuçların paylaşılmasını istedi. Yerel sentetik API ile 1.29.0 arayüzünde 18 görünüm yakalanıp incelendi; genel bakış, cari listesi ve üç cari türü, hesap/kart/araç liste ve yeni kayıtları, rapor ve ödeme planı ile iki mobil örnek ele alındı. Rapor docs/TASARIM-ENVANTERI-2026-11-26.md, güncel ekran kanıtları docs/evidence/design-audit-2026-11-26 altındadır. Kapsam eksikleri raporda belirtilmiştir; canlı hosting veya tam site testi yapılmış sayılmaz.
+
+Önemli düzeltme: önceki özette kesinleşmemiş öneri diye sunulan 44 px ana kontrol, 8 px kontrol köşesi ve boşluk ölçeği mevcut TASARIM-ILKELERI.md/tokens.css içinde zaten vardır. Sorun ortak ölçülerin uygulanması ve tarihsel belgelerde değişmiş kararların ayrılmamasıdır. Analiz; ortak etiket/kontrol hattı, veri anlamına uygun genişlikler, mobil yoğunluk, boş durumlar, özet iç ızgarası, eylem dili ve tarih biçimi için öncelikler önerir. Bunlar ek uygulama onayı değildir. Uygulama kodu, bağımlılık, sürüm, paket veya GitHub yayını değiştirilmedi.
+
+## 26 Kasım 2026 — 1.30.0 açık uygulama ve yayın talimatı
+
+Kullanıcı tasarım kararlarının çakışmasını gidermeyi, tek güncel sözleşmeyi ve buna göre kod güncellemesini açıkça istedi. 26 Kasım form tercihi ve envanter bulguları bu kapsamda uygulanır: Radix seçim altyapısı, ortak ızgara/alan rolleri, kompakt mobil form, sade etki özeti, ortak boş durum/özet/eylem/tarih sunumu. Yeni güncel sözleşme tarihsel kararların üzerinde tasarım kaynağı olur; eski belgeler arşivlenir. Finansal model ve şema korunur. GitHub Release ve hostinge hazır ZIP çalışma kuralı gereği kapsam içindedir; canlı hosting kurulumu yapılmaz.

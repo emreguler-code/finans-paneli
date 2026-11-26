@@ -1,6 +1,6 @@
-# Finans Paneli 1.29.0
+# Finans Paneli 1.30.0
 
-1.29.0: Bağımsız kompakt işlem kartı, ödeme anahtarı ve fazla ödeme dağıtımı; sade geçmiş/iptal, hizalı kimlik bilgileri ve toplamlı CSV/PDF ekstre. [Kapsam](docs/SURUM-1.29.0.md) · [Doğrulama](docs/TEST-RAPORU-1.29.0.md).
+1.30.0: Tek güncel tasarım sözleşmesi, ortak Radix UI seçim altyapısı ve CSS Grid form düzeni; kompakt mobil, tutarlı özet ve boş durumlar. [Kapsam](docs/SURUM-1.30.0.md) · [Doğrulama](docs/TEST-RAPORU-1.30.0.md).
 
 1.28.0: Üstte ortak kompakt işlem ekleme/düzenleme formu, yeniden eskiye işlem sırası, kart içinde cari bilgisi düzenleme, gerçek hafta personel takvimi ve yalnız hamburger ile mobil gezinme. [Kapsam](docs/SURUM-1.28.0.md) · [Doğrulama](docs/TEST-RAPORU-1.28.0.md).
 
@@ -110,3 +110,7 @@ Yerel Chromium gerekiyorsa `QA_BROWSER_BIN=/usr/bin/chromium` tanımlayın. Dock
 ## 1.27.0 personel hakedişleri
 
 Personel profilindeki aylık maaş/yemek tutarları ayrı CLI göreviyle dönem başında cari hakediş oluşturur. Hosting görevi kendiliğinden kurulmaz; [personel cron kılavuzunu](docs/PERSONEL-CRON.md) izleyin. Mevcut yedek cron görevi ayrıdır. Satır içi kayıt ve kaynak satıra yönlendirme kapsamı [1.27.0 sürüm belgesindedir](docs/SURUM-1.27.0.md).
+
+## Güncel tasarım sözleşmesi
+
+Tüm arayüz çalışmaları için tek geçerli kaynak [TASARIM-SOZLESMESI.md](docs/TASARIM-SOZLESMESI.md). Önceki tasarım belgeleri tarihçedir.

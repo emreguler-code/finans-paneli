@@ -280,3 +280,39 @@
     text-align: right;
   }
 }
+
+@media (max-width: 760px) {
+  .layout-shell .party-identity-summary {
+    padding: 16px;
+  }
+  .layout-shell .party-heading-row {
+    grid-template-columns: 44px minmax(0, 1fr);
+    gap: 8px 12px;
+  }
+  .layout-shell .party-balance-and-actions {
+    grid-column: 2;
+    display: block;
+  }
+  .layout-shell .party-current-balance {
+    grid-column: 2;
+    text-align: left;
+    margin: 0;
+  }
+  .layout-shell .party-current-balance > span {
+    display: none;
+  }
+  .layout-shell .party-heading-name {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+  .layout-shell .party-heading-name h1 {
+    margin: 0;
+  }
+  .layout-shell .party-identity-summary .party-current-balance .summary-value {
+    text-align: left;
+    justify-content: flex-start;
+    font-size: 24px;
+  }
+}

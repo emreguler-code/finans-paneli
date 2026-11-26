@@ -31,7 +31,8 @@ export function NotificationPreview({
       className={
         "panel notification-preview " +
         (source === "accounts" ? "account-alerts " : "") +
-        className
+        className +
+        (!alerts.length ? " is-empty" : "")
       }
       aria-label={source === "accounts" ? "Hesap uyarıları" : title}
     >
@@ -43,14 +44,16 @@ export function NotificationPreview({
         <AlertNotice key={a.id} alert={a} onOpen={() => onOpen(a)} />
       ))}
       {!alerts.length && <p className="empty">Güncel uyarı bulunmuyor.</p>}
-      <button
-        className="text-button preview-all"
-        onClick={() =>
-          onAll({ source, subject: subject ? String(subject) : "all" })
-        }
-      >
-        Tümünü göster ({alerts.length}) <ChevronRight size={16} />
-      </button>
+      {alerts.length > 0 && (
+        <button
+          className="text-button preview-all"
+          onClick={() =>
+            onAll({ source, subject: subject ? String(subject) : "all" })
+          }
+        >
+          Tümünü göster ({alerts.length}) <ChevronRight size={16} />
+        </button>
+      )}
     </section>
   );
 }

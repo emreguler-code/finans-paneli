@@ -1,0 +1,1552 @@
+[
+  {
+    "step": 1,
+    "name": "overview",
+    "url": "http://127.0.0.1:4320/#/ozet",
+    "controls": [
+      {
+        "text": "Kredi kartları",
+        "height": 45
+      },
+      {
+        "text": "Araçlarım",
+        "height": 45
+      },
+      {
+        "text": "Raporlar",
+        "height": 45
+      },
+      {
+        "text": "Kullanıcılar",
+        "height": 45
+      },
+      {
+        "text": "Ayarlar",
+        "height": 44
+      },
+      {
+        "text": "Görünüm ve bilgiler",
+        "height": 44
+      },
+      {
+        "text": "Menüyü daralt",
+        "height": 44
+      },
+      {
+        "text": "Menüyü daralt",
+        "height": 44
+      },
+      {
+        "text": "Bildirimleri aç",
+        "height": 32
+      },
+      {
+        "text": "İşlem ekle",
+        "height": 44
+      },
+      {
+        "text": "Alacaklar\n0TL\nVerilen avans ve kart alacağı dâhil",
+        "height": 109
+      },
+      {
+        "text": "Borçlar\n0TL\nKredi kartları ve alınan avans dâhil",
+        "height": 109
+      },
+      {
+        "text": "Yaklaşan ödeme\n7 gün\n0TL\nToplam borcun vadesi yaklaşan kısmı",
+        "height": 109
+      },
+      {
+        "text": "1 Kas 2026 – 30 Kas 2026",
+        "height": 44
+      },
+      {
+        "text": "Hareketleri incele",
+        "height": 27
+      },
+      {
+        "text": "Tümünü gör",
+        "height": 27
+      },
+      {
+        "text": "Filtreleri temizle",
+        "height": 27
+      },
+      {
+        "text": "Tüm hesapları gör",
+        "height": 32
+      },
+      {
+        "text": "Merkez Kasa\nKasa\n1.000.000 TL",
+        "height": 68
+      },
+      {
+        "text": "0 TL",
+        "height": 20
+      }
+    ]
+  },
+  {
+    "step": 2,
+    "name": "parties",
+    "url": "http://127.0.0.1:4320/#/cariler",
+    "controls": [
+      {
+        "text": "Kullanıcılar",
+        "height": 45
+      },
+      {
+        "text": "Ayarlar",
+        "height": 44
+      },
+      {
+        "text": "Görünüm ve bilgiler",
+        "height": 44
+      },
+      {
+        "text": "Menüyü daralt",
+        "height": 44
+      },
+      {
+        "text": "Menüyü daralt",
+        "height": 44
+      },
+      {
+        "text": "Bildirimleri aç",
+        "height": 32
+      },
+      {
+        "text": "Yeni kayıt ekle",
+        "height": 44
+      },
+      {
+        "text": "CSV indir",
+        "height": 44
+      },
+      {
+        "text": "Cari",
+        "height": 32
+      },
+      {
+        "text": "Tür",
+        "height": 32
+      },
+      {
+        "text": "Net bakiye",
+        "height": 32
+      },
+      {
+        "text": "Ada Tasarım\nMüşteri\n12.000,00 TL",
+        "height": 57
+      },
+      {
+        "text": "Ali\nPoyraz Gıda\nPersonel\n7.513,00 TL",
+        "height": 70
+      },
+      {
+        "text": "Dengeli hesap\nTedarikçi\n0,00 TL",
+        "height": 57
+      },
+      {
+        "text": "Poyraz Gıda\nTedarikçi\n7.513,00 TL",
+        "height": 57
+      },
+      {
+        "text": "Stok alışı 75\nPoyraz Gıda · Alış\n14 Tem 2026 · 16:14\n−100,00 TL",
+        "height": 90
+      },
+      {
+        "text": "Stok alışı 74\nPoyraz Gıda · Alış\n13 Tem 2026 · 16:13\n−100,00 TL",
+        "height": 90
+      },
+      {
+        "text": "Stok alışı 73\nPoyraz Gıda · Alış\n12 Tem 2026 · 16:12\n−100,00 TL",
+        "height": 90
+      },
+      {
+        "text": "Stok alışı 72\nPoyraz Gıda · Alış\n11 Tem 2026 · 16:11\n−100,00 TL",
+        "height": 90
+      },
+      {
+        "text": "Stok alışı 71\nPoyraz Gıda · Alış\n10 Tem 2026 · 16:10\n−100,00 TL",
+        "height": 89
+      }
+    ]
+  },
+  {
+    "step": 3,
+    "name": "supplier",
+    "url": "http://127.0.0.1:4320/#/cariler/1",
+    "controls": [
+      {
+        "text": "Ayarlar",
+        "height": 44
+      },
+      {
+        "text": "Görünüm ve bilgiler",
+        "height": 44
+      },
+      {
+        "text": "Menüyü daralt",
+        "height": 44
+      },
+      {
+        "text": "Menüyü daralt",
+        "height": 44
+      },
+      {
+        "text": "Bildirimleri aç",
+        "height": 32
+      },
+      {
+        "text": "Cari hesaplar",
+        "height": 44
+      },
+      {
+        "text": "Yeni işlem ekle",
+        "height": 21
+      },
+      {
+        "text": "PDF indir",
+        "height": 44
+      },
+      {
+        "text": "CSV indir",
+        "height": 44
+      },
+      {
+        "text": "Tarih",
+        "height": 32
+      },
+      {
+        "text": "İşlem",
+        "height": 32
+      },
+      {
+        "text": "Açıklama",
+        "height": 32
+      },
+      {
+        "text": "Etiket",
+        "height": 32
+      },
+      {
+        "text": "Ekleyen",
+        "height": 32
+      },
+      {
+        "text": "Tutar",
+        "height": 32
+      },
+      {
+        "text": "Bakiye",
+        "height": 32
+      },
+      {
+        "text": "Sonraki 30 işlemi yükle",
+        "height": 40
+      },
+      {
+        "text": "Düzenle",
+        "height": 21
+      },
+      {
+        "text": "Önceki ay",
+        "height": 32
+      },
+      {
+        "text": "Sonraki ay",
+        "height": 32
+      }
+    ]
+  },
+  {
+    "step": 4,
+    "name": "supplier-form",
+    "url": "http://127.0.0.1:4320/#/cariler/1",
+    "controls": [
+      {
+        "text": "Ödeme",
+        "height": 44
+      },
+      {
+        "text": "26 Kas 2026",
+        "height": 44
+      },
+      {
+        "text": "Tarih seç",
+        "height": 44
+      },
+      {
+        "text": "Taksitli işlem",
+        "height": 44
+      },
+      {
+        "text": "Etiket seçenekleri",
+        "height": 44
+      },
+      {
+        "text": "Vazgeç",
+        "height": 44
+      },
+      {
+        "text": "Kaydet",
+        "height": 44
+      },
+      {
+        "text": "PDF indir",
+        "height": 44
+      },
+      {
+        "text": "CSV indir",
+        "height": 44
+      },
+      {
+        "text": "Tarih",
+        "height": 32
+      },
+      {
+        "text": "İşlem",
+        "height": 32
+      },
+      {
+        "text": "Açıklama",
+        "height": 32
+      },
+      {
+        "text": "Etiket",
+        "height": 32
+      },
+      {
+        "text": "Ekleyen",
+        "height": 32
+      },
+      {
+        "text": "Tutar",
+        "height": 32
+      },
+      {
+        "text": "Bakiye",
+        "height": 32
+      },
+      {
+        "text": "Sonraki 30 işlemi yükle",
+        "height": 40
+      },
+      {
+        "text": "Düzenle",
+        "height": 21
+      },
+      {
+        "text": "Önceki ay",
+        "height": 32
+      },
+      {
+        "text": "Sonraki ay",
+        "height": 32
+      }
+    ]
+  },
+  {
+    "step": 5,
+    "name": "supplier-mobile",
+    "url": "http://127.0.0.1:4320/#/cariler/1",
+    "controls": [
+      {
+        "text": "Ödeme",
+        "height": 44
+      },
+      {
+        "text": "26 Kas 2026",
+        "height": 44
+      },
+      {
+        "text": "Tarih seç",
+        "height": 44
+      },
+      {
+        "text": "Taksitli işlem",
+        "height": 44
+      },
+      {
+        "text": "Etiket seçenekleri",
+        "height": 44
+      },
+      {
+        "text": "Vazgeç",
+        "height": 44
+      },
+      {
+        "text": "Kaydet",
+        "height": 44
+      },
+      {
+        "text": "PDF indir",
+        "height": 44
+      },
+      {
+        "text": "CSV indir",
+        "height": 44
+      },
+      {
+        "text": "Tarih",
+        "height": 44
+      },
+      {
+        "text": "İşlem",
+        "height": 44
+      },
+      {
+        "text": "Açıklama",
+        "height": 44
+      },
+      {
+        "text": "Etiket",
+        "height": 44
+      },
+      {
+        "text": "Ekleyen",
+        "height": 44
+      },
+      {
+        "text": "Tutar",
+        "height": 44
+      },
+      {
+        "text": "Bakiye",
+        "height": 44
+      },
+      {
+        "text": "Sonraki 30 işlemi yükle",
+        "height": 44
+      },
+      {
+        "text": "Durum ve bilgiler",
+        "height": 47
+      },
+      {
+        "text": "Aylık Özet",
+        "height": 47
+      },
+      {
+        "text": "Düzenle",
+        "height": 44
+      }
+    ]
+  },
+  {
+    "step": 6,
+    "name": "customer",
+    "url": "http://127.0.0.1:4320/#/cariler/2",
+    "controls": [
+      {
+        "text": "Kullanıcılar",
+        "height": 45
+      },
+      {
+        "text": "Ayarlar",
+        "height": 44
+      },
+      {
+        "text": "Görünüm ve bilgiler",
+        "height": 44
+      },
+      {
+        "text": "Menüyü daralt",
+        "height": 44
+      },
+      {
+        "text": "Menüyü daralt",
+        "height": 44
+      },
+      {
+        "text": "Bildirimleri aç",
+        "height": 32
+      },
+      {
+        "text": "Cari hesaplar",
+        "height": 44
+      },
+      {
+        "text": "Yeni işlem ekle",
+        "height": 21
+      },
+      {
+        "text": "PDF indir",
+        "height": 44
+      },
+      {
+        "text": "CSV indir",
+        "height": 44
+      },
+      {
+        "text": "Tarih",
+        "height": 32
+      },
+      {
+        "text": "İşlem",
+        "height": 32
+      },
+      {
+        "text": "Açıklama",
+        "height": 32
+      },
+      {
+        "text": "Etiket",
+        "height": 32
+      },
+      {
+        "text": "Ekleyen",
+        "height": 32
+      },
+      {
+        "text": "Tutar",
+        "height": 32
+      },
+      {
+        "text": "Bakiye",
+        "height": 32
+      },
+      {
+        "text": "Düzenle",
+        "height": 21
+      },
+      {
+        "text": "Önceki ay",
+        "height": 32
+      },
+      {
+        "text": "Sonraki ay",
+        "height": 32
+      }
+    ]
+  },
+  {
+    "step": 7,
+    "name": "customer-form",
+    "url": "http://127.0.0.1:4320/#/cariler/2",
+    "controls": [
+      {
+        "text": "Tahsilat",
+        "height": 44
+      },
+      {
+        "text": "İade",
+        "height": 44
+      },
+      {
+        "text": "26 Kas 2026",
+        "height": 44
+      },
+      {
+        "text": "Tarih seç",
+        "height": 44
+      },
+      {
+        "text": "Taksitli işlem",
+        "height": 44
+      },
+      {
+        "text": "Etiket seçenekleri",
+        "height": 44
+      },
+      {
+        "text": "Vazgeç",
+        "height": 44
+      },
+      {
+        "text": "Kaydet",
+        "height": 44
+      },
+      {
+        "text": "PDF indir",
+        "height": 44
+      },
+      {
+        "text": "CSV indir",
+        "height": 44
+      },
+      {
+        "text": "Tarih",
+        "height": 32
+      },
+      {
+        "text": "İşlem",
+        "height": 32
+      },
+      {
+        "text": "Açıklama",
+        "height": 32
+      },
+      {
+        "text": "Etiket",
+        "height": 32
+      },
+      {
+        "text": "Ekleyen",
+        "height": 32
+      },
+      {
+        "text": "Tutar",
+        "height": 32
+      },
+      {
+        "text": "Bakiye",
+        "height": 32
+      },
+      {
+        "text": "Düzenle",
+        "height": 21
+      },
+      {
+        "text": "Önceki ay",
+        "height": 32
+      },
+      {
+        "text": "Sonraki ay",
+        "height": 32
+      }
+    ]
+  },
+  {
+    "step": 8,
+    "name": "staff",
+    "url": "http://127.0.0.1:4320/#/cariler/4",
+    "controls": [
+      {
+        "text": "Görünüm ve bilgiler",
+        "height": 44
+      },
+      {
+        "text": "Menüyü daralt",
+        "height": 44
+      },
+      {
+        "text": "Menüyü daralt",
+        "height": 44
+      },
+      {
+        "text": "Bildirimleri aç",
+        "height": 32
+      },
+      {
+        "text": "Cari hesaplar",
+        "height": 44
+      },
+      {
+        "text": "Yeni işlem ekle",
+        "height": 21
+      },
+      {
+        "text": "PDF indir",
+        "height": 44
+      },
+      {
+        "text": "CSV indir",
+        "height": 44
+      },
+      {
+        "text": "Tarih",
+        "height": 32
+      },
+      {
+        "text": "İşlem",
+        "height": 32
+      },
+      {
+        "text": "Açıklama",
+        "height": 32
+      },
+      {
+        "text": "Etiket",
+        "height": 32
+      },
+      {
+        "text": "Ekleyen",
+        "height": 32
+      },
+      {
+        "text": "Tutar",
+        "height": 32
+      },
+      {
+        "text": "Bakiye",
+        "height": 32
+      },
+      {
+        "text": "Düzenle",
+        "height": 21
+      },
+      {
+        "text": "TCKN kopyala",
+        "height": 44
+      },
+      {
+        "text": "IBAN kopyala",
+        "height": 44
+      },
+      {
+        "text": "Önceki ay",
+        "height": 32
+      },
+      {
+        "text": "Sonraki ay",
+        "height": 32
+      }
+    ]
+  },
+  {
+    "step": 9,
+    "name": "staff-form",
+    "url": "http://127.0.0.1:4320/#/cariler/4",
+    "controls": [
+      {
+        "text": "Maaş",
+        "height": 44
+      },
+      {
+        "text": "26 Kas 2026",
+        "height": 44
+      },
+      {
+        "text": "Taksitli işlem",
+        "height": 44
+      },
+      {
+        "text": "Etiket seçenekleri",
+        "height": 44
+      },
+      {
+        "text": "Vazgeç",
+        "height": 44
+      },
+      {
+        "text": "Kaydet",
+        "height": 44
+      },
+      {
+        "text": "PDF indir",
+        "height": 44
+      },
+      {
+        "text": "CSV indir",
+        "height": 44
+      },
+      {
+        "text": "Tarih",
+        "height": 32
+      },
+      {
+        "text": "İşlem",
+        "height": 32
+      },
+      {
+        "text": "Açıklama",
+        "height": 32
+      },
+      {
+        "text": "Etiket",
+        "height": 32
+      },
+      {
+        "text": "Ekleyen",
+        "height": 32
+      },
+      {
+        "text": "Tutar",
+        "height": 32
+      },
+      {
+        "text": "Bakiye",
+        "height": 32
+      },
+      {
+        "text": "Düzenle",
+        "height": 21
+      },
+      {
+        "text": "TCKN kopyala",
+        "height": 44
+      },
+      {
+        "text": "IBAN kopyala",
+        "height": 44
+      },
+      {
+        "text": "Önceki ay",
+        "height": 32
+      },
+      {
+        "text": "Sonraki ay",
+        "height": 32
+      }
+    ]
+  },
+  {
+    "step": 10,
+    "name": "accounts",
+    "url": "http://127.0.0.1:4320/#/hesaplar",
+    "controls": [
+      {
+        "text": "Genel bakış",
+        "height": 45
+      },
+      {
+        "text": "Cari hesaplar",
+        "height": 45
+      },
+      {
+        "text": "Tahsilat & Ödeme",
+        "height": 45
+      },
+      {
+        "text": "Ödeme Planı",
+        "height": 45
+      },
+      {
+        "text": "Hesaplar",
+        "height": 45
+      },
+      {
+        "text": "Kredi kartları",
+        "height": 45
+      },
+      {
+        "text": "Araçlarım",
+        "height": 45
+      },
+      {
+        "text": "Raporlar",
+        "height": 45
+      },
+      {
+        "text": "Kullanıcılar",
+        "height": 45
+      },
+      {
+        "text": "Ayarlar",
+        "height": 44
+      },
+      {
+        "text": "Görünüm ve bilgiler",
+        "height": 44
+      },
+      {
+        "text": "Menüyü daralt",
+        "height": 44
+      },
+      {
+        "text": "Menüyü daralt",
+        "height": 44
+      },
+      {
+        "text": "Bildirimleri aç",
+        "height": 32
+      },
+      {
+        "text": "Hesap ekle",
+        "height": 44
+      },
+      {
+        "text": "Ad",
+        "height": 32
+      },
+      {
+        "text": "Bakiye",
+        "height": 32
+      },
+      {
+        "text": "CSV indir",
+        "height": 44
+      },
+      {
+        "text": "Merkez Kasa hareketleri",
+        "height": 122
+      },
+      {
+        "text": "Tümünü göster (0)",
+        "height": 44
+      }
+    ]
+  },
+  {
+    "step": 11,
+    "name": "accounts-form",
+    "url": "http://127.0.0.1:4320/#/hesaplar",
+    "controls": [
+      {
+        "text": "Hesaplar",
+        "height": 45
+      },
+      {
+        "text": "Kredi kartları",
+        "height": 45
+      },
+      {
+        "text": "Araçlarım",
+        "height": 45
+      },
+      {
+        "text": "Raporlar",
+        "height": 45
+      },
+      {
+        "text": "Kullanıcılar",
+        "height": 45
+      },
+      {
+        "text": "Ayarlar",
+        "height": 44
+      },
+      {
+        "text": "Görünüm ve bilgiler",
+        "height": 44
+      },
+      {
+        "text": "Menüyü daralt",
+        "height": 44
+      },
+      {
+        "text": "Menüyü daralt",
+        "height": 44
+      },
+      {
+        "text": "Bildirimleri aç",
+        "height": 32
+      },
+      {
+        "text": "Hesap ekle",
+        "height": 44
+      },
+      {
+        "text": "Banka hesabı",
+        "height": 44
+      },
+      {
+        "text": "Banka seçin veya ekleyin",
+        "height": 44
+      },
+      {
+        "text": "Vazgeç",
+        "height": 44
+      },
+      {
+        "text": "Kaydet",
+        "height": 44
+      },
+      {
+        "text": "Ad",
+        "height": 32
+      },
+      {
+        "text": "Bakiye",
+        "height": 32
+      },
+      {
+        "text": "CSV indir",
+        "height": 44
+      },
+      {
+        "text": "Merkez Kasa hareketleri",
+        "height": 122
+      },
+      {
+        "text": "Tümünü göster (0)",
+        "height": 44
+      }
+    ]
+  },
+  {
+    "step": 12,
+    "name": "accounts-mobile",
+    "url": "http://127.0.0.1:4320/#/hesaplar",
+    "controls": [
+      {
+        "text": "Hesaplar",
+        "height": 45
+      },
+      {
+        "text": "Kredi kartları",
+        "height": 45
+      },
+      {
+        "text": "Araçlarım",
+        "height": 45
+      },
+      {
+        "text": "Raporlar",
+        "height": 45
+      },
+      {
+        "text": "Kullanıcılar",
+        "height": 45
+      },
+      {
+        "text": "Ayarlar",
+        "height": 44
+      },
+      {
+        "text": null,
+        "height": 44
+      },
+      {
+        "text": "Menüyü daralt",
+        "height": 44
+      },
+      {
+        "text": "Menüyü aç",
+        "height": 44
+      },
+      {
+        "text": "Bildirimleri aç",
+        "height": 44
+      },
+      {
+        "text": "Hesap ekle",
+        "height": 44
+      },
+      {
+        "text": "Banka hesabı",
+        "height": 44
+      },
+      {
+        "text": "Banka seçin veya ekleyin",
+        "height": 44
+      },
+      {
+        "text": "Vazgeç",
+        "height": 44
+      },
+      {
+        "text": "Kaydet",
+        "height": 44
+      },
+      {
+        "text": "Ad",
+        "height": 44
+      },
+      {
+        "text": "Bakiye",
+        "height": 44
+      },
+      {
+        "text": "CSV indir",
+        "height": 44
+      },
+      {
+        "text": "Merkez Kasa hareketleri",
+        "height": 116
+      },
+      {
+        "text": "Tümünü göster (0)",
+        "height": 44
+      }
+    ]
+  },
+  {
+    "step": 13,
+    "name": "cards",
+    "url": "http://127.0.0.1:4320/#/kartlar",
+    "controls": [
+      {
+        "text": "Genel bakış",
+        "height": 45
+      },
+      {
+        "text": "Cari hesaplar",
+        "height": 45
+      },
+      {
+        "text": "Tahsilat & Ödeme",
+        "height": 45
+      },
+      {
+        "text": "Ödeme Planı",
+        "height": 45
+      },
+      {
+        "text": "Hesaplar",
+        "height": 45
+      },
+      {
+        "text": "Kredi kartları",
+        "height": 45
+      },
+      {
+        "text": "Kampanyalar",
+        "height": 44
+      },
+      {
+        "text": "Araçlarım",
+        "height": 45
+      },
+      {
+        "text": "Raporlar",
+        "height": 45
+      },
+      {
+        "text": "Kullanıcılar",
+        "height": 45
+      },
+      {
+        "text": "Ayarlar",
+        "height": 44
+      },
+      {
+        "text": "Görünüm ve bilgiler",
+        "height": 44
+      },
+      {
+        "text": "Menüyü daralt",
+        "height": 44
+      },
+      {
+        "text": "Menüyü daralt",
+        "height": 44
+      },
+      {
+        "text": "Bildirimleri aç",
+        "height": 32
+      },
+      {
+        "text": "Kart ekle",
+        "height": 44
+      },
+      {
+        "text": "Ad",
+        "height": 32
+      },
+      {
+        "text": "Bakiye",
+        "height": 32
+      },
+      {
+        "text": "CSV indir",
+        "height": 44
+      },
+      {
+        "text": "Tümünü göster (0)",
+        "height": 44
+      }
+    ]
+  },
+  {
+    "step": 14,
+    "name": "cards-form",
+    "url": "http://127.0.0.1:4320/#/kartlar",
+    "controls": [
+      {
+        "text": "Raporlar",
+        "height": 45
+      },
+      {
+        "text": "Kullanıcılar",
+        "height": 45
+      },
+      {
+        "text": "Ayarlar",
+        "height": 44
+      },
+      {
+        "text": "Görünüm ve bilgiler",
+        "height": 44
+      },
+      {
+        "text": "Menüyü daralt",
+        "height": 44
+      },
+      {
+        "text": "Menüyü daralt",
+        "height": 44
+      },
+      {
+        "text": "Bildirimleri aç",
+        "height": 32
+      },
+      {
+        "text": "Kart ekle",
+        "height": 44
+      },
+      {
+        "text": "Banka seçin veya ekleyin",
+        "height": 44
+      },
+      {
+        "text": "26 Kas 2026",
+        "height": 44
+      },
+      {
+        "text": "Tarih seç",
+        "height": 44
+      },
+      {
+        "text": "Yok",
+        "height": 44
+      },
+      {
+        "text": "Belirtilmedi",
+        "height": 44
+      },
+      {
+        "text": "Bağlı hesap seçilmedi",
+        "height": 44
+      },
+      {
+        "text": "Vazgeç",
+        "height": 44
+      },
+      {
+        "text": "Kartı ekle",
+        "height": 44
+      },
+      {
+        "text": "Ad",
+        "height": 32
+      },
+      {
+        "text": "Bakiye",
+        "height": 32
+      },
+      {
+        "text": "CSV indir",
+        "height": 44
+      },
+      {
+        "text": "Tümünü göster (0)",
+        "height": 44
+      }
+    ]
+  },
+  {
+    "step": 15,
+    "name": "vehicles",
+    "url": "http://127.0.0.1:4320/#/araclar",
+    "controls": [
+      {
+        "text": "Genel bakış",
+        "height": 45
+      },
+      {
+        "text": "Cari hesaplar",
+        "height": 45
+      },
+      {
+        "text": "Tahsilat & Ödeme",
+        "height": 45
+      },
+      {
+        "text": "Ödeme Planı",
+        "height": 45
+      },
+      {
+        "text": "Hesaplar",
+        "height": 45
+      },
+      {
+        "text": "Kredi kartları",
+        "height": 45
+      },
+      {
+        "text": "Araçlarım",
+        "height": 45
+      },
+      {
+        "text": "Raporlar",
+        "height": 45
+      },
+      {
+        "text": "Kullanıcılar",
+        "height": 45
+      },
+      {
+        "text": "Ayarlar",
+        "height": 44
+      },
+      {
+        "text": "Görünüm ve bilgiler",
+        "height": 44
+      },
+      {
+        "text": "Menüyü daralt",
+        "height": 44
+      },
+      {
+        "text": "Menüyü daralt",
+        "height": 44
+      },
+      {
+        "text": "Bildirimleri aç",
+        "height": 32
+      },
+      {
+        "text": "Araç ekle",
+        "height": 44
+      },
+      {
+        "text": "Tümünü göster (0)",
+        "height": 44
+      }
+    ]
+  },
+  {
+    "step": 16,
+    "name": "vehicles-form",
+    "url": "http://127.0.0.1:4320/#/araclar",
+    "controls": [
+      {
+        "text": "Genel bakış",
+        "height": 45
+      },
+      {
+        "text": "Cari hesaplar",
+        "height": 45
+      },
+      {
+        "text": "Tahsilat & Ödeme",
+        "height": 45
+      },
+      {
+        "text": "Ödeme Planı",
+        "height": 45
+      },
+      {
+        "text": "Hesaplar",
+        "height": 45
+      },
+      {
+        "text": "Kredi kartları",
+        "height": 45
+      },
+      {
+        "text": "Araçlarım",
+        "height": 45
+      },
+      {
+        "text": "Raporlar",
+        "height": 45
+      },
+      {
+        "text": "Kullanıcılar",
+        "height": 45
+      },
+      {
+        "text": "Ayarlar",
+        "height": 44
+      },
+      {
+        "text": "Görünüm ve bilgiler",
+        "height": 44
+      },
+      {
+        "text": "Menüyü daralt",
+        "height": 44
+      },
+      {
+        "text": "Menüyü daralt",
+        "height": 44
+      },
+      {
+        "text": "Bildirimleri aç",
+        "height": 32
+      },
+      {
+        "text": "Araç ekle",
+        "height": 44
+      },
+      {
+        "text": "Otomobil",
+        "height": 44
+      },
+      {
+        "text": "Belirtilmedi",
+        "height": 44
+      },
+      {
+        "text": "Vazgeç",
+        "height": 44
+      },
+      {
+        "text": "Kaydet",
+        "height": 44
+      },
+      {
+        "text": "Tümünü göster (0)",
+        "height": 44
+      }
+    ]
+  },
+  {
+    "step": 17,
+    "name": "reports",
+    "url": "http://127.0.0.1:4320/#/raporlar",
+    "controls": [
+      {
+        "text": "Kredi kartları",
+        "height": 45
+      },
+      {
+        "text": "Araçlarım",
+        "height": 45
+      },
+      {
+        "text": "Raporlar",
+        "height": 45
+      },
+      {
+        "text": "Kullanıcılar",
+        "height": 45
+      },
+      {
+        "text": "Ayarlar",
+        "height": 44
+      },
+      {
+        "text": "Görünüm ve bilgiler",
+        "height": 44
+      },
+      {
+        "text": "Menüyü daralt",
+        "height": 44
+      },
+      {
+        "text": "Menüyü daralt",
+        "height": 44
+      },
+      {
+        "text": "Tarih aralığı: 2026-11-01 – 2026-11-30",
+        "height": 30
+      },
+      {
+        "text": "Aramayı temizle",
+        "height": 42
+      },
+      {
+        "text": "Bildirimleri aç",
+        "height": 32
+      },
+      {
+        "text": "Yeni işlem ekle",
+        "height": 21
+      },
+      {
+        "text": "PDF indir",
+        "height": 44
+      },
+      {
+        "text": "CSV indir",
+        "height": 44
+      },
+      {
+        "text": "Tarih",
+        "height": 32
+      },
+      {
+        "text": "İşlem",
+        "height": 32
+      },
+      {
+        "text": "Açıklama",
+        "height": 32
+      },
+      {
+        "text": "Ekleyen",
+        "height": 32
+      },
+      {
+        "text": "Hesap",
+        "height": 32
+      },
+      {
+        "text": "Tutar",
+        "height": 32
+      }
+    ]
+  },
+  {
+    "step": 18,
+    "name": "plan",
+    "url": "http://127.0.0.1:4320/#/odeme-plani",
+    "controls": [
+      {
+        "text": "19",
+        "height": 144
+      },
+      {
+        "text": "20",
+        "height": 144
+      },
+      {
+        "text": "21",
+        "height": 144
+      },
+      {
+        "text": "22",
+        "height": 144
+      },
+      {
+        "text": "23",
+        "height": 144
+      },
+      {
+        "text": "24",
+        "height": 144
+      },
+      {
+        "text": "25",
+        "height": 144
+      },
+      {
+        "text": "26",
+        "height": 144
+      },
+      {
+        "text": "27",
+        "height": 144
+      },
+      {
+        "text": "28",
+        "height": 144
+      },
+      {
+        "text": "29",
+        "height": 144
+      },
+      {
+        "text": "30",
+        "height": 144
+      },
+      {
+        "text": "1",
+        "height": 144
+      },
+      {
+        "text": "2",
+        "height": 144
+      },
+      {
+        "text": "3",
+        "height": 144
+      },
+      {
+        "text": "4",
+        "height": 144
+      },
+      {
+        "text": "5",
+        "height": 144
+      },
+      {
+        "text": "6",
+        "height": 144
+      },
+      {
+        "text": "Planlanan alış\n1 Kasım 2026 · Planlanan ödeme\nPlanlanan alış\n913,00 TL",
+        "height": 82
+      },
+      {
+        "text": "İşlemi gerçekleştir",
+        "height": 21
+      }
+    ]
+  }
+]

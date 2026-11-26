@@ -10,7 +10,17 @@ import {
 } from "./search-query.mjs";
 const labelFor = (f, v) =>
   f.range
-    ? [v.from, v.to].filter(Boolean).join(" – ")
+    ? [v.from, v.to]
+        .filter(Boolean)
+        .map((date) =>
+          new Date(date + "T12:00:00Z").toLocaleDateString("tr-TR", {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+            timeZone: "UTC",
+          }),
+        )
+        .join(" – ")
     : f.check
       ? v
         ? "Evet"

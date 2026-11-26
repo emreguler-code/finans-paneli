@@ -674,7 +674,7 @@ export function App({ initialData, onLogout }) {
         </div>
       </div>
       <div
-        className="chart"
+        className={"chart" + (!periodTx.length ? " is-empty" : "")}
         aria-label="Günlere göre banka ve kasa girişleri ile çıkışları"
       >
         {periodTx.length === 0 ? (
