@@ -1,0 +1,19 @@
+{
+  "source": "12f423d99e19fcec68289afef8f9b149ffd2136e",
+  "node": "26.13.1",
+  "npm": "12.2.2",
+  "unit": 92,
+  "worker": 4,
+  "api": 206,
+  "migrations": 34,
+  "backups": 77,
+  "chromium_ui": 92,
+  "webkit_ui": 92,
+  "firefox_local": "profile creation unavailable; GitHub acceptance gate used",
+  "browser_chromium": "passed",
+  "demo": "passed",
+  "package": "passed",
+  "security": "no known vulnerabilities",
+  "finans-paneli-1.30.0.zip": "05dcff49db2279542cf1249c2fdb08dc275841c531aebd0033bb514f63b04c52",
+  "finans-paneli-1.30.0-hosting.zip": "49b1db979f8929b0913bced6eef00c0ead3734820e62fb8accfbc0d10445755d"
+}

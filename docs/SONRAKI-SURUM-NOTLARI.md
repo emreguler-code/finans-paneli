@@ -1606,3 +1606,7 @@ Kullanıcı önerilen analize başlanmasını ve sonuçların paylaşılmasını
 ## 26 Kasım 2026 — 1.30.0 açık uygulama ve yayın talimatı
 
 Kullanıcı tasarım kararlarının çakışmasını gidermeyi, tek güncel sözleşmeyi ve buna göre kod güncellemesini açıkça istedi. 26 Kasım form tercihi ve envanter bulguları bu kapsamda uygulanır: Radix seçim altyapısı, ortak ızgara/alan rolleri, kompakt mobil form, sade etki özeti, ortak boş durum/özet/eylem/tarih sunumu. Yeni güncel sözleşme tarihsel kararların üzerinde tasarım kaynağı olur; eski belgeler arşivlenir. Finansal model ve şema korunur. GitHub Release ve hostinge hazır ZIP çalışma kuralı gereği kapsam içindedir; canlı hosting kurulumu yapılmaz.
+
+## 26 Kasım 2026 — 1.30.0 tamamlandı ve doğrulanarak yayımlandı
+
+Tek güncel tasarım sözleşmesi, tarihsel kararların ayrılması ve ortak Radix UI + CSS Grid düzeni uygulandı. Seçim altyapısı form ve sayfa araçlarına yayıldı; arama komutları, zorunluluk/odak ve taslak koruması uyumlandı. Gerçek form container genişliği ve tek bölüm aralığı kuralı doğrulandı. Windows/Linux tam kabulü sonrası v1.30.0 yayımlandı; kaynak 12f423d99e19fcec68289afef8f9b149ffd2136e, koşu 45826515683. İndirilen dört varlık ve depodaki hosting ZIP eşliği docs/evidence/1.30.0/publication.json içinde doğrulandı. Hosting/cron kurulumu yapılmadı. Bu sürümün uygulama talimatı yeni taleplere taşınmaz; sonraki fikirler önce notlara alınır.
